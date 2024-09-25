@@ -1,0 +1,42 @@
+/** Clear float */
+%clearfix {
+  &::after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+/** Beautify native scroll bar */
+%scrollbar {
+  // The entire scroll bar
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  // Scroll bar on the scroll bar
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: #90939955;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: #90939977;
+  }
+  &::-webkit-scrollbar-thumb:active {
+    background-color: #90939999;
+  }
+  // The part where the vertical scroll bar and the horizontal scroll bar meet at the same time
+  &::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
+}
+
+/** Display ellipsis when text overflows */
+%ellipsis {
+  // Hide overflowing text
+  overflow: hidden;
+  // Prevent text wrapping
+  white-space: nowrap;
+  // When text content overflows the container, ellipsis is displayed at the end of the text
+  text-overflow: ellipsis;
+}

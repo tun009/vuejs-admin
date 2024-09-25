@@ -1,0 +1,48 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    /** https://cn.vitejs.dev/guide/features.html#typescript-compiler-options */
+    "useDefineForClassFields": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    /** TS Strict Mode */
+    "strict": true,
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
+    "importHelpers": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    /** https://cn.vitejs.dev/guide/features.html#typescript-compiler-options */
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "lib": ["esnext", "dom"],
+    "skipLibCheck": true,
+    "types": [
+      "node",
+      "vite/client",
+      /** Element Plus Volar plugin support*/
+      "element-plus/global",
+      "vitest"
+    ],
+    /** baseUrl Used to tell the compiler where to find the module. This must be configured when using non-relative modules.*/
+    "baseUrl": ".",
+    /** Path mapping configuration for non-relative module imports, path calculation based on baseUrl configuration */
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "tests/**/*.ts",
+    "types/**/*.d.ts",
+    "vite.config.ts",
+    "vitest.config.ts"
+, "types/common.ts"  ],
+  /** Compiler default excluded compilation files */
+  "exclude": ["node_modules", "dist"]
+}

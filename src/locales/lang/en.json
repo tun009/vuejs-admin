@@ -1,0 +1,32 @@
+{
+  "notification": {
+    "title": {
+      "joinWeb": "Hello"
+    },
+    "description": {
+      "joinWeb": "Welcome to the editing web, listen to music here!"
+    }
+  },
+  "layouts": {
+    "config": {
+      "layoutConfig": "Configuration Settings",
+      "functionConfig": "Function Configuration",
+      "showTagsView": "Tab Bar",
+      "showLogo": "Logo",
+      "fixedHeader": "Fixed Header",
+      "showFooter": "Footer",
+      "showNotify": "Notification",
+      "showThemeSwitch": "Theme Switch",
+      "showScreenfull": "Full Screen",
+      "showSearchMenu": "Search Button",
+      "cacheTagsView": "Remember Tab Bar",
+      "showWatermark": "Fade",
+      "showGreyMode": "Gray Mode",
+      "showColorWeakness": "Weak Color Mode",
+      "language": "Language"
+    }
+  },
+  "button": {
+    "reset": "Reset"
+  }
+}

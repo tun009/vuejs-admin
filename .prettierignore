@@ -1,0 +1,7 @@
+# Prettier Files to be ignored
+
+.DS_Store
+node_modules
+dist
+dist-ssr
+*.local

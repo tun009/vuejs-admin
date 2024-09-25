@@ -1,0 +1,32 @@
+{
+  "notification": {
+    "title": {
+      "joinWeb": "Xin chào"
+    },
+    "description": {
+      "joinWeb": "Chào mừng bạn đến với web hiệu chỉnh, nghe nhạc tại đây!"
+    }
+  },
+  "layouts": {
+    "config": {
+      "layoutConfig": "Cài đặt cấu hình",
+      "functionConfig": "Cấu hình chức năng",
+      "showTagsView": "Thanh tab",
+      "showLogo": "Logo",
+      "fixedHeader": "Tiêu đề cố định",
+      "showFooter": "Chân trang",
+      "showNotify": "Thông báo",
+      "showThemeSwitch": "Chuyển đổi chủ đề",
+      "showScreenfull": "Toàn màn hình",
+      "showSearchMenu": "Nút tìm kiếm",
+      "cacheTagsView": "Ghi nhớ thanh tab",
+      "showWatermark": "Làm mờ",
+      "showGreyMode": "Chế độ màu xám",
+      "showColorWeakness": "Chế độ màu yếu",
+      "language": "Ngôn ngữ"
+    }
+  },
+  "button": {
+    "reset": "Cài lại"
+  }
+}

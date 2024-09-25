@@ -1,0 +1,155 @@
+<script lang="ts" setup>
+import { ref, nextTick } from 'vue'
+import { RouterLink, useRoute } from 'vue-router'
+import { useSettingsStore } from '@/store/modules/settings'
+import { useRouteListener } from '@/hooks/useRouteListener'
+import Screenfull from '@/components/Screenfull/index.vue'
+import { ElScrollbar } from 'element-plus'
+import { ArrowLeft, ArrowRight } from '@element-plus/icons-vue'
+
+interface Props {
+  tagRefs: InstanceType<typeof RouterLink>[]
+}
+
+const props = defineProps<Props>()
+
+const route = useRoute()
+const settingsStore = useSettingsStore()
+const { listenerRouteChange } = useRouteListener()
+
+/** Reference to scrollbar component element */
+const scrollbarRef = ref<InstanceType<typeof ElScrollbar>>()
+/** Reference to scrollbar content element */
+const scrollbarContentRef = ref<HTMLDivElement>()
+
+/** Current scrollbar distance from the left */
+let currentScrollLeft = 0
+/** Distance of each scroll */
+const translateDistance = 200
+
+/** Triggered when scrolling */
+const scroll = ({ scrollLeft }: { scrollLeft: number }) => {
+  currentScrollLeft = scrollLeft
+}
+
+/** Triggered when the mouse wheel is scrolled */
+const wheelScroll = ({ deltaY }: WheelEvent) => {
+  if (/^-/.test(deltaY.toString())) {
+    scrollTo('left')
+  } else {
+    scrollTo('right')
+  }
+}
+
+/** Get the width that may be needed */
+const getWidth = () => {
+  /** Length of scrollable content */
+  const scrollbarContentRefWidth = scrollbarContentRef.value!.clientWidth
+  /** Scrollable view width */
+  const scrollbarRefWidth = scrollbarRef.value!.wrapRef!.clientWidth
+  /** The remaining scrollable width */
+  const lastDistance = scrollbarContentRefWidth - scrollbarRefWidth - currentScrollLeft
+
+  return { scrollbarContentRefWidth, scrollbarRefWidth, lastDistance }
+}
+
+/** 左右滚动 */
+const scrollTo = (direction: 'left' | 'right', distance: number = translateDistance) => {
+  let scrollLeft = 0
+  const { scrollbarContentRefWidth, scrollbarRefWidth, lastDistance } = getWidth()
+  // 没有横向滚动条，直接结束
+  if (scrollbarRefWidth > scrollbarContentRefWidth) return
+  if (direction === 'left') {
+    scrollLeft = Math.max(0, currentScrollLeft - distance)
+  } else {
+    scrollLeft = Math.min(currentScrollLeft + distance, currentScrollLeft + lastDistance)
+  }
+  scrollbarRef.value!.setScrollLeft(scrollLeft)
+}
+
+/** Move to target location */
+const moveTo = () => {
+  const tagRefs = props.tagRefs
+  for (let i = 0; i < tagRefs.length; i++) {
+    // @ts-ignore
+    if (route.path === tagRefs[i].$props.to.path) {
+      // @ts-ignore
+      const el: HTMLElement = tagRefs[i].$el
+      const offsetWidth = el.offsetWidth
+      const offsetLeft = el.offsetLeft
+      const { scrollbarRefWidth } = getWidth()
+      // When the current tag is on the left side of the visible area
+      if (offsetLeft < currentScrollLeft) {
+        const distance = currentScrollLeft - offsetLeft
+        scrollTo('left', distance)
+        return
+      }
+      // When the current tag is on the right side of the visible area
+      const width = scrollbarRefWidth + currentScrollLeft - offsetWidth
+      if (offsetLeft > width) {
+        const distance = offsetLeft - width
+        scrollTo('right', distance)
+        return
+      }
+    }
+  }
+}
+
+/** Listen for route changes and move to the target location */
+listenerRouteChange(() => {
+  nextTick(moveTo)
+})
+</script>
+
+<template>
+  <div class="scroll-container">
+    <el-icon class="arrow left" @click="scrollTo('left')">
+      <ArrowLeft />
+    </el-icon>
+    <el-scrollbar ref="scrollbarRef" @wheel.passive="wheelScroll" @scroll="scroll">
+      <div ref="scrollbarContentRef" class="scrollbar-content">
+        <slot />
+      </div>
+    </el-scrollbar>
+    <el-icon class="arrow right" @click="scrollTo('right')">
+      <ArrowRight />
+    </el-icon>
+    <Screenfull v-if="settingsStore.showScreenfull" :content="true" class="screenfull" />
+  </div>
+</template>
+
+<style lang="scss" scoped>
+.scroll-container {
+  height: 100%;
+  user-select: none;
+  display: flex;
+  justify-content: space-between;
+  .arrow {
+    width: 40px;
+    height: 100%;
+    font-size: 18px;
+    cursor: pointer;
+    &.left {
+      box-shadow: 5px 0 5px -6px var(--el-border-color-darker);
+    }
+    &.right {
+      box-shadow: -5px 0 5px -6px var(--el-border-color-darker);
+    }
+  }
+  .el-scrollbar {
+    flex: 1;
+    // Prevent line wrapping (display scroll bar when width exceeds)
+    white-space: nowrap;
+    .scrollbar-content {
+      display: inline-block;
+    }
+  }
+  .screenfull {
+    width: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+}
+</style>
