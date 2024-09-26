@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# Get the current branch name
+branch_name=$(git rev-parse --abbrev-ref HEAD)
+
+# Extract the prefix from the branch name (e.g., "feat/" becomes "feat:")
+prefix="${branch_name%%/*}:"
+
+# Check if a file was provided
+if [ -z "$1" ]; then
+  echo "Error: No commit message file provided."
+  exit 1
+fi
+
+# Read the commit message from the file
+commit_message=$(cat "$1")
+
+# Check if the commit message starts with the correct prefix
+if ! echo "$commit_message" | grep -qE "^$prefix "; then
+  echo "Error: Commit message must start with '$prefix '"
+  exit 1
+fi
+
+echo "The commit message is valid."

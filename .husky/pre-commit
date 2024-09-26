@@ -1,3 +1,4 @@
 #!/usr/bin/env sh
-. "$(dirname "$0")/h"
+echo "Check code before commit"
+sh .husky/pre-checkout
 npx lint-staged
