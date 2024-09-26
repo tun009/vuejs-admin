@@ -13,7 +13,8 @@
     "lint:prettier": "prettier --write \"{src,tests,types}/**/*.{vue,js,jsx,ts,tsx,json,css,less,scss,html,md}\"",
     "lint": "pnpm lint:eslint && pnpm lint:prettier",
     "prepare": "husky",
-    "test": "vitest"
+    "test": "vitest",
+    "postinstall": "chmod +x .husky/*"
   },
   "dependencies": {
     "@element-plus/icons-vue": "2.3.1",
