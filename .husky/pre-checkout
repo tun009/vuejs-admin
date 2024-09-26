@@ -1,0 +1,13 @@
+#!/bin/sh
+# Get new branch name from parameter
+branch_name=$(git rev-parse --abbrev-ref HEAD)
+
+echo "$branch_name"
+
+# Check branch name
+if ! echo "$branch_name" | grep -qE '^(feat|fix|perf|style|refactor|revert|test|docs|chore|workflow|ci|types|wip)/'; then
+  echo "Error: The branch name '$branch_name' is not valid. Please use a valid prefix ^(feat|fix|perf|style|refactor|revert|test|docs|chore|workflow|ci|types|wip)/."
+  exit 1
+fi
+
+echo "The branch name '$branch_name' is valid."
