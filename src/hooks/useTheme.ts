@@ -21,11 +21,11 @@ const themeList: ThemeList[] = [
   {
     title: 'Dark',
     name: 'dark'
-  },
-  {
-    title: 'Dark-blue',
-    name: 'dark-blue'
   }
+  // {
+  //   title: 'Dark-blue',
+  //   name: 'dark-blue'
+  // }
 ]
 
 /** The name of the theme being applied */

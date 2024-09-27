@@ -1,8 +1,6 @@
 <script lang="ts" setup>
 import { useLayoutMode } from '@/hooks/useLayoutMode'
-import logo from '@/assets/layouts/logo.png?url'
-import logoText1 from '@/assets/layouts/logo-text-1.png?url'
-import logoText2 from '@/assets/layouts/logo-text-2.png?url'
+import { EximbankLogo, EximbankLogoWhite, EximbankLogoMiniWhite } from '@/assets'
 
 interface Props {
   collapse?: boolean
@@ -16,15 +14,13 @@ const { isLeft, isTop } = useLayoutMode()
 </script>
 
 <template>
-  <div class="layout-logo-container" :class="{ collapse: props.collapse, 'layout-mode-top': isTop }">
-    <transition name="layout-logo-fade">
-      <router-link v-if="props.collapse" key="collapse" to="/">
-        <img :src="logo" class="layout-logo" />
-      </router-link>
-      <router-link v-else key="expand" to="/">
-        <img :src="!isLeft ? logoText2 : logoText1" class="layout-logo-text" />
-      </router-link>
-    </transition>
+  <div class="layout-logo-container flex justify-center items-center" :class="{ 'layout-mode-top': isTop }">
+    <router-link v-if="props.collapse" key="collapse" to="/">
+      <img :src="EximbankLogoMiniWhite" class="h-7" />
+    </router-link>
+    <router-link v-else key="expand" to="/">
+      <img :src="isTop || !isLeft ? EximbankLogo : EximbankLogoWhite" class="layout-logo-text h-7" />
+    </router-link>
   </div>
 </template>
 

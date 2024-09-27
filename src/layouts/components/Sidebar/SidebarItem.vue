@@ -8,6 +8,7 @@ import path from 'path-browserify'
 interface Props {
   item: RouteRecordRaw
   basePath?: string
+  isCollapse?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -54,32 +55,34 @@ const resolvePath = (routePath: string) => {
 </script>
 
 <template>
-  <template v-if="!alwaysShowRootMenu && theOnlyOneChild && !theOnlyOneChild.children">
-    <SidebarItemLink v-if="theOnlyOneChild.meta" :to="resolvePath(theOnlyOneChild.path)">
-      <el-menu-item :index="resolvePath(theOnlyOneChild.path)">
-        <SvgIcon v-if="theOnlyOneChild.meta.svgIcon" :name="theOnlyOneChild.meta.svgIcon" />
-        <component v-else-if="theOnlyOneChild.meta.elIcon" :is="theOnlyOneChild.meta.elIcon" class="el-icon" />
-        <template v-if="theOnlyOneChild.meta.title" #title>
-          {{ theOnlyOneChild.meta.title }}
-        </template>
-      </el-menu-item>
-    </SidebarItemLink>
-  </template>
-  <el-sub-menu v-else :index="resolvePath(props.item.path)" teleported>
-    <template #title>
-      <SvgIcon v-if="props.item.meta?.svgIcon" :name="props.item.meta.svgIcon" />
-      <component v-else-if="props.item.meta?.elIcon" :is="props.item.meta.elIcon" class="el-icon" />
-      <span v-if="props.item.meta?.title">{{ props.item.meta.title }}</span>
+  <div class="rounded-2xl">
+    <template v-if="!alwaysShowRootMenu && theOnlyOneChild && !theOnlyOneChild.children">
+      <SidebarItemLink v-if="theOnlyOneChild.meta" :to="resolvePath(theOnlyOneChild.path)">
+        <el-menu-item :index="resolvePath(theOnlyOneChild.path)">
+          <SvgIcon v-if="theOnlyOneChild.meta.svgIcon" :name="theOnlyOneChild.meta.svgIcon" />
+          <component v-else-if="theOnlyOneChild.meta.elIcon" :is="theOnlyOneChild.meta.elIcon" class="el-icon" />
+          <template v-if="theOnlyOneChild.meta.title" #title>
+            {{ theOnlyOneChild.meta.title }}
+          </template>
+        </el-menu-item>
+      </SidebarItemLink>
     </template>
-    <template v-if="props.item.children">
-      <SidebarItem
-        v-for="child in showingChildren"
-        :key="child.path"
-        :item="child"
-        :base-path="resolvePath(child.path)"
-      />
-    </template>
-  </el-sub-menu>
+    <el-sub-menu v-else :index="resolvePath(props.item.path)" teleported>
+      <template #title>
+        <SvgIcon v-if="props.item.meta?.svgIcon" :name="props.item.meta.svgIcon" />
+        <component v-else-if="props.item.meta?.elIcon" :is="props.item.meta.elIcon" class="el-icon" />
+        <span v-if="props.item.meta?.title && !isCollapse">{{ props.item.meta.title }}</span>
+      </template>
+      <template v-if="props.item.children">
+        <SidebarItem
+          v-for="child in showingChildren"
+          :key="child.path"
+          :item="child"
+          :base-path="resolvePath(child.path)"
+        />
+      </template>
+    </el-sub-menu>
+  </div>
 </template>
 
 <style lang="scss" scoped>

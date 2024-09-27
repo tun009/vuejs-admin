@@ -1,0 +1,65 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#3k2sw44eqa)">
+        <mask id="ue9jno4swb" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="11" y="0" width="2" height="24">
+            <path d="M11.29 23.928h1.41V.063h-1.41v23.874-.01z" fill="#fff"/>
+        </mask>
+        <g mask="url(#ue9jno4swb)">
+            <path d="M12.7.054h-1.41v23.874h1.41V.054z" fill="#fff"/>
+        </g>
+        <mask id="oodycexrxc" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="11" y="0" width="13" height="13">
+            <path d="M11.344 0h-.054v2.478c.29-1.149 1.42-1.004 1.42-1.004 4.763.317 8.66 3.78 9.617 8.338 0 0 .064.343.064.524 0 1.05-.778 1.962-1.79 2.125 3.1-.108 3.227-2.233 3.2-2.631A11.99 11.99 0 0 0 12.655.036l-.66-.027h-.66l.01-.009z" fill="#fff"/>
+        </mask>
+        <g mask="url(#oodycexrxc)">
+            <path d="M16.072-6.078 5.259 7.722l13.813 10.823 10.813-13.8L16.072-6.078z" fill="#fff"/>
+        </g>
+        <mask id="h4fdns3nad" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="13" y="9" width="11" height="15">
+            <path d="M20.366 12.39h-6.87v11.465c5.776-.714 10.278-5.543 10.495-11.457 0-.154.009-.298.009-.443 0-.75-.072-1.474-.199-2.188 0 0 .09 2.622-3.435 2.622z" fill="#fff"/>
+        </mask>
+        <g mask="url(#h4fdns3nad)">
+            <path d="M17.689 4.611 6.584 18.212l13.208 10.784 11.105-13.601L17.689 4.61z" fill="#fff"/>
+        </g>
+        <g style="mix-blend-mode:overlay">
+            <mask id="lo83c49ile" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="13" y="9" width="11" height="15">
+                <path d="M23.991 9.767H13.487v14.088h10.504V9.768z" fill="#fff"/>
+            </mask>
+            <g mask="url(#lo83c49ile)">
+                <mask id="3hy43ibqzf" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="13" y="9" width="11" height="15">
+                    <path d="M13.487 23.855c5.777-.714 10.278-5.543 10.495-11.457 0-.154.01-.298.01-.443 0-.75-.073-1.474-.2-2.188 0 0 .09 2.622-3.435 2.622h-6.87v11.466z" fill="#fff"/>
+                </mask>
+                <g mask="url(#3hy43ibqzf)">
+                    <path d="M23.991 9.767H13.487v14.088h10.504V9.768z" fill="#fff" style="mix-blend-mode:overlay"/>
+                </g>
+            </g>
+        </g>
+        <mask id="ca4l1bza8g" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="11" width="13" height="13">
+            <path d="M.199 14.18a11.99 11.99 0 0 0 11.145 9.793l.66.027h.705v-2.478c-.289 1.149-1.419 1.004-1.419 1.004a10.547 10.547 0 0 1-9.618-8.338s-.063-.344-.063-.524c0-1.05.777-1.963 1.79-2.125-3.1.108-3.218 2.233-3.2 2.631" fill="#fff"/>
+        </mask>
+        <g mask="url(#ca4l1bza8g)">
+            <path d="m4.95 5.468-10.813 13.8L7.95 30.091l10.813-13.8L4.95 5.468z" fill="#fff"/>
+        </g>
+        <mask id="hdhd4jftsh" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="11" height="15">
+            <path d="M.009 11.602c0 .154-.009.298-.009.443 0 .75.072 1.474.199 2.188 0 0-.09-2.622 3.435-2.622h6.87V.145C4.728.859.226 5.688.009 11.602z" fill="#fff"/>
+        </mask>
+        <g mask="url(#hdhd4jftsh)">
+            <path d="m4.209-4.998-11.107 13.6L6.308 19.388l11.107-13.6L4.209-4.998z" fill="#fff"/>
+        </g>
+        <g style="mix-blend-mode:overlay">
+            <mask id="nzt5ylb7zi" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="11" height="15">
+                <path d="M10.504.145H0v14.088h10.504V.146z" fill="#fff"/>
+            </mask>
+            <g mask="url(#nzt5ylb7zi)">
+                <mask id="je4cbyey8j" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="11" height="15">
+                    <path d="M10.504.145C4.728.859.226 5.688.009 11.602c0 .154-.009.298-.009.443 0 .75.072 1.474.199 2.188 0 0-.09-2.622 3.435-2.622h6.87V.145z" fill="#fff"/>
+                </mask>
+                <g mask="url(#je4cbyey8j)">
+                    <path d="M10.504.145H0v14.088h10.504V.146z" fill="#fff" style="mix-blend-mode:overlay"/>
+                </g>
+            </g>
+        </g>
+    </g>
+    <defs>
+        <clipPath id="3k2sw44eqa">
+            <path fill="#fff" d="M0 0h24v24H0z"/>
+        </clipPath>
+    </defs>
+</svg>

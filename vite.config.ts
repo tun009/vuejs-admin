@@ -10,7 +10,6 @@ import svgLoader from 'vite-svg-loader'
 export default ({ mode }: ConfigEnv): UserConfigExport => {
   const viteEnv = loadEnv(mode, process.cwd()) as ImportMetaEnv
   const { VITE_PUBLIC_PATH } = viteEnv
-  console.log(mode, VITE_PUBLIC_PATH)
   return {
     /** Modify base according to actual situation when packaging */
     base: VITE_PUBLIC_PATH,
@@ -31,15 +30,6 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
       cors: true,
       /** Whether to exit directly when the port is occupied */
       strictPort: false,
-      /** Interface proxy */
-      proxy: {
-        '/api/v1': {
-          target: 'https://mock.mengxuegu.com/mock/63218b5fb4c53348ed2bc212',
-          ws: true,
-          /** Whether to allow cross-domain */
-          changeOrigin: true
-        }
-      },
       /** Warm up common files to increase the initial page loading speed */
       warmup: {
         clientFiles: ['./src/layouts/**/*.vue']

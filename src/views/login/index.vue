@@ -1,32 +1,25 @@
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { type LoginRequestData } from '@/api/login/types/login'
 import { useUserStore } from '@/store/modules/user'
 import { type FormInstance, type FormRules } from 'element-plus'
-import { User, Lock, Key, Picture, Loading } from '@element-plus/icons-vue'
-import { getLoginCodeApi } from '@/api/login'
-import { type LoginRequestData } from '@/api/login/types/login'
+import { reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import Background from './components/Background.vue'
+import { Lock, User } from '@element-plus/icons-vue'
 import ThemeSwitch from '@/components/ThemeSwitch/index.vue'
-import Owl from './components/Owl.vue'
-import { useFocus } from './hooks/useFocus'
+import LanguageSwitch from '@/components/LanguageSwitch/index.vue'
+import InputComponent from '@/components/common/InputComponent.vue'
 
 const router = useRouter()
-const { isFocus, handleBlur, handleFocus } = useFocus()
-
-/** Reference to login form element */
 const loginFormRef = ref<FormInstance | null>(null)
 
-/** Login button Loading */
 const loading = ref(false)
-/** Verification code image URL */
-const codeUrl = ref('')
-/** Login form data */
 const loginFormData: LoginRequestData = reactive({
   username: 'admin',
   password: '12345678',
   code: ''
 })
-/** Login form validation rules */
+
 const loginFormRules: FormRules = {
   username: [{ required: true, message: 'Please enter your username', trigger: 'blur' }],
   password: [
@@ -35,7 +28,6 @@ const loginFormRules: FormRules = {
   ],
   code: [{ required: true, message: 'Please enter the verification code', trigger: 'blur' }]
 }
-/** Login Logic */
 const handleLogin = () => {
   loginFormRef.value?.validate((valid: boolean, fields) => {
     if (valid) {
@@ -46,7 +38,6 @@ const handleLogin = () => {
           router.push({ path: '/' })
         })
         .catch(() => {
-          createCode()
           loginFormData.password = ''
         })
         .finally(() => {
@@ -57,136 +48,46 @@ const handleLogin = () => {
     }
   })
 }
-/** Create verification code */
-const createCode = () => {
-  // Clear the verification code input first
-  loginFormData.code = ''
-  // Get verification code
-  codeUrl.value = ''
-  getLoginCodeApi().then((res) => {
-    codeUrl.value = res.data
-  })
-}
-
-/** Initialize verification code */
-createCode()
 </script>
 
 <template>
-  <div class="login-container">
-    <ThemeSwitch class="theme-switch" />
-    <Owl :close-eyes="isFocus" />
-    <div class="login-card">
-      <div class="title">
-        <img src="@/assets/layouts/logo-text-2.png" />
-      </div>
-      <div class="content">
-        <el-form ref="loginFormRef" :model="loginFormData" :rules="loginFormRules" @keyup.enter="handleLogin">
-          <el-form-item prop="username">
-            <el-input
-              v-model.trim="loginFormData.username"
-              placeholder="username"
-              type="text"
-              tabindex="-1"
+  <div>
+    <ThemeSwitch class="fixed top-8 right-10 pointer" />
+    <LanguageSwitch class="fixed top-8 right-20 pointer" />
+    <Background>
+      <template #form>
+        <div class="flex flex-col gap-14 w-full h-full items-center justify-center relative">
+          <el-text tag="p" class="text-3xl">{{ $t('login.title') }}</el-text>
+          <el-form
+            ref="loginFormRef"
+            :model="loginFormData"
+            :rules="loginFormRules"
+            @keyup.enter="handleLogin"
+            class="w-full max-w-[500px] mx-auto"
+          >
+            <InputComponent
+              name="username"
+              :label="$t('login.username')"
               :prefix-icon="User"
-              size="large"
+              :model-value="loginFormData.username"
+              @update:modelValue="(val: string) => (loginFormData.username = val)"
             />
-          </el-form-item>
-          <el-form-item prop="password">
-            <el-input
-              v-model.trim="loginFormData.password"
-              placeholder="Password"
-              type="password"
-              tabindex="-2"
+            <InputComponent
+              name="password"
+              :label="$t('login.password')"
               :prefix-icon="Lock"
-              size="large"
+              type="password"
               show-password
-              @blur="handleBlur"
-              @focus="handleFocus"
+              :model-value="loginFormData.password"
+              @update:modelValue="(val: string) => (loginFormData.password = val)"
             />
-          </el-form-item>
-          <el-form-item prop="code">
-            <el-input
-              v-model.trim="loginFormData.code"
-              placeholder="Code"
-              type="text"
-              tabindex="-3"
-              :prefix-icon="Key"
-              maxlength="7"
-              size="large"
-            >
-              <template #append>
-                <el-image :src="codeUrl" @click="createCode" draggable="false">
-                  <template #placeholder>
-                    <el-icon>
-                      <Picture />
-                    </el-icon>
-                  </template>
-                  <template #error>
-                    <el-icon>
-                      <Loading />
-                    </el-icon>
-                  </template>
-                </el-image>
-              </template>
-            </el-input>
-          </el-form-item>
-          <el-button :loading="loading" type="primary" size="large" @click.prevent="handleLogin">Login</el-button>
-        </el-form>
-      </div>
-    </div>
+            <el-button :loading="loading" type="primary" size="large" @click.prevent="handleLogin" class="w-full">{{
+              $t('button.login')
+            }}</el-button></el-form
+          >
+          <el-text tag="span" class="absolute bottom-0">© Viettel AI 2024. All rights reserved.</el-text>
+        </div>
+      </template>
+    </Background>
   </div>
 </template>
-
-<style lang="scss" scoped>
-.login-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  min-height: 100%;
-  .theme-switch {
-    position: fixed;
-    top: 5%;
-    right: 5%;
-    cursor: pointer;
-  }
-  .login-card {
-    width: 480px;
-    max-width: 90%;
-    border-radius: 20px;
-    box-shadow: 0 0 10px #dcdfe6;
-    background-color: var(--el-bg-color);
-    overflow: hidden;
-    .title {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 150px;
-      img {
-        height: 100%;
-      }
-    }
-    .content {
-      padding: 20px 50px 50px 50px;
-      :deep(.el-input-group__append) {
-        padding: 0;
-        overflow: hidden;
-        .el-image {
-          width: 100px;
-          height: 40px;
-          border-left: 0px;
-          user-select: none;
-          cursor: pointer;
-          text-align: center;
-        }
-      }
-      .el-button {
-        width: 100%;
-        margin-top: 10px;
-      }
-    }
-  }
-}
-</style>
