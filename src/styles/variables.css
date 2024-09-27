@@ -1,6 +1,7 @@
 /** Global CSS variables, which can be used not only in CSS and SCSS, but also imported into JS for use */
 
 :root {
+  --el-color-primary: #005d98;
   /** Body */
   --prefix-body-text-color: var(--el-text-color-primary);
   --prefix-body-bg-color: var(--el-bg-color-page);
@@ -21,7 +22,7 @@
   --prefix-sidebar-border-right: 1px solid var(--el-fill-color);
   --prefix-sidebar-menu-item-height: 60px;
   --prefix-sidebar-menu-tip-line-bg-color: var(--el-color-primary);
-  --prefix-sidebar-menu-bg-color: #001428;
+  --prefix-sidebar-menu-bg-color: #005d98;
   --prefix-sidebar-menu-hover-bg-color: #409eff10;
   --prefix-sidebar-menu-text-color: #cfd3dc;
   --prefix-sidebar-menu-active-text-color: #ffffff;
@@ -44,7 +45,7 @@
   /** Hamburger component */
   --prefix-hamburger-text-color: var(--el-text-color-primary);
   /** RightPanel component */
-  --prefix-rightpanel-button-bg-color: #001428;
+  --prefix-rightpanel-button-bg-color: #005d98;
 }
 
 /** When the content area is enlarged, hide unnecessary components */

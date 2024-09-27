@@ -55,179 +55,80 @@ export const constantRoutes: RouteRecordRaw[] = [
         name: 'Dashboard',
         meta: {
           title: 'Dashboard',
-          svgIcon: 'dashboard',
+          svgIcon: 'ic-home',
           affix: true
         }
       }
     ]
   },
   {
-    path: '/link',
+    path: '/docs',
     meta: {
-      title: 'Link',
-      svgIcon: 'link'
+      title: 'Document',
+      svgIcon: 'ic-model-group'
     },
     children: [
       {
-        path: 'https://juejin.cn/post/7089377403717287972',
+        path: 'data-processing',
         component: () => {},
-        name: 'Link1',
+        name: 'Data procesing',
         meta: {
-          title: 'Link1'
+          title: 'Data procesing',
+          keepAlive: true
         }
       },
       {
-        path: 'https://juejin.cn/column/7207659644487139387',
+        path: 'reports',
         component: () => {},
-        name: 'Link2',
+        name: 'Reports',
         meta: {
-          title: 'Link2'
-        }
-      }
-    ]
-  },
-  {
-    path: '/table',
-    component: Layouts,
-    redirect: '/table/element-plus',
-    name: 'Table',
-    meta: {
-      title: 'Table',
-      elIcon: 'Grid'
-    },
-    children: [
-      {
-        path: 'element-plus',
-        component: () => import('@/views/table/element-plus/index.vue'),
-        name: 'ElementPlus',
-        meta: {
-          title: 'Element Plus',
+          title: 'Reports',
           keepAlive: true
         }
       },
       {
-        path: 'vxe-table',
-        component: () => import('@/views/table/vxe-table/index.vue'),
-        name: 'VxeTable',
+        path: 'settings',
+        component: () => {},
+        name: 'Settings',
         meta: {
-          title: 'Vxe Table',
+          title: 'Settings',
           keepAlive: true
         }
       }
     ]
   },
   {
-    path: '/menu',
+    path: '/users',
     component: Layouts,
-    redirect: '/menu/menu1',
-    name: 'Menu',
+    name: 'Users',
     meta: {
-      title: 'Menu',
-      svgIcon: 'menu'
-    },
-    children: [
-      {
-        path: 'menu1',
-        component: () => import('@/views/menu/menu1/index.vue'),
-        redirect: '/menu/menu1/menu1-1',
-        name: 'Menu1',
-        meta: {
-          title: 'menu1'
-        },
-        children: [
-          {
-            path: 'menu1-1',
-            component: () => import('@/views/menu/menu1/menu1-1/index.vue'),
-            name: 'Menu1-1',
-            meta: {
-              title: 'menu1-1',
-              keepAlive: true
-            }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/menu/menu1/menu1-2/index.vue'),
-            redirect: '/menu/menu1/menu1-2/menu1-2-1',
-            name: 'Menu1-2',
-            meta: {
-              title: 'menu1-2'
-            },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/menu/menu1/menu1-2/menu1-2-1/index.vue'),
-                name: 'Menu1-2-1',
-                meta: {
-                  title: 'menu1-2-1',
-                  keepAlive: true
-                }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/menu/menu1/menu1-2/menu1-2-2/index.vue'),
-                name: 'Menu1-2-2',
-                meta: {
-                  title: 'menu1-2-2',
-                  keepAlive: true
-                }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/menu/menu1/menu1-3/index.vue'),
-            name: 'Menu1-3',
-            meta: {
-              title: 'menu1-3',
-              keepAlive: true
-            }
-          }
-        ]
-      },
-      {
-        path: 'menu2',
-        component: () => import('@/views/menu/menu2/index.vue'),
-        name: 'Menu2',
-        meta: {
-          title: 'menu2',
-          keepAlive: true
-        }
-      }
-    ]
+      title: 'Users',
+      svgIcon: 'ic-user-group'
+    }
   },
   {
-    path: '/hook-demo',
-    component: Layouts,
-    redirect: '/hook-demo/use-fetch-select',
-    name: 'HookDemo',
+    path: '/rules',
     meta: {
-      title: 'Hook',
-      elIcon: 'Menu',
-      alwaysShow: true
+      title: 'Rules',
+      svgIcon: 'ic-round-rule'
     },
     children: [
       {
-        path: 'use-fetch-select',
-        component: () => import('@/views/hook-demo/use-fetch-select.vue'),
-        name: 'UseFetchSelect',
+        path: 'ucp-isbp',
+        component: () => {},
+        name: 'Rule UCP/ISBP',
         meta: {
-          title: 'useFetchSelect'
+          title: 'Rule UCP/ISBP',
+          keepAlive: true
         }
       },
       {
-        path: 'use-fullscreen-loading',
-        component: () => import('@/views/hook-demo/use-fullscreen-loading.vue'),
-        name: 'UseFullscreenLoading',
+        path: 'invalid-category',
+        component: () => {},
+        name: 'Invalid category',
         meta: {
-          title: 'useFullscreenLoading'
-        }
-      },
-      {
-        path: 'use-watermark',
-        component: () => import('@/views/hook-demo/use-watermark.vue'),
-        name: 'UseWatermark',
-        meta: {
-          title: 'useWatermark'
+          title: 'Invalid category',
+          keepAlive: true
         }
       }
     ]
@@ -240,37 +141,37 @@ export const constantRoutes: RouteRecordRaw[] = [
  * Must have a Name attribute
  */
 export const dynamicRoutes: RouteRecordRaw[] = [
-  {
-    path: '/permission',
-    component: Layouts,
-    redirect: '/permission/page',
-    name: 'Permission',
-    meta: {
-      title: 'Permissions',
-      svgIcon: 'lock',
-      roles: ['admin', 'editor'], // Roles can be set in the root route
-      alwaysShow: true // The root menu will always be displayed
-    },
-    children: [
-      {
-        path: 'page',
-        component: () => import('@/views/permission/page.vue'),
-        name: 'PagePermission',
-        meta: {
-          title: 'Page level',
-          roles: ['admin'] // Or set roles in sub-navigation
-        }
-      },
-      {
-        path: 'directive',
-        component: () => import('@/views/permission/directive.vue'),
-        name: 'DirectivePermission',
-        meta: {
-          title: 'Button level' // If no role is set, it means: the page does not require permission, but will inherit the role of the root route
-        }
-      }
-    ]
-  }
+  // {
+  //   path: '/permission',
+  //   component: Layouts,
+  //   redirect: '/permission/page',
+  //   name: 'Permission',
+  //   meta: {
+  //     title: 'Permissions',
+  //     svgIcon: 'lock',
+  //     roles: ['admin', 'editor'], // Roles can be set in the root route
+  //     alwaysShow: true // The root menu will always be displayed
+  //   },
+  //   children: [
+  //     {
+  //       path: 'page',
+  //       component: () => import('@/views/permission/page.vue'),
+  //       name: 'PagePermission',
+  //       meta: {
+  //         title: 'Page level',
+  //         roles: ['admin'] // Or set roles in sub-navigation
+  //       }
+  //     },
+  //     {
+  //       path: 'directive',
+  //       component: () => import('@/views/permission/directive.vue'),
+  //       name: 'DirectivePermission',
+  //       meta: {
+  //         title: 'Button level' // If no role is set, it means: the page does not require permission, but will inherit the role of the root route
+  //       }
+  //     }
+  //   ]
+  // }
 ]
 
 const router = createRouter({

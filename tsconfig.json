@@ -1,11 +1,9 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    /** https://cn.vitejs.dev/guide/features.html#typescript-compiler-options */
     "useDefineForClassFields": true,
     "module": "esnext",
     "moduleResolution": "node",
-    /** TS Strict Mode */
     "strict": true,
     "jsx": "preserve",
     "jsxImportSource": "vue",
@@ -14,7 +12,6 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "resolveJsonModule": true,
-    /** https://cn.vitejs.dev/guide/features.html#typescript-compiler-options */
     "isolatedModules": true,
     "esModuleInterop": true,
     "lib": ["esnext", "dom"],
@@ -22,7 +19,6 @@
     "types": [
       "node",
       "vite/client",
-      /** Element Plus Volar plugin support*/
       "element-plus/global",
       "vitest"
     ],
@@ -30,7 +26,8 @@
     "baseUrl": ".",
     /** Path mapping configuration for non-relative module imports, path calculation based on baseUrl configuration */
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@c/*": ["src/components/*"],
     }
   },
   "include": [
@@ -41,8 +38,9 @@
     "tests/**/*.ts",
     "types/**/*.d.ts",
     "vite.config.ts",
-    "vitest.config.ts"
-, "types/common.ts"  ],
+    "vitest.config.ts",
+    "types/common.ts"
+  ],
   /** Compiler default excluded compilation files */
   "exclude": ["node_modules", "dist"]
 }
