@@ -1,0 +1,1 @@
+<template>invalid-category</template>

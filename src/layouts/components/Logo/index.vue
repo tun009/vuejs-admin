@@ -16,7 +16,7 @@ const { isLeft, isTop } = useLayoutMode()
 <template>
   <div class="layout-logo-container flex justify-center items-center" :class="{ 'layout-mode-top': isTop }">
     <router-link v-if="props.collapse" key="collapse" to="/">
-      <img :src="EximbankLogoMiniWhite" class="h-7" />
+      <img :src="EximbankLogoMiniWhite" class="h-5" />
     </router-link>
     <router-link v-else key="expand" to="/">
       <img :src="isTop || !isLeft ? EximbankLogo : EximbankLogoWhite" class="layout-logo-text h-7" />

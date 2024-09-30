@@ -15,6 +15,7 @@ import SearchMenu from '@/components/SearchMenu/index.vue'
 import LanguageSwitch from '@/components/LanguageSwitch/index.vue'
 import { useDevice } from '@/hooks/useDevice'
 import { useLayoutMode } from '@/hooks/useLayoutMode'
+import { LOGIN_PAGE, PROFILE_PAGE } from '@/utils/constants/router'
 
 const { isMobile } = useDevice()
 const { isTop } = useLayoutMode()
@@ -32,7 +33,12 @@ const toggleSidebar = () => {
 /** Sign out */
 const logout = () => {
   userStore.logout()
-  router.push('/login')
+  router.push(LOGIN_PAGE)
+}
+
+/** Profile */
+const goToProfile = () => {
+  router.push(PROFILE_PAGE)
 }
 </script>
 
@@ -59,14 +65,13 @@ const logout = () => {
         </div>
         <template #dropdown>
           <el-dropdown-menu>
-            <a target="_blank" href="https://github.com/un-pany/v3-admin-vite">
-              <el-dropdown-item>GitHub</el-dropdown-item>
-            </a>
-            <a target="_blank" href="https://gitee.com/un-pany/v3-admin-vite">
-              <el-dropdown-item>Gitee</el-dropdown-item>
-            </a>
-            <el-dropdown-item divided @click="logout">
-              <span style="display: block">Log out</span>
+            <el-dropdown-item @click="goToProfile" class="flex flex-row gap-2 items-center">
+              <SvgIcon name="user-profile" class-name="!w-5 !h-5" />
+              <span>{{ $t('layouts.navigation.profile') }}</span>
+            </el-dropdown-item>
+            <el-dropdown-item divided @click="logout" class="flex flex-row gap-2 items-center">
+              <SvgIcon name="sign-out" class-name="!w-5 !h-5" />
+              <span style="display: block">{{ $t('layouts.navigation.logout') }}</span>
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>

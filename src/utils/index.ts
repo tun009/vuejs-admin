@@ -1,6 +1,7 @@
 import dayjs from 'dayjs'
 import { removeConfigLayout } from '@/utils/cache/local-storage'
 import { formatYYYYMMDDHHmmss } from './constants/date'
+import { regexAccents1, regexAccents2, regexAccents3 } from './constants/regex'
 
 /** Format time */
 export const formatDateTime = (time: string | number | Date) => {
@@ -34,4 +35,9 @@ export const getCssVariableValue = (cssVariableName: string) => {
 export const resetConfigLayout = () => {
   removeConfigLayout()
   location.reload()
+}
+
+export const removeAccents = (str: string) => {
+  const res = str.normalize('NFD').replace(regexAccents1, '').replace(regexAccents2, 'd').replace(regexAccents3, 'D')
+  return res
 }

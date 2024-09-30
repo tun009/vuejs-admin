@@ -24,6 +24,19 @@
       "showGreyMode": "Chế độ màu xám",
       "showColorWeakness": "Chế độ màu yếu",
       "language": "Ngôn ngữ"
+    },
+    "search": {
+      "title": "Tìm kiếm trang",
+      "searchResults": "Kết quả tìm kiếm",
+      "noResults": "Không có kết quả tìm kiếm",
+      "confirm": "Xác nhận",
+      "switch": "Chuyển",
+      "close": "Hủy",
+      "totalResults": "{total} kết quả"
+    },
+    "navigation": {
+      "profile": "Thông tin tài khoản",
+      "logout": "Đăng xuất"
     }
   },
   "button": {
@@ -34,5 +47,20 @@
     "title": "Đăng nhập",
     "username": "Tên đăng nhập",
     "password": "Mật khẩu"
+  },
+  "router": {
+    "dashboard": "Tổng quan",
+    "document": "Quản lý chứng từ",
+    "dataProcessing": "Xử lý dữ liệu",
+    "reports": "Báo cáo",
+    "settings": "Cài đặt",
+    "users": "Quản lý người dùng",
+    "rules": "Quản lý rule",
+    "ruleUI": "Luật UCP/ISBP",
+    "invalidCategory": "Danh mục bất hợp lệ",
+    "profile": "Thông tin tài khoản"
+  },
+  "profile": {
+    "title": "Thông tin tài khoản"
   }
 }

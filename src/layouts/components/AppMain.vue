@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { useTagsViewStore } from '@/store/modules/tags-view'
-import { useSettingsStore } from '@/store/modules/settings'
-import Footer from './Footer/index.vue'
+// import { useSettingsStore } from '@/store/modules/settings'
+// import Footer from './Footer/index.vue'
 
 const tagsViewStore = useTagsViewStore()
-const settingsStore = useSettingsStore()
+// const settingsStore = useSettingsStore()
 </script>
 
 <template>
@@ -12,14 +12,14 @@ const settingsStore = useSettingsStore()
     <div class="app-scrollbar">
       <!-- Using route.path and route.fullPath as key has different effects, path is more general in most cases -->
       <router-view v-slot="{ Component, route }">
-        <transition name="el-fade-in" mode="out-in">
-          <keep-alive :include="tagsViewStore.cachedViews">
-            <component :is="Component" :key="route.path" class="app-container-grow" />
-          </keep-alive>
-        </transition>
+        <!-- <transition name="el-fade-in" mode="out-in"> -->
+        <keep-alive :include="tagsViewStore.cachedViews">
+          <component :is="Component" :key="route.path" class="app-container-grow" />
+        </keep-alive>
+        <!-- </transition> -->
       </router-view>
       <!-- Footer -->
-      <Footer v-if="settingsStore.showFooter" />
+      <!-- <Footer v-if="settingsStore.showFooter" /> -->
     </div>
     <!-- Return to top -->
     <el-backtop />
@@ -34,11 +34,13 @@ const settingsStore = useSettingsStore()
 .app-main {
   width: 100%;
   display: flex;
+  padding: 0 20px;
 }
 
 .app-scrollbar {
   flex-grow: 1;
   overflow: auto;
+  padding-top: 20px;
   @extend %scrollbar;
   display: flex;
   flex-direction: column;

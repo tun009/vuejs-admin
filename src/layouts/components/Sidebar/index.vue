@@ -1,14 +1,14 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useDevice } from '@/hooks/useDevice'
+import { useLayoutMode } from '@/hooks/useLayoutMode'
 import { useAppStore } from '@/store/modules/app'
 import { usePermissionStore } from '@/store/modules/permission'
 import { useSettingsStore } from '@/store/modules/settings'
-import SidebarItem from './SidebarItem.vue'
-import Logo from '../Logo/index.vue'
-import { useDevice } from '@/hooks/useDevice'
-import { useLayoutMode } from '@/hooks/useLayoutMode'
 import { getCssVariableValue } from '@/utils'
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import Logo from '../Logo/index.vue'
+import SidebarItem from './SidebarItem.vue'
 
 const v3SidebarMenuBgColor = getCssVariableValue('--prefix-sidebar-menu-bg-color')
 const v3SidebarMenuTextColor = getCssVariableValue('--prefix-sidebar-menu-text-color')
@@ -52,7 +52,7 @@ const hiddenScrollbarVerticalBar = computed(() => {
 <template>
   <div :class="{ 'has-logo': isLogo }">
     <Logo v-if="isLogo" :collapse="isCollapse" />
-    <el-scrollbar wrap-class="scrollbar-wrapper">
+    <el-scrollbar wrap-class="scrollbar-wrapper" :class="{ 'is-collapse': isCollapse }">
       <el-menu
         :default-active="activeMenu"
         :collapse="isCollapse && !isTop"
@@ -157,6 +157,24 @@ const hiddenScrollbarVerticalBar = computed(() => {
     .el-sub-menu__title {
       @extend %tip-line;
     }
+  }
+}
+
+.is-collapse {
+  :deep(.el-sub-menu__icon-arrow) {
+    display: none;
+  }
+
+  :deep(.svg-icon) {
+    font-size: 24px;
+  }
+
+  :deep(.el-menu-tooltip__trigger) {
+    padding-left: 16px;
+  }
+
+  :deep(.el-tooltip__trigger) {
+    padding-left: 16px;
   }
 }
 </style>

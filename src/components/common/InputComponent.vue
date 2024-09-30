@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col mb-2">
-    <label v-if="label" class="mb-1 text-md">{{ label }}</label>
+    <label v-if="label" class="mb-1 text-md"><span v-if="required" class="text-red-600 mr-2">*</span>{{ label }}</label>
     <el-form-item :prop="name">
       <el-input
         v-bind="props"
@@ -26,6 +26,7 @@ interface Props {
   placeholder?: string
   showPassword?: boolean
   name: string
+  required?: boolean
 }
 
 interface Emits {
