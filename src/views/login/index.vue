@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { type LoginRequestData } from '@/api/login/types/login'
 import { useUserStore } from '@/store/modules/user'
-import { type FormInstance, type FormRules } from 'element-plus'
+import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Background from './components/Background.vue'
@@ -9,9 +9,13 @@ import { Lock, User } from '@element-plus/icons-vue'
 import ThemeSwitch from '@/components/ThemeSwitch/index.vue'
 import LanguageSwitch from '@/components/LanguageSwitch/index.vue'
 import InputComponent from '@/components/common/InputComponent.vue'
+import { DASHBOARD_PAGE } from '@/utils/constants/router'
+import { limitLengthRule, requireRule } from '@/utils/validate'
+import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
 const loginFormRef = ref<FormInstance | null>(null)
+const { t } = useI18n()
 
 const loading = ref(false)
 const loginFormData: LoginRequestData = reactive({
@@ -21,12 +25,9 @@ const loginFormData: LoginRequestData = reactive({
 })
 
 const loginFormRules: FormRules = {
-  username: [{ required: true, message: 'Please enter your username', trigger: 'blur' }],
-  password: [
-    { required: true, message: 'Please enter your password', trigger: 'blur' },
-    { min: 8, max: 16, message: 'Length between 8 and 16 characters', trigger: 'blur' }
-  ],
-  code: [{ required: true, message: 'Please enter the verification code', trigger: 'blur' }]
+  username: [requireRule()],
+  password: [requireRule(), limitLengthRule({ min: 8, max: 16 })],
+  code: []
 }
 const handleLogin = () => {
   loginFormRef.value?.validate((valid: boolean, fields) => {
@@ -35,7 +36,12 @@ const handleLogin = () => {
       useUserStore()
         .login(loginFormData)
         .then(() => {
-          router.push({ path: '/' })
+          ElMessage({
+            showClose: true,
+            type: 'success',
+            message: t('notification.description.loginSuccess')
+          })
+          router.push({ path: DASHBOARD_PAGE })
         })
         .catch(() => {
           loginFormData.password = ''

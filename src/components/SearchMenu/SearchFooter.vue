@@ -15,19 +15,19 @@ const { isMobile } = useDevice()
     <template v-if="!isMobile">
       <span class="search-footer-item">
         <SvgIcon name="keyboard-enter" />
-        <span>Confirm</span>
+        <span>{{ $t('layouts.search.confirm') }}</span>
       </span>
       <span class="search-footer-item">
         <SvgIcon name="keyboard-up" />
         <SvgIcon name="keyboard-down" />
-        <span>Switch</span>
+        <span>{{ $t('layouts.search.switch') }}</span>
       </span>
       <span class="search-footer-item">
         <SvgIcon name="keyboard-esc" />
-        <span>Close</span>
+        <span>{{ $t('layouts.search.close') }}</span>
       </span>
     </template>
-    <span class="search-footer-total">{{ props.total }} results</span>
+    <span class="search-footer-total">{{ $t('layouts.search.totalResults', { total: props.total }) }}</span>
   </div>
 </template>
 

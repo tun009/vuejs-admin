@@ -8,10 +8,12 @@ import { ElMessage, ElScrollbar } from 'element-plus'
 import { cloneDeep, debounce } from 'lodash-es'
 import { useDevice } from '@/hooks/useDevice'
 import { isExternal } from '@/utils/validate'
+import { useI18n } from 'vue-i18n'
+import { removeAccents } from '@/utils'
 
 /** Control modal visibility */
 const modelValue = defineModel<boolean>({ required: true })
-
+const { t } = useI18n()
 const router = useRouter()
 const { isMobile } = useDevice()
 
@@ -34,7 +36,11 @@ const menusData = computed(() => cloneDeep(usePermissionStore().routes))
 const handleSearch = debounce(() => {
   const flatMenusData = flatTree(menusData.value)
   resultList.value = flatMenusData.filter((menu) =>
-    keyword.value ? menu.meta?.title?.toLocaleLowerCase().includes(keyword.value.toLocaleLowerCase().trim()) : false
+    keyword.value
+      ? (menu.meta?.title ? removeAccents(t('router.' + menu.meta?.title)) : '')
+          ?.toLocaleLowerCase()
+          .includes(removeAccents(keyword.value.toLocaleLowerCase().trim()))
+      : false
   )
   // The first search result is selected by default
   const length = resultList.value?.length
@@ -162,14 +168,21 @@ const handleReleaseUpOrDown = () => {
     class="search-modal__private"
     append-to-body
   >
-    <el-input ref="inputRef" v-model="keyword" @input="handleSearch" placeholder="Search Menu" size="large" clearable>
+    <el-input
+      ref="inputRef"
+      v-model="keyword"
+      @input="handleSearch"
+      :placeholder="$t('layouts.search.title')"
+      size="large"
+      clearable
+    >
       <template #prefix>
         <SvgIcon name="search" />
       </template>
     </el-input>
-    <el-empty v-if="resultList.length === 0" description="No search results found" :image-size="100" />
+    <el-empty v-if="resultList.length === 0" :description="$t('layouts.search.noResults')" :image-size="100" />
     <template v-else>
-      <p>Search Results</p>
+      <p class="mt-2">{{ $t('layouts.search.searchResults') }}</p>
       <el-scrollbar ref="scrollbarRef" max-height="40vh" always>
         <SearchResult
           ref="searchResultRef"

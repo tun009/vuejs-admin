@@ -1,9 +1,9 @@
 <script lang="ts" setup>
+import { isExternal } from '@/utils/validate'
+import path from 'path-browserify'
 import { computed } from 'vue'
 import { type RouteRecordRaw } from 'vue-router'
 import SidebarItemLink from './SidebarItemLink.vue'
-import { isExternal } from '@/utils/validate'
-import path from 'path-browserify'
 
 interface Props {
   item: RouteRecordRaw
@@ -55,23 +55,23 @@ const resolvePath = (routePath: string) => {
 </script>
 
 <template>
-  <div class="rounded-2xl">
+  <div class="shadow-sm shadow-[#3784a9]">
     <template v-if="!alwaysShowRootMenu && theOnlyOneChild && !theOnlyOneChild.children">
       <SidebarItemLink v-if="theOnlyOneChild.meta" :to="resolvePath(theOnlyOneChild.path)">
         <el-menu-item :index="resolvePath(theOnlyOneChild.path)">
-          <SvgIcon v-if="theOnlyOneChild.meta.svgIcon" :name="theOnlyOneChild.meta.svgIcon" />
+          <SvgIcon v-if="theOnlyOneChild.meta.svgIcon" :name="theOnlyOneChild.meta.svgIcon" class="!w-6 !h-6" />
           <component v-else-if="theOnlyOneChild.meta.elIcon" :is="theOnlyOneChild.meta.elIcon" class="el-icon" />
           <template v-if="theOnlyOneChild.meta.title" #title>
-            {{ theOnlyOneChild.meta.title }}
+            {{ $t('router.' + theOnlyOneChild.meta.title) }}
           </template>
         </el-menu-item>
       </SidebarItemLink>
     </template>
     <el-sub-menu v-else :index="resolvePath(props.item.path)" teleported>
       <template #title>
-        <SvgIcon v-if="props.item.meta?.svgIcon" :name="props.item.meta.svgIcon" />
+        <SvgIcon v-if="props.item.meta?.svgIcon" :name="props.item.meta.svgIcon" class="!w-6 !h-6" />
         <component v-else-if="props.item.meta?.elIcon" :is="props.item.meta.elIcon" class="el-icon" />
-        <span v-if="props.item.meta?.title && !isCollapse">{{ props.item.meta.title }}</span>
+        <span v-if="props.item.meta?.title && !isCollapse">{{ $t('router.' + props.item.meta.title) }}</span>
       </template>
       <template v-if="props.item.children">
         <SidebarItem
@@ -89,12 +89,24 @@ const resolvePath = (routePath: string) => {
 .svg-icon {
   min-width: 1em;
   margin-right: 12px;
-  font-size: 18px;
+  font-size: 24px;
 }
 
 .el-icon {
   width: 1em !important;
   margin-right: 12px !important;
-  font-size: 18px;
+  font-size: 24px;
+}
+
+.el-menu-item.is-active,
+.el-menu-item:hover,
+:deep(.el-sub-menu__title:hover) {
+  background-color: #4192cd !important;
+}
+
+.el-menu-item,
+:deep(.el-sub-menu__title) {
+  color: #ffffff;
+  font-weight: 500;
 }
 </style>

@@ -175,7 +175,7 @@ onMounted(() => {
         @click.middle="!isAffix(tag) && closeSelectedTag(tag)"
         @contextmenu.prevent="openMenu(tag, $event)"
       >
-        {{ tag.meta?.title }}
+        {{ $t('router.' + tag.meta?.title) }}
         <el-icon v-if="!isAffix(tag)" :size="12" @click.prevent.stop="closeSelectedTag(tag)">
           <Close />
         </el-icon>

@@ -4,7 +4,10 @@
       "joinWeb": "Xin chào"
     },
     "description": {
-      "joinWeb": "Chào mừng bạn đến với web hiệu chỉnh, nghe nhạc tại đây!"
+      "joinWeb": "Chào mừng bạn đến với web hiệu chỉnh, nghe nhạc tại đây!",
+      "loginSuccess": "Đăng nhập thành công",
+      "updateSuccess": "Cập nhật thành công",
+      "confirmCloseDrawer": "Bạn chắc chắn thoát khỏi?"
     }
   },
   "layouts": {
@@ -24,15 +27,68 @@
       "showGreyMode": "Chế độ màu xám",
       "showColorWeakness": "Chế độ màu yếu",
       "language": "Ngôn ngữ"
+    },
+    "search": {
+      "title": "Tìm kiếm trang",
+      "searchResults": "Kết quả tìm kiếm",
+      "noResults": "Không có kết quả tìm kiếm",
+      "confirm": "Xác nhận",
+      "switch": "Chuyển",
+      "close": "Hủy",
+      "totalResults": "{total} kết quả"
+    },
+    "navigation": {
+      "profile": "Thông tin tài khoản",
+      "logout": "Đăng xuất"
     }
   },
   "button": {
     "reset": "Cài lại",
-    "login": "Đăng nhập"
+    "login": "Đăng nhập",
+    "update": "Cập nhật",
+    "cancel": "Hủy"
   },
   "login": {
     "title": "Đăng nhập",
     "username": "Tên đăng nhập",
-    "password": "Mật khẩu"
+    "password": "Mật khẩu",
+    "loginSuccess": "Đăng nhập thành công"
+  },
+  "router": {
+    "dashboard": "Tổng quan",
+    "document": "Quản lý chứng từ",
+    "dataProcessing": "Xử lý dữ liệu",
+    "reports": "Báo cáo",
+    "settings": "Cài đặt",
+    "users": "Quản lý người dùng",
+    "rules": "Quản lý rule",
+    "ruleUI": "Luật UCP/ISBP",
+    "invalidCategory": "Danh mục bất hợp lệ",
+    "profile": "Thông tin tài khoản"
+  },
+  "profile": {
+    "title": "Thông tin tài khoản",
+    "name": "Họ tên",
+    "username": "Tên đăng nhập",
+    "phoneNumber": "Tên đăng nhập",
+    "password": "Mật khẩu",
+    "updateProfile": "Cập nhật thông tin",
+    "changePassword": "Thay đổi mật khẩu",
+    "newPassword": "Mật khẩu mới",
+    "confirmPassword": "Xác thực mật khẩu",
+    "changePasswordDes": "Mật khẩu mới tối thiểu 8 ký tự, tối đa 100 ký tự, bao gồm: Ký tự số, chữ thường, chữ hoa, ký tự đặc biệt "
+  },
+  "validate": {
+    "required": "Trường này là bắt buộc",
+    "email": "Vui lòng nhập định dạng email",
+    "phoneNumber": "Vui lòng nhập định dạng số điện thoại",
+    "limit": "Độ dài nằm giữa { min } và { max } ký tự",
+    "password": "Vui lòng nhập đúng định dạng mật khẩu",
+    "passwordNotMatch": "Mật khẩu không khớp"
+  },
+  "base": {
+    "input": {
+      "limit": "{ length }/{ maxLength } ký tự"
+    }
   }
 }

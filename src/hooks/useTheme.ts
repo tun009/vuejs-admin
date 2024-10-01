@@ -1,11 +1,11 @@
 import { ref, watchEffect } from 'vue'
 import { getActiveThemeName, setActiveThemeName } from '@/utils/cache/local-storage'
 
-const DEFAULT_THEME_NAME = 'normal'
+const DEFAULT_THEME_NAME = 'dark'
 type DefaultThemeName = typeof DEFAULT_THEME_NAME
 
 /** Registered theme name, DefaultThemeName is required */
-export type ThemeName = DefaultThemeName | 'dark' | 'dark-blue'
+export type ThemeName = DefaultThemeName | 'normal' | 'dark-blue'
 
 interface ThemeList {
   title: string
@@ -15,12 +15,12 @@ interface ThemeList {
 /** Theme list */
 const themeList: ThemeList[] = [
   {
-    title: 'Default',
-    name: DEFAULT_THEME_NAME
+    title: 'Light',
+    name: 'normal'
   },
   {
     title: 'Dark',
-    name: 'dark'
+    name: DEFAULT_THEME_NAME
   }
   // {
   //   title: 'Dark-blue',
