@@ -2,6 +2,7 @@
 
 :root {
   --el-color-primary: #005d98;
+  --el-dialog-padding-primary: 0px;
   /** Body */
   --prefix-body-text-color: var(--el-text-color-primary);
   --prefix-body-bg-color: var(--el-bg-color-page);

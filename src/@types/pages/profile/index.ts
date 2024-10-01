@@ -3,3 +3,9 @@ export interface ChangeProfileRequestData {
   name: string
   phoneNumber: string
 }
+
+export interface ChangePasswordRequestData {
+  password: string
+  newPassword: string
+  confirmPassword: string
+}

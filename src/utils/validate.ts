@@ -6,11 +6,14 @@ import {
   regexIPv4,
   regexIdCard,
   regexMac,
+  regexPassword,
   regexPhoneNumber,
   regexUrl,
   regexUrlPort,
   regexVersion
 } from './constants/regex'
+
+import { useI18n } from 'vue-i18n'
 
 /** Determine whether it is an array */
 export const isArray = (arg: unknown) => {
@@ -86,4 +89,24 @@ export const isMAC = (mac: string) => {
 export const isIPv4 = (ip: string) => {
   const reg = regexIPv4
   return reg.test(ip)
+}
+
+export const requireRule = () => {
+  const { t } = useI18n()
+  return { required: true, message: t('validate.required'), trigger: 'blur' }
+}
+
+export const phoneNumberRule = () => {
+  const { t } = useI18n()
+  return { pattern: regexPhoneNumber, message: t('validate.phoneNumber'), trigger: 'blur' }
+}
+
+export const limitLengthRule = ({ min, max }: { min: number; max: number }) => {
+  const { t } = useI18n()
+  return { max, min, message: t('validate.limit', { min, max }), trigger: 'blur' }
+}
+
+export const passwordRule = () => {
+  const { t } = useI18n()
+  return { pattern: regexPassword, message: t('validate.password'), trigger: 'blur' }
 }
