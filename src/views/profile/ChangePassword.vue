@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ChangePasswordRequestData } from '@/@types/pages/profile'
-import InputComponent from '@/components/common/InputComponent.vue'
+import Input from '@/components/common/Input.vue'
 import { passwordRule, requireRule } from '@/utils/validate'
 import { ElMessage, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
@@ -75,21 +75,21 @@ defineExpose<Exposes>({
     @keyup.enter="handleChangePassword"
     class="flex flex-col gap-1"
   >
-    <InputComponent
+    <Input
       :label="$t('profile.password')"
       name="password"
       v-model="changePasswordFormData.password"
       required
       show-limit
     />
-    <InputComponent
+    <Input
       :label="$t('profile.newPassword')"
       name="newPassword"
       v-model="changePasswordFormData.newPassword"
       required
       show-limit
     />
-    <InputComponent
+    <Input
       :label="$t('profile.confirmPassword')"
       name="confirmPassword"
       v-model="changePasswordFormData.confirmPassword"

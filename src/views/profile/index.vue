@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import { ChangeProfileRequestData } from '@/@types/pages/profile'
 import Drawer from '@/components/common/Drawer.vue'
-import InputComponent from '@/components/common/InputComponent.vue'
+import Input from '@/components/common/Input.vue'
 import { Title } from '@/layouts/components'
 import { phoneNumberRule, requireRule } from '@/utils/validate'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ChangePassword from './ChangePassword.vue'
+
+defineOptions({
+  name: 'Profile'
+})
 
 const { t } = useI18n()
 
@@ -64,7 +68,7 @@ const handleCloseDrawer = () => {
         @keyup.enter="handleUpdateProfile"
         class="flex flex-col gap-3"
       >
-        <InputComponent
+        <Input
           :label="$t('profile.name')"
           name="name"
           v-model="changeProfileFormData.name"
@@ -72,14 +76,14 @@ const handleCloseDrawer = () => {
           show-limit
           :readonly="!isEdit"
         />
-        <InputComponent
+        <Input
           :label="$t('profile.username')"
           name="namename"
           v-model="changeProfileFormData.username"
           disabled
           :readonly="!isEdit"
         />
-        <InputComponent
+        <Input
           :label="$t('profile.phoneNumber')"
           name="phoneNumber"
           v-model="changeProfileFormData.phoneNumber"
@@ -87,7 +91,7 @@ const handleCloseDrawer = () => {
           :readonly="!isEdit"
         />
         <div class="flex flex-row items-center justify-between" v-if="!isEdit">
-          <InputComponent :label="$t('profile.password')" readonly model-value="*********" />
+          <Input :label="$t('profile.password')" readonly model-value="*********" />
           <Drawer :text-button="$t('profile.changePassword')" ref="changePasswordDrawerRef" @close="handleCloseDrawer">
             <template #default>
               <div class="mt-3 flex flex-col gap-5">

@@ -46,7 +46,9 @@
     "reset": "Cài lại",
     "login": "Đăng nhập",
     "update": "Cập nhật",
-    "cancel": "Hủy"
+    "cancel": "Hủy",
+    "roleSetting": "Cấu hình vai trò",
+    "add": "Thêm"
   },
   "login": {
     "title": "Đăng nhập",
@@ -89,6 +91,22 @@
   "base": {
     "input": {
       "limit": "{ length }/{ maxLength } ký tự"
+    },
+    "table": {
+      "totalRecords": "Tổng số: <span class='text-total-records'>{ total }</span> bản ghi"
     }
+  },
+  "user": {
+    "title": "Quản lý người dùng",
+    "addUser": {
+      "title": "Thêm mới nguowif dùng",
+      "name": "Họ tên",
+      "username": "Tên đăng nhập",
+      "password": "Mật khẩu (mặc định)",
+      "sql": "Chọn SQL",
+      "role": "Vai trò"
+    },
+    "filter": "Bộ lọc",
+    "searchByName": "Tìm kiếm theo tên"
   }
 }
