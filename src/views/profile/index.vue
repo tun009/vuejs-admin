@@ -69,7 +69,8 @@ const handleCloseDrawer = () => {
         class="flex flex-col gap-3"
       >
         <Input
-          :label="$t('profile.name')"
+          label="profile.name"
+          placeholder="profile.enterName"
           name="name"
           v-model="changeProfileFormData.name"
           required
@@ -77,22 +78,29 @@ const handleCloseDrawer = () => {
           :readonly="!isEdit"
         />
         <Input
-          :label="$t('profile.username')"
+          label="profile.username"
+          placeholder="profile.enterUsername"
           name="namename"
           v-model="changeProfileFormData.username"
           disabled
           :readonly="!isEdit"
         />
         <Input
-          :label="$t('profile.phoneNumber')"
+          label="profile.phoneNumber"
+          placeholder="profile.enterPhoneNumber"
           name="phoneNumber"
           v-model="changeProfileFormData.phoneNumber"
           required
           :readonly="!isEdit"
         />
         <div class="flex flex-row items-center justify-between" v-if="!isEdit">
-          <Input :label="$t('profile.password')" readonly model-value="*********" />
-          <Drawer :text-button="$t('profile.changePassword')" ref="changePasswordDrawerRef" @close="handleCloseDrawer">
+          <Input label="profile.password" readonly model-value="*********" />
+          <Drawer
+            title="profile.changePassword"
+            :text-button="$t('profile.changePassword')"
+            ref="changePasswordDrawerRef"
+            @close="handleCloseDrawer"
+          >
             <template #default>
               <div class="mt-3 flex flex-col gap-5">
                 <el-text>{{ $t('profile.changePasswordDes') + '*&^%#@!' }}</el-text>

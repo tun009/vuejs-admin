@@ -4,9 +4,10 @@
       "joinWeb": "Hello"
     },
     "description": {
-      "joinWeb": "Welcome to the editing website, listen to music here!",
+      "joinWeb": "Welcome to the editing web, listen to music here!",
       "loginSuccess": "Login successful",
       "updateSuccess": "Update successful",
+      "createSuccess": "Creation successful",
       "confirmCloseDrawer": "Are you sure you want to exit?"
     }
   },
@@ -14,22 +15,22 @@
     "config": {
       "layoutConfig": "Configuration Settings",
       "functionConfig": "Function Configuration",
-      "showTagsView": "Tabs",
+      "showTagsView": "Tab Bar",
       "showLogo": "Logo",
       "fixedHeader": "Fixed Header",
       "showFooter": "Footer",
       "showNotify": "Notifications",
       "showThemeSwitch": "Theme Switch",
-      "showScreenfull": "Full Screen",
+      "showScreenfull": "Fullscreen",
       "showSearchMenu": "Search Button",
-      "cacheTagsView": "Remember Tabs",
+      "cacheTagsView": "Remember Tab Bar",
       "showWatermark": "Watermark",
-      "showGreyMode": "Grey Mode",
+      "showGreyMode": "Gray Mode",
       "showColorWeakness": "Color Weakness Mode",
       "language": "Language"
     },
     "search": {
-      "title": "Page Search",
+      "title": "Search Page",
       "searchResults": "Search Results",
       "noResults": "No search results",
       "confirm": "Confirm",
@@ -46,13 +47,17 @@
     "reset": "Reset",
     "login": "Login",
     "update": "Update",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "roleSetting": "Role Configuration",
+    "add": "Add"
   },
   "login": {
     "title": "Login",
     "username": "Username",
     "password": "Password",
-    "loginSuccess": "Login successful"
+    "loginSuccess": "Login successful",
+    "enterUsername": "Enter your username",
+    "enterPassword": "Enter your password"
   },
   "router": {
     "dashboard": "Dashboard",
@@ -76,7 +81,13 @@
     "changePassword": "Change Password",
     "newPassword": "New Password",
     "confirmPassword": "Confirm Password",
-    "changePasswordDes": "New password must be between 8 and 100 characters, including: numbers, lowercase letters, uppercase letters, and special characters."
+    "changePasswordDes": "The new password must be at least 8 characters and a maximum of 100 characters, including: digits, lowercase letters, uppercase letters, special characters.",
+    "enterCurrentPassword": "Enter current password",
+    "enterNewPassword": "Enter new password",
+    "enterNewPasswordAgain": "Re-enter new password",
+    "enterName": "Enter full name",
+    "enterUsername": "Enter username",
+    "enterPhoneNumber": "Enter phone number"
   },
   "validate": {
     "required": "This field is required",
@@ -89,9 +100,30 @@
   "base": {
     "input": {
       "limit": "{ length }/{ maxLength } characters"
+    },
+    "table": {
+      "totalRecords": "Total: <span class='text-total-records'>{ total }</span> records"
     }
   },
   "user": {
-    "title": "User Management"
+    "title": "User Management",
+    "addUser": {
+      "title": "Add New User",
+      "name": "Full Name",
+      "username": "Username",
+      "password": "Default Password",
+      "sql": "Select SQL",
+      "role": "Role",
+      "enterName": "Enter full name",
+      "enterUsername": "Enter username"
+    },
+    "updateUser": {
+      "title": "Update User Information",
+      "password": "Password",
+      "blockUser": "Block Account",
+      "resetPassword": "Reset Password"
+    },
+    "filter": "Filter",
+    "searchByName": "Search by Name"
   }
 }

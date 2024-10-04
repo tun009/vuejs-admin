@@ -7,6 +7,7 @@
       "joinWeb": "Chào mừng bạn đến với web hiệu chỉnh, nghe nhạc tại đây!",
       "loginSuccess": "Đăng nhập thành công",
       "updateSuccess": "Cập nhật thành công",
+      "createSuccess": "Tạo mới thành công",
       "confirmCloseDrawer": "Bạn chắc chắn thoát khỏi?"
     }
   },
@@ -54,7 +55,9 @@
     "title": "Đăng nhập",
     "username": "Tên đăng nhập",
     "password": "Mật khẩu",
-    "loginSuccess": "Đăng nhập thành công"
+    "loginSuccess": "Đăng nhập thành công",
+    "enterUsername": "Nhập tên đăng nhập",
+    "enterPassword": "Nhập mật khẩu của bạn"
   },
   "router": {
     "dashboard": "Tổng quan",
@@ -78,7 +81,13 @@
     "changePassword": "Thay đổi mật khẩu",
     "newPassword": "Mật khẩu mới",
     "confirmPassword": "Xác thực mật khẩu",
-    "changePasswordDes": "Mật khẩu mới tối thiểu 8 ký tự, tối đa 100 ký tự, bao gồm: Ký tự số, chữ thường, chữ hoa, ký tự đặc biệt "
+    "changePasswordDes": "Mật khẩu mới tối thiểu 8 ký tự, tối đa 100 ký tự, bao gồm: Ký tự số, chữ thường, chữ hoa, ký tự đặc biệt ",
+    "enterCurrentPassword": "Nhập mật khẩu hiện tại",
+    "enterNewPassword": "Nhập mật khẩu mới",
+    "enterNewPasswordAgain": "Nhập lại mật khẩu mới",
+    "enterName": "Nhập họ tên",
+    "enterUsername": "Nhập tên đăng nhập",
+    "enterPhoneNumber": "Nhập số điện thoại"
   },
   "validate": {
     "required": "Trường này là bắt buộc",
@@ -99,12 +108,20 @@
   "user": {
     "title": "Quản lý người dùng",
     "addUser": {
-      "title": "Thêm mới nguowif dùng",
+      "title": "Thêm mới người dùng",
       "name": "Họ tên",
       "username": "Tên đăng nhập",
       "password": "Mật khẩu (mặc định)",
       "sql": "Chọn SQL",
-      "role": "Vai trò"
+      "role": "Vai trò",
+      "enterName": "Nhập họ tên",
+      "enterUsername": "Nhập tên đăng nhập"
+    },
+    "updateUser": {
+      "title": "Cập nhật thông tin người dùng",
+      "password": "Mật khẩu",
+      "blockUser": "Khóa tài khoản",
+      "resetPassword": "Đặt lại mậu khẩu"
     },
     "filter": "Bộ lọc",
     "searchByName": "Tìm kiếm theo tên"

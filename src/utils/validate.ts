@@ -91,9 +91,9 @@ export const isIPv4 = (ip: string) => {
   return reg.test(ip)
 }
 
-export const requireRule = () => {
+export const requireRule = (trigger: 'change' | 'blur' = 'blur') => {
   const { t } = useI18n()
-  return { required: true, message: t('validate.required'), trigger: 'blur' }
+  return { required: true, message: t('validate.required'), trigger }
 }
 
 export const phoneNumberRule = () => {

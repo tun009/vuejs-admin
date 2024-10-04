@@ -1,6 +1,5 @@
 <template>
   <div class="flex flex-col gap-5">
-    <span class="text-2xl" v-html="$t('base.table.totalRecords', { total: totalItems })" />
     <el-table
       ref="multipleTableRef"
       border
@@ -8,7 +7,7 @@
       :data="data"
       lazy
       style="width: 100%"
-      height="500"
+      height="600"
       class="fixed-table"
       @selection-change="handleSelectionChange"
     >

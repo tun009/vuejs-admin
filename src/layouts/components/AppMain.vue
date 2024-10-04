@@ -41,6 +41,7 @@ const tagsViewStore = useTagsViewStore()
   flex-grow: 1;
   overflow: auto;
   padding-top: 20px;
+  padding-right: 20px;
   @extend %scrollbar;
   display: flex;
   flex-direction: column;

@@ -76,21 +76,24 @@ defineExpose<Exposes>({
     class="flex flex-col gap-1"
   >
     <Input
-      :label="$t('profile.password')"
+      label="profile.password"
+      placeholder="profile.enterCurrentPassword"
       name="password"
       v-model="changePasswordFormData.password"
       required
       show-limit
     />
     <Input
-      :label="$t('profile.newPassword')"
+      label="profile.newPassword"
+      placeholder="profile.enterNewPassword"
       name="newPassword"
       v-model="changePasswordFormData.newPassword"
       required
       show-limit
     />
     <Input
-      :label="$t('profile.confirmPassword')"
+      label="profile.confirmPassword"
+      placeholder="profile.enterNewPasswordAgain"
       name="confirmPassword"
       v-model="changePasswordFormData.confirmPassword"
       required
