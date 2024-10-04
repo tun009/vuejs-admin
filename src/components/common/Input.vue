@@ -7,9 +7,9 @@
         :class="{
           'text-gray-600': readonly
         }"
-        ><span v-if="required && !readonly" class="text-red-600 mr-1">*</span>{{ label }}</label
+        ><span v-if="required && !readonly" class="text-red-600 mr-1">*</span>{{ $t(label) }}</label
       >
-      <span v-if="showLimit && !readonly">{{
+      <span v-if="showLimit && !readonly && !disabled">{{
         $t('base.input.limit', { length: modelValue.length, maxLength: maxLength })
       }}</span>
     </div>
@@ -24,6 +24,7 @@
         :disabled="disabled"
         :maxlength="maxLength"
         :class="[customClass]"
+        :placeholder="$t(placeholder ?? '')"
       />
     </el-form-item>
   </div>

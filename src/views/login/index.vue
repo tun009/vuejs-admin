@@ -73,14 +73,16 @@ const handleLogin = () => {
           >
             <Input
               name="username"
-              :label="$t('login.username')"
+              label="login.username"
+              placeholder="login.enterUsername"
               :prefix-icon="User"
               :model-value="loginFormData.username"
               @update:modelValue="(val: string) => (loginFormData.username = val)"
             />
             <Input
               name="password"
-              :label="$t('login.password')"
+              label="login.password"
+              placeholder="login.enterPassword"
               :prefix-icon="Lock"
               type="password"
               show-password

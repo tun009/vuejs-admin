@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { AddUserRequestModel, RoleEnum } from '@/@types/pages/users'
+import { AddUserRequestModel, RoleEnum, roleSelectOptions } from '@/@types/pages/users'
 import Input from '@/components/common/Input.vue'
+import Select from '@/components/common/Select.vue'
 import { PASSWORD_DEFAULT } from '@/utils/constants/common'
 import { requireRule } from '@/utils/validate'
 import { ElMessage, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { MOCK_SOLS } from '@/mocks/user'
 
 interface Emits {
   (event: 'close'): void
@@ -30,8 +32,8 @@ const addUserFormData: AddUserRequestModel = reactive({
 const addUserFormRules: FormRules = {
   name: [requireRule()],
   username: [requireRule()],
-  sql: [requireRule()],
-  role: [requireRule()]
+  sql: [requireRule('change')],
+  role: [requireRule('change')]
 }
 
 const handleAddUser = () => {
@@ -43,7 +45,7 @@ const handleAddUser = () => {
         ElMessage({
           showClose: true,
           type: 'success',
-          message: t('notification.description.updateSuccess')
+          message: t('notification.description.createSuccess')
         })
         handleClose()
       }, 5000)
@@ -71,17 +73,32 @@ defineExpose<Exposes>({
     @keyup.enter="handleAddUser"
     class="flex flex-col gap-1"
   >
-    <Input :label="$t('user.addUser.name')" name="name" v-model="addUserFormData.name" required show-limit />
     <Input
-      :label="$t('user.addUser.username')"
-      name="username"
-      v-model="addUserFormData.username"
+      label="user.addUser.name"
+      placeholder="user.addUser.enterName"
+      name="name"
+      v-model="addUserFormData.name"
       required
       show-limit
     />
-    <Input :label="$t('user.addUser.password')" name="password" :model-value="PASSWORD_DEFAULT" disabled />
-    <Input :label="$t('user.addUser.sql')" name="sql" v-model="addUserFormData.sql" required />
-    <Input :label="$t('user.addUser.role')" name="role" v-model="addUserFormData.role" required />
+    <Input
+      label="user.addUser.username"
+      name="username"
+      placeholder="user.addUser.enterUsername"
+      v-model="addUserFormData.username"
+      required
+      show-limit
+      :max-length="200"
+    />
+    <Input label="user.addUser.password" name="password" :model-value="PASSWORD_DEFAULT" disabled />
+    <Select v-model="addUserFormData.sql" name="sql" :options="MOCK_SOLS" label="user.addUser.sql" required />
+    <Select
+      v-model="addUserFormData.role"
+      name="role"
+      :options="roleSelectOptions"
+      label="user.addUser.role"
+      required
+    />
   </el-form>
   <div>
     <el-button :loading="loading" @click.prevent="handleAddUser" type="primary">{{ $t('button.update') }}</el-button>

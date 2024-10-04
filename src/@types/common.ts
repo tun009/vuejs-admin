@@ -14,3 +14,9 @@ export interface BaseListDataResponseModel<T> extends PaginationModel {
 }
 
 export type BaseListResponseModel<T> = ApiResponseData<BaseListDataResponseModel<T>>
+
+export interface SelectOptionModel {
+  label: string
+  value: string | number
+  description?: string
+}

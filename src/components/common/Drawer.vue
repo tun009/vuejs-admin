@@ -1,5 +1,5 @@
 <template>
-  <span @click="dialog = true">
+  <span @click.stop="dialog = true">
     <slot name="button">
       <el-button text type="primary">{{ textButton }}</el-button>
     </slot>
@@ -18,8 +18,8 @@
           <el-icon class="w-5 cursor-pointer"><CloseBold style="color: white; height: 20px; width: 20px" /></el-icon>
         </div>
       </div>
-      <div class="demo-drawer__content p-8 flex flex-col gap-5">
-        <el-text class="text-xl uppercase font-bold">{{ $t('profile.changePassword') }}</el-text>
+      <div class="demo-drawer__content p-8 flex flex-col gap-5 w-full">
+        <el-text class="text-xl uppercase font-bold">{{ $t(title ?? '') }}</el-text>
         <slot />
       </div>
     </div>
@@ -33,10 +33,12 @@ import { useI18n } from 'vue-i18n'
 
 interface Props {
   textButton?: string
+  title?: string
 }
 
 interface Exposes {
   closeDrawer: () => void
+  openDrawer: () => void
 }
 
 interface Emits {
@@ -50,6 +52,10 @@ const dialog = ref(false)
 
 const closeDrawer = () => {
   dialog.value = false
+}
+
+const openDrawer = () => {
+  dialog.value = true
 }
 
 const beforeClose = (done: any) => {
@@ -66,6 +72,7 @@ const beforeClose = (done: any) => {
 }
 
 defineExpose<Exposes>({
-  closeDrawer
+  closeDrawer,
+  openDrawer
 })
 </script>
