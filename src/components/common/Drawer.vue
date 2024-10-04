@@ -1,5 +1,9 @@
 <template>
-  <el-button text type="primary" @click="dialog = true">{{ textButton }}</el-button>
+  <span @click="dialog = true">
+    <slot name="button">
+      <el-button text type="primary">{{ textButton }}</el-button>
+    </slot>
+  </span>
   <el-drawer
     v-model="dialog"
     :before-close="beforeClose"
@@ -28,7 +32,7 @@ import { ElDrawer, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 
 interface Props {
-  textButton: string
+  textButton?: string
 }
 
 interface Exposes {

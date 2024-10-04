@@ -8,7 +8,7 @@ import Background from './components/Background.vue'
 import { Lock, User } from '@element-plus/icons-vue'
 import ThemeSwitch from '@/components/ThemeSwitch/index.vue'
 import LanguageSwitch from '@/components/LanguageSwitch/index.vue'
-import InputComponent from '@/components/common/InputComponent.vue'
+import Input from '@/components/common/Input.vue'
 import { DASHBOARD_PAGE } from '@/utils/constants/router'
 import { limitLengthRule, requireRule } from '@/utils/validate'
 import { useI18n } from 'vue-i18n'
@@ -71,14 +71,14 @@ const handleLogin = () => {
             @keyup.enter="handleLogin"
             class="w-full max-w-[500px] mx-auto"
           >
-            <InputComponent
+            <Input
               name="username"
               :label="$t('login.username')"
               :prefix-icon="User"
               :model-value="loginFormData.username"
               @update:modelValue="(val: string) => (loginFormData.username = val)"
             />
-            <InputComponent
+            <Input
               name="password"
               :label="$t('login.password')"
               :prefix-icon="Lock"

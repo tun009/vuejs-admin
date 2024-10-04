@@ -4,35 +4,94 @@
       "joinWeb": "Hello"
     },
     "description": {
-      "joinWeb": "Welcome to the editing web, listen to music here!"
+      "joinWeb": "Welcome to the editing website, listen to music here!",
+      "loginSuccess": "Login successful",
+      "updateSuccess": "Update successful",
+      "confirmCloseDrawer": "Are you sure you want to exit?"
     }
   },
   "layouts": {
     "config": {
       "layoutConfig": "Configuration Settings",
       "functionConfig": "Function Configuration",
-      "showTagsView": "Tab Bar",
+      "showTagsView": "Tabs",
       "showLogo": "Logo",
       "fixedHeader": "Fixed Header",
       "showFooter": "Footer",
-      "showNotify": "Notification",
+      "showNotify": "Notifications",
       "showThemeSwitch": "Theme Switch",
       "showScreenfull": "Full Screen",
       "showSearchMenu": "Search Button",
-      "cacheTagsView": "Remember Tab Bar",
-      "showWatermark": "Fade",
-      "showGreyMode": "Gray Mode",
-      "showColorWeakness": "Weak Color Mode",
+      "cacheTagsView": "Remember Tabs",
+      "showWatermark": "Watermark",
+      "showGreyMode": "Grey Mode",
+      "showColorWeakness": "Color Weakness Mode",
       "language": "Language"
+    },
+    "search": {
+      "title": "Page Search",
+      "searchResults": "Search Results",
+      "noResults": "No search results",
+      "confirm": "Confirm",
+      "switch": "Switch",
+      "close": "Cancel",
+      "totalResults": "{total} results"
+    },
+    "navigation": {
+      "profile": "Account Information",
+      "logout": "Logout"
     }
   },
   "button": {
     "reset": "Reset",
-    "login": "Login"
+    "login": "Login",
+    "update": "Update",
+    "cancel": "Cancel"
   },
   "login": {
     "title": "Login",
     "username": "Username",
-    "password": "Password"
+    "password": "Password",
+    "loginSuccess": "Login successful"
+  },
+  "router": {
+    "dashboard": "Dashboard",
+    "document": "Document",
+    "dataProcessing": "Data Processing",
+    "reports": "Reports",
+    "settings": "Settings",
+    "users": "User",
+    "rules": "Rule",
+    "ruleUI": "UCP/ISBP Rules",
+    "invalidCategory": "Invalid Category",
+    "profile": "Account Information"
+  },
+  "profile": {
+    "title": "Account Information",
+    "name": "Full Name",
+    "username": "Username",
+    "phoneNumber": "Phone Number",
+    "password": "Password",
+    "updateProfile": "Update Information",
+    "changePassword": "Change Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "changePasswordDes": "New password must be between 8 and 100 characters, including: numbers, lowercase letters, uppercase letters, and special characters."
+  },
+  "validate": {
+    "required": "This field is required",
+    "email": "Please enter a valid email format",
+    "phoneNumber": "Please enter a valid phone number format",
+    "limit": "Length must be between { min } and { max } characters",
+    "password": "Please enter a valid password format",
+    "passwordNotMatch": "Passwords do not match"
+  },
+  "base": {
+    "input": {
+      "limit": "{ length }/{ maxLength } characters"
+    }
+  },
+  "user": {
+    "title": "User Management"
   }
 }

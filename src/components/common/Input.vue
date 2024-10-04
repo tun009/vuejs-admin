@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col mb-2 text-sm">
+  <div class="flex flex-col mb-2 text-sm input-component">
     <div class="flex flex-row items-center justify-between">
       <label
         v-if="label"
@@ -23,6 +23,7 @@
         @update:model-value="updateValue"
         :disabled="disabled"
         :maxlength="maxLength"
+        :class="[customClass]"
       />
     </el-form-item>
   </div>
@@ -46,6 +47,8 @@ interface Props {
   maxLength?: number
   showLimit?: boolean
   readonly?: boolean
+  customClass?: string
+  noForm?: boolean
 }
 
 interface Emits {

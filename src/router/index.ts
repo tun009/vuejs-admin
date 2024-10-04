@@ -85,7 +85,8 @@ export const constantRoutes: RouteRecordRaw[] = [
         name: 'Profile',
         meta: {
           title: 'profile',
-          hidden: true
+          hidden: true,
+          keepAlive: true
         }
       }
     ]
@@ -140,7 +141,7 @@ export const constantRoutes: RouteRecordRaw[] = [
       {
         path: '',
         component: () => import('@/views/users/index.vue'),
-        name: 'users',
+        name: 'Users',
         meta: {
           title: 'users',
           svgIcon: 'ic-user-group',
