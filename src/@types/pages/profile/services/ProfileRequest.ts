@@ -1,10 +1,10 @@
-export interface ChangeProfileRequestData {
+export interface ChangeProfileRequestModel {
   username: string
   name: string
   phoneNumber: string
 }
 
-export interface ChangePasswordRequestData {
+export interface ChangePasswordRequestModel {
   password: string
   newPassword: string
   confirmPassword: string

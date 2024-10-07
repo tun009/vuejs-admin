@@ -25,14 +25,14 @@ const addUserFormRef = ref()
 const addUserFormData: AddUserRequestModel = reactive({
   name: '',
   username: '',
-  sql: '',
+  sol: '',
   role: RoleEnum.ADMIN
 })
 
 const addUserFormRules: FormRules = {
   name: [requireRule()],
   username: [requireRule()],
-  sql: [requireRule('change')],
+  sol: [requireRule('change')],
   role: [requireRule('change')]
 }
 
@@ -91,7 +91,7 @@ defineExpose<Exposes>({
       :max-length="200"
     />
     <Input label="user.addUser.password" name="password" :model-value="PASSWORD_DEFAULT" disabled />
-    <Select v-model="addUserFormData.sql" name="sql" :options="MOCK_SOLS" label="user.addUser.sql" required />
+    <Select v-model="addUserFormData.sol" name="sol" :options="MOCK_SOLS" label="user.addUser.sol" required />
     <Select
       v-model="addUserFormData.role"
       name="role"

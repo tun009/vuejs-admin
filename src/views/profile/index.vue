@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ChangeProfileRequestData } from '@/@types/pages/profile'
 import Drawer from '@/components/common/Drawer.vue'
 import Input from '@/components/common/Input.vue'
 import { Title } from '@/layouts/components'
@@ -8,6 +7,7 @@ import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ChangePassword from './ChangePassword.vue'
+import { ChangeProfileRequestModel } from '@/@types/pages/profile/services/ProfileRequest'
 
 defineOptions({
   name: 'Profile'
@@ -21,7 +21,7 @@ const isEdit = ref(false)
 const changePasswordDrawerRef = ref<InstanceType<typeof Drawer>>()
 const changePasswordRef = ref<InstanceType<typeof ChangePassword>>()
 
-const changeProfileFormData: ChangeProfileRequestData = reactive({
+const changeProfileFormData: ChangeProfileRequestModel = reactive({
   username: 'admin',
   name: 'HuyDV',
   phoneNumber: '0963648426'

@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import { useSettingsStore } from '@/store/modules/settings'
-import { TLanguage } from 'types/common'
+import { TLanguage } from '@/@types/common'
 import { reactive, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 

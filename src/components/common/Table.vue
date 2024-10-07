@@ -6,15 +6,17 @@
       v-loading="loading"
       :data="data"
       lazy
-      style="width: 100%"
-      height="600"
+      style="width: 100%; overflow-y: auto"
+      :height="height === 'unset' ? undefined : (height ?? 600)"
       class="fixed-table"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" :selectable="selectable" width="55" />
+      <el-table-column v-if="!hiddenChecked" fixed type="selection" :selectable="selectable" width="55" />
       <el-table-column
-        v-for="(column, index) in columnConfigs"
-        :fixed="!index"
+        v-for="column in columnConfigs"
+        :min-width="column?.minWidth"
+        :width="column?.width"
+        :fixed="column.field === 'actions' ? 'right' : false"
         :key="column.field"
         :prop="column.field"
         :label="column.label"
@@ -28,6 +30,7 @@
     </el-table>
 
     <el-pagination
+      v-if="!hiddenPagination"
       :current-page="pagination.pageNum + 1"
       :page-size="pagination.pageSize"
       :page-sizes="PAGE_SIZE_LIST_DEFAULT"
@@ -52,6 +55,7 @@ interface Props {
   hiddenPagination?: boolean
   columnConfigs?: ColumnConfigModel[]
   disabledIds?: (string | number)[]
+  height?: number | string | 'unset'
 }
 const props = defineProps<Props>()
 const totalItems = ref<number>(0)
@@ -109,5 +113,10 @@ onMounted(async () => {
 
 :deep(.text-total-records) {
   color: #005d98;
+}
+
+:deep(.el-checkbox.is-checked),
+:deep(.el-checkbox__input.is-indeterminate) {
+  border: 1px solid #fff;
 }
 </style>

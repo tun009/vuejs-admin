@@ -112,7 +112,7 @@
       "name": "Họ tên",
       "username": "Tên đăng nhập",
       "password": "Mật khẩu (mặc định)",
-      "sql": "Chọn SQL",
+      "sol": "Chọn SOL",
       "role": "Vai trò",
       "enterName": "Nhập họ tên",
       "enterUsername": "Nhập tên đăng nhập"
@@ -125,5 +125,12 @@
     },
     "filter": "Bộ lọc",
     "searchByName": "Tìm kiếm theo tên"
+  },
+  "docs": {
+    "title": "Danh sách bộ chứng từ",
+    "document": {
+      "searchByName": "Tìm kiếm theo tên",
+      "filter": "Bộ lọc"
+    }
   }
 }

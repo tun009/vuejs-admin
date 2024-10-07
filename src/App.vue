@@ -17,7 +17,7 @@ ElNotification({
   dangerouslyUseHTMLString: true,
   message: `<a style='color: teal' target='_blank' href='https://www.youtube.com/watch?v=jfpQHBsPzkU'>${t('notification.description.joinWeb')}</a>`,
   duration: 0,
-  position: 'bottom-right'
+  position: 'top-right'
 })
 </script>
 

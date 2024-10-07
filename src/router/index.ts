@@ -3,7 +3,7 @@ import { history, flatMultiLevelRoutes } from './helper'
 import routeSettings from '@/config/route'
 import {
   DASHBOARD_PAGE,
-  DATA_PROCESSING_PAGE,
+  DOCUMENT_PAGE,
   DOCS_PAGE,
   INVALID_CATEGORY_PAGE,
   LOGIN_PAGE,
@@ -94,15 +94,15 @@ export const constantRoutes: RouteRecordRaw[] = [
   {
     path: DOCS_PAGE,
     component: Layouts,
-    redirect: DOCS_PAGE + DATA_PROCESSING_PAGE,
+    redirect: DOCS_PAGE + DOCUMENT_PAGE,
     meta: {
       title: 'document',
       svgIcon: 'ic-model-group'
     },
     children: [
       {
-        path: DOCS_PAGE + DATA_PROCESSING_PAGE,
-        component: () => import('@/views/docs/data-processing/index.vue'),
+        path: DOCS_PAGE + DOCUMENT_PAGE,
+        component: () => import('@/views/docs/documents/index.vue'),
         name: 'Data procesing',
         meta: {
           title: 'dataProcessing',
@@ -133,13 +133,9 @@ export const constantRoutes: RouteRecordRaw[] = [
     path: USERS_PAGE,
     component: Layouts,
     name: 'Users',
-    meta: {
-      title: 'users',
-      svgIcon: 'ic-user-group'
-    },
     children: [
       {
-        path: '',
+        path: 'list',
         component: () => import('@/views/users/index.vue'),
         name: 'Users',
         meta: {

@@ -13,8 +13,9 @@ const tagsViewStore = useTagsViewStore()
       <!-- Using route.path and route.fullPath as key has different effects, path is more general in most cases -->
       <router-view v-slot="{ Component, route }">
         <!-- <transition name="el-fade-in" mode="out-in"> -->
+        <!-- <component :is="Component" :key="route.path" class="app-container-grow" /> -->
         <keep-alive :include="tagsViewStore.cachedViews">
-          <component :is="Component" :key="route.path" class="app-container-grow" />
+          <component :is="Component" :key="route.path" />
         </keep-alive>
         <!-- </transition> -->
       </router-view>
