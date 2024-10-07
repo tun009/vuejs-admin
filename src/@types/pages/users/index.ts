@@ -1,4 +1,4 @@
-import { SelectOptionModel } from '@/@types/common'
+import { ColumnConfigModel, SelectOptionModel } from '@/@types/common'
 
 export enum RoleEnum {
   ADMIN = 'ADMIN',
@@ -19,15 +19,15 @@ export interface UserModel {
   username: string
   role: RoleEnum
   isMe?: boolean
-  sql: string
-  sqlId: number
+  sol: string
+  solId: number
   status: UserStatusEnum
 }
 
 export interface AddUserRequestModel {
   name: string
   username: string
-  sql: string
+  sol: string
   role: RoleEnum
 }
 
@@ -59,7 +59,7 @@ export const roleSelectOptions: SelectOptionModel[] = [
   }
 ]
 
-export const userListColumnConfigs = [
+export const userListColumnConfigs: ColumnConfigModel[] = [
   {
     field: 'stt',
     label: 'Stt'
@@ -73,8 +73,8 @@ export const userListColumnConfigs = [
     label: 'Role'
   },
   {
-    field: 'sql',
-    label: 'Sql'
+    field: 'sol',
+    label: 'SOL'
   },
   {
     field: 'status',

@@ -24,7 +24,7 @@ const updateUserFormRef = ref()
 const updateUserFormData: UpdateUserRequestModel = reactive({
   name: '',
   username: '',
-  sql: '',
+  sol: '',
   role: RoleEnum.ADMIN,
   block: false
 })
@@ -32,7 +32,7 @@ const updateUserFormData: UpdateUserRequestModel = reactive({
 const updateUserFormRules: FormRules = {
   name: [],
   username: [],
-  sql: [requireRule('change')],
+  sol: [requireRule('change')],
   role: [requireRule('change')]
 }
 
@@ -87,7 +87,7 @@ defineExpose<Exposes>({
       v-model="updateUserFormData.username"
       disabled
     />
-    <Select v-model="updateUserFormData.sql" name="sql" :options="roleSelectOptions" label="user.addUser.sql" />
+    <Select v-model="updateUserFormData.sol" name="sol" :options="roleSelectOptions" label="user.addUser.sol" />
     <Select v-model="updateUserFormData.role" name="role" :options="roleSelectOptions" label="user.addUser.role" />
     <div class="flex flex-col gap-2 mb-[26px]">
       <span>{{ $t('user.updateUser.password') }}</span>

@@ -1,6 +1,6 @@
 import { RoleEnum, UserModel, UserStatusEnum } from '@/@types/pages/users'
-import { GetUserRequestModel } from '@/@types/pages/users/service/UserRequest'
-import { GetUserResponseModel } from '@/@types/pages/users/service/UserResponse'
+import { GetUserRequestModel } from '@/@types/pages/users/services/UserRequest'
+import { GetUserResponseModel } from '@/@types/pages/users/services/UserResponse'
 import { getDataWithPagination } from '@/utils/common'
 // import { GetUserResponseModel } from '@/@types/pages/users/service/UserResponse'
 // import { request } from '@/utils/service'
@@ -31,8 +31,8 @@ export function getUsers(params: GetUserRequestModel): Promise<GetUserResponseMo
               username: 'thang.nq',
               role: ROLE_LIST[Math.floor(Math.random() * 3)],
               isMe: true,
-              sql: 'Hội sở',
-              sqlId: 1120,
+              sol: 'Hội sở',
+              solId: 1120,
               status: USER_STATUS_LIST[Math.floor(Math.random() * 3)]
             })),
             params.pageNum,

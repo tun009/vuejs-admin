@@ -112,7 +112,7 @@
       "name": "Full Name",
       "username": "Username",
       "password": "Default Password",
-      "sql": "Select SQL",
+      "sol": "Select SOL",
       "role": "Role",
       "enterName": "Enter full name",
       "enterUsername": "Enter username"
