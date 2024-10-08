@@ -1,4 +1,4 @@
-import { request } from '@/utils/service'
+import { request } from '@/api/service'
 import type * as Login from './types/login'
 
 /** Get login verification code */

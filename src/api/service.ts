@@ -2,7 +2,7 @@ import axios, { type AxiosInstance, type AxiosRequestConfig } from 'axios'
 import { useUserStoreHook } from '@/store/modules/user'
 import { ElMessage } from 'element-plus'
 import { get, merge } from 'lodash-es'
-import { getToken } from './cache/cookies'
+import { getToken } from '../utils/cache/cookies'
 
 /** Log out and force refresh the page (will redirect to the login page) */
 function logout() {

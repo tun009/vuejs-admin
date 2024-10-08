@@ -9,7 +9,7 @@ import { Lock, User } from '@element-plus/icons-vue'
 import ThemeSwitch from '@/components/ThemeSwitch/index.vue'
 import LanguageSwitch from '@/components/LanguageSwitch/index.vue'
 import Input from '@/components/common/Input.vue'
-import { DASHBOARD_PAGE } from '@/utils/constants/router'
+import { DASHBOARD_PAGE } from '@/constants/router'
 import { limitLengthRule, requireRule } from '@/utils/validate'
 import { useI18n } from 'vue-i18n'
 

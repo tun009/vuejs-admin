@@ -2,7 +2,7 @@
 import { AddUserRequestModel, RoleEnum, roleSelectOptions } from '@/@types/pages/users'
 import Input from '@/components/common/Input.vue'
 import Select from '@/components/common/Select.vue'
-import { PASSWORD_DEFAULT } from '@/utils/constants/common'
+import { PASSWORD_DEFAULT } from '@/constants/common'
 import { requireRule } from '@/utils/validate'
 import { ElMessage, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'

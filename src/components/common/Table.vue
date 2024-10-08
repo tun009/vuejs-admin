@@ -11,7 +11,7 @@
       class="fixed-table"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column v-if="!hiddenChecked" fixed type="selection" :selectable="selectable" width="55" />
+      <el-table-column v-if="!hiddenChecked" fixed type="selection" :selectable="selectable" width="40" />
       <el-table-column
         v-for="column in columnConfigs"
         :min-width="column?.minWidth"
@@ -19,7 +19,7 @@
         :fixed="column.field === 'actions' ? 'right' : false"
         :key="column.field"
         :prop="column.field"
-        :label="column.label"
+        :label="locales ? $t(column.label) : column.label"
       >
         <template v-slot:default="scope">
           <slot :name="column.field" :column="column" :row="scope.row" :index="scope.$index">
@@ -31,6 +31,7 @@
 
     <el-pagination
       v-if="!hiddenPagination"
+      background
       :current-page="pagination.pageNum + 1"
       :page-size="pagination.pageSize"
       :page-sizes="PAGE_SIZE_LIST_DEFAULT"
@@ -46,7 +47,7 @@
 import { onMounted, ref } from 'vue'
 import type { TableInstance } from 'element-plus'
 import { ColumnConfigModel, PaginationModel } from '@/@types/common'
-import { PAGE_SIZE_LIST_DEFAULT } from '@/utils/constants/common'
+import { PAGE_SIZE_LIST_DEFAULT } from '@/constants/common'
 
 interface Props {
   hiddenChecked?: boolean
@@ -56,6 +57,7 @@ interface Props {
   columnConfigs?: ColumnConfigModel[]
   disabledIds?: (string | number)[]
   height?: number | string | 'unset'
+  locales?: boolean
 }
 const props = defineProps<Props>()
 const totalItems = ref<number>(0)

@@ -32,81 +32,82 @@ export interface DocumentModel {
   createdAt: string
   createdBy: string
   result: DocumentResultEnum
-  completioDate: string
+  completionDate: string
 }
 
 export const docListColumnConfigs: ColumnConfigModel[] = [
   {
     field: 'stt',
-    label: 'Stt'
+    label: 'docs.document.stt'
   },
   {
     field: 'documentName',
-    label: 'Document name',
+    label: 'docs.document.documentName',
     minWidth: 200
   },
   {
     field: 'businessType',
-    label: 'Type of business',
+    label: 'docs.document.businessType',
     minWidth: 150
   },
   {
     field: 'status',
-    label: 'Status',
+    label: 'docs.document.status',
     minWidth: 150
   },
   {
     field: 'handler',
-    label: 'Handler',
-    minWidth: 100
+    label: 'docs.document.handler',
+    minWidth: 150
   },
   {
     field: 'processingStep',
-    label: 'Processing step',
+    label: 'docs.document.processingStep',
     minWidth: 150
   },
   {
     field: 'sol',
-    label: 'SOL',
+    label: 'docs.document.sol',
     minWidth: 100
   },
   {
     field: 'cif',
-    label: 'CIF'
+    label: 'docs.document.cif'
   },
   {
     field: 'customerName',
-    label: 'Customer name',
+    label: 'docs.document.customerName',
     minWidth: 150
   },
   {
     field: 'amount',
-    label: 'Amount',
+    label: 'docs.document.amount',
     minWidth: 120
   },
   {
     field: 'createdAt',
-    label: 'Uploaded at',
+    label: 'docs.document.createdAt',
     minWidth: 120
   },
   {
     field: 'createdBy',
-    label: 'Uploaded by',
+    label: 'docs.document.createdBy',
     minWidth: 120
   },
   {
     field: 'result',
-    label: 'Result',
+    label: 'docs.document.result',
     minWidth: 150
   },
   {
-    field: 'completioDate',
-    label: 'Completion date',
-    minWidth: 120
+    field: 'completionDate',
+    label: 'docs.document.completionDate',
+    minWidth: 150
   },
   {
     field: 'actions',
-    label: 'Action'
+    label: 'docs.document.actions',
+    minWidth: 120
   }
 ]
 

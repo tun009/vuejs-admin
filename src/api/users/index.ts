@@ -3,7 +3,7 @@ import { GetUserRequestModel } from '@/@types/pages/users/services/UserRequest'
 import { GetUserResponseModel } from '@/@types/pages/users/services/UserResponse'
 import { getDataWithPagination } from '@/utils/common'
 // import { GetUserResponseModel } from '@/@types/pages/users/service/UserResponse'
-// import { request } from '@/utils/service'
+// import { request } from '@/api/service'
 
 // mock data
 const ROLE_LIST = [RoleEnum.ADMIN, RoleEnum.MARKER, RoleEnum.CHECKER]

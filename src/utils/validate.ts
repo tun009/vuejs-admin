@@ -11,7 +11,7 @@ import {
   regexUrl,
   regexUrlPort,
   regexVersion
-} from './constants/regex'
+} from '../constants/regex'
 
 import { useI18n } from 'vue-i18n'
 

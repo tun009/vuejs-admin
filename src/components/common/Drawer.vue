@@ -56,7 +56,7 @@ const localModelValue = computed({
 })
 
 const beforeClose = (done: any) => {
-  ElMessageBox.confirm(t('notification.description.confirmCloseDrawer'))
+  ElMessageBox.confirm(t('notification.description.confirmClose'))
     .then(() => {
       setTimeout(() => {
         done()

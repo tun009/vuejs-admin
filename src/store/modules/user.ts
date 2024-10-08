@@ -38,7 +38,7 @@ export const useUserStore = defineStore('user', () => {
     // Refresh the page instead of re-login
     window.location.reload()
   }
-  /** 登出 */
+  /** Sign out */
   const logout = () => {
     removeToken()
     token.value = ''
@@ -46,13 +46,13 @@ export const useUserStore = defineStore('user', () => {
     resetRouter()
     _resetTagsView()
   }
-  /** 重置 Token */
+  /** Reset Token */
   const resetToken = () => {
     removeToken()
     token.value = ''
     roles.value = []
   }
-  /** 重置 Visited Views 和 Cached Views */
+  /** Reset Visited Views and Cached Views */
   const _resetTagsView = () => {
     if (!settingsStore.cacheTagsView) {
       tagsViewStore.delAllVisitedViews()
