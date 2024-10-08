@@ -17,10 +17,11 @@ defineOptions({
   name: 'Users'
 })
 
-const addUserDrawerRef = ref<InstanceType<typeof Drawer>>()
 const addUserFormRef = ref<InstanceType<typeof AddUserForm>>()
-const updateUserDrawerRef = ref<InstanceType<typeof Drawer>>()
 const updateUserFormRef = ref<InstanceType<typeof UpdateUserForm>>()
+
+const openAddUserDrawer = ref(false)
+const openUpdateUserDrawer = ref(false)
 const searchQuery = ref('')
 
 const disabledIds = [1]
@@ -74,12 +75,12 @@ const handleDeleteUser = (name: string) => {
       </div>
       <div class="flex flex-row gap-3">
         <el-button plain type="primary" :icon="Tools">{{ $t('button.roleSetting') }}</el-button>
-        <Drawer ref="addUserDrawerRef" title="user.addUser.title" @close="addUserFormRef?.handleClose">
+        <Drawer title="user.addUser.title" v-model="openAddUserDrawer">
           <template #button>
             <el-button type="primary" :icon="Plus">{{ $t('button.add') }}</el-button>
           </template>
           <template #default>
-            <AddUserForm ref="addUserFormRef" @close="addUserDrawerRef?.closeDrawer()" />
+            <AddUserForm ref="addUserFormRef" @close="openAddUserDrawer = false" />
           </template>
         </Drawer>
       </div>
@@ -107,8 +108,8 @@ const handleDeleteUser = (name: string) => {
         </template>
         <template #actions="{ row }">
           <div class="flex flex-row gap-2">
-            <el-icon :size="18" class="cursor-pointer" @click="updateUserDrawerRef?.openDrawer"><Edit /></el-icon>
-            <el-icon :size="18" color="#e03131" class="cursor-pointer" @click="() => handleDeleteUser(row.name)"
+            <el-icon :size="18" class="cursor-pointer" @click="openUpdateUserDrawer = true"><Edit /></el-icon>
+            <el-icon :size="18" color="#e03131" class="cursor-pointer" @click="handleDeleteUser(row.name)"
               ><Delete
             /></el-icon>
           </div>
@@ -117,9 +118,9 @@ const handleDeleteUser = (name: string) => {
     </el-card>
   </div>
 
-  <Drawer ref="updateUserDrawerRef" title="user.updateUser.title" @close="updateUserFormRef?.handleClose">
+  <Drawer v-model="openUpdateUserDrawer" title="user.updateUser.title">
     <template #default>
-      <UpdateUserForm ref="updateUserFormRef" @close="updateUserDrawerRef?.closeDrawer()" />
+      <UpdateUserForm ref="updateUserFormRef" @close="openUpdateUserDrawer = false" />
     </template>
   </Drawer>
 </template>
