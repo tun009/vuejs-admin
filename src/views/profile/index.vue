@@ -18,7 +18,7 @@ const { t } = useI18n()
 const changeProfileFormRef = ref<FormInstance | null>(null)
 const loading = ref(false)
 const isEdit = ref(false)
-const changePasswordDrawerRef = ref<InstanceType<typeof Drawer>>()
+const openDrawer = ref(false)
 const changePasswordRef = ref<InstanceType<typeof ChangePassword>>()
 
 const changeProfileFormData: ChangeProfileRequestModel = reactive({
@@ -50,10 +50,6 @@ const handleUpdateProfile = () => {
       console.error('Form validation failed', fields)
     }
   })
-}
-
-const handleCloseDrawer = () => {
-  changePasswordRef.value?.handleClose()
 }
 </script>
 
@@ -95,16 +91,11 @@ const handleCloseDrawer = () => {
         />
         <div class="flex flex-row items-center justify-between" v-if="!isEdit">
           <Input label="profile.password" readonly model-value="*********" />
-          <Drawer
-            title="profile.changePassword"
-            :text-button="$t('profile.changePassword')"
-            ref="changePasswordDrawerRef"
-            @close="handleCloseDrawer"
-          >
+          <Drawer title="profile.changePassword" :text-button="$t('profile.changePassword')" v-model="openDrawer">
             <template #default>
               <div class="mt-3 flex flex-col gap-5">
                 <el-text>{{ $t('profile.changePasswordDes') + '*&^%#@!' }}</el-text>
-                <ChangePassword ref="changePasswordRef" @close="changePasswordDrawerRef?.closeDrawer" />
+                <ChangePassword ref="changePasswordRef" @close="openDrawer = false" />
               </div>
             </template>
           </Drawer>

@@ -9,6 +9,7 @@ import routeSettings from '@/config/route'
 import isWhiteList from '@/config/white-list'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
+import i18n from '@/locales/index'
 
 const { setTitle } = useTitle()
 NProgress.configure({ showSpinner: false })
@@ -57,6 +58,6 @@ router.beforeEach(async (to, _from, next) => {
 
 router.afterEach((to) => {
   setRouteChange(to)
-  setTitle(to.meta.title)
+  setTitle(i18n.global.t('router.' + to.meta.title))
   NProgress.done()
 })

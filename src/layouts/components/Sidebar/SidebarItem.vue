@@ -4,6 +4,7 @@ import path from 'path-browserify'
 import { computed } from 'vue'
 import { type RouteRecordRaw } from 'vue-router'
 import SidebarItemLink from './SidebarItemLink.vue'
+import { useTheme } from '@/hooks/useTheme'
 
 interface Props {
   item: RouteRecordRaw
@@ -52,10 +53,12 @@ const resolvePath = (routePath: string) => {
       return path.resolve(props.basePath, routePath)
   }
 }
+
+const { activeThemeName } = useTheme()
 </script>
 
 <template>
-  <div class="shadow-sm shadow-[#3784a9]">
+  <div class="shadow-sm shadow-[#3784a9]" :class="{ 'sidebar-item': activeThemeName !== 'dark' }">
     <template v-if="!alwaysShowRootMenu && theOnlyOneChild && !theOnlyOneChild.children">
       <SidebarItemLink v-if="theOnlyOneChild.meta" :to="resolvePath(theOnlyOneChild.path)">
         <el-menu-item :index="resolvePath(theOnlyOneChild.path)">
@@ -108,5 +111,9 @@ const resolvePath = (routePath: string) => {
 :deep(.el-sub-menu__title) {
   color: #ffffff;
   font-weight: 500;
+}
+
+.sidebar-item {
+  background-color: var(--el-menu-bg-color);
 }
 </style>

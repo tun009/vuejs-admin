@@ -105,6 +105,7 @@ const goToProfile = () => {
     min-width: 0px;
     :deep(.el-menu) {
       background-color: transparent;
+      // background-color: var(--el-menu-bg-color);
     }
     :deep(.el-sub-menu) {
       &.is-active {
