@@ -1,4 +1,5 @@
 # eximbank-ui
+
 <div align="center">
   <img alt="Eximbank OCR" height="120" src="./src/assets/layouts/vtai-logo.svg">
   <h1>Viettel IDP</h1>
@@ -11,14 +12,14 @@ Eximbank OCR is a free and open source middle and background management system b
 
 ## 📚 Document
 
-- Vue3 documentation: [link](https://vuejs.org/)
-- Typescript documentation: [link](https://www.typescriptlang.org/)
-- Element Plus documentation: [link](https://element-plus.org/en-US/)
-- Pinia documentation: [link](https://pinia.vuejs.org/)
-- Vite documentation: [link](https://vitejs.dev/)
-- Eslint documentation: [link](https://eslint.org/)
-- Prettier documentation: [link](https://prettier.io/)
-- Tailwind documentation: [link](https://tailwindcss.com/)
+- Vue3 documentation: [https://vuejs.org/](https://vuejs.org/)
+- Typescript documentation: [https://www.typescriptlang.org/](https://www.typescriptlang.org/)
+- Element Plus documentation: [https://element-plus.org](https://element-plus.org/en-US/)
+- Pinia documentation: [https://pinia.vuejs.org/](https://pinia.vuejs.org/)
+- Vite documentation: [https://vitejs.dev/](https://vitejs.dev/)
+- Eslint documentation: [https://eslint.org/](https://eslint.org/)
+- Prettier documentation: [https://prettier.io/](https://prettier.io/)
+- Tailwind documentation: [https://tailwindcss.com/](https://tailwindcss.com/)
 
 ## Feature
 
@@ -122,10 +123,8 @@ pnpm test
 
 ## Project preview
 
-![preview1.png](./src/assets/docs/preview1.png)
-![preview2.png](./src/assets/docs/preview2.png)
-![preview3.png](./src/assets/docs/preview3.png)
+![preview1.png](./src/assets/docs/preview-exb-1.png)
+![preview2.png](./src/assets/docs/preview-exb-2.png)
+![preview3.png](./src/assets/docs/preview-exb-3.png)
 
 ## ☕ Donate
-
-
