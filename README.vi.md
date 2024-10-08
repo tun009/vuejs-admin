@@ -10,14 +10,14 @@ Eximbank OCR là giải pháp cơ bản cho hệ thống quản lý nền tảng
 
 ## 📚 Tài liệu
 
-- Vue3: [link](https://vuejs.org/)
-- Typescript: [link](https://www.typescriptlang.org/)
-- Element Plus: [link](https://element-plus.org/en-US/)
-- Pinia: [link](https://pinia.vuejs.org/)
-- Vite: [link](https://vitejs.dev/)
-- Eslint: [link](https://eslint.org/)
-- Prettier: [link](https://prettier.io/)
-- Tailwind: [link](https://tailwindcss.com/)
+- Vue3: [https://vuejs.org/](https://vuejs.org/)
+- Typescript: [https://www.typescriptlang.org/](https://www.typescriptlang.org/)
+- Element Plus: [https://element-plus.org](https://element-plus.org/en-US/)
+- Pinia: [https://pinia.vuejs.org/](https://pinia.vuejs.org/)
+- Vite: [https://vitejs.dev/](https://vitejs.dev/)
+- Eslint: [https://eslint.org/](https://eslint.org/)
+- Prettier: [https://prettier.io/](https://prettier.io/)
+- Tailwind: [https://tailwindcss.com/](https://tailwindcss.com/)
 
 ## Tính năng
 
@@ -121,10 +121,8 @@ pnpm test
 
 ## Project preview
 
-![preview1.png](./src/assets/docs/preview1.png)
-![preview2.png](./src/assets/docs/preview2.png)
-![preview3.png](./src/assets/docs/preview3.png)
+![preview1.png](./src/assets/docs/preview-exb-1.png)
+![preview2.png](./src/assets/docs/preview-exb-2.png)
+![preview3.png](./src/assets/docs/preview-exb-3.png)
 
 ## ☕ Donate
-
-
