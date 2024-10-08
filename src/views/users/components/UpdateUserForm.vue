@@ -48,7 +48,7 @@ const handleUpdateUser = () => {
           message: t('notification.description.createSuccess')
         })
         handleClose()
-      }, 5000)
+      }, 2000)
     } else {
       console.error('Form validation failed', fields)
     }

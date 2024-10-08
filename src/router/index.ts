@@ -17,7 +17,7 @@ import {
   USERS_PAGE,
   _403_PAGE,
   _404_PAGE
-} from '@/utils/constants/router'
+} from '@/constants/router'
 
 const Layouts = () => import('@/layouts/index.vue')
 

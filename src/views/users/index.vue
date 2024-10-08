@@ -75,14 +75,7 @@ const handleDeleteUser = (name: string) => {
       </div>
       <div class="flex flex-row gap-3">
         <el-button plain type="primary" :icon="Tools">{{ $t('button.roleSetting') }}</el-button>
-        <Drawer title="user.addUser.title" v-model="openAddUserDrawer">
-          <template #button>
-            <el-button type="primary" :icon="Plus">{{ $t('button.add') }}</el-button>
-          </template>
-          <template #default>
-            <AddUserForm ref="addUserFormRef" @close="openAddUserDrawer = false" />
-          </template>
-        </Drawer>
+        <el-button type="primary" :icon="Plus" @click="openAddUserDrawer = true">{{ $t('button.add') }}</el-button>
       </div>
     </div>
     <el-card>
@@ -118,7 +111,13 @@ const handleDeleteUser = (name: string) => {
     </el-card>
   </div>
 
-  <Drawer v-model="openUpdateUserDrawer" title="user.updateUser.title">
+  <Drawer v-if="openAddUserDrawer" title="user.addUser.title" v-model="openAddUserDrawer">
+    <template #default>
+      <AddUserForm ref="addUserFormRef" @close="openAddUserDrawer = false" />
+    </template>
+  </Drawer>
+
+  <Drawer v-if="openUpdateUserDrawer" v-model="openUpdateUserDrawer" title="user.updateUser.title">
     <template #default>
       <UpdateUserForm ref="updateUserFormRef" @close="openUpdateUserDrawer = false" />
     </template>

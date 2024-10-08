@@ -16,7 +16,7 @@
       </div>
     </div>
     <el-card>
-      <Table :columnConfigs="docListColumnConfigs" :data="tableData" :callback="handleGetDocuments">
+      <Table locales :columnConfigs="docListColumnConfigs" :data="tableData" :callback="handleGetDocuments">
         <template #status="{ row }">
           <span>{{ renderLabelByValue(documentStatusOptions, row.status) }}</span>
         </template>

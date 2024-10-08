@@ -26,7 +26,7 @@ export function getDocuments(params: GetDocumentRequestModel): Promise<GetDocume
               handler: HANDLER_LIST[Math.floor(Math.random() * 2)],
               processingStep: PROCESSING_STEP_LIST[Math.floor(Math.random() * 4)],
               result: DOCUMENT_RESULT_LIST[Math.floor(Math.random() * 2)],
-              completioDate: '01-01-2025',
+              completionDate: '01-01-2025',
               sol: 'SOL Meo',
               cif: 'CIF Meo',
               customerName: 'Meo ' + `${index + 1}`,

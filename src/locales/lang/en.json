@@ -8,7 +8,7 @@
       "loginSuccess": "Login successful",
       "updateSuccess": "Update successful",
       "createSuccess": "Creation successful",
-      "confirmCloseDrawer": "Are you sure you want to exit?"
+      "confirmClose": "Are you sure you want to exit?"
     }
   },
   "layouts": {
@@ -125,5 +125,27 @@
     },
     "filter": "Filter",
     "searchByName": "Search by Name"
+  },
+  "docs": {
+    "title": "Document List",
+    "document": {
+      "searchByName": "Search by Name",
+      "filter": "Filter",
+      "stt": "No.",
+      "documentName": "Document Name",
+      "businessType": "Business Type",
+      "status": "Status",
+      "processingStep": "Processing Step",
+      "sol": "SOL",
+      "cif": "CIF",
+      "handler": "Handler",
+      "result": "Result",
+      "completionDate": "Completion Date",
+      "customerName": "Customer Name",
+      "amount": "Amount",
+      "createdAt": "Upload Date",
+      "createdBy": "Uploaded By",
+      "actions": "Actions"
+    }
   }
 }

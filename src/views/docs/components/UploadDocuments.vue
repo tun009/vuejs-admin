@@ -12,7 +12,7 @@
           <Select
             v-model="addDocumentFormData.businessType"
             name="businessType"
-            :options="businessTypeOptions"
+            :options="businessTypeOptions.slice(0, 1)"
             label="Loại nghiệp vụ"
             is-row
           />
@@ -25,7 +25,7 @@
             is-row
             class="col-start-1"
           />
-          <Select v-model="addDocumentFormData.sol" name="sol" :options="[]" label="Chọn SOL" is-row />
+          <Select v-model="addDocumentFormData.sol" name="sol" :options="MOCK_SOLS" label="Chọn SOL" is-row />
           <Input
             label="Tên khách hàng"
             placeholder="Tên khách hàng"
@@ -34,27 +34,20 @@
             required
             is-row
           />
-          <Input
-            label="Mã CIF"
-            placeholder="Mã CIF"
-            name="documentName"
-            v-model="addDocumentFormData.cif"
-            required
-            is-row
-          />
+          <Input label="Mã CIF" placeholder="Mã CIF" name="cif" v-model="addDocumentFormData.cif" is-row />
         </div>
       </div>
     </el-form>
     <template #footer>
       <div class="dialog-footer flex flex-row justify-between items-center">
-        <span class="text-sm text-gray-600">Tối đa 10 file, mỗi file tối đa 16mb</span>
+        <span class="text-sm text-gray-600">Tối đa 10 file, mỗi file tối đa 16MB</span>
         <div>
           <el-button @click="localModelValue = false">Cancel</el-button>
-          <el-button type="primary" @click="localModelValue = false"> Confirm </el-button>
+          <el-button :loading="loading" type="primary" @click="handleAddDocument"> Confirm </el-button>
         </div>
       </div>
     </template>
-    <Upload />
+    <Upload :files="files" @add-files="addFiles" @set-files="setFiles" />
   </el-dialog>
 </template>
 
@@ -64,10 +57,11 @@ import { AddDocumentRequestData } from '@/@types/pages/docs/documents/services/D
 import Input from '@/components/common/Input.vue'
 import Select from '@/components/common/Select.vue'
 import Upload from '@/components/common/Upload.vue'
+import { MOCK_SOLS } from '@/mocks/user'
 import { requireRule } from '@/utils/validate'
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus'
 import { computed, reactive, ref } from 'vue'
-import { t } from 'vxe-table'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   modelValue: boolean
@@ -80,8 +74,20 @@ interface Emits {
 const props = defineProps<Props>()
 const emits = defineEmits<Emits>()
 
+const { t } = useI18n()
+
+const files = ref<File[]>([])
+
+const addFiles = (fileList: FileList) => {
+  files.value.push(...Array.from(fileList))
+}
+
+const setFiles = (fileList: File[]) => {
+  files.value = fileList
+}
+
 const handleClose = (done: () => void) => {
-  ElMessageBox.confirm('Are you sure to close this dialog?')
+  ElMessageBox.confirm(t('notification.description.confirmClose'))
     .then(() => {
       done()
     })
@@ -111,11 +117,11 @@ const addDocumentFormData: AddDocumentRequestData = reactive({
 })
 
 const addDocumentFormRules: FormRules = {
-  businessType: [requireRule()],
+  businessType: [],
   cif: [],
   customerName: [requireRule()],
   documentName: [requireRule()],
-  sol: [requireRule()]
+  sol: []
 }
 
 const handleAddDocument = () => {
@@ -129,7 +135,8 @@ const handleAddDocument = () => {
           type: 'success',
           message: t('notification.description.updateSuccess')
         })
-      }, 5000)
+        emits('update:model-value', false)
+      }, 2000)
     } else {
       console.error('Form validation failed', fields)
     }

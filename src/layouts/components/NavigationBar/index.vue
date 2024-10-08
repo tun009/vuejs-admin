@@ -15,7 +15,7 @@ import SearchMenu from '@/components/SearchMenu/index.vue'
 import LanguageSwitch from '@/components/LanguageSwitch/index.vue'
 import { useDevice } from '@/hooks/useDevice'
 import { useLayoutMode } from '@/hooks/useLayoutMode'
-import { LOGIN_PAGE, PROFILE_PAGE } from '@/utils/constants/router'
+import { LOGIN_PAGE, PROFILE_PAGE } from '@/constants/router'
 
 const { isMobile } = useDevice()
 const { isTop } = useLayoutMode()

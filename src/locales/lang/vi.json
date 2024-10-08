@@ -1,14 +1,17 @@
 {
   "notification": {
     "title": {
-      "joinWeb": "Xin chào"
+      "joinWeb": "Xin chào",
+      "success": "Thành công",
+      "warning": "Cảnh báo",
+      "error": "Thất bại"
     },
     "description": {
       "joinWeb": "Chào mừng bạn đến với web hiệu chỉnh, nghe nhạc tại đây!",
       "loginSuccess": "Đăng nhập thành công",
       "updateSuccess": "Cập nhật thành công",
       "createSuccess": "Tạo mới thành công",
-      "confirmCloseDrawer": "Bạn chắc chắn thoát khỏi?"
+      "confirmClose": "Bạn chắc chắn thoát khỏi?"
     }
   },
   "layouts": {
@@ -130,7 +133,22 @@
     "title": "Danh sách bộ chứng từ",
     "document": {
       "searchByName": "Tìm kiếm theo tên",
-      "filter": "Bộ lọc"
+      "filter": "Bộ lọc",
+      "stt": "Stt",
+      "documentName": "Tên bộ chứng từ",
+      "businessType": "Loại nghiệp vụ",
+      "status": "Trạng thái",
+      "processingStep": "Bước xử lý",
+      "sol": "SOL",
+      "cif": "CIF",
+      "handler": "Người xử lý",
+      "result": "Kết quả",
+      "completionDate": "Ngày hoàn thành",
+      "customerName": "Tên khách hàng",
+      "amount": "Số tiền",
+      "createdAt": "Ngày upload",
+      "createdBy": "Người upload",
+      "actions": "Hành dộng"
     }
   }
 }

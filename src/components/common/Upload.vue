@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col lg:flex-row gap-4">
     <div
-      class="dropzone flex flex-[3] flex-col gap-y-3 justify-center items-center min-h-96 relative"
+      class="dropzone flex flex-[3] flex-col gap-y-3 justify-center items-center min-h-96 relative bg-[#f8f9fa] dark:bg-transparent"
       @dragover.prevent="onDragOver"
       @dragleave="onDragLeave"
       @drop.prevent="onDrop"
@@ -22,7 +22,7 @@
         :data="tableFiles"
         hiddenPagination
         hiddenChecked
-        height="unset"
+        height="350"
       >
         <template #actions="{ index }">
           <el-icon :size="18" color="#e03131" class="cursor-pointer" @click="() => handleDeleteFile(index)"
@@ -36,12 +36,28 @@
 
 <script setup lang="ts">
 import { uploadDocumentColumnConfig } from '@/@types/common'
+import { MAX_FILE_LIMIT, MAX_FILE_SIZE } from '@/constants/common'
+import { truncateFileName } from '@/utils/common'
+import { warningNotification } from '@/utils/notification'
 import { Delete, Plus } from '@element-plus/icons-vue'
 import { computed, ref } from 'vue'
 import Table from './Table.vue'
-import { ElMessage } from 'element-plus'
 
-const files = ref<File[]>([])
+interface Props {
+  files: File[]
+}
+
+interface Emits {
+  (e: 'add-files', value: FileList): void
+  (e: 'set-files', value: File[]): void
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  files: () => []
+})
+
+const emits = defineEmits<Emits>()
+
 const isDragOver = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
 
@@ -69,13 +85,21 @@ const onFileChange = (event: Event) => {
 }
 
 const addFiles = (fileList: FileList) => {
-  if (files.value.length + fileList.length > 10) {
-    ElMessage({
-      type: 'success',
-      message: 'notification.description.createSuccess'
-    })
+  let isInvalidFileSize = false
+  Array.from(fileList).forEach((item) => {
+    if (item.size > MAX_FILE_SIZE) {
+      isInvalidFileSize = true
+    }
+  })
+  if (isInvalidFileSize) {
+    warningNotification('Dung lượng file không vượt quá 16MB!')
+    return
   }
-  files.value.push(...Array.from(fileList))
+  if (props.files.length + fileList.length > MAX_FILE_LIMIT) {
+    warningNotification('Tổng số file không vượt quá 10!')
+    return
+  }
+  emits('add-files', fileList)
 }
 
 const selectFiles = () => {
@@ -85,8 +109,8 @@ const selectFiles = () => {
 const tableFiles = computed(() => {
   const dataTable = []
   let stt = 1
-  for (const file of files.value) {
-    const fileName = file.name
+  for (const file of props.files) {
+    const fileName = truncateFileName(file.name)
     dataTable.push({
       stt,
       fileName,
@@ -98,8 +122,8 @@ const tableFiles = computed(() => {
 })
 
 const handleDeleteFile = (index: number) => {
-  const temp = files.value.filter((_i, idx) => idx !== index)
-  files.value = temp
+  const newFiles = props.files.filter((_i, idx) => idx !== index)
+  emits('set-files', newFiles)
 }
 </script>
 
@@ -111,7 +135,6 @@ const handleDeleteFile = (index: number) => {
   text-align: center;
   cursor: pointer;
   transition: border-color 0.5s;
-  background-color: #f8f9fa;
 }
 
 .dropzone.is-dragover {
