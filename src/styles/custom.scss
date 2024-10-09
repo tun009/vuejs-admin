@@ -1,0 +1,8 @@
+/** Hidden scroll bar */
+.hidden-scroll-bar {
+  // The entire scroll bar
+  &::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+  }
+}

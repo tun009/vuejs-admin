@@ -18,3 +18,11 @@
     }
   }
 }
+
+.el-message-box__container {
+  align-items: start;
+
+  .el-message-box__status {
+    margin-top: 4px;
+  }
+}

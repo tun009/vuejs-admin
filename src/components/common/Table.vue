@@ -8,7 +8,7 @@
       lazy
       style="width: 100%; overflow-y: auto"
       :height="height === 'unset' ? undefined : (height ?? 600)"
-      class="fixed-table"
+      class="custom-table hidden-scroll-bar"
       @selection-change="handleSelectionChange"
     >
       <el-table-column v-if="!hiddenChecked" fixed type="selection" :selectable="selectable" width="40" />
@@ -27,6 +27,13 @@
           </slot>
         </template>
       </el-table-column>
+      <template #empty>
+        <div class="flex flex-col justify-center gap-2 items-center leading-8 text-[#495057]">
+          <SvgIcon name="empty-data" class="!h-12 !w-12" />
+          <p>Không có dữ liệu</p>
+          <p>Hãy bắt đầu sử dụng, bằng việc click vào nút <strong>Thêm</strong> để có thể thêm bộ chứng từ bạn cần</p>
+        </div>
+      </template>
     </el-table>
 
     <el-pagination
@@ -36,10 +43,19 @@
       :page-size="pagination.pageSize"
       :page-sizes="PAGE_SIZE_LIST_DEFAULT"
       :total="totalItems"
-      layout="total, prev, pager, next, jumper, sizes"
+      layout="sizes, slot, ->, prev, pager, next"
       @size-change="handlePageSizeChange"
       @current-change="handlePageChange"
-    />
+    >
+      <template #default>
+        <span class="el-pagination__total-text ml-5">
+          <span class="text-[#868e96]">{{ $t('base.table.showing') }}</span>
+          {{ pagination.pageNum * pagination.pageSize + 1 }} <span class="text-[#868e96]">-</span>
+          {{ Math.min((pagination.pageNum + 1) * pagination.pageSize, totalItems) }} / {{ totalItems }}
+          <span class="text-[#868e96]">{{ $t('base.table.results') }}</span>
+        </span>
+      </template>
+    </el-pagination>
   </div>
 </template>
 
@@ -60,7 +76,17 @@ interface Props {
   height?: number | string | 'unset'
   locales?: boolean
 }
+
+interface Emits {
+  (event: 'update:selection', value: any[]): void
+}
+
+interface Exposes {
+  clearSelection: () => void
+}
+
 const props = defineProps<Props>()
+const emits = defineEmits<Emits>()
 const totalItems = ref<number>(0)
 const loading = ref<boolean>(false)
 
@@ -70,11 +96,10 @@ const pagination = ref<PaginationModel>({
 })
 
 const multipleTableRef = ref<TableInstance>()
-const multipleSelection = ref([])
 
 const selectable = (row: any) => !(props.disabledIds ?? []).includes(row.id)
-const handleSelectionChange = (val: any) => {
-  multipleSelection.value = val
+const handleSelectionChange = (val: any[]) => {
+  emits('update:selection', val)
 }
 
 const handlePageChange = (newPage: number) => {
@@ -103,8 +128,16 @@ const handlePageSizeChange = (newPageSize: number) => {
   handleGetData()
 }
 
+const handleClearSelection = () => {
+  multipleTableRef.value?.clearSelection()
+}
+
 onMounted(async () => {
   handleGetData()
+})
+
+defineExpose<Exposes>({
+  clearSelection: handleClearSelection
 })
 </script>
 
@@ -121,5 +154,9 @@ onMounted(async () => {
 :deep(.el-checkbox.is-checked),
 :deep(.el-checkbox__input.is-indeterminate) {
   border: 1px solid #fff;
+}
+
+.custom-table {
+  transition: height 0.4s;
 }
 </style>

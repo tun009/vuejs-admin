@@ -1,5 +1,5 @@
 <template>
-  <span @click.stop="localModelValue = true">
+  <span v-if="textButton" @click.stop="localModelValue = true">
     <slot name="button">
       <el-button text type="primary">{{ textButton }}</el-button>
     </slot>
@@ -7,10 +7,11 @@
   <el-drawer
     v-model="localModelValue"
     :before-close="beforeClose"
-    direction="rtl"
+    :direction="direction"
     class="demo-drawer"
     :with-header="false"
-    size="40%"
+    :size="size"
+    modal-fade
   >
     <div class="flex flex-row h-full">
       <div class="w-12 bg-[#005d98] flex justify-center py-3 px-2">
@@ -19,7 +20,7 @@
         </div>
       </div>
       <div class="demo-drawer__content p-8 flex flex-col gap-5 w-full">
-        <el-text class="text-xl uppercase font-bold">{{ $t(title ?? '') }}</el-text>
+        <el-text class="text-xl uppercase font-bold text-[#868e96] self-auto">{{ $t(title ?? '') }}</el-text>
         <slot />
       </div>
     </div>
@@ -27,6 +28,7 @@
 </template>
 
 <script lang="ts" setup>
+import { CloseBold } from '@element-plus/icons-vue'
 import { ElDrawer, ElMessageBox } from 'element-plus'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -35,13 +37,18 @@ interface Props {
   textButton?: string
   title?: string
   modelValue: boolean
+  size?: string | number
+  direction?: 'rtl' | 'ltr' | 'ttb' | 'btt'
 }
 
 interface Emits {
   (event: 'update:model-value', value: boolean): void
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  direction: 'rtl',
+  size: '40%'
+})
 const emits = defineEmits<Emits>()
 
 const { t } = useI18n()

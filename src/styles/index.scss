@@ -11,6 +11,8 @@
 @import './mixins.scss';
 // View Transition
 @import './view-transition.scss';
+// Custom
+@import './custom.scss';
 // Business pages should almost always mount class="app-container" on the root element to keep the page beautiful
 .app-container {
   padding: 20px;

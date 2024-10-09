@@ -1,32 +1,38 @@
 {
   "notification": {
     "title": {
-      "joinWeb": "Hello"
+      "joinWeb": "Hello",
+      "success": "Success",
+      "warning": "Warning",
+      "error": "Failure"
     },
     "description": {
-      "joinWeb": "Welcome to the editing web, listen to music here!",
+      "joinWeb": "Welcome to the editing website, listen to music here!",
       "loginSuccess": "Login successful",
       "updateSuccess": "Update successful",
       "createSuccess": "Creation successful",
-      "confirmClose": "Are you sure you want to exit?"
+      "confirmClose": "Are you sure you want to exit?",
+      "limitSize": "File size must not exceed 16MB!",
+      "limitQuantity": "Total number of files must not exceed 10!",
+      "emptyFiles": "Please select at least 1 file!"
     }
   },
   "layouts": {
     "config": {
-      "layoutConfig": "Configuration Settings",
+      "layoutConfig": "Layout Configuration",
       "functionConfig": "Function Configuration",
-      "showTagsView": "Tab Bar",
+      "showTagsView": "Tab bar",
       "showLogo": "Logo",
-      "fixedHeader": "Fixed Header",
+      "fixedHeader": "Fixed header",
       "showFooter": "Footer",
       "showNotify": "Notifications",
-      "showThemeSwitch": "Theme Switch",
+      "showThemeSwitch": "Theme switch",
       "showScreenfull": "Fullscreen",
-      "showSearchMenu": "Search Button",
-      "cacheTagsView": "Remember Tab Bar",
+      "showSearchMenu": "Search button",
+      "cacheTagsView": "Remember tab bar",
       "showWatermark": "Watermark",
-      "showGreyMode": "Gray Mode",
-      "showColorWeakness": "Color Weakness Mode",
+      "showGreyMode": "Grey mode",
+      "showColorWeakness": "Color weakness mode",
       "language": "Language"
     },
     "search": {
@@ -49,14 +55,18 @@
     "update": "Update",
     "cancel": "Cancel",
     "roleSetting": "Role Configuration",
-    "add": "Add"
+    "add": "Add",
+    "confirm": "Confirm",
+    "confirmDelete": "Confirm Delete",
+    "cancel_1": "Cancel",
+    "delete": "Delete"
   },
   "login": {
     "title": "Login",
     "username": "Username",
     "password": "Password",
     "loginSuccess": "Login successful",
-    "enterUsername": "Enter your username",
+    "enterUsername": "Enter username",
     "enterPassword": "Enter your password"
   },
   "router": {
@@ -81,7 +91,7 @@
     "changePassword": "Change Password",
     "newPassword": "New Password",
     "confirmPassword": "Confirm Password",
-    "changePasswordDes": "The new password must be at least 8 characters and a maximum of 100 characters, including: digits, lowercase letters, uppercase letters, special characters.",
+    "changePasswordDes": "New password must be at least 8 characters long, up to 100 characters, including: Numbers, lowercase letters, uppercase letters, special characters.",
     "enterCurrentPassword": "Enter current password",
     "enterNewPassword": "Enter new password",
     "enterNewPasswordAgain": "Re-enter new password",
@@ -93,16 +103,18 @@
     "required": "This field is required",
     "email": "Please enter a valid email format",
     "phoneNumber": "Please enter a valid phone number format",
-    "limit": "Length must be between { min } and { max } characters",
+    "limit": "Length must be between {min} and {max} characters",
     "password": "Please enter a valid password format",
     "passwordNotMatch": "Passwords do not match"
   },
   "base": {
     "input": {
-      "limit": "{ length }/{ maxLength } characters"
+      "limit": "{length}/{maxLength} characters"
     },
     "table": {
-      "totalRecords": "Total: <span class='text-total-records'>{ total }</span> records"
+      "totalRecords": "Total: <span class='text-total-records'>{total}</span> records",
+      "showing": "Showing",
+      "results": "results"
     }
   },
   "user": {
@@ -145,7 +157,28 @@
       "amount": "Amount",
       "createdAt": "Upload Date",
       "createdBy": "Uploaded By",
-      "actions": "Actions"
+      "actions": "Actions",
+      "addDocument": "Add Document",
+      "cifCode": "CIF Code",
+      "selectSOL": "Select SOL",
+      "uploadNote": "Up to 10 files, each file max 16MB",
+      "dragDrop": "Drag and drop files here",
+      "or": "or",
+      "selectFromDevice": "Select from device",
+      "validFormat": "Supported file formats: PDF, JPEG, JPG, PNG",
+      "uploadList": "Uploaded Files List",
+      "fileName": "File Name",
+      "enterName": "Enter Name",
+      "updateDocument": "Update Information",
+      "solDes": "SOL (business unit)",
+      "enterCifCode": "Enter CIF Code",
+      "enterCustomerName": "Enter Customer Name",
+      "selected": "Selected",
+      "items": "records",
+      "cancelAll": "Cancel all selections",
+      "deleteDocsConfirm": "You are about to delete <strong>{name}</strong>. Once deleted, it cannot be restored. <br/> <br/> Do you confirm the deletion?",
+      "deleteDocsTitle": "Delete Document",
+      "selectedDocs": "the selected documents"
     }
   }
 }

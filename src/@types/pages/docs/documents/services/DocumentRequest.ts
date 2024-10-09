@@ -7,9 +7,16 @@ export interface GetDocumentRequestModel extends PaginationModel {
 }
 
 export interface AddDocumentRequestData {
-  businessType: BusinessTypeEnum
+  businessType?: BusinessTypeEnum
   documentName: string
-  sol: string
+  sol?: string
   customerName: string
-  cif: string
+  cif?: string
+}
+
+export interface UpdateDocumentRequestModel {
+  documentName: string
+  sol?: string
+  cif?: string
+  customerName?: string
 }
