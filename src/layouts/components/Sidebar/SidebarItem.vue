@@ -5,6 +5,7 @@ import { computed } from 'vue'
 import { type RouteRecordRaw } from 'vue-router'
 import SidebarItemLink from './SidebarItemLink.vue'
 import { useTheme } from '@/hooks/useTheme'
+import { useAppStore } from '@/store/modules/app'
 
 interface Props {
   item: RouteRecordRaw
@@ -15,6 +16,8 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   basePath: ''
 })
+
+const appStore = useAppStore()
 
 /** Whether to always show the root menu */
 const alwaysShowRootMenu = computed(() => props.item.meta?.alwaysShow)
@@ -76,14 +79,15 @@ const { activeThemeName } = useTheme()
         <component v-else-if="props.item.meta?.elIcon" :is="props.item.meta.elIcon" class="el-icon" />
         <span v-if="props.item.meta?.title && !isCollapse">{{ $t('router.' + props.item.meta.title) }}</span>
       </template>
-      <template v-if="props.item.children">
+      <div v-if="props.item.children" class="relative">
         <SidebarItem
           v-for="child in showingChildren"
           :key="child.path"
           :item="child"
           :base-path="resolvePath(child.path)"
         />
-      </template>
+        <div v-if="appStore.sidebar.opened" class="h-full w-1 absolute top-0 left-7 rounded-sm bg-white" />
+      </div>
     </el-sub-menu>
   </div>
 </template>
@@ -111,6 +115,10 @@ const { activeThemeName } = useTheme()
 :deep(.el-sub-menu__title) {
   color: #ffffff;
   font-weight: 500;
+}
+
+.el-menu-item[role='menuitem']:not(:has(.svg-icon)) {
+  padding-left: 56px !important;
 }
 
 .sidebar-item {
