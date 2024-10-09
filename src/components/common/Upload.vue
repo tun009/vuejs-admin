@@ -7,22 +7,23 @@
       @drop.prevent="onDrop"
       :class="{ 'is-dragover': isDragOver }"
     >
-      <p>Kéo và thả file vào đây</p>
-      <p>hoặc</p>
+      <p>{{ $t('docs.document.dragDrop') }}</p>
+      <p>{{ $t('docs.document.or') }}</p>
       <input type="file" @change="onFileChange" multiple hidden ref="fileInput" />
-      <el-button @click="selectFiles" class="w-fit min-w-96" type="primary" plain :icon="Plus"
-        >Chọn từ máy tính</el-button
-      >
-      <p class="absolute bottom-6">Các dạng file hỗ trợ: PDF, JPEG, JPG, PNG</p>
+      <el-button @click="selectFiles" class="w-fit min-w-96" type="primary" plain :icon="Plus">{{
+        $t('docs.document.selectFromDevice')
+      }}</el-button>
+      <p class="absolute bottom-6">{{ $t('docs.document.validFormat') }}</p>
     </div>
     <div v-if="files.length" class="flex-[2] flex flex-col gap-y-2 overflow-x-auto">
-      <p>Danh sách file upload</p>
+      <p>{{ $t('docs.document.uploadList') }}</p>
       <Table
         :column-configs="uploadDocumentColumnConfig"
         :data="tableFiles"
         hiddenPagination
         hiddenChecked
         height="350"
+        locales
       >
         <template #actions="{ index }">
           <el-icon :size="18" color="#e03131" class="cursor-pointer" @click="() => handleDeleteFile(index)"
@@ -42,6 +43,7 @@ import { warningNotification } from '@/utils/notification'
 import { Delete, Plus } from '@element-plus/icons-vue'
 import { computed, ref } from 'vue'
 import Table from './Table.vue'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   files: File[]
@@ -57,6 +59,8 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emits = defineEmits<Emits>()
+
+const { t } = useI18n()
 
 const isDragOver = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
@@ -92,11 +96,11 @@ const addFiles = (fileList: FileList) => {
     }
   })
   if (isInvalidFileSize) {
-    warningNotification('Dung lượng file không vượt quá 16MB!')
+    warningNotification(t('notification.description.limitSize'))
     return
   }
   if (props.files.length + fileList.length > MAX_FILE_LIMIT) {
-    warningNotification('Tổng số file không vượt quá 10!')
+    warningNotification(t('notification.description.limitQuantity'))
     return
   }
   emits('add-files', fileList)
@@ -127,7 +131,7 @@ const handleDeleteFile = (index: number) => {
 }
 </script>
 
-<style scoped>
+<style lang="css" scoped>
 .dropzone {
   border: 1px dashed #343a40;
   border-radius: 5px;

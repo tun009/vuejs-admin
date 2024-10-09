@@ -45,16 +45,16 @@ export enum DocumentStatusEnum {
 export const uploadDocumentColumnConfig: ColumnConfigModel[] = [
   {
     field: 'stt',
-    label: 'STT',
+    label: 'docs.document.stt',
     width: 60
   },
   {
     field: 'fileName',
-    label: 'Tên file'
+    label: 'docs.document.fileName'
   },
   {
     field: 'actions',
-    label: 'Actions',
+    label: 'docs.document.actions',
     width: 80
   }
 ]
