@@ -42,6 +42,11 @@
 </template>
 
 <script lang="ts" setup>
+import { Delete, Edit, Filter, Plus, Search } from '@element-plus/icons-vue'
+import { ref } from 'vue'
+
+import UploadDocuments from '../components/UploadDocuments.vue'
+
 import { PaginationModel } from '@/@types/common'
 import {
   DocumentModel,
@@ -56,9 +61,6 @@ import Input from '@/components/common/Input.vue'
 import Table from '@/components/common/Table.vue'
 import { Title } from '@/layouts/components'
 import { handleComingSoon, renderLabelByValue } from '@/utils/common'
-import { Delete, Edit, Filter, Plus, Search } from '@element-plus/icons-vue'
-import { ref } from 'vue'
-import UploadDocuments from '../components/UploadDocuments.vue'
 
 const searchQuery = ref('')
 const tableData = ref<DocumentModel[]>([])

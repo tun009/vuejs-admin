@@ -1,9 +1,11 @@
 <script lang="ts" setup>
-import { isExternal } from '@/utils/validate'
 import path from 'path-browserify'
 import { computed } from 'vue'
 import { type RouteRecordRaw } from 'vue-router'
+
 import SidebarItemLink from './SidebarItemLink.vue'
+
+import { isExternal } from '@/utils/validate'
 import { useTheme } from '@/hooks/useTheme'
 
 interface Props {

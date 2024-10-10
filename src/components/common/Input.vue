@@ -64,11 +64,11 @@ interface Emits {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: '',
   label: '',
-  type: 'text',
+  maxLength: 100,
+  modelValue: '',
   size: 'large',
-  maxLength: 100
+  type: 'text'
 })
 
 const emit = defineEmits<Emits>()

@@ -26,21 +26,21 @@ export function getUsers(params: GetUserRequestModel): Promise<GetUserResponseMo
           list: getDataWithPagination(
             Array.from({ length: 3124 }, (_, index) => ({
               id: index + 1,
-              stt: index + 1,
-              name: 'Nguyễn Quốc Thắng' + ` ${index + 1}`,
-              username: 'thang.nq',
-              role: ROLE_LIST[Math.floor(Math.random() * 3)],
               isMe: true,
+              name: 'Nguyễn Quốc Thắng' + ` ${index + 1}`,
+              role: ROLE_LIST[Math.floor(Math.random() * 3)],
               sol: 'Hội sở',
               solId: 1120,
-              status: USER_STATUS_LIST[Math.floor(Math.random() * 3)]
+              status: USER_STATUS_LIST[Math.floor(Math.random() * 3)],
+              stt: index + 1,
+              username: 'thang.nq'
             })),
             params.pageNum,
             params.pageSize
           ) as UserModel[],
-          total: 3124,
           pageNum: params.pageNum,
-          pageSize: params.pageSize
+          pageSize: params.pageSize,
+          total: 3124
         },
         message: 'Meo'
       })

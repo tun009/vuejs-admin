@@ -1,5 +1,6 @@
 import { reactive, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
+
 import { getSidebarStatus, setSidebarStatus } from '@/utils/cache/local-storage'
 import { DeviceEnum, SIDEBAR_OPENED, SIDEBAR_CLOSED } from '@/constants/app-key'
 
@@ -43,5 +44,5 @@ export const useAppStore = defineStore('app', () => {
     device.value = value
   }
 
-  return { device, sidebar, toggleSidebar, closeSidebar, toggleDevice }
+  return { closeSidebar, device, sidebar, toggleDevice, toggleSidebar }
 })

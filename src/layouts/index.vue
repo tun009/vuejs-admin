@@ -1,15 +1,17 @@
 <script lang="ts" setup>
 import { computed, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useSettingsStore } from '@/store/modules/settings'
+
 import useResize from './hooks/useResize'
-import { useWatermark } from '@/hooks/useWatermark'
-import { useDevice } from '@/hooks/useDevice'
-import { useLayoutMode } from '@/hooks/useLayoutMode'
 import LeftMode from './LeftMode.vue'
 import TopMode from './TopMode.vue'
 import LeftTopMode from './LeftTopMode.vue'
 import { Settings, RightPanel } from './components'
+
+import { useLayoutMode } from '@/hooks/useLayoutMode'
+import { useDevice } from '@/hooks/useDevice'
+import { useWatermark } from '@/hooks/useWatermark'
+import { useSettingsStore } from '@/store/modules/settings'
 import { getCssVariableValue, setCssVariableValue } from '@/utils'
 
 /** Layout responsiveness */
@@ -23,8 +25,8 @@ const { showSettings, showTagsView, showWatermark, showGreyMode, showColorWeakne
 
 const classes = computed(() => {
   return {
-    showGreyMode: showGreyMode.value,
-    showColorWeakness: showColorWeakness.value
+    showColorWeakness: showColorWeakness.value,
+    showGreyMode: showGreyMode.value
   }
 })
 

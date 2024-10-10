@@ -1,4 +1,11 @@
 <script setup lang="ts">
+import { Delete, Edit, Filter, Plus, Search, Tools } from '@element-plus/icons-vue'
+import { ref } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+
+import AddUserForm from './components/AddUserForm.vue'
+import UpdateUserForm from './components/UpdateUserForm.vue'
+
 import { PaginationModel } from '@/@types/common'
 import { UserModel, userListColumnConfigs } from '@/@types/pages/users'
 import { getUsers } from '@/api/users'
@@ -6,12 +13,7 @@ import Drawer from '@/components/common/Drawer.vue'
 import Input from '@/components/common/Input.vue'
 import Table from '@/components/common/Table.vue'
 import { Title } from '@/layouts/components'
-import { Delete, Edit, Filter, Plus, Search, Tools } from '@element-plus/icons-vue'
-import { ref } from 'vue'
-import AddUserForm from './components/AddUserForm.vue'
-import UpdateUserForm from './components/UpdateUserForm.vue'
 import { handleComingSoon } from '@/utils/common'
-import { ElMessage, ElMessageBox } from 'element-plus'
 
 defineOptions({
   name: 'Users'
@@ -43,23 +45,23 @@ const handleDeleteUser = (name: string) => {
     `Sau khi xóa thành công <strong> ${name} </strong>: <br/> Bạn không thể xem các tác vụ người dùng này đã xử lý <br/> Sau khi Xóa thành công, tài khoản này sẽ không thể khôi phục lại. <br/> <br/> Bạn xác nhận xóa người dùng này chứ?`,
     'Xóa người dùng',
     {
-      confirmButtonText: 'Xác nhận xóa',
       cancelButtonText: 'Hủy bỏ',
-      type: 'warning',
+      confirmButtonText: 'Xác nhận xóa',
       dangerouslyUseHTMLString: true,
-      draggable: true
+      draggable: true,
+      type: 'warning'
     }
   )
     .then(() => {
       ElMessage({
-        type: 'success',
-        message: 'Delete user completed'
+        message: 'Delete user completed',
+        type: 'success'
       })
     })
     .catch(() => {
       ElMessage({
-        type: 'info',
-        message: 'Delete user canceled'
+        message: 'Delete user canceled',
+        type: 'info'
       })
     })
 }
