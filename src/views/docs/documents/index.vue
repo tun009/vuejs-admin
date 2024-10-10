@@ -126,14 +126,6 @@ const handleDeleteDocument = (name?: string) => {
     t('docs.document.deleteDocsConfirm', { name: name ?? t('docs.document.selectedDocs') }),
     t('docs.document.deleteDocsTitle'),
     {
-<<<<<<< src/views/docs/documents/index.vue
-=======
-      confirmButtonText: t('button.confirmDelete'),
-      cancelButtonText: t('button.cancel_1'),
-      type: 'warning',
-      dangerouslyUseHTMLString: true,
-      draggable: true,
->>>>>>> src/views/docs/documents/index.vue
       beforeClose: (action, instance, done) => {
         if (action === 'confirm') {
           instance.confirmButtonLoading = true
@@ -147,39 +139,25 @@ const handleDeleteDocument = (name?: string) => {
         } else {
           done()
         }
-<<<<<<< src/views/docs/documents/index.vue
       },
       cancelButtonText: t('button.cancel_1'),
       confirmButtonText: t('button.confirmDelete'),
       dangerouslyUseHTMLString: true,
       draggable: true,
       type: 'warning'
-=======
-      }
->>>>>>> src/views/docs/documents/index.vue
     }
   )
     .then(() => {
       handleClearAllChecked()
       ElMessage({
-<<<<<<< src/views/docs/documents/index.vue
         message: 'Delete document completed',
         type: 'success'
-=======
-        type: 'success',
-        message: 'Delete document completed'
->>>>>>> src/views/docs/documents/index.vue
       })
     })
     .catch(() => {
       ElMessage({
-<<<<<<< src/views/docs/documents/index.vue
         message: 'Delete document canceled',
         type: 'info'
-=======
-        type: 'info',
-        message: 'Delete document canceled'
->>>>>>> src/views/docs/documents/index.vue
       })
     })
 }
