@@ -74,8 +74,6 @@
 
 <script lang="ts" setup>
 import { Delete, Edit, Filter, Plus, Search } from '@element-plus/icons-vue'
-import { ElMessageBox, ElMessage } from 'element-plus'
-import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
