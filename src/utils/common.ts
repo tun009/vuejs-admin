@@ -1,5 +1,6 @@
-import { SelectOptionModel } from '@/@types/common'
 import { ElMessageBox } from 'element-plus'
+
+import { SelectOptionModel } from '@/@types/common'
 
 export const getDataWithPagination = <T>(array: T[], pageNum: number, pageSize: number): T[] => {
   const start = pageNum * pageSize

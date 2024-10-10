@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+
 import { isArray } from '@/utils/validate'
 
 describe('isArray', () => {

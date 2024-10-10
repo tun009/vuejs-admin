@@ -15,10 +15,10 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  content: false,
   element: 'html',
-  openTips: 'Full screen',
   exitTips: 'Exit full screen',
-  content: false
+  openTips: 'Full screen'
 })
 
 // region full screen

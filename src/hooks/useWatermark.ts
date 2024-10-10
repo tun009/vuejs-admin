@@ -11,22 +11,29 @@ type DefaultConfig = typeof defaultConfig
 
 /** Default configuration */
 const defaultConfig = {
-  /** Defense (enabled by default, can prevent watermark from being deleted or hidden, but may cause performance loss) */
-  defense: true,
-  /** Text color */
-  color: '#c0c4cc',
-  /** Text transparency */
-  opacity: 0.5,
-  /** Text font size */
-  size: 16,
-  /** Text font */
-  family: 'serif',
   /** Text tilt angle */
   angle: -20,
-  /** The width of a watermark (the larger the value, the lower the watermark density) */
-  width: 300,
+
+  /** Text color */
+  color: '#c0c4cc',
+
+  /** Defense (enabled by default, can prevent watermark from being deleted or hidden, but may cause performance loss) */
+  defense: true,
+
+  /** Text font */
+  family: 'serif',
+
   /** The height of a watermark (the larger the value, the lower the watermark density) */
-  height: 200
+  height: 200,
+
+  /** Text transparency */
+  opacity: 0.5,
+
+  /** Text font size */
+  size: 16,
+
+  /** The width of a watermark (the larger the value, the lower the watermark density) */
+  width: 300
 }
 
 /** body element */
@@ -46,9 +53,9 @@ export function useWatermark(parentEl: Ref<HTMLElement | null> = bodyEl) {
   let watermarkEl: HTMLElement | null = null
   /** Observer */
   const observer: Observer = {
-    watermarkElMutationObserver: undefined,
     parentElMutationObserver: undefined,
-    parentElResizeObserver: undefined
+    parentElResizeObserver: undefined,
+    watermarkElMutationObserver: undefined
   }
 
   /** Set watermark */
@@ -79,7 +86,7 @@ export function useWatermark(parentEl: Ref<HTMLElement | null> = bodyEl) {
     watermarkEl.style.position = watermarkElPosition
     watermarkEl.style.zIndex = '99999'
     const { clientWidth, clientHeight } = parentEl.value!
-    updateWatermarkEl({ width: clientWidth, height: clientHeight })
+    updateWatermarkEl({ height: clientHeight, width: clientWidth })
     // Set the watermark container to relative positioning
     parentEl.value!.style.position = parentElPosition
     // Add the watermark element to the watermark container
@@ -219,7 +226,7 @@ export function useWatermark(parentEl: Ref<HTMLElement | null> = bodyEl) {
     // Update the size of the entire watermark when the size of the targetNode element changes
     const resizeCallback = debounce(() => {
       const { clientWidth, clientHeight } = targetNode
-      updateWatermarkEl({ width: clientWidth, height: clientHeight })
+      updateWatermarkEl({ height: clientHeight, width: clientWidth })
     }, 500)
     // Create an observer instance and pass in a callback
     observer.parentElResizeObserver = new ResizeObserver(resizeCallback)
@@ -232,5 +239,5 @@ export function useWatermark(parentEl: Ref<HTMLElement | null> = bodyEl) {
     clearWatermark()
   })
 
-  return { setWatermark, clearWatermark }
+  return { clearWatermark, setWatermark }
 }

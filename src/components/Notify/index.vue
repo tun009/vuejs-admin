@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Bell } from '@element-plus/icons-vue'
+
 import NotifyList from './NotifyList.vue'
 import { type ListItem, notifyData, messageData, todoData } from './data'
 
@@ -27,21 +28,21 @@ const activeName = ref<TabName>('notification')
 const data = ref<DataItem[]>([
   // Notification data
   {
+    list: notifyData,
     name: 'notification',
-    type: 'primary',
-    list: notifyData
+    type: 'primary'
   },
   // Message data
   {
+    list: messageData,
     name: 'message',
-    type: 'danger',
-    list: messageData
+    type: 'danger'
   },
   // To-do data
   {
+    list: todoData,
     name: 'toDo',
-    type: 'warning',
-    list: todoData
+    type: 'warning'
   }
 ])
 

@@ -1,4 +1,5 @@
 import { ref, watchEffect } from 'vue'
+
 import { getActiveThemeName, setActiveThemeName } from '@/utils/cache/local-storage'
 
 const DEFAULT_THEME_NAME = 'dark'
@@ -15,12 +16,12 @@ interface ThemeList {
 /** Theme list */
 const themeList: ThemeList[] = [
   {
-    title: 'Light',
-    name: 'normal'
+    name: 'normal',
+    title: 'Light'
   },
   {
-    title: 'Dark',
-    name: DEFAULT_THEME_NAME
+    name: DEFAULT_THEME_NAME,
+    title: 'Dark'
   }
   // {
   //   title: 'Dark-blue',
@@ -53,5 +54,5 @@ const initTheme = () => {
 
 /** Theme hook */
 export function useTheme() {
-  return { themeList, activeThemeName, initTheme, setTheme }
+  return { activeThemeName, initTheme, setTheme, themeList }
 }

@@ -1,4 +1,5 @@
 import { computed } from 'vue'
+
 import { useSettingsStore } from '@/store/modules/settings'
 import { LayoutModeEnum } from '@/constants/app-key'
 
@@ -12,5 +13,5 @@ const setLayoutMode = (mode: LayoutModeEnum) => {
 }
 
 export function useLayoutMode() {
-  return { isLeft, isTop, isLeftTop, setLayoutMode }
+  return { isLeft, isLeftTop, isTop, setLayoutMode }
 }

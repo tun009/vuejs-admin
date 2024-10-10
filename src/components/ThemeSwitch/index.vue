@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { type ThemeName, useTheme } from '@/hooks/useTheme'
 import { MagicStick } from '@element-plus/icons-vue'
+
+import { type ThemeName, useTheme } from '@/hooks/useTheme'
 
 const { themeList, activeThemeName, setTheme } = useTheme()
 

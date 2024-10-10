@@ -38,24 +38,24 @@ export interface UpdateUserRequestModel extends AddUserRequestModel {
 /**********************/
 export const roleSelectOptions: SelectOptionModel[] = [
   {
+    description: 'Quyền hạn cao nhất và cũng có thể thực hiện các chức năng tương tự như Checker',
     label: 'Admin',
-    value: 'ADMIN',
-    description: 'Quyền hạn cao nhất và cũng có thể thực hiện các chức năng tương tự như Checker'
+    value: 'ADMIN'
   },
   {
+    description: 'Xác nhận và phê duyệt Bộ chứng từ',
     label: 'Checker',
-    value: 'CHECKER',
-    description: 'Xác nhận và phê duyệt Bộ chứng từ'
+    value: 'CHECKER'
   },
   {
+    description: 'Upload chứng từ, kiểm tra Bộ chứng từ sau khi hệ thống xử lý thành công',
     label: 'Marker',
-    value: 'MARKER',
-    description: 'Upload chứng từ, kiểm tra Bộ chứng từ sau khi hệ thống xử lý thành công'
+    value: 'MARKER'
   },
   {
+    description: 'Chỉ có quyền xem',
     label: 'Viewer',
-    value: 'VIEWER',
-    description: 'Chỉ có quyền xem'
+    value: 'VIEWER'
   }
 ]
 

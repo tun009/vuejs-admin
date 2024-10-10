@@ -1,7 +1,9 @@
 import { ref, watchEffect } from 'vue'
 import { defineStore } from 'pinia'
-import { useSettingsStore } from './settings'
 import { type RouteLocationNormalized } from 'vue-router'
+
+import { useSettingsStore } from './settings'
+
 import { getVisitedViews, setVisitedViews, getCachedViews, setCachedViews } from '@/utils/cache/local-storage'
 
 export type TagView = Partial<RouteLocationNormalized>
@@ -81,15 +83,15 @@ export const useTagsViewStore = defineStore('tags-view', () => {
   //#endregion
 
   return {
-    visitedViews,
-    cachedViews,
-    addVisitedView,
     addCachedView,
-    delVisitedView,
-    delCachedView,
-    delOthersVisitedViews,
-    delOthersCachedViews,
+    addVisitedView,
+    cachedViews,
+    delAllCachedViews,
     delAllVisitedViews,
-    delAllCachedViews
+    delCachedView,
+    delOthersCachedViews,
+    delOthersVisitedViews,
+    delVisitedView,
+    visitedViews
   }
 })

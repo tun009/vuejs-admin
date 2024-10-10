@@ -1,5 +1,5 @@
 {
-  "Vue3 Hook 代码结构一键生成": {
+  "Vue3 Hook": {
     "prefix": "Vue3 Hook",
     "body": [
       "import { ref } from \"vue\"\n",

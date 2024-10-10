@@ -1,14 +1,16 @@
 <script lang="ts" setup>
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+
+import Logo from '../Logo/index.vue'
+import SidebarItem from './SidebarItem.vue'
+
 import { useDevice } from '@/hooks/useDevice'
 import { useLayoutMode } from '@/hooks/useLayoutMode'
 import { useAppStore } from '@/store/modules/app'
 import { usePermissionStore } from '@/store/modules/permission'
 import { useSettingsStore } from '@/store/modules/settings'
 import { getCssVariableValue } from '@/utils'
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
-import Logo from '../Logo/index.vue'
-import SidebarItem from './SidebarItem.vue'
 
 const v3SidebarMenuBgColor = getCssVariableValue('--prefix-sidebar-menu-bg-color')
 const v3SidebarMenuTextColor = getCssVariableValue('--prefix-sidebar-menu-text-color')

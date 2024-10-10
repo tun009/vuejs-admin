@@ -1,12 +1,13 @@
 <script setup lang="ts">
+import { ElMessage, FormRules } from 'element-plus'
+import { reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
 import { UpdateDocumentRequestModel } from '@/@types/pages/docs/documents/services/DocumentRequest'
 import Input from '@/components/common/Input.vue'
 import Select from '@/components/common/Select.vue'
 import { MOCK_SOLS } from '@/mocks/user'
 import { requireRule } from '@/utils/validate'
-import { ElMessage, FormRules } from 'element-plus'
-import { reactive, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
 
 interface Emits {
   (event: 'close'): void
@@ -22,16 +23,16 @@ const { t } = useI18n()
 const loading = ref(false)
 const upadateDocumentFormRef = ref()
 const upadateDocumentFormData: UpdateDocumentRequestModel = reactive({
-  documentName: '',
   cif: '',
   customerName: '',
+  documentName: '',
   sol: ''
 })
 
 const upadateDocumentFormRules: FormRules = {
-  documentName: [requireRule()],
   cif: [],
   customerName: [],
+  documentName: [requireRule()],
   sol: []
 }
 
@@ -42,9 +43,9 @@ const handleUpdateDocument = () => {
       setTimeout(() => {
         loading.value = false
         ElMessage({
+          message: t('notification.description.updateSuccess'),
           showClose: true,
-          type: 'success',
-          message: t('notification.description.updateSuccess')
+          type: 'success'
         })
         handleClose()
       }, 5000)

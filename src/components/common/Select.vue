@@ -40,8 +40,9 @@
 </template>
 
 <script setup lang="ts">
-import { SelectOptionModel } from '@/@types/common'
 import { Check } from '@element-plus/icons-vue'
+
+import { SelectOptionModel } from '@/@types/common'
 
 interface Props {
   modelValue: any

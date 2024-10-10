@@ -1,11 +1,12 @@
-import { request } from '@/api/service'
 import type * as Login from './types/login'
+
+import { request } from '@/api/service'
 
 /** Get login verification code */
 export function getLoginCodeApi() {
   return request<Login.LoginCodeResponseData>({
-    url: 'login/code',
-    method: 'get'
+    method: 'get',
+    url: 'login/code'
   })
 }
 
@@ -46,8 +47,8 @@ export function getUserInfoApi(): Promise<Login.UserInfoResponseData> {
       return resolve({
         code: 0,
         data: {
-          username: 'admin',
-          roles: ['admin']
+          roles: ['admin'],
+          username: 'admin'
         },
         message: 'Meo'
       })

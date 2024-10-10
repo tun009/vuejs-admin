@@ -1,5 +1,7 @@
 import { type RouteRecordRaw, createRouter } from 'vue-router'
+
 import { history, flatMultiLevelRoutes } from './helper'
+
 import routeSettings from '@/config/route'
 import {
   DASHBOARD_PAGE,
@@ -28,152 +30,152 @@ const Layouts = () => import('@/layouts/index.vue')
 export const constantRoutes: RouteRecordRaw[] = [
   // Public router
   {
-    path: REDIRECT_PAGE,
+    children: [
+      {
+        component: () => import('@/views/redirect/index.vue'),
+        path: ':path(.*)'
+      }
+    ],
     component: Layouts,
     meta: {
       hidden: true
     },
-    children: [
-      {
-        path: ':path(.*)',
-        component: () => import('@/views/redirect/index.vue')
-      }
-    ]
+    path: REDIRECT_PAGE
   },
   {
-    path: _403_PAGE,
     component: () => import('@/views/error-page/403.vue'),
     meta: {
       hidden: true
-    }
+    },
+    path: _403_PAGE
   },
   {
-    path: _404_PAGE,
+    alias: '/:pathMatch(.*)*',
     component: () => import('@/views/error-page/404.vue'),
     meta: {
       hidden: true
     },
-    alias: '/:pathMatch(.*)*'
+    path: _404_PAGE
   },
   {
-    path: LOGIN_PAGE,
     component: () => import('@/views/login/index.vue'),
     meta: {
       hidden: true
-    }
+    },
+    path: LOGIN_PAGE
   },
 
   // Private router
   {
-    path: MAIN_PAGE,
-    component: Layouts,
-    redirect: DASHBOARD_PAGE,
     children: [
       {
-        path: DASHBOARD_PAGE,
         component: () => import('@/views/dashboard/index.vue'),
-        name: 'Dashboard',
         meta: {
-          title: 'dashboard',
+          affix: true,
           svgIcon: 'ic-home',
-          affix: true
-        }
+          title: 'dashboard'
+        },
+        name: 'Dashboard',
+        path: DASHBOARD_PAGE
       },
       {
-        path: PROFILE_PAGE,
         component: () => import('@/views/profile/index.vue'),
-        name: 'Profile',
         meta: {
-          title: 'profile',
           hidden: true,
-          keepAlive: true
-        }
+          keepAlive: true,
+          title: 'profile'
+        },
+        name: 'Profile',
+        path: PROFILE_PAGE
       }
-    ]
+    ],
+    component: Layouts,
+    path: MAIN_PAGE,
+    redirect: DASHBOARD_PAGE
   },
   {
-    path: DOCS_PAGE,
-    component: Layouts,
-    redirect: DOCS_PAGE + DOCUMENT_PAGE,
-    meta: {
-      title: 'document',
-      svgIcon: 'ic-model-group'
-    },
     children: [
       {
-        path: DOCS_PAGE + DOCUMENT_PAGE,
         component: () => import('@/views/docs/documents/index.vue'),
+        meta: {
+          keepAlive: true,
+          title: 'dataProcessing'
+        },
         name: 'Data procesing',
-        meta: {
-          title: 'dataProcessing',
-          keepAlive: true
-        }
+        path: DOCS_PAGE + DOCUMENT_PAGE
       },
       {
-        path: DOCS_PAGE + REPORTS_PAGE,
         component: () => import('@/views/docs/reports/index.vue'),
-        name: 'Reports',
         meta: {
-          title: 'reports',
-          keepAlive: true
-        }
+          keepAlive: true,
+          title: 'reports'
+        },
+        name: 'Reports',
+        path: DOCS_PAGE + REPORTS_PAGE
       },
       {
-        path: DOCS_PAGE + SETTINGS_PAGE,
         component: () => import('@/views/docs/settings/index.vue'),
-        name: 'Settings',
         meta: {
-          title: 'settings',
-          keepAlive: true
-        }
+          keepAlive: true,
+          title: 'settings'
+        },
+        name: 'Settings',
+        path: DOCS_PAGE + SETTINGS_PAGE
       }
-    ]
+    ],
+    component: Layouts,
+    meta: {
+      svgIcon: 'ic-model-group',
+      title: 'document'
+    },
+    path: DOCS_PAGE,
+    redirect: DOCS_PAGE + DOCUMENT_PAGE
   },
   {
-    path: USERS_PAGE,
+    children: [
+      {
+        component: () => import('@/views/users/index.vue'),
+        meta: {
+          keepAlive: true,
+          svgIcon: 'ic-user-group',
+          title: 'users'
+        },
+        name: 'Users',
+        path: 'list'
+      }
+    ],
     component: Layouts,
     name: 'Users',
-    children: [
-      {
-        path: 'list',
-        component: () => import('@/views/users/index.vue'),
-        name: 'Users',
-        meta: {
-          title: 'users',
-          svgIcon: 'ic-user-group',
-          keepAlive: true
-        }
-      }
-    ]
+    path: USERS_PAGE
   },
   {
-    path: RULES_PAGE,
-    redirect: RULES_PAGE + UCP_ISBP_PAGE,
-    component: Layouts,
-    meta: {
-      title: 'rules',
-      svgIcon: 'ic-round-rule'
-    },
     children: [
       {
-        path: RULES_PAGE + UCP_ISBP_PAGE,
         component: () => import('@/views/rules/ucp-isbp/index.vue'),
-        name: 'Rule UCP/ISBP',
         meta: {
-          title: 'ruleUI',
-          keepAlive: true
-        }
+          keepAlive: true,
+          title: 'ruleUI'
+        },
+        name: 'Rule UCP/ISBP',
+        path: RULES_PAGE + UCP_ISBP_PAGE
       },
       {
-        path: RULES_PAGE + INVALID_CATEGORY_PAGE,
         component: () => import('@/views/rules/invalid-category/index.vue'),
-        name: 'Invalid category',
         meta: {
-          title: 'invalidCategory',
-          keepAlive: true
-        }
+          keepAlive: true,
+          title: 'invalidCategory'
+        },
+        name: 'Invalid category',
+        path: RULES_PAGE + INVALID_CATEGORY_PAGE
       }
-    ]
+    ],
+    component: Layouts,
+    meta: {
+      svgIcon: 'ic-round-rule',
+      title: 'rules'
+    },
+    path: RULES_PAGE,
+    redirect: RULES_PAGE + UCP_ISBP_PAGE
   }
 ]
 

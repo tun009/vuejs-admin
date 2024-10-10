@@ -73,6 +73,14 @@
 </template>
 
 <script lang="ts" setup>
+import { Delete, Edit, Filter, Plus, Search } from '@element-plus/icons-vue'
+import { ref } from 'vue'
+import { ElMessageBox, ElMessage } from 'element-plus'
+import { useI18n } from 'vue-i18n'
+
+import UploadDocuments from '../components/UploadDocuments.vue'
+import UpdateDocument from './components/UpdateDocument.vue'
+
 import { PaginationModel } from '@/@types/common'
 import {
   DocumentModel,
@@ -87,13 +95,7 @@ import Input from '@/components/common/Input.vue'
 import Table from '@/components/common/Table.vue'
 import { Title } from '@/layouts/components'
 import { handleComingSoon, renderLabelByValue } from '@/utils/common'
-import { Delete, Edit, Filter, Plus, Search } from '@element-plus/icons-vue'
-import { ref } from 'vue'
-import UploadDocuments from '../components/UploadDocuments.vue'
 import Drawer from '@/components/common/Drawer.vue'
-import UpdateDocument from './components/UpdateDocument.vue'
-import { ElMessageBox, ElMessage } from 'element-plus'
-import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
@@ -124,11 +126,14 @@ const handleDeleteDocument = (name?: string) => {
     t('docs.document.deleteDocsConfirm', { name: name ?? t('docs.document.selectedDocs') }),
     t('docs.document.deleteDocsTitle'),
     {
+<<<<<<< src/views/docs/documents/index.vue
+=======
       confirmButtonText: t('button.confirmDelete'),
       cancelButtonText: t('button.cancel_1'),
       type: 'warning',
       dangerouslyUseHTMLString: true,
       draggable: true,
+>>>>>>> src/views/docs/documents/index.vue
       beforeClose: (action, instance, done) => {
         if (action === 'confirm') {
           instance.confirmButtonLoading = true
@@ -142,20 +147,39 @@ const handleDeleteDocument = (name?: string) => {
         } else {
           done()
         }
+<<<<<<< src/views/docs/documents/index.vue
+      },
+      cancelButtonText: t('button.cancel_1'),
+      confirmButtonText: t('button.confirmDelete'),
+      dangerouslyUseHTMLString: true,
+      draggable: true,
+      type: 'warning'
+=======
       }
+>>>>>>> src/views/docs/documents/index.vue
     }
   )
     .then(() => {
       handleClearAllChecked()
       ElMessage({
+<<<<<<< src/views/docs/documents/index.vue
+        message: 'Delete document completed',
+        type: 'success'
+=======
         type: 'success',
         message: 'Delete document completed'
+>>>>>>> src/views/docs/documents/index.vue
       })
     })
     .catch(() => {
       ElMessage({
+<<<<<<< src/views/docs/documents/index.vue
+        message: 'Delete document canceled',
+        type: 'info'
+=======
         type: 'info',
         message: 'Delete document canceled'
+>>>>>>> src/views/docs/documents/index.vue
       })
     })
 }

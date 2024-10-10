@@ -1,12 +1,14 @@
 <script setup lang="ts">
+import { ElMessage, FormInstance, FormRules } from 'element-plus'
+import { reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import ChangePassword from './ChangePassword.vue'
+
 import Drawer from '@/components/common/Drawer.vue'
 import Input from '@/components/common/Input.vue'
 import { Title } from '@/layouts/components'
 import { phoneNumberRule, requireRule } from '@/utils/validate'
-import { ElMessage, FormInstance, FormRules } from 'element-plus'
-import { reactive, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-import ChangePassword from './ChangePassword.vue'
 import { ChangeProfileRequestModel } from '@/@types/pages/profile/services/ProfileRequest'
 
 defineOptions({
@@ -22,15 +24,15 @@ const openDrawer = ref(false)
 const changePasswordRef = ref<InstanceType<typeof ChangePassword>>()
 
 const changeProfileFormData: ChangeProfileRequestModel = reactive({
-  username: 'admin',
   name: 'HuyDV',
-  phoneNumber: '0963648426'
+  phoneNumber: '0963648426',
+  username: 'admin'
 })
 
 const changeProfileFormRules: FormRules = {
   name: [requireRule()],
-  username: [],
-  phoneNumber: [requireRule(), phoneNumberRule()]
+  phoneNumber: [requireRule(), phoneNumberRule()],
+  username: []
 }
 
 const handleUpdateProfile = () => {
@@ -40,9 +42,9 @@ const handleUpdateProfile = () => {
       setTimeout(() => {
         loading.value = false
         ElMessage({
+          message: t('notification.description.updateSuccess'),
           showClose: true,
-          type: 'success',
-          message: t('notification.description.updateSuccess')
+          type: 'success'
         })
         isEdit.value = false
       }, 5000)
