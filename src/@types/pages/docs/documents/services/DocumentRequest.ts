@@ -1,6 +1,5 @@
-import { BusinessTypeEnum } from '..'
-
 import { PaginationModel } from '@/@types/common'
+import { BusinessTypeEnum } from '..'
 
 export interface GetDocumentRequestModel extends PaginationModel {
   searchQuery: string

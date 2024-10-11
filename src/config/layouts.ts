@@ -20,21 +20,21 @@ export interface LayoutSettings {
 }
 
 const defaultSettings: LayoutSettings = {
-  cacheTagsView: false,
-  fixedHeader: true,
-  language: 'vi',
   layoutMode: LayoutModeEnum.Left,
-  showColorWeakness: false,
-  showFooter: true,
-  showGreyMode: false,
-  showLogo: true,
-  showNotify: true,
-  showScreenfull: true,
-  showSearchMenu: true,
   showSettings: true,
   showTagsView: true,
+  fixedHeader: true,
+  showFooter: true,
+  showLogo: true,
+  showNotify: true,
   showThemeSwitch: true,
-  showWatermark: true
+  showScreenfull: true,
+  showSearchMenu: true,
+  cacheTagsView: false,
+  showWatermark: true,
+  showGreyMode: false,
+  showColorWeakness: false,
+  language: 'vi'
 }
 
 export const layoutSettings: LayoutSettings = { ...defaultSettings, ...getConfigLayout() }

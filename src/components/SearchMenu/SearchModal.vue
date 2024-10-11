@@ -1,16 +1,14 @@
 <script lang="ts" setup>
 import { computed, ref, shallowRef } from 'vue'
 import { type RouteRecordName, type RouteRecordRaw, useRouter } from 'vue-router'
-import { ElMessage, ElScrollbar } from 'element-plus'
-import { cloneDeep, debounce } from 'lodash-es'
-import { useI18n } from 'vue-i18n'
-
+import { usePermissionStore } from '@/store/modules/permission'
 import SearchResult from './SearchResult.vue'
 import SearchFooter from './SearchFooter.vue'
-
-import { usePermissionStore } from '@/store/modules/permission'
+import { ElMessage, ElScrollbar } from 'element-plus'
+import { cloneDeep, debounce } from 'lodash-es'
 import { useDevice } from '@/hooks/useDevice'
 import { isExternal } from '@/utils/validate'
+import { useI18n } from 'vue-i18n'
 import { removeAccents } from '@/utils'
 
 /** Control modal visibility */

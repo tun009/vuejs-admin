@@ -1,14 +1,12 @@
 <script lang="ts" setup>
 import { getCurrentInstance, onMounted, ref, watch } from 'vue'
 import { type RouteLocationNormalizedLoaded, type RouteRecordRaw, RouterLink, useRoute, useRouter } from 'vue-router'
-import path from 'path-browserify'
-import { Close } from '@element-plus/icons-vue'
-
-import ScrollPane from './ScrollPane.vue'
-
 import { type TagView, useTagsViewStore } from '@/store/modules/tags-view'
 import { usePermissionStore } from '@/store/modules/permission'
 import { useRouteListener } from '@/hooks/useRouteListener'
+import path from 'path-browserify'
+import ScrollPane from './ScrollPane.vue'
+import { Close } from '@element-plus/icons-vue'
 
 const instance = getCurrentInstance()
 const router = useRouter()
@@ -49,9 +47,9 @@ const filterAffixTags = (routes: RouteRecordRaw[], basePath = '/') => {
       const tagPath = path.resolve(basePath, route.path)
       tags.push({
         fullPath: tagPath,
-        meta: { ...route.meta },
+        path: tagPath,
         name: route.name,
-        path: tagPath
+        meta: { ...route.meta }
       })
     }
     if (route.children) {

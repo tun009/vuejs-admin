@@ -8,8 +8,8 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  className: '',
-  prefix: 'icon'
+  prefix: 'icon',
+  className: ''
 })
 
 const symbolId = computed(() => `#${props.prefix}-${props.name}`)

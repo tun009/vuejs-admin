@@ -62,7 +62,6 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
 import type { TableInstance } from 'element-plus'
-
 import { ColumnConfigModel, PaginationModel } from '@/@types/common'
 import { PAGE_SIZE_LIST_DEFAULT } from '@/constants/common'
 

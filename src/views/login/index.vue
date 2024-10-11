@@ -1,19 +1,17 @@
 <script lang="ts" setup>
+import { type LoginRequestData } from '@/api/login/types/login'
+import { useUserStore } from '@/store/modules/user'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { Lock, User } from '@element-plus/icons-vue'
-import { useI18n } from 'vue-i18n'
-
 import Background from './components/Background.vue'
-
-import { type LoginRequestData } from '@/api/login/types/login'
-import { useUserStore } from '@/store/modules/user'
+import { Lock, User } from '@element-plus/icons-vue'
 import ThemeSwitch from '@/components/ThemeSwitch/index.vue'
 import LanguageSwitch from '@/components/LanguageSwitch/index.vue'
 import Input from '@/components/common/Input.vue'
 import { DASHBOARD_PAGE } from '@/constants/router'
 import { limitLengthRule, requireRule } from '@/utils/validate'
+import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
 const loginFormRef = ref<FormInstance | null>(null)
@@ -21,15 +19,15 @@ const { t } = useI18n()
 
 const loading = ref(false)
 const loginFormData: LoginRequestData = reactive({
-  code: '',
+  username: 'admin',
   password: '12345678',
-  username: 'admin'
+  code: ''
 })
 
 const loginFormRules: FormRules = {
-  code: [],
-  password: [requireRule(), limitLengthRule({ max: 16, min: 8 })],
-  username: [requireRule()]
+  username: [requireRule()],
+  password: [requireRule(), limitLengthRule({ min: 8, max: 16 })],
+  code: []
 }
 const handleLogin = () => {
   loginFormRef.value?.validate((valid: boolean, fields) => {
@@ -39,9 +37,9 @@ const handleLogin = () => {
         .login(loginFormData)
         .then(() => {
           ElMessage({
-            message: t('notification.description.loginSuccess'),
             showClose: true,
-            type: 'success'
+            type: 'success',
+            message: t('notification.description.loginSuccess')
           })
           router.push({ path: DASHBOARD_PAGE })
         })

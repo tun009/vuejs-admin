@@ -18,28 +18,28 @@ export function getDocuments(params: GetDocumentRequestModel): Promise<GetDocume
         data: {
           list: getDataWithPagination<DocumentModel>(
             Array.from({ length: 3124 }, (_, index) => ({
-              amount: '100.000 USD',
-              businessType: BUSINESS_TYPE_LIST[Math.floor(Math.random() * 2)],
-              cif: 'CIF Meo',
-              completionDate: '01-01-2025',
-              createdAt: '01-01-2025',
-              createdBy: '01-01-2025',
-              customerName: 'Meo ' + `${index + 1}`,
-              documentName: '1012ILSEIB210069_NGUY....',
-              handler: HANDLER_LIST[Math.floor(Math.random() * 2)],
               id: index + 1,
+              stt: index + 1,
+              documentName: '1012ILSEIB210069_NGUY....',
+              businessType: BUSINESS_TYPE_LIST[Math.floor(Math.random() * 2)],
+              status: DOCUMENT_STATUS_LIST[Math.floor(Math.random() * 14)],
+              handler: HANDLER_LIST[Math.floor(Math.random() * 2)],
               processingStep: PROCESSING_STEP_LIST[Math.floor(Math.random() * 4)],
               result: DOCUMENT_RESULT_LIST[Math.floor(Math.random() * 2)],
+              completionDate: '01-01-2025',
               sol: 'SOL Meo',
-              status: DOCUMENT_STATUS_LIST[Math.floor(Math.random() * 14)],
-              stt: index + 1
+              cif: 'CIF Meo',
+              customerName: 'Meo ' + `${index + 1}`,
+              amount: '100.000 USD',
+              createdAt: '01-01-2025',
+              createdBy: '01-01-2025'
             })),
             params.pageNum,
             params.pageSize
           ),
+          total: 3124,
           pageNum: params.pageNum,
-          pageSize: params.pageSize,
-          total: 3124
+          pageSize: params.pageSize
         },
         message: 'Meo'
       })

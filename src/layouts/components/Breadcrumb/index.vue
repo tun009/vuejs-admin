@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { type RouteLocationMatched, useRoute, useRouter } from 'vue-router'
-import { compile } from 'path-to-regexp'
-
 import { useRouteListener } from '@/hooks/useRouteListener'
+import { compile } from 'path-to-regexp'
 
 const route = useRoute()
 const router = useRouter()

@@ -11,14 +11,14 @@ import { describe, expect, it } from 'vitest'
  */
 
 const author1 = {
-  email: '939630029@qq.com',
   name: 'pany',
+  email: '939630029@qq.com',
   url: 'https://github.com/pany-ang'
 }
 
 const author2 = {
-  email: '939630029@qq.com',
   name: 'pany',
+  email: '939630029@qq.com',
   url: 'https://github.com/pany-ang'
 }
 

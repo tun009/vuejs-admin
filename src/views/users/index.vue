@@ -1,10 +1,4 @@
 <script setup lang="ts">
-import { Delete, Edit, Filter, Plus, Search, Tools } from '@element-plus/icons-vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { ref } from 'vue'
-
-import AddUserForm from './components/AddUserForm.vue'
-import UpdateUserForm from './components/UpdateUserForm.vue'
 import ConfigRoleUserForm from './components/ConfigRoleUserForm.vue'
 
 import { PaginationModel } from '@/@types/common'
@@ -14,7 +8,12 @@ import Drawer from '@/components/common/Drawer.vue'
 import Input from '@/components/common/Input.vue'
 import Table from '@/components/common/Table.vue'
 import { Title } from '@/layouts/components'
+import { Delete, Edit, Filter, Plus, Search, Tools } from '@element-plus/icons-vue'
+import { ref } from 'vue'
+import AddUserForm from './components/AddUserForm.vue'
+import UpdateUserForm from './components/UpdateUserForm.vue'
 import { handleComingSoon } from '@/utils/common'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 defineOptions({
   name: 'Users'
@@ -48,23 +47,23 @@ const handleDeleteUser = (name: string) => {
     `Sau khi xóa thành công <strong> ${name} </strong>: <br/> Bạn không thể xem các tác vụ người dùng này đã xử lý <br/> Sau khi Xóa thành công, tài khoản này sẽ không thể khôi phục lại. <br/> <br/> Bạn xác nhận xóa người dùng này chứ?`,
     'Xóa người dùng',
     {
-      cancelButtonText: 'Hủy bỏ',
       confirmButtonText: 'Xác nhận xóa',
+      cancelButtonText: 'Hủy bỏ',
+      type: 'warning',
       dangerouslyUseHTMLString: true,
-      draggable: true,
-      type: 'warning'
+      draggable: true
     }
   )
     .then(() => {
       ElMessage({
-        message: 'Delete user completed',
-        type: 'success'
+        type: 'success',
+        message: 'Delete user completed'
       })
     })
     .catch(() => {
       ElMessage({
-        message: 'Delete user canceled',
-        type: 'info'
+        type: 'info',
+        message: 'Delete user canceled'
       })
     })
 }

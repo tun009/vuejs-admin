@@ -1,10 +1,8 @@
 import { ref } from 'vue'
+import store from '@/store'
 import { defineStore } from 'pinia'
-
 import { useTagsViewStore } from './tags-view'
 import { useSettingsStore } from './settings'
-
-import store from '@/store'
 import { getToken, removeToken, setToken } from '@/utils/cache/cookies'
 import { resetRouter } from '@/router'
 import { loginApi, getUserInfoApi } from '@/api/login'
@@ -21,7 +19,7 @@ export const useUserStore = defineStore('user', () => {
 
   /** Login */
   const login = async ({ username, password }: LoginRequestData) => {
-    const { data } = await loginApi({ password, username })
+    const { data } = await loginApi({ username, password })
     setToken(data.token)
     token.value = data.token
   }
@@ -62,7 +60,7 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  return { changeRoles, getInfo, login, logout, resetToken, roles, token, username }
+  return { token, roles, username, login, getInfo, changeRoles, logout, resetToken }
 })
 
 /** For use outside of setup */
