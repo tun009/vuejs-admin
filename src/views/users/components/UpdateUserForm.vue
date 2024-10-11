@@ -36,6 +36,11 @@ const updateUserFormRules: FormRules = {
   role: [requireRule('change')]
 }
 
+const handleClose = () => {
+  emits('close')
+  updateUserFormRef.value.resetFields()
+}
+
 const handleUpdateUser = () => {
   updateUserFormRef.value?.validate((valid: boolean, fields: any) => {
     if (valid) {
@@ -53,11 +58,6 @@ const handleUpdateUser = () => {
       console.error('Form validation failed', fields)
     }
   })
-}
-
-const handleClose = () => {
-  emits('close')
-  updateUserFormRef.value.resetFields()
 }
 
 defineExpose<Exposes>({

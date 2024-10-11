@@ -1,3 +1,31 @@
+<script setup lang="ts">
+import { Check } from '@element-plus/icons-vue'
+
+import { SelectOptionModel } from '@/@types/common'
+
+interface Props {
+  modelValue: any
+  options: SelectOptionModel[]
+  placeholder?: string
+  label?: string
+  readonly?: boolean
+  required?: boolean
+  name?: string
+  isRow?: boolean
+}
+
+interface Emits {
+  (event: 'update:modelValue', value: string): void
+}
+
+defineProps<Props>()
+
+const emit = defineEmits<Emits>()
+const updateValue = (value: string) => {
+  emit('update:modelValue', value)
+}
+</script>
+
 <template>
   <div
     class="flex flex-col mb-2 text-sm input-component"
@@ -38,33 +66,6 @@
     </el-form-item>
   </div>
 </template>
-
-<script setup lang="ts">
-import { SelectOptionModel } from '@/@types/common'
-import { Check } from '@element-plus/icons-vue'
-
-interface Props {
-  modelValue: any
-  options: SelectOptionModel[]
-  placeholder?: string
-  label?: string
-  readonly?: boolean
-  required?: boolean
-  name?: string
-  isRow?: boolean
-}
-
-interface Emits {
-  (event: 'update:modelValue', value: string): void
-}
-
-defineProps<Props>()
-
-const emit = defineEmits<Emits>()
-const updateValue = (value: string) => {
-  emit('update:modelValue', value)
-}
-</script>
 
 <style lang="scss" scoped>
 .el-select-dropdown__item {

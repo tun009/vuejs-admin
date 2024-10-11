@@ -20,7 +20,6 @@ defineOptions({
 })
 
 const addUserFormRef = ref<InstanceType<typeof AddUserForm>>()
-const updateUserFormRef = ref<InstanceType<typeof UpdateUserForm>>()
 const configRoleUserFormRef = ref<InstanceType<typeof ConfigRoleUserForm>>()
 
 const openAddUserDrawer = ref(false)
@@ -131,13 +130,13 @@ const handleDeleteUser = (name: string) => {
 
   <Drawer v-if="openAddUserDrawer" title="user.addUser.title" v-model="openAddUserDrawer">
     <template #default>
-      <AddUserForm ref="addUserFormRef" @close="openAddUserDrawer = false" />
+      <AddUserForm @close="openAddUserDrawer = false" />
     </template>
   </Drawer>
 
   <Drawer v-if="openUpdateUserDrawer" v-model="openUpdateUserDrawer" title="user.updateUser.title">
     <template #default>
-      <UpdateUserForm ref="updateUserFormRef" @close="openUpdateUserDrawer = false" />
+      <UpdateUserForm @close="openUpdateUserDrawer = false" />
     </template>
   </Drawer>
 </template>

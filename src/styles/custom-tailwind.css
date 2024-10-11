@@ -1,0 +1,12 @@
+/* Tailwind */
+@tailwind utilities;
+
+@layer utilities {
+  .c-text-value {
+    @apply text-[#495057] dark:text-[#c1c1c1] font-normal;
+  }
+
+  .c-text-title {
+    @apply c-text-value font-bold;
+  }
+}

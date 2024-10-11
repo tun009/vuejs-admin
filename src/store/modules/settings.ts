@@ -13,6 +13,17 @@ type SettingsStoreKey = keyof SettingsStore
 export const useSettingsStore = defineStore('settings', () => {
   /** State object */
   const state = {} as SettingsStore
+
+  /** Get the data to be cached: Convert the state object to the settings object */
+  const _getCacheData = () => {
+    const settings = {} as LayoutSettings
+    for (const [key, value] of Object.entries(state)) {
+      // @ts-ignore
+      settings[key as SettingsStoreKey] = value.value
+    }
+    return settings
+  }
+
   // Traverse the key-value pairs of the layoutSettings object
   for (const [key, value] of Object.entries(layoutSettings)) {
     // Use type assertions to specify the type of key, wrap value in a ref function, and create a responsive variable
@@ -25,15 +36,6 @@ export const useSettingsStore = defineStore('settings', () => {
       const settings = _getCacheData()
       setConfigLayout(settings)
     })
-  }
-  /** Get the data to be cached: Convert the state object to the settings object */
-  const _getCacheData = () => {
-    const settings = {} as LayoutSettings
-    for (const [key, value] of Object.entries(state)) {
-      // @ts-ignore
-      settings[key as SettingsStoreKey] = value.value
-    }
-    return settings
   }
 
   return state
