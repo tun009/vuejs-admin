@@ -1,8 +1,7 @@
 import { ref } from 'vue'
+import store from '@/store'
 import { defineStore } from 'pinia'
 import { type RouteRecordRaw } from 'vue-router'
-
-import store from '@/store'
 import { constantRoutes, dynamicRoutes } from '@/router'
 import { flatMultiLevelRoutes } from '@/router/helper'
 import routeSettings from '@/config/route'
@@ -47,7 +46,7 @@ export const usePermissionStore = defineStore('permission', () => {
     routes.value = constantRoutes.concat(accessedRoutes)
     addRoutes.value = routeSettings.thirdLevelRouteCache ? flatMultiLevelRoutes(accessedRoutes) : accessedRoutes
   }
-  return { addRoutes, routes, setAllRoutes, setRoutes }
+  return { routes, addRoutes, setRoutes, setAllRoutes }
 }) /** Use outside setup */
 export function usePermissionStoreHook() {
   return usePermissionStore(store)

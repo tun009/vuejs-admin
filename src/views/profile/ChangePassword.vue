@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { ElMessage, FormRules } from 'element-plus'
-import { reactive, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-
 import { ChangePasswordRequestModel } from '@/@types/pages/profile/services/ProfileRequest'
 import Input from '@/components/common/Input.vue'
 import { passwordRule, requireRule } from '@/utils/validate'
+import { ElMessage, FormRules } from 'element-plus'
+import { reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 interface Emits {
   (event: 'close'): void
@@ -21,9 +20,9 @@ const { t } = useI18n()
 const loading = ref(false)
 const changePasswordFormRef = ref()
 const changePasswordFormData: ChangePasswordRequestModel = reactive({
-  confirmPassword: '',
+  password: '',
   newPassword: '',
-  password: ''
+  confirmPassword: ''
 })
 const validateConfirmPass = (_rule: any, value: any, callback: (error?: Error) => void) => {
   if (value !== changePasswordFormData.newPassword) {
@@ -34,9 +33,9 @@ const validateConfirmPass = (_rule: any, value: any, callback: (error?: Error) =
 }
 
 const changePasswordFormRules: FormRules = {
-  confirmPassword: [requireRule(), passwordRule(), { trigger: 'blur', validator: validateConfirmPass }],
+  password: [requireRule()],
   newPassword: [requireRule(), passwordRule()],
-  password: [requireRule()]
+  confirmPassword: [requireRule(), passwordRule(), { validator: validateConfirmPass, trigger: 'blur' }]
 }
 
 const handleChangePassword = () => {
@@ -46,9 +45,9 @@ const handleChangePassword = () => {
       setTimeout(() => {
         loading.value = false
         ElMessage({
-          message: t('notification.description.updateSuccess'),
           showClose: true,
-          type: 'success'
+          type: 'success',
+          message: t('notification.description.updateSuccess')
         })
         handleClose()
       }, 5000)

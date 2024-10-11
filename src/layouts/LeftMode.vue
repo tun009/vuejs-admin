@@ -1,11 +1,9 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
-
-import { AppMain, NavigationBar, Sidebar, TagsView } from './components'
-
 import { useAppStore } from '@/store/modules/app'
 import { useSettingsStore } from '@/store/modules/settings'
+import { AppMain, NavigationBar, Sidebar, TagsView } from './components'
 import { useDevice } from '@/hooks/useDevice'
 
 const { isMobile } = useDevice()
@@ -17,9 +15,9 @@ const { showTagsView, fixedHeader } = storeToRefs(settingsStore)
 const layoutClasses = computed(() => {
   return {
     hideSidebar: !appStore.sidebar.opened,
-    mobile: isMobile.value,
     openSidebar: appStore.sidebar.opened,
-    withoutAnimation: appStore.sidebar.withoutAnimation
+    withoutAnimation: appStore.sidebar.withoutAnimation,
+    mobile: isMobile.value
   }
 })
 

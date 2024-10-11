@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
-
 import { useUserStore } from '@/store/modules/user'
 
 const userStore = useUserStore()

@@ -1,27 +1,26 @@
 import { ElNotification } from 'element-plus'
-
 import i18n from '@/locales'
 
 export const successNotification = (message: string) => {
   ElNotification({
-    message,
     title: i18n.global.t('notification.title.success'),
-    type: 'success'
+    type: 'success',
+    message
   })
 }
 
 export const warningNotification = (message: string) => {
   ElNotification({
-    message,
     title: i18n.global.t('notification.title.warning'),
-    type: 'warning'
+    type: 'warning',
+    message
   })
 }
 
 export const errorNotification = (message: string) => {
   ElNotification({
-    message,
     title: i18n.global.t('notification.title.error'),
-    type: 'error'
+    type: 'error',
+    message
   })
 }

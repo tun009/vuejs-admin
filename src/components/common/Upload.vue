@@ -36,16 +36,15 @@
 </template>
 
 <script setup lang="ts">
-import { Delete, Plus } from '@element-plus/icons-vue'
-import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-
-import Table from './Table.vue'
 
 import { uploadDocumentColumnConfig } from '@/@types/common'
 import { MAX_FILE_LIMIT, MAX_FILE_SIZE } from '@/constants/common'
 import { truncateFileName } from '@/utils/common'
 import { warningNotification } from '@/utils/notification'
+import { Delete, Plus } from '@element-plus/icons-vue'
+import { computed, ref } from 'vue'
+import Table from './Table.vue'
 
 interface Props {
   files: File[]
@@ -118,9 +117,9 @@ const tableFiles = computed(() => {
   for (const file of props.files) {
     const fileName = truncateFileName(file.name)
     dataTable.push({
+      stt,
       fileName,
-      size: file.size,
-      stt
+      size: file.size
     })
     stt++
   }

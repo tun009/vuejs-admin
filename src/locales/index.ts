@@ -3,7 +3,6 @@ import { createI18n } from 'vue-i18n'
 // User defined lang
 import enLocale from './lang/en.json'
 import viLocale from './lang/vi.json'
-
 // import { useSettingsStore } from "@/store/modules/settings"
 import { getConfigLayout } from '@/utils/cache/local-storage'
 
@@ -18,6 +17,7 @@ const messages = {
 
 export const getLocale = () => {
   const settingsStore = getConfigLayout()
+  console.log(settingsStore?.language)
   return settingsStore?.language ?? 'vi'
 }
 
