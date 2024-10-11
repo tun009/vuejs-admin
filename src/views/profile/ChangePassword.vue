@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ChangePasswordRequestData } from '@/@types/pages/profile'
-import Input from '@/components/common/Input.vue'
-import { passwordRule, requireRule } from '@/utils/validate'
 import { ElMessage, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+
+import { ChangePasswordRequestModel } from '@/@types/pages/profile/services/ProfileRequest'
+import Input from '@/components/common/Input.vue'
+import { passwordRule, requireRule } from '@/utils/validate'
 
 interface Emits {
   (event: 'close'): void
@@ -19,10 +20,10 @@ const emits = defineEmits<Emits>()
 const { t } = useI18n()
 const loading = ref(false)
 const changePasswordFormRef = ref()
-const changePasswordFormData: ChangePasswordRequestData = reactive({
-  password: '',
+const changePasswordFormData: ChangePasswordRequestModel = reactive({
+  confirmPassword: '',
   newPassword: '',
-  confirmPassword: ''
+  password: ''
 })
 const validateConfirmPass = (_rule: any, value: any, callback: (error?: Error) => void) => {
   if (value !== changePasswordFormData.newPassword) {
@@ -33,9 +34,9 @@ const validateConfirmPass = (_rule: any, value: any, callback: (error?: Error) =
 }
 
 const changePasswordFormRules: FormRules = {
-  password: [requireRule()],
+  confirmPassword: [requireRule(), passwordRule(), { trigger: 'blur', validator: validateConfirmPass }],
   newPassword: [requireRule(), passwordRule()],
-  confirmPassword: [requireRule(), passwordRule(), { validator: validateConfirmPass, trigger: 'blur' }]
+  password: [requireRule()]
 }
 
 const handleChangePassword = () => {
@@ -45,9 +46,9 @@ const handleChangePassword = () => {
       setTimeout(() => {
         loading.value = false
         ElMessage({
+          message: t('notification.description.updateSuccess'),
           showClose: true,
-          type: 'success',
-          message: t('notification.description.updateSuccess')
+          type: 'success'
         })
         handleClose()
       }, 5000)

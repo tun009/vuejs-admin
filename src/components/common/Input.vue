@@ -1,11 +1,17 @@
 <template>
-  <div class="flex flex-col mb-2 text-sm input-component">
+  <div
+    class="flex flex-col mb-2 text-sm input-component"
+    :class="{
+      '!flex-row justify-center gap-4': isRow
+    }"
+  >
     <div class="flex flex-row items-center justify-between">
       <label
         v-if="label"
         class="mb-1"
         :class="{
-          'text-gray-600': readonly
+          'text-gray-600': readonly,
+          'text-right w-40 mb-5': isRow
         }"
         ><span v-if="required && !readonly" class="text-red-600 mr-1">*</span>{{ $t(label) }}</label
       >
@@ -14,7 +20,7 @@
       }}</span>
     </div>
     <span v-if="readonly" class="text-[18px] leading-[24px] font-normal">{{ modelValue }}</span>
-    <el-form-item :prop="name" v-else>
+    <el-form-item :prop="name" v-else class="w-full">
       <el-input
         v-bind="props"
         :model-value="modelValue"
@@ -50,6 +56,7 @@ interface Props {
   readonly?: boolean
   customClass?: string
   noForm?: boolean
+  isRow?: boolean
 }
 
 interface Emits {
@@ -57,11 +64,11 @@ interface Emits {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: '',
   label: '',
-  type: 'text',
+  maxLength: 100,
+  modelValue: '',
   size: 'large',
-  maxLength: 100
+  type: 'text'
 })
 
 const emit = defineEmits<Emits>()

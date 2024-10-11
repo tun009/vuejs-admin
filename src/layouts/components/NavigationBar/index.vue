@@ -1,13 +1,15 @@
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { useAppStore } from '@/store/modules/app'
-import { useSettingsStore } from '@/store/modules/settings'
-import { useUserStore } from '@/store/modules/user'
 import { UserFilled } from '@element-plus/icons-vue'
+
 import Hamburger from '../Hamburger/index.vue'
 import Breadcrumb from '../Breadcrumb/index.vue'
 import Sidebar from '../Sidebar/index.vue'
+
+import { useUserStore } from '@/store/modules/user'
+import { useSettingsStore } from '@/store/modules/settings'
+import { useAppStore } from '@/store/modules/app'
 import Notify from '@/components/Notify/index.vue'
 import ThemeSwitch from '@/components/ThemeSwitch/index.vue'
 import Screenfull from '@/components/Screenfull/index.vue'
@@ -15,7 +17,7 @@ import SearchMenu from '@/components/SearchMenu/index.vue'
 import LanguageSwitch from '@/components/LanguageSwitch/index.vue'
 import { useDevice } from '@/hooks/useDevice'
 import { useLayoutMode } from '@/hooks/useLayoutMode'
-import { LOGIN_PAGE, PROFILE_PAGE } from '@/utils/constants/router'
+import { LOGIN_PAGE, PROFILE_PAGE } from '@/constants/router'
 
 const { isMobile } = useDevice()
 const { isTop } = useLayoutMode()
@@ -105,6 +107,7 @@ const goToProfile = () => {
     min-width: 0px;
     :deep(.el-menu) {
       background-color: transparent;
+      // background-color: var(--el-menu-bg-color);
     }
     :deep(.el-sub-menu) {
       &.is-active {

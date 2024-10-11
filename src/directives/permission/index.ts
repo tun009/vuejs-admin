@@ -1,4 +1,5 @@
 import { type Directive } from 'vue'
+
 import { useUserStoreHook } from '@/store/modules/user'
 
 /** Permission instructions are similar to the permission judgment function checkPermission */

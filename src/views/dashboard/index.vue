@@ -70,7 +70,7 @@
           class="table-container pt-2"
           :columnConfigs="fieldChangedListColumnConfigs"
           :data="fieldsChangedData"
-          hiddenSelection
+          hiddenChecked
           hiddenPagination
         >
           <template #field="{ row }">
@@ -90,7 +90,7 @@
         <Table
           :columnConfigs="SOLListColumnConfigs"
           :data="SOLData"
-          hiddenSelection
+          hiddenChecked
           hiddenPagination
           class="table-container"
         />
@@ -101,10 +101,12 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
-import Table from '@/components/common/Table.vue'
 import { InfoFilled } from '@element-plus/icons-vue'
 import VueApexCharts from 'vue3-apexcharts'
+
 import DoughnutChart from './components/DoughnutChart.vue'
+
+import Table from '@/components/common/Table.vue'
 import {
   fieldChangedModel,
   fieldChangedListColumnConfigs,

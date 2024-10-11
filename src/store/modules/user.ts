@@ -1,8 +1,10 @@
 import { ref } from 'vue'
-import store from '@/store'
 import { defineStore } from 'pinia'
+
 import { useTagsViewStore } from './tags-view'
 import { useSettingsStore } from './settings'
+
+import store from '@/store'
 import { getToken, removeToken, setToken } from '@/utils/cache/cookies'
 import { resetRouter } from '@/router'
 import { loginApi, getUserInfoApi } from '@/api/login'
@@ -19,7 +21,7 @@ export const useUserStore = defineStore('user', () => {
 
   /** Login */
   const login = async ({ username, password }: LoginRequestData) => {
-    const { data } = await loginApi({ username, password })
+    const { data } = await loginApi({ password, username })
     setToken(data.token)
     token.value = data.token
   }
@@ -38,7 +40,7 @@ export const useUserStore = defineStore('user', () => {
     // Refresh the page instead of re-login
     window.location.reload()
   }
-  /** 登出 */
+  /** Sign out */
   const logout = () => {
     removeToken()
     token.value = ''
@@ -46,13 +48,13 @@ export const useUserStore = defineStore('user', () => {
     resetRouter()
     _resetTagsView()
   }
-  /** 重置 Token */
+  /** Reset Token */
   const resetToken = () => {
     removeToken()
     token.value = ''
     roles.value = []
   }
-  /** 重置 Visited Views 和 Cached Views */
+  /** Reset Visited Views and Cached Views */
   const _resetTagsView = () => {
     if (!settingsStore.cacheTagsView) {
       tagsViewStore.delAllVisitedViews()
@@ -60,7 +62,7 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  return { token, roles, username, login, getInfo, changeRoles, logout, resetToken }
+  return { changeRoles, getInfo, login, logout, resetToken, roles, token, username }
 })
 
 /** For use outside of setup */

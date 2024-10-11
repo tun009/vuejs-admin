@@ -1,14 +1,20 @@
 {
   "notification": {
     "title": {
-      "joinWeb": "Xin chào"
+      "joinWeb": "Xin chào",
+      "success": "Thành công",
+      "warning": "Cảnh báo",
+      "error": "Thất bại"
     },
     "description": {
       "joinWeb": "Chào mừng bạn đến với web hiệu chỉnh, nghe nhạc tại đây!",
       "loginSuccess": "Đăng nhập thành công",
       "updateSuccess": "Cập nhật thành công",
       "createSuccess": "Tạo mới thành công",
-      "confirmCloseDrawer": "Bạn chắc chắn thoát khỏi?"
+      "confirmClose": "Bạn chắc chắn thoát khỏi?",
+      "limitSize": "Dung lượng file không vượt quá 16MB!",
+      "limitQuantity": "Tổng số file không vượt quá 10!",
+      "emptyFiles": "Vui lòng chọn ít nhất 1 file!"
     }
   },
   "layouts": {
@@ -49,7 +55,11 @@
     "update": "Cập nhật",
     "cancel": "Hủy",
     "roleSetting": "Cấu hình vai trò",
-    "add": "Thêm"
+    "add": "Thêm",
+    "confirm": "Xác nhận",
+    "confirmDelete": "Xác nhận xóa",
+    "cancel_1": "Hủy bỏ",
+    "delete": "Xóa"
   },
   "login": {
     "title": "Đăng nhập",
@@ -102,7 +112,9 @@
       "limit": "{ length }/{ maxLength } ký tự"
     },
     "table": {
-      "totalRecords": "Tổng số: <span class='text-total-records'>{ total }</span> bản ghi"
+      "totalRecords": "Tổng số: <span class='text-total-records'>{ total }</span> bản ghi",
+      "showing": "Đang hiển thị",
+      "results": "kết quả"
     }
   },
   "user": {
@@ -112,7 +124,7 @@
       "name": "Họ tên",
       "username": "Tên đăng nhập",
       "password": "Mật khẩu (mặc định)",
-      "sql": "Chọn SQL",
+      "sol": "Chọn SOL",
       "role": "Vai trò",
       "enterName": "Nhập họ tên",
       "enterUsername": "Nhập tên đăng nhập"
@@ -125,5 +137,48 @@
     },
     "filter": "Bộ lọc",
     "searchByName": "Tìm kiếm theo tên"
+  },
+  "docs": {
+    "title": "Danh sách bộ chứng từ",
+    "document": {
+      "searchByName": "Tìm kiếm theo tên",
+      "filter": "Bộ lọc",
+      "stt": "Stt",
+      "documentName": "Tên bộ chứng từ",
+      "businessType": "Loại nghiệp vụ",
+      "status": "Trạng thái",
+      "processingStep": "Bước xử lý",
+      "sol": "SOL",
+      "cif": "CIF",
+      "handler": "Người xử lý",
+      "result": "Kết quả",
+      "completionDate": "Ngày hoàn thành",
+      "customerName": "Tên khách hàng",
+      "amount": "Số tiền",
+      "createdAt": "Ngày upload",
+      "createdBy": "Người upload",
+      "actions": "Hành động",
+      "addDocument": "Thêm bộ chứng từ",
+      "cifCode": "Mã CIF",
+      "selectSOL": "Chọn SOL",
+      "uploadNote": "Tối đa 10 file, mỗi file tối đa 16MB",
+      "dragDrop": "Kéo và thả file vào đây",
+      "or": "hoặc",
+      "selectFromDevice": "Chọn từ máy tính",
+      "validFormat": "Các dạng file hỗ trợ: PDF, JPEG, JPG, PNG",
+      "uploadList": "Danh sách file upload",
+      "fileName": "Tên file",
+      "enterName": "Nhập tên",
+      "updateDocument": "Cập nhật thông tin",
+      "solDes": "SOL (đơn vị kinh doanh)",
+      "enterCifCode": "Nhập mã CIF",
+      "enterCustomerName": "Nhập tên khách hàng",
+      "selected": "Đã chọn",
+      "items": "bản ghi",
+      "cancelAll": "Hủy chọn tất cả",
+      "deleteDocsConfirm": "Bạn đang thực hiện xóa <strong> { name } </strong>. Sau khi xóa sẽ không thể khôi phục lại. <br/> <br/> Bạn xác nhận xóa chứ?",
+      "deleteDocsTitle": "Xóa bộ chứng từ",
+      "selectedDocs": "các bộ chứng từ đã được chọn"
+    }
   }
 }

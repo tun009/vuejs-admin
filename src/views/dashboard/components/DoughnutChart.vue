@@ -12,7 +12,6 @@ import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from 'chart.js'
 ChartJS.register(Title, Tooltip, Legend, ArcElement)
 
 ChartJS.register({
-  id: 'customCenterText',
   afterDraw: (chart: any) => {
     const { ctx, chartArea } = chart
     const text = chart.options.plugins.customCenterText.text
@@ -32,7 +31,8 @@ ChartJS.register({
       )
       ctx.restore()
     }
-  }
+  },
+  id: 'customCenterText'
 })
 
 const props = defineProps<{
@@ -42,29 +42,38 @@ const props = defineProps<{
 }>()
 
 const chartData = computed(() => ({
-  labels: props.labels,
   datasets: [
     {
       backgroundColor: props.bgcolor,
-      data: props.share_percentage,
+      borderColor: '#777',
       borderWidth: 0,
-      borderColor: '#777'
+      data: props.share_percentage
     }
-  ]
+  ],
+  labels: props.labels
 }))
 
 const chartOptions = computed(() => ({
-  responsive: true,
-  maintainAspectRatio: false,
   aspectRatio: 1,
   cutout: '70%',
+  maintainAspectRatio: false,
   plugins: {
+    customCenterText: {
+      color: '#495057',
+
+      fontFamily: 'Montserrat',
+
+      fontSize: '15',
+
+      fontWeight: '600',
+      //   text: `Tổng ${((props.share_percentage[0] / props.share_percentage.reduce((a, b) => a + b, 0)) * 100).toFixed(0)}%`,
+      text: `90.0%`
+    },
     legend: {
       display: false,
       position: 'bottom'
     },
     tooltip: {
-      enabled: false,
       callbacks: {
         label: (tooltipItem: any) => {
           const label = tooltipItem.label || ''
@@ -72,17 +81,11 @@ const chartOptions = computed(() => ({
           const percentage = ((value / props.share_percentage.reduce((a, b) => a + b, 0)) * 100).toFixed(2)
           return `${label}: ${value} (${percentage}%)`
         }
-      }
-    },
-    customCenterText: {
-      //   text: `Tổng ${((props.share_percentage[0] / props.share_percentage.reduce((a, b) => a + b, 0)) * 100).toFixed(0)}%`,
-      text: `90.0%`,
-      color: '#495057',
-      fontSize: '15',
-      fontWeight: '600',
-      fontFamily: 'Montserrat'
+      },
+      enabled: false
     }
-  }
+  },
+  responsive: true
 }))
 </script>
 

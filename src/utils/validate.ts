@@ -1,3 +1,5 @@
+import { useI18n } from 'vue-i18n'
+
 import {
   regexDomain,
   regexEmail,
@@ -11,9 +13,7 @@ import {
   regexUrl,
   regexUrlPort,
   regexVersion
-} from './constants/regex'
-
-import { useI18n } from 'vue-i18n'
+} from '../constants/regex'
 
 /** Determine whether it is an array */
 export const isArray = (arg: unknown) => {
@@ -93,20 +93,20 @@ export const isIPv4 = (ip: string) => {
 
 export const requireRule = (trigger: 'change' | 'blur' = 'blur') => {
   const { t } = useI18n()
-  return { required: true, message: t('validate.required'), trigger }
+  return { message: t('validate.required'), required: true, trigger }
 }
 
 export const phoneNumberRule = () => {
   const { t } = useI18n()
-  return { pattern: regexPhoneNumber, message: t('validate.phoneNumber'), trigger: 'blur' }
+  return { message: t('validate.phoneNumber'), pattern: regexPhoneNumber, trigger: 'blur' }
 }
 
 export const limitLengthRule = ({ min, max }: { min: number; max: number }) => {
   const { t } = useI18n()
-  return { max, min, message: t('validate.limit', { min, max }), trigger: 'blur' }
+  return { max, message: t('validate.limit', { max, min }), min, trigger: 'blur' }
 }
 
 export const passwordRule = () => {
   const { t } = useI18n()
-  return { pattern: regexPassword, message: t('validate.password'), trigger: 'blur' }
+  return { message: t('validate.password'), pattern: regexPassword, trigger: 'blur' }
 }

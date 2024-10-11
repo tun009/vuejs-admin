@@ -1,4 +1,4 @@
-import { SelectOptionModel } from '@/@types/common'
+import { ColumnConfigModel, SelectOptionModel } from '@/@types/common'
 
 export enum RoleEnum {
   ADMIN = 'ADMIN',
@@ -19,15 +19,15 @@ export interface UserModel {
   username: string
   role: RoleEnum
   isMe?: boolean
-  sql: string
-  sqlId: number
+  sol: string
+  solId: number
   status: UserStatusEnum
 }
 
 export interface AddUserRequestModel {
   name: string
   username: string
-  sql: string
+  sol: string
   role: RoleEnum
 }
 
@@ -38,28 +38,28 @@ export interface UpdateUserRequestModel extends AddUserRequestModel {
 /**********************/
 export const roleSelectOptions: SelectOptionModel[] = [
   {
+    description: 'Quyền hạn cao nhất và cũng có thể thực hiện các chức năng tương tự như Checker',
     label: 'Admin',
-    value: 'ADMIN',
-    description: 'Quyền hạn cao nhất và cũng có thể thực hiện các chức năng tương tự như Checker'
+    value: 'ADMIN'
   },
   {
+    description: 'Xác nhận và phê duyệt Bộ chứng từ',
     label: 'Checker',
-    value: 'CHECKER',
-    description: 'Xác nhận và phê duyệt Bộ chứng từ'
+    value: 'CHECKER'
   },
   {
+    description: 'Upload chứng từ, kiểm tra Bộ chứng từ sau khi hệ thống xử lý thành công',
     label: 'Marker',
-    value: 'MARKER',
-    description: 'Upload chứng từ, kiểm tra Bộ chứng từ sau khi hệ thống xử lý thành công'
+    value: 'MARKER'
   },
   {
+    description: 'Chỉ có quyền xem',
     label: 'Viewer',
-    value: 'VIEWER',
-    description: 'Chỉ có quyền xem'
+    value: 'VIEWER'
   }
 ]
 
-export const userListColumnConfigs = [
+export const userListColumnConfigs: ColumnConfigModel[] = [
   {
     field: 'stt',
     label: 'Stt'
@@ -73,8 +73,8 @@ export const userListColumnConfigs = [
     label: 'Role'
   },
   {
-    field: 'sql',
-    label: 'Sql'
+    field: 'sol',
+    label: 'SOL'
   },
   {
     field: 'status',

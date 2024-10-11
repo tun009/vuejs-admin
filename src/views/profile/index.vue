@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { ChangeProfileRequestData } from '@/@types/pages/profile'
+import { ElMessage, FormInstance, FormRules } from 'element-plus'
+import { reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import ChangePassword from './ChangePassword.vue'
+
 import Drawer from '@/components/common/Drawer.vue'
 import Input from '@/components/common/Input.vue'
 import { Title } from '@/layouts/components'
 import { phoneNumberRule, requireRule } from '@/utils/validate'
-import { ElMessage, FormInstance, FormRules } from 'element-plus'
-import { reactive, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-import ChangePassword from './ChangePassword.vue'
+import { ChangeProfileRequestModel } from '@/@types/pages/profile/services/ProfileRequest'
 
 defineOptions({
   name: 'Profile'
@@ -18,19 +20,19 @@ const { t } = useI18n()
 const changeProfileFormRef = ref<FormInstance | null>(null)
 const loading = ref(false)
 const isEdit = ref(false)
-const changePasswordDrawerRef = ref<InstanceType<typeof Drawer>>()
+const openDrawer = ref(false)
 const changePasswordRef = ref<InstanceType<typeof ChangePassword>>()
 
-const changeProfileFormData: ChangeProfileRequestData = reactive({
-  username: 'admin',
+const changeProfileFormData: ChangeProfileRequestModel = reactive({
   name: 'HuyDV',
-  phoneNumber: '0963648426'
+  phoneNumber: '0963648426',
+  username: 'admin'
 })
 
 const changeProfileFormRules: FormRules = {
   name: [requireRule()],
-  username: [],
-  phoneNumber: [requireRule(), phoneNumberRule()]
+  phoneNumber: [requireRule(), phoneNumberRule()],
+  username: []
 }
 
 const handleUpdateProfile = () => {
@@ -40,9 +42,9 @@ const handleUpdateProfile = () => {
       setTimeout(() => {
         loading.value = false
         ElMessage({
+          message: t('notification.description.updateSuccess'),
           showClose: true,
-          type: 'success',
-          message: t('notification.description.updateSuccess')
+          type: 'success'
         })
         isEdit.value = false
       }, 5000)
@@ -50,10 +52,6 @@ const handleUpdateProfile = () => {
       console.error('Form validation failed', fields)
     }
   })
-}
-
-const handleCloseDrawer = () => {
-  changePasswordRef.value?.handleClose()
 }
 </script>
 
@@ -95,16 +93,11 @@ const handleCloseDrawer = () => {
         />
         <div class="flex flex-row items-center justify-between" v-if="!isEdit">
           <Input label="profile.password" readonly model-value="*********" />
-          <Drawer
-            title="profile.changePassword"
-            :text-button="$t('profile.changePassword')"
-            ref="changePasswordDrawerRef"
-            @close="handleCloseDrawer"
-          >
+          <Drawer title="profile.changePassword" :text-button="$t('profile.changePassword')" v-model="openDrawer">
             <template #default>
               <div class="mt-3 flex flex-col gap-5">
                 <el-text>{{ $t('profile.changePasswordDes') + '*&^%#@!' }}</el-text>
-                <ChangePassword ref="changePasswordRef" @close="changePasswordDrawerRef?.closeDrawer" />
+                <ChangePassword ref="changePasswordRef" @close="openDrawer = false" />
               </div>
             </template>
           </Drawer>

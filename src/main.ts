@@ -1,5 +1,6 @@
 // core
 import { createApp } from 'vue'
+
 import App from '@/App.vue'
 import store from '@/store'
 import router from '@/router'
@@ -12,8 +13,6 @@ import { loadDirectives } from '@/directives'
 import 'normalize.css'
 import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
-import 'vxe-table/lib/style.css'
-import 'vxe-table-plugin-element/dist/style.css'
 import '@/styles/index.scss'
 import '@/styles/tailwind.css'
 

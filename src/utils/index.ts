@@ -1,7 +1,9 @@
 import dayjs from 'dayjs'
+
+import { formatYYYYMMDDHHmmss } from '../constants/date'
+import { regexAccents1, regexAccents2, regexAccents3 } from '../constants/regex'
+
 import { removeConfigLayout } from '@/utils/cache/local-storage'
-import { formatYYYYMMDDHHmmss } from './constants/date'
-import { regexAccents1, regexAccents2, regexAccents3 } from './constants/regex'
 
 /** Format time */
 export const formatDateTime = (time: string | number | Date) => {

@@ -42,63 +42,63 @@ export const SOLListColumnConfigs = [
   }
 ]
 export const chartOptionsSumary = {
-  labels: ['Đã tải lên', 'Đang xử lý', 'Đã kiểm tra', 'Đã phê duyệt', 'Từ chối', 'Lỗi'],
   chart: {
-    type: 'donut',
-    width: '300px',
     height: '300px',
     sparkline: {
       enabled: true
-    }
-  },
-  plotOptions: {
-    pie: {
-      customScale: 0.6,
-      donut: {
-        size: '40%',
-        background: 'transparent'
-      }
-    }
+    },
+    type: 'donut',
+    width: '300px'
   },
   dataLabels: {
     enabled: true,
+    formatter: (val: number) => `${Math.floor(val)}%`,
     style: {
       fontSize: '14px'
-    },
-    formatter: (val: number) => `${Math.floor(val)}%`
+    }
   },
   fill: {
     colors: ['#ced4da', '#fab005', '#1971c2', '#0ca678', '#e03131', '#a61e4d']
   },
+  labels: ['Đã tải lên', 'Đang xử lý', 'Đã kiểm tra', 'Đã phê duyệt', 'Từ chối', 'Lỗi'],
   legend: {
-    show: true,
-    offsetY: 20,
     formatter: (seriesName: string, opts: any) => {
       return `${seriesName}: ${opts.w.globals.series[opts.seriesIndex]}`
     },
     labels: {
       style: {
-        fontSize: '18px',
-        colors: ['#fab005']
+        colors: ['#fab005'],
+        fontSize: '18px'
+      }
+    },
+    offsetY: 20,
+    show: true
+  },
+  plotOptions: {
+    pie: {
+      customScale: 0.6,
+      donut: {
+        background: 'transparent',
+        size: '40%'
       }
     }
   }
 }
 export const optionsFieldChanged = [
   {
-    value: '-1',
-    label: 'Tất cả'
+    label: 'Tất cả',
+    value: '-1'
   },
   {
-    value: 'buyer_adress',
-    label: 'Invoice'
+    label: 'Invoice',
+    value: 'buyer_adress'
   },
   {
-    value: 'additional_conditions',
-    label: 'Letter of credit'
+    label: 'Letter of credit',
+    value: 'additional_conditions'
   },
   {
-    value: 'description',
-    label: 'Bill of landing'
+    label: 'Bill of landing',
+    value: 'description'
   }
 ]

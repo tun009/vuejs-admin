@@ -1,4 +1,5 @@
 import { type App } from 'vue'
+
 import { permission } from './permission'
 
 /** Mount custom instructions */

@@ -1,22 +1,29 @@
 <template>
-  <div class="flex flex-col mb-2 text-sm input-component">
+  <div
+    class="flex flex-col mb-2 text-sm input-component"
+    :class="{
+      '!flex-row justify-center gap-4': isRow
+    }"
+  >
     <div class="flex flex-row items-center justify-between">
       <label
         v-if="label"
         class="mb-1"
         :class="{
-          'text-gray-600': readonly
+          'text-gray-600': readonly,
+          'w-40 text-right mb-5': isRow
         }"
         ><span v-if="required && !readonly" class="text-red-600 mr-1">*</span>{{ $t(label) }}</label
       >
     </div>
-    <el-form-item :prop="name">
+    <el-form-item :prop="name" class="w-full">
       <el-select
         :model-value="modelValue"
         :placeholder="placeholder"
         size="large"
         @update:model-value="updateValue"
         :disabled="readonly"
+        class="w-full"
       >
         <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
           <div class="flex flex-row gap-2">
@@ -33,17 +40,19 @@
 </template>
 
 <script setup lang="ts">
-import { SelectOptionModel } from '@/@types/common'
 import { Check } from '@element-plus/icons-vue'
 
+import { SelectOptionModel } from '@/@types/common'
+
 interface Props {
-  modelValue: string
+  modelValue: any
   options: SelectOptionModel[]
   placeholder?: string
   label?: string
   readonly?: boolean
   required?: boolean
   name?: string
+  isRow?: boolean
 }
 
 interface Emits {

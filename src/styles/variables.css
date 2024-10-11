@@ -3,6 +3,9 @@
 :root {
   --el-color-primary: #005d98;
   --el-dialog-padding-primary: 0px;
+  --el-menu-bg-color: #005d98;
+  --el-menu-text-color: #ffffff;
+  --el-checkbox-bg-color: #141414;
   /** Body */
   --prefix-body-text-color: var(--el-text-color-primary);
   --prefix-body-bg-color: var(--el-bg-color-page);

@@ -19,15 +19,16 @@
 </template>
 
 <script setup lang="ts">
-import { useSettingsStore } from '@/store/modules/settings'
-import { TLanguage } from 'types/common'
 import { reactive, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import { useSettingsStore } from '@/store/modules/settings'
+import { TLanguage } from '@/@types/common'
+
 defineProps({
   color: {
-    type: String,
-    default: '#666'
+    default: '#666',
+    type: String
   }
 })
 
@@ -36,14 +37,14 @@ const { locale } = useI18n()
 const settingsStore = useSettingsStore()
 const languages = reactive([
   {
+    flag: 'flag-vi',
     name: 'Vietnamese',
-    value: 'vi' as TLanguage,
-    flag: 'flag-vi'
+    value: 'vi' as TLanguage
   },
   {
+    flag: 'flag-en',
     name: 'English',
-    value: 'en' as TLanguage,
-    flag: 'flag-en'
+    value: 'en' as TLanguage
   }
 ])
 

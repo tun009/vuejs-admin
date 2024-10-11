@@ -10,38 +10,18 @@ import svgLoader from 'vite-svg-loader'
 export default ({ mode }: ConfigEnv): UserConfigExport => {
   const viteEnv = loadEnv(mode, process.cwd()) as ImportMetaEnv
   const { VITE_PUBLIC_PATH } = viteEnv
+  // eslint-disable-next-line no-console
+  console.log(VITE_PUBLIC_PATH)
   return {
-    /** Modify base according to actual situation when packaging */
-    base: VITE_PUBLIC_PATH,
-    resolve: {
-      alias: {
-        /** The @ symbol points to the src directory */
-        '@': resolve(__dirname, './src')
-      }
-    },
-    server: {
-      /** Set host: true to use Network to access the project by IP */
-      host: true, // host: "0.0.0.0"
-      /** Port number */
-      port: 8080,
-      /** Whether to open the browser automatically */
-      open: false,
-      /** Cross-domain settings allowed */
-      cors: true,
-      /** Whether to exit directly when the port is occupied */
-      strictPort: false,
-      /** Warm up common files to increase the initial page loading speed */
-      warmup: {
-        clientFiles: ['./src/layouts/**/*.vue']
-      }
-    },
     build: {
-      /** Issue a warning when the size of a single chunk file exceeds 2048KB */
-      chunkSizeWarningLimit: 2048,
-      /** Disable gzip compressed size reporting */
-      reportCompressedSize: false,
       /** Static resource directory after packaging */
       assetsDir: 'static',
+
+      /** Issue a warning when the size of a single chunk file exceeds 2048KB */
+      chunkSizeWarningLimit: 2048,
+
+      /** Disable gzip compressed size reporting */
+      reportCompressedSize: false,
       rollupOptions: {
         output: {
           /**
@@ -50,25 +30,28 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
            * 2. If you don't want to customize the chunk splitting strategy, you can directly remove this configuration
            */
           manualChunks: {
-            vue: ['vue', 'vue-router', 'pinia'],
             element: ['element-plus', '@element-plus/icons-vue'],
-            vxe: ['vxe-table', 'vxe-table-plugin-element', 'xe-utils']
+            vue: ['vue', 'vue-router', 'pinia']
           }
         }
       }
     },
+
     /** ProGuard */
     esbuild:
       mode === 'development'
         ? undefined
         : {
-            /** Remove console.log when bundling */
-            pure: ['console.log'],
             /** Remove debugger when bundling */
             drop: ['debugger'],
+
             /** Remove all comments when bundling */
-            legalComments: 'none'
+            legalComments: 'none',
+
+            /** Remove console.log when bundling */
+            pure: ['console.log']
           },
+
     /** Vite plugin */
     plugins: [
       vue(),
@@ -81,10 +64,40 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
         symbolId: 'icon-[dir]-[name]'
       })
     ],
+
+    /** Modify base according to actual situation when packaging */
+    // base: VITE_PUBLIC_PATH,
+    resolve: {
+      alias: {
+        /** The @ symbol points to the src directory */
+        '@': resolve(__dirname, './src')
+      }
+    },
+
+    server: {
+      /** Cross-domain settings allowed */
+      cors: true,
+
+      /** Set host: true to use Network to access the project by IP */
+      host: true,
+
+      /** Whether to open the browser automatically */
+      open: false,
+
+      // host: "0.0.0.0"
+      /** Port number */
+      port: 8080,
+      /** Whether to exit directly when the port is occupied */
+      strictPort: false,
+      /** Warm up common files to increase the initial page loading speed */
+      warmup: {
+        clientFiles: ['./src/layouts/**/*.vue']
+      }
+    },
     /** Vitest unit test configuration: https://cn.vitest.dev/config */
     test: {
-      include: ['tests/**/*.test.ts'],
-      environment: 'jsdom'
+      environment: 'jsdom',
+      include: ['tests/**/*.test.ts']
     }
   }
 }
