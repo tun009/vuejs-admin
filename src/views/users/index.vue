@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import ConfigRoleUserForm from './components/ConfigRoleUserForm.vue'
+
 import { PaginationModel } from '@/@types/common'
 import { UserModel, userListColumnConfigs } from '@/@types/pages/users'
 import { getUsers } from '@/api/users'
@@ -19,10 +21,12 @@ defineOptions({
 
 const addUserFormRef = ref<InstanceType<typeof AddUserForm>>()
 const updateUserFormRef = ref<InstanceType<typeof UpdateUserForm>>()
+const configRoleUserFormRef = ref<InstanceType<typeof ConfigRoleUserForm>>()
 
 const openAddUserDrawer = ref(false)
 const openUpdateUserDrawer = ref(false)
 const searchQuery = ref('')
+const openConfigRoleUserDrawer = ref(false)
 
 const disabledIds = [1]
 
@@ -74,8 +78,22 @@ const handleDeleteUser = (name: string) => {
         <el-button :icon="Filter" @click="handleComingSoon">{{ $t('user.filter') }}</el-button>
       </div>
       <div class="flex flex-row gap-3">
-        <el-button plain type="primary" :icon="Tools">{{ $t('button.roleSetting') }}</el-button>
-        <el-button type="primary" :icon="Plus" @click="openAddUserDrawer = true">{{ $t('button.add') }}</el-button>
+        <Drawer title="Cấu hình vai trò" size="50%" v-model="openConfigRoleUserDrawer">
+          <template #button>
+            <el-button plain type="primary" :icon="Tools">{{ $t('button.roleSetting') }}</el-button>
+          </template>
+          <template #default>
+            <ConfigRoleUserForm ref="configRoleUserFormRef" @close="openConfigRoleUserDrawer = false" />
+          </template>
+        </Drawer>
+        <Drawer title="user.addUser.title" v-model="openAddUserDrawer">
+          <template #button>
+            <el-button type="primary" :icon="Plus">{{ $t('button.add') }}</el-button>
+          </template>
+          <template #default>
+            <AddUserForm ref="addUserFormRef" @close="openAddUserDrawer = false" />
+          </template>
+        </Drawer>
       </div>
     </div>
     <el-card>

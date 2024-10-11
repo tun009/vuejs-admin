@@ -11,7 +11,6 @@
     class="demo-drawer"
     :with-header="false"
     :size="size"
-    modal-fade
   >
     <div class="flex flex-row h-full">
       <div class="w-12 bg-[#005d98] flex justify-center py-3 px-2">
