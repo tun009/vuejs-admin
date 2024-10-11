@@ -13,3 +13,4 @@ export const RULES_PAGE = '/rules'
 export const UCP_ISBP_PAGE = '/ucp-isbp'
 export const INVALID_CATEGORY_PAGE = '/invalid-category'
 export const PROFILE_PAGE = '/profile'
+export const DOCUMENT_DETAIL_PAGE = (id: string | number = ':id') => `/docs/document/${id}`

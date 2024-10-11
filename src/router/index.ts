@@ -16,7 +16,8 @@ import {
   UCP_ISBP_PAGE,
   USERS_PAGE,
   _403_PAGE,
-  _404_PAGE
+  _404_PAGE,
+  DOCUMENT_DETAIL_PAGE
 } from '@/constants/router'
 
 const Layouts = () => import('@/layouts/index.vue')
@@ -103,11 +104,12 @@ export const constantRoutes: RouteRecordRaw[] = [
       {
         path: DOCS_PAGE + DOCUMENT_PAGE,
         component: () => import('@/views/docs/documents/index.vue'),
-        name: 'Data procesing',
         meta: {
-          title: 'dataProcessing',
-          keepAlive: true
-        }
+          breadcrumb: false,
+          keepAlive: true,
+          title: 'dataProcessing'
+        },
+        name: 'Data procesing'
       },
       {
         path: DOCS_PAGE + REPORTS_PAGE,
@@ -126,6 +128,16 @@ export const constantRoutes: RouteRecordRaw[] = [
           title: 'settings',
           keepAlive: true
         }
+      },
+      {
+        component: () => import('@/views/docs/documents/detail/index.vue'),
+        meta: {
+          hidden: true,
+          keepAlive: true,
+          title: 'documentDetail'
+        },
+        name: 'Document detail',
+        path: DOCUMENT_DETAIL_PAGE()
       }
     ]
   },
@@ -175,6 +187,16 @@ export const constantRoutes: RouteRecordRaw[] = [
       }
     ]
   }
+  // {
+  //   component: () => import('@/views/docs/documents/DocumentDetail.vue'),
+  //   meta: {
+  //     hidden: true,
+  //     keepAlive: true,
+  //     title: 'documentDetail'
+  //   },
+  //   name: 'Document detail',
+  //   path: DOCUMENT_DETAIL_PAGE()
+  // }
 ]
 
 /**

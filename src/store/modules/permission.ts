@@ -31,6 +31,11 @@ export const usePermissionStore = defineStore('permission', () => {
   /** Dynamic routes with access permissions */
   const addRoutes = ref<RouteRecordRaw[]>([])
 
+  const _set = (accessedRoutes: RouteRecordRaw[]) => {
+    routes.value = constantRoutes.concat(accessedRoutes)
+    addRoutes.value = routeSettings.thirdLevelRouteCache ? flatMultiLevelRoutes(accessedRoutes) : accessedRoutes
+  }
+
   /** Generate accessible Routes based on roles (accessible routes = resident routes + dynamic routes with access permissions) */
   const setRoutes = (roles: string[]) => {
     const accessedRoutes = filterDynamicRoutes(dynamicRoutes, roles)
@@ -42,11 +47,7 @@ export const usePermissionStore = defineStore('permission', () => {
     _set(dynamicRoutes)
   }
 
-  const _set = (accessedRoutes: RouteRecordRaw[]) => {
-    routes.value = constantRoutes.concat(accessedRoutes)
-    addRoutes.value = routeSettings.thirdLevelRouteCache ? flatMultiLevelRoutes(accessedRoutes) : accessedRoutes
-  }
-  return { routes, addRoutes, setRoutes, setAllRoutes }
+  return { addRoutes, routes, setAllRoutes, setRoutes }
 }) /** Use outside setup */
 export function usePermissionStoreHook() {
   return usePermissionStore(store)

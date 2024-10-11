@@ -10,7 +10,7 @@
       "joinWeb": "Chào mừng bạn đến với web hiệu chỉnh, nghe nhạc tại đây!",
       "loginSuccess": "Đăng nhập thành công",
       "updateSuccess": "Cập nhật thành công",
-      "createSuccess": "Tạo mới thành công",
+      "createSuccess": "Thêm mới thành công",
       "confirmClose": "Bạn chắc chắn thoát khỏi?",
       "limitSize": "Dung lượng file không vượt quá 16MB!",
       "limitQuantity": "Tổng số file không vượt quá 10!",
@@ -79,7 +79,8 @@
     "rules": "Quản lý rule",
     "ruleUI": "Luật UCP/ISBP",
     "invalidCategory": "Danh mục bất hợp lệ",
-    "profile": "Thông tin tài khoản"
+    "profile": "Thông tin tài khoản",
+    "documentDetail": "Chi tiết chứng từ"
   },
   "profile": {
     "title": "Thông tin tài khoản",
@@ -178,7 +179,14 @@
       "cancelAll": "Hủy chọn tất cả",
       "deleteDocsConfirm": "Bạn đang thực hiện xóa <strong> { name } </strong>. Sau khi xóa sẽ không thể khôi phục lại. <br/> <br/> Bạn xác nhận xóa chứ?",
       "deleteDocsTitle": "Xóa bộ chứng từ",
-      "selectedDocs": "các bộ chứng từ đã được chọn"
+      "selectedDocs": "các bộ chứng từ đã được chọn",
+      "addFile": "Thêm mới file",
+      "#": "#",
+      "documentName_1": "Tên chứng từ",
+      "testResults": "Kết quả kiểm tra",
+      "numberSatisfiesRequirement": "Số kiểm tra thỏa mãn yêu cầu",
+      "select": "Select",
+      "checkerName": "Tên checker"
     }
   }
 }

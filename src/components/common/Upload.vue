@@ -1,40 +1,3 @@
-<template>
-  <div class="flex flex-col lg:flex-row gap-4">
-    <div
-      class="dropzone flex flex-[3] flex-col gap-y-3 justify-center items-center min-h-96 relative bg-[#f8f9fa] dark:bg-transparent"
-      @dragover.prevent="onDragOver"
-      @dragleave="onDragLeave"
-      @drop.prevent="onDrop"
-      :class="{ 'is-dragover': isDragOver }"
-    >
-      <p>{{ $t('docs.document.dragDrop') }}</p>
-      <p>{{ $t('docs.document.or') }}</p>
-      <input type="file" @change="onFileChange" multiple hidden ref="fileInput" />
-      <el-button @click="selectFiles" class="w-fit min-w-96" type="primary" plain :icon="Plus">{{
-        $t('docs.document.selectFromDevice')
-      }}</el-button>
-      <p class="absolute bottom-6">{{ $t('docs.document.validFormat') }}</p>
-    </div>
-    <div v-if="files.length" class="flex-[2] flex flex-col gap-y-2 overflow-x-auto">
-      <p>{{ $t('docs.document.uploadList') }}</p>
-      <Table
-        :column-configs="uploadDocumentColumnConfig"
-        :data="tableFiles"
-        hiddenPagination
-        hiddenChecked
-        height="350"
-        locales
-      >
-        <template #actions="{ index }">
-          <el-icon :size="18" color="#e03131" class="cursor-pointer" @click="() => handleDeleteFile(index)"
-            ><Delete
-          /></el-icon>
-        </template>
-      </Table>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 
@@ -74,21 +37,6 @@ const onDragLeave = () => {
   isDragOver.value = false
 }
 
-const onDrop = (event: DragEvent) => {
-  isDragOver.value = false
-  const droppedFiles = event.dataTransfer?.files
-  if (droppedFiles) {
-    addFiles(droppedFiles)
-  }
-}
-
-const onFileChange = (event: Event) => {
-  const input = event.target as HTMLInputElement
-  if (input.files) {
-    addFiles(input.files)
-  }
-}
-
 const addFiles = (fileList: FileList) => {
   let isInvalidFileSize = false
   Array.from(fileList).forEach((item) => {
@@ -105,6 +53,21 @@ const addFiles = (fileList: FileList) => {
     return
   }
   emits('add-files', fileList)
+}
+
+const onDrop = (event: DragEvent) => {
+  isDragOver.value = false
+  const droppedFiles = event.dataTransfer?.files
+  if (droppedFiles) {
+    addFiles(droppedFiles)
+  }
+}
+
+const onFileChange = (event: Event) => {
+  const input = event.target as HTMLInputElement
+  if (input.files) {
+    addFiles(input.files)
+  }
 }
 
 const selectFiles = () => {
@@ -131,6 +94,43 @@ const handleDeleteFile = (index: number) => {
   emits('set-files', newFiles)
 }
 </script>
+
+<template>
+  <div class="flex flex-col lg:flex-row gap-4">
+    <div
+      class="dropzone flex flex-[3] flex-col gap-y-3 justify-center items-center min-h-96 relative bg-[#f8f9fa] dark:bg-transparent"
+      @dragover.prevent="onDragOver"
+      @dragleave="onDragLeave"
+      @drop.prevent="onDrop"
+      :class="{ 'is-dragover': isDragOver }"
+    >
+      <p>{{ $t('docs.document.dragDrop') }}</p>
+      <p>{{ $t('docs.document.or') }}</p>
+      <input type="file" @change="onFileChange" multiple hidden ref="fileInput" />
+      <el-button @click="selectFiles" class="w-fit min-w-96" type="primary" plain :icon="Plus">{{
+        $t('docs.document.selectFromDevice')
+      }}</el-button>
+      <p class="absolute bottom-6">{{ $t('docs.document.validFormat') }}</p>
+    </div>
+    <div v-if="files.length" class="flex-[2] flex flex-col gap-y-2 overflow-x-auto">
+      <p>{{ $t('docs.document.uploadList') }}</p>
+      <Table
+        :column-configs="uploadDocumentColumnConfig"
+        :data="tableFiles"
+        hiddenPagination
+        hiddenChecked
+        height="350"
+        locales
+      >
+        <template #actions="{ index }">
+          <el-icon :size="18" color="#e03131" class="cursor-pointer" @click="() => handleDeleteFile(index)"
+            ><Delete
+          /></el-icon>
+        </template>
+      </Table>
+    </div>
+  </div>
+</template>
 
 <style lang="css" scoped>
 .dropzone {

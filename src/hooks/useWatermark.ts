@@ -7,8 +7,6 @@ type Observer = {
   parentElResizeObserver?: ResizeObserver
 }
 
-type DefaultConfig = typeof defaultConfig
-
 /** Default configuration */
 const defaultConfig = {
   /** Defense (enabled by default, can prevent watermark from being deleted or hidden, but may cause performance loss) */
@@ -28,6 +26,8 @@ const defaultConfig = {
   /** The height of a watermark (the larger the value, the lower the watermark density) */
   height: 200
 }
+
+type DefaultConfig = typeof defaultConfig
 
 /** body element */
 const bodyEl = ref<HTMLElement>(document.body)
@@ -51,54 +51,6 @@ export function useWatermark(parentEl: Ref<HTMLElement | null> = bodyEl) {
     parentElResizeObserver: undefined
   }
 
-  /** Set watermark */
-  const setWatermark = (text: string, config: Partial<DefaultConfig> = {}) => {
-    if (!parentEl.value) {
-      console.warn('Please call the setWatermark method to set the watermark after DOM mounting is completed')
-      return
-    }
-    // Backup text
-    backupText = text
-    // Merge configuration
-    mergeConfig = { ...defaultConfig, ...config }
-    // Create or update watermark element
-    watermarkEl ? updateWatermarkEl() : createWatermarkEl()
-    // Listen for changes in watermark element and container element
-    addElListener(parentEl.value)
-  }
-
-  /** Creating a watermark element */
-  const createWatermarkEl = () => {
-    const isBody = parentEl.value!.tagName.toLowerCase() === bodyEl.value.tagName.toLowerCase()
-    const watermarkElPosition = isBody ? 'fixed' : 'absolute'
-    const parentElPosition = isBody ? '' : 'relative'
-    watermarkEl = document.createElement('div')
-    watermarkEl.style.pointerEvents = 'none'
-    watermarkEl.style.top = '0'
-    watermarkEl.style.left = '0'
-    watermarkEl.style.position = watermarkElPosition
-    watermarkEl.style.zIndex = '99999'
-    const { clientWidth, clientHeight } = parentEl.value!
-    updateWatermarkEl({ width: clientWidth, height: clientHeight })
-    // Set the watermark container to relative positioning
-    parentEl.value!.style.position = parentElPosition
-    // Add the watermark element to the watermark container
-    parentEl.value!.appendChild(watermarkEl)
-  }
-
-  /** Update watermark element */
-  const updateWatermarkEl = (
-    options: Partial<{
-      width: number
-      height: number
-    }> = {}
-  ) => {
-    if (!watermarkEl) return
-    backupText && (watermarkEl.style.background = `url(${createBase64()}) left top repeat`)
-    options.width && (watermarkEl.style.width = `${options.width}px`)
-    options.height && (watermarkEl.style.height = `${options.height}px`)
-  }
-
   /** Creating a base64 image */
   const createBase64 = () => {
     const { color, opacity, size, family, angle, width, height } = mergeConfig
@@ -114,6 +66,35 @@ export function useWatermark(parentEl: Ref<HTMLElement | null> = bodyEl) {
       ctx.fillText(backupText, 0, height / 2)
     }
     return canvasEl.toDataURL()
+  }
+
+  /** Update watermark element */
+  const updateWatermarkEl = (
+    options: Partial<{
+      width: number
+      height: number
+    }> = {}
+  ) => {
+    if (!watermarkEl) return
+    backupText && (watermarkEl.style.background = `url(${createBase64()}) left top repeat`)
+    options.width && (watermarkEl.style.width = `${options.width}px`)
+    options.height && (watermarkEl.style.height = `${options.height}px`)
+  }
+
+  /** Remove the listener for the watermark element and container element. You can specify which listener to remove by passing a parameter. If no parameter is passed, all listeners are removed by default. */
+  const removeListener = (kind: 'mutation' | 'resize' | 'all' = 'all') => {
+    // Remove mutation listener
+    if (kind === 'mutation' || kind === 'all') {
+      observer.watermarkElMutationObserver?.disconnect()
+      observer.watermarkElMutationObserver = undefined
+      observer.parentElMutationObserver?.disconnect()
+      observer.parentElMutationObserver = undefined
+    }
+    // Remove resize listener
+    if (kind === 'resize' || kind === 'all') {
+      observer.parentElResizeObserver?.disconnect()
+      observer.parentElResizeObserver = undefined
+    }
   }
 
   /** Clear Watermark */
@@ -132,12 +113,24 @@ export function useWatermark(parentEl: Ref<HTMLElement | null> = bodyEl) {
     }
   }
 
-  /** Refresh watermark (called during defense) */
-  const updateWatermark = debounce(() => {
-    clearWatermark()
-    createWatermarkEl()
-    addElListener(parentEl.value!)
-  }, 100)
+  /** Creating a watermark element */
+  const createWatermarkEl = () => {
+    const isBody = parentEl.value!.tagName.toLowerCase() === bodyEl.value.tagName.toLowerCase()
+    const watermarkElPosition = isBody ? 'fixed' : 'absolute'
+    const parentElPosition = isBody ? '' : 'relative'
+    watermarkEl = document.createElement('div')
+    watermarkEl.style.pointerEvents = 'none'
+    watermarkEl.style.top = '0'
+    watermarkEl.style.left = '0'
+    watermarkEl.style.position = watermarkElPosition
+    watermarkEl.style.zIndex = '99999'
+    const { clientWidth, clientHeight } = parentEl.value!
+    updateWatermarkEl({ height: clientHeight, width: clientWidth })
+    // Set the watermark container to relative positioning
+    parentEl.value!.style.position = parentElPosition
+    // Add the watermark element to the watermark container
+    parentEl.value!.appendChild(watermarkEl)
+  }
 
   /** Listen for changes in watermark elements and container elements (DOM changes & DOM size changes) */
   const addElListener = (targetNode: HTMLElement) => {
@@ -146,6 +139,7 @@ export function useWatermark(parentEl: Ref<HTMLElement | null> = bodyEl) {
       // Prevent repeated addition of listeners
       if (!observer.watermarkElMutationObserver && !observer.parentElMutationObserver) {
         // Listen for DOM changes
+        // eslint-disable-next-line no-use-before-define
         addMutationListener(targetNode)
       }
     } else {
@@ -155,25 +149,17 @@ export function useWatermark(parentEl: Ref<HTMLElement | null> = bodyEl) {
     // Prevent repeated addition of listeners
     if (!observer.parentElResizeObserver) {
       // Listen for DOM size changes
+      // eslint-disable-next-line no-use-before-define
       addResizeListener(targetNode)
     }
   }
 
-  /** Remove the listener for the watermark element and container element. You can specify which listener to remove by passing a parameter. If no parameter is passed, all listeners are removed by default. */
-  const removeListener = (kind: 'mutation' | 'resize' | 'all' = 'all') => {
-    // Remove mutation listener
-    if (kind === 'mutation' || kind === 'all') {
-      observer.watermarkElMutationObserver?.disconnect()
-      observer.watermarkElMutationObserver = undefined
-      observer.parentElMutationObserver?.disconnect()
-      observer.parentElMutationObserver = undefined
-    }
-    // Remove resize listener
-    if (kind === 'resize' || kind === 'all') {
-      observer.parentElResizeObserver?.disconnect()
-      observer.parentElResizeObserver = undefined
-    }
-  }
+  /** Refresh watermark (called during defense) */
+  const updateWatermark = debounce(() => {
+    clearWatermark()
+    createWatermarkEl()
+    addElListener(parentEl.value!)
+  }, 100)
 
   /** Listen for DOM changes */
   const addMutationListener = (targetNode: HTMLElement) => {
@@ -212,6 +198,22 @@ export function useWatermark(parentEl: Ref<HTMLElement | null> = bodyEl) {
       childList: true,
       subtree: false
     })
+  }
+
+  /** Set watermark */
+  const setWatermark = (text: string, config: Partial<DefaultConfig> = {}) => {
+    if (!parentEl.value) {
+      console.warn('Please call the setWatermark method to set the watermark after DOM mounting is completed')
+      return
+    }
+    // Backup text
+    backupText = text
+    // Merge configuration
+    mergeConfig = { ...defaultConfig, ...config }
+    // Create or update watermark element
+    watermarkEl ? updateWatermarkEl() : createWatermarkEl()
+    // Listen for changes in watermark element and container element
+    addElListener(parentEl.value)
   }
 
   /** Listen for DOM size changes */

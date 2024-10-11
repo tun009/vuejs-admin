@@ -1,5 +1,93 @@
+<script lang="ts" setup>
+import { onMounted, ref } from 'vue'
+import type { TableInstance } from 'element-plus'
+import { ColumnConfigModel, PaginationModel } from '@/@types/common'
+import { PAGE_SIZE_LIST_DEFAULT } from '@/constants/common'
+
+interface Props {
+  hiddenChecked?: boolean
+  data?: any[]
+  callback?: (params: PaginationModel) => Promise<any>
+  hiddenPagination?: boolean
+  columnConfigs?: ColumnConfigModel[]
+  disabledIds?: (string | number)[]
+  height?: number | string | 'unset'
+  locales?: boolean
+}
+
+interface Emits {
+  (event: 'update:selection', value: any[]): void
+  (event: 'row-click', row: any): void
+}
+
+interface Exposes {
+  clearSelection: () => void
+  setLoading: (status: boolean) => void
+}
+
+const props = defineProps<Props>()
+const emits = defineEmits<Emits>()
+const totalItems = ref<number>(0)
+const loading = ref<boolean>(false)
+
+const pagination = ref<PaginationModel>({
+  pageNum: 0,
+  pageSize: 10
+})
+
+const multipleTableRef = ref<TableInstance>()
+
+const selectable = (row: any) => !(props.disabledIds ?? []).includes(row.id)
+const handleSelectionChange = (val: any[]) => {
+  emits('update:selection', val)
+}
+
+const handleGetData = async () => {
+  try {
+    if (!props.callback) return
+    loading.value = true
+    const response = await props.callback(pagination.value)
+    if (response?.data?.total) {
+      totalItems.value = response.data.total
+    }
+  } catch (error: any) {
+    throw new Error(error)
+  } finally {
+    loading.value = false
+  }
+}
+
+const handlePageChange = (newPage: number) => {
+  pagination.value.pageNum = newPage - 1
+  handleGetData()
+}
+
+const handlePageSizeChange = (newPageSize: number) => {
+  pagination.value.pageSize = newPageSize
+  pagination.value.pageNum = 0 // Reset to first page on size change
+  handleGetData()
+}
+
+const handleClearSelection = () => {
+  multipleTableRef.value?.clearSelection()
+}
+
+const setLoading = (status: boolean) => {
+  loading.value = status
+}
+
+onMounted(async () => {
+  handleGetData()
+})
+
+defineExpose<Exposes>({
+  clearSelection: handleClearSelection,
+  setLoading
+})
+</script>
+
 <template>
-  <div class="flex flex-col gap-5">
+  <div class="flex flex-col gap-5 w-full">
     <el-table
       ref="multipleTableRef"
       border
@@ -10,6 +98,7 @@
       :height="height === 'unset' ? undefined : (height ?? 600)"
       class="custom-table hidden-scroll-bar"
       @selection-change="handleSelectionChange"
+      @row-click="(row) => $emit('row-click', row)"
     >
       <el-table-column v-if="!hiddenChecked" fixed type="selection" :selectable="selectable" width="40" />
       <el-table-column
@@ -22,7 +111,7 @@
         :label="locales ? $t(column.label) : column.label"
       >
         <template v-slot:default="scope">
-          <slot :name="column.field" :column="column" :row="scope.row" :index="scope.$index">
+          <slot :name="column.field" :column="column" :row="scope.row" :index="scope.$index" class="cursor-pointer">
             <span>{{ scope.row[column.field] }}</span>
           </slot>
         </template>
@@ -58,87 +147,6 @@
     </el-pagination>
   </div>
 </template>
-
-<script lang="ts" setup>
-import { onMounted, ref } from 'vue'
-import type { TableInstance } from 'element-plus'
-import { ColumnConfigModel, PaginationModel } from '@/@types/common'
-import { PAGE_SIZE_LIST_DEFAULT } from '@/constants/common'
-
-interface Props {
-  hiddenChecked?: boolean
-  data?: any[]
-  callback?: (params: PaginationModel) => Promise<any>
-  hiddenPagination?: boolean
-  columnConfigs?: ColumnConfigModel[]
-  disabledIds?: (string | number)[]
-  height?: number | string | 'unset'
-  locales?: boolean
-}
-
-interface Emits {
-  (event: 'update:selection', value: any[]): void
-}
-
-interface Exposes {
-  clearSelection: () => void
-}
-
-const props = defineProps<Props>()
-const emits = defineEmits<Emits>()
-const totalItems = ref<number>(0)
-const loading = ref<boolean>(false)
-
-const pagination = ref<PaginationModel>({
-  pageNum: 0,
-  pageSize: 10
-})
-
-const multipleTableRef = ref<TableInstance>()
-
-const selectable = (row: any) => !(props.disabledIds ?? []).includes(row.id)
-const handleSelectionChange = (val: any[]) => {
-  emits('update:selection', val)
-}
-
-const handlePageChange = (newPage: number) => {
-  pagination.value.pageNum = newPage - 1
-  handleGetData()
-}
-
-const handleGetData = async () => {
-  try {
-    if (!props.callback) return
-    loading.value = true
-    const response = await props.callback(pagination.value)
-    if (response?.data?.total) {
-      totalItems.value = response.data.total
-    }
-  } catch (error: any) {
-    throw new Error(error)
-  } finally {
-    loading.value = false
-  }
-}
-
-const handlePageSizeChange = (newPageSize: number) => {
-  pagination.value.pageSize = newPageSize
-  pagination.value.pageNum = 0 // Reset to first page on size change
-  handleGetData()
-}
-
-const handleClearSelection = () => {
-  multipleTableRef.value?.clearSelection()
-}
-
-onMounted(async () => {
-  handleGetData()
-})
-
-defineExpose<Exposes>({
-  clearSelection: handleClearSelection
-})
-</script>
 
 <style lang="css" scoped>
 :deep(.el-table tr th) {

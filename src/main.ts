@@ -16,6 +16,7 @@ import 'vxe-table/lib/style.css'
 import 'vxe-table-plugin-element/dist/style.css'
 import '@/styles/index.scss'
 import '@/styles/tailwind.css'
+import '@/styles/custom-tailwind.css'
 
 const app = createApp(App)
 

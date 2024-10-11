@@ -80,7 +80,18 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
       createSvgIconsPlugin({
         iconDirs: [path.resolve(process.cwd(), 'src/icons/svg')],
         symbolId: 'icon-[dir]-[name]'
-      })
+      }),
+      {
+        handleHotUpdate({ modules }) {
+          modules.map((m: any) => {
+            m.importedModules = new Set()
+            m.importers = new Set()
+          })
+
+          return modules
+        },
+        name: 'singleHMR'
+      }
     ],
     /** Vitest unit test configuration: https://cn.vitest.dev/config */
     test: {

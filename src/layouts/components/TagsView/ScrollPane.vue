@@ -32,15 +32,6 @@ const scroll = ({ scrollLeft }: { scrollLeft: number }) => {
   currentScrollLeft = scrollLeft
 }
 
-/** Triggered when the mouse wheel is scrolled */
-const wheelScroll = ({ deltaY }: WheelEvent) => {
-  if (/^-/.test(deltaY.toString())) {
-    scrollTo('left')
-  } else {
-    scrollTo('right')
-  }
-}
-
 /** Get the width that may be needed */
 const getWidth = () => {
   /** Length of scrollable content */
@@ -53,11 +44,11 @@ const getWidth = () => {
   return { scrollbarContentRefWidth, scrollbarRefWidth, lastDistance }
 }
 
-/** 左右滚动 */
+/** Scroll left and right */
 const scrollTo = (direction: 'left' | 'right', distance: number = translateDistance) => {
   let scrollLeft = 0
   const { scrollbarContentRefWidth, scrollbarRefWidth, lastDistance } = getWidth()
-  // 没有横向滚动条，直接结束
+  // No horizontal scroll bar, end directly
   if (scrollbarRefWidth > scrollbarContentRefWidth) return
   if (direction === 'left') {
     scrollLeft = Math.max(0, currentScrollLeft - distance)
@@ -92,6 +83,15 @@ const moveTo = () => {
         return
       }
     }
+  }
+}
+
+/** Triggered when the mouse wheel is scrolled */
+const wheelScroll = ({ deltaY }: WheelEvent) => {
+  if (/^-/.test(deltaY.toString())) {
+    scrollTo('left')
+  } else {
+    scrollTo('right')
   }
 }
 

@@ -1,31 +1,3 @@
-<template>
-  <span v-if="textButton" @click.stop="localModelValue = true">
-    <slot name="button">
-      <el-button text type="primary">{{ textButton }}</el-button>
-    </slot>
-  </span>
-  <el-drawer
-    v-model="localModelValue"
-    :before-close="beforeClose"
-    :direction="direction"
-    class="demo-drawer"
-    :with-header="false"
-    :size="size"
-  >
-    <div class="flex flex-row h-full">
-      <div class="w-12 bg-[#005d98] flex justify-center py-3 px-2">
-        <div @click="localModelValue = false">
-          <el-icon class="w-5 cursor-pointer"><CloseBold style="color: white; height: 20px; width: 20px" /></el-icon>
-        </div>
-      </div>
-      <div class="demo-drawer__content p-8 flex flex-col gap-5 w-full">
-        <el-text class="text-xl uppercase font-bold text-[#868e96] self-auto">{{ $t(title ?? '') }}</el-text>
-        <slot />
-      </div>
-    </div>
-  </el-drawer>
-</template>
-
 <script lang="ts" setup>
 import { CloseBold } from '@element-plus/icons-vue'
 import { ElDrawer, ElMessageBox } from 'element-plus'
@@ -73,3 +45,32 @@ const beforeClose = (done: any) => {
     })
 }
 </script>
+
+<template>
+  <span v-if="textButton" @click.stop="localModelValue = true">
+    <slot name="button">
+      <el-button text type="primary">{{ textButton }}</el-button>
+    </slot>
+  </span>
+  <el-drawer
+    v-model="localModelValue"
+    :before-close="beforeClose"
+    :direction="direction"
+    class="demo-drawer"
+    :with-header="false"
+    :size="size"
+    modal-fade
+  >
+    <div class="flex flex-row h-full">
+      <div class="w-12 bg-[#005d98] flex justify-center py-3 px-2">
+        <div @click="localModelValue = false">
+          <el-icon class="w-5 cursor-pointer"><CloseBold style="color: white; height: 20px; width: 20px" /></el-icon>
+        </div>
+      </div>
+      <div class="demo-drawer__content p-8 flex flex-col gap-5 w-full">
+        <el-text class="text-xl uppercase c-text-title self-auto">{{ $t(title ?? '') }}</el-text>
+        <slot />
+      </div>
+    </div>
+  </el-drawer>
+</template>
