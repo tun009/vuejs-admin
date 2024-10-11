@@ -119,6 +119,9 @@ $transition-time: 0.35s;
   .app-main {
     min-height: calc(100vh - var(--prefix-header-height));
   }
+  .bg-normal {
+    background-color: #f8f9fa;
+  }
   .fixed-header + .app-main {
     padding-top: var(--prefix-header-height);
   }

@@ -20,3 +20,5 @@ export interface SelectOptionModel {
   value: string | number
   description?: string
 }
+
+export type BaseResponseModel<T> = ApiResponseData<T>

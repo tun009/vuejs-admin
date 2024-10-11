@@ -7,17 +7,19 @@
       :data="data"
       lazy
       style="width: 100%"
-      height="600"
       class="fixed-table"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" :selectable="selectable" width="55" />
+      <el-table-column v-if="!hiddenSelection" type="selection" :selectable="selectable" width="55" />
       <el-table-column
         v-for="(column, index) in columnConfigs"
         :fixed="!index"
         :key="column.field"
         :prop="column.field"
         :label="column.label"
+        :width="column.width"
+        :min-width="column.minWidth"
+        :class-name="column.class"
       >
         <template v-slot:default="scope">
           <slot :name="column.field" :column="column" :row="scope.row" :index="scope.$index">
@@ -28,6 +30,7 @@
     </el-table>
 
     <el-pagination
+      v-if="!hiddenPagination"
       :current-page="pagination.pageNum + 1"
       :page-size="pagination.pageSize"
       :page-sizes="PAGE_SIZE_LIST_DEFAULT"
@@ -52,6 +55,7 @@ interface Props {
   hiddenPagination?: boolean
   columnConfigs?: ColumnConfigModel[]
   disabledIds?: (string | number)[]
+  hiddenSelection?: boolean
 }
 const props = defineProps<Props>()
 const totalItems = ref<number>(0)
