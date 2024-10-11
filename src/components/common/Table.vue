@@ -1,3 +1,47 @@
+<template>
+  <div class="flex flex-col gap-5">
+    <el-table
+      ref="multipleTableRef"
+      border
+      v-loading="loading"
+      :data="data"
+      lazy
+      style="width: 100%"
+      class="fixed-table"
+      @selection-change="handleSelectionChange"
+    >
+      <el-table-column v-if="!hiddenSelection" type="selection" :selectable="selectable" width="55" />
+      <el-table-column
+        v-for="(column, index) in columnConfigs"
+        :fixed="!index"
+        :key="column.field"
+        :prop="column.field"
+        :label="column.label"
+        :width="column.width"
+        :min-width="column.minWidth"
+        :class-name="column.class"
+      >
+        <template v-slot:default="scope">
+          <slot :name="column.field" :column="column" :row="scope.row" :index="scope.$index">
+            <span>{{ scope.row[column.field] }}</span>
+          </slot>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <el-pagination
+      v-if="!hiddenPagination"
+      :current-page="pagination.pageNum + 1"
+      :page-size="pagination.pageSize"
+      :page-sizes="PAGE_SIZE_LIST_DEFAULT"
+      :total="totalItems"
+      layout="total, prev, pager, next, jumper, sizes"
+      @size-change="handlePageSizeChange"
+      @current-change="handlePageChange"
+    />
+  </div>
+</template>
+
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
 import type { TableInstance } from 'element-plus'
@@ -13,6 +57,7 @@ interface Props {
   disabledIds?: (string | number)[]
   height?: number | string | 'unset'
   locales?: boolean
+  hiddenSelection?: boolean
 }
 
 interface Emits {

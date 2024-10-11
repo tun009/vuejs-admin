@@ -119,6 +119,7 @@ import {
   labelsValidChart
 } from '@/@types/pages/dashboard'
 import { getFieldsChanged, getSOLs } from '@/api/dashboard'
+
 const labelsValid = labelsValidChart
 const bgcolorValid = bgcolorValidChart
 const share_percentage_valid = [800, 100, 100]

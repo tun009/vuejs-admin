@@ -59,3 +59,4 @@ export const uploadDocumentColumnConfig: ColumnConfigModel[] = [
     width: 110
   }
 ]
+export type BaseResponseModel<T> = ApiResponseData<T>
