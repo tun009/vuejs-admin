@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import { ElMessage } from 'element-plus'
-
 import { useFullscreenLoading } from '@/hooks/useFullscreenLoading'
 import { getSuccessApi, getErrorApi } from '@/api/hook-demo/use-fullscreen-loading'
+import { ElMessage } from 'element-plus'
 
 const svg = `
   <path class="path" d="
@@ -16,10 +15,10 @@ const svg = `
 `
 
 const options = {
+  text: 'An error is about to occur...',
   background: '#F56C6C20',
   svg,
-  svgViewBox: '-10, -10, 50, 50',
-  text: 'An error is about to occur...'
+  svgViewBox: '-10, -10, 50, 50'
 }
 
 const querySuccess = async () => {

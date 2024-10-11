@@ -1,6 +1,5 @@
-import { RoleEnum } from '../../users'
-
 import { ColumnConfigModel, DocumentStatusEnum, SelectOptionModel } from '@/@types/common'
+import { RoleEnum } from '../../users'
 
 export enum BusinessTypeEnum {
   EXPORT_LC,

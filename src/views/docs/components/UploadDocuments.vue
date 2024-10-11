@@ -66,10 +66,6 @@
 </template>
 
 <script setup lang="ts">
-import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus'
-import { computed, reactive, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-
 import { BusinessTypeEnum, businessTypeOptions } from '@/@types/pages/docs/documents'
 import { AddDocumentRequestData } from '@/@types/pages/docs/documents/services/DocumentRequest'
 import Input from '@/components/common/Input.vue'
@@ -78,6 +74,9 @@ import Upload from '@/components/common/Upload.vue'
 import { MOCK_SOLS } from '@/mocks/user'
 import { warningNotification } from '@/utils/notification'
 import { requireRule } from '@/utils/validate'
+import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus'
+import { computed, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   modelValue: boolean
@@ -167,9 +166,9 @@ const handleAddDocument = () => {
       setTimeout(() => {
         loading.value = false
         ElMessage({
-          message: t('notification.description.updateSuccess'),
           showClose: true,
-          type: 'success'
+          type: 'success',
+          message: t('notification.description.updateSuccess')
         })
         emits('update:model-value', false)
       }, 2000)

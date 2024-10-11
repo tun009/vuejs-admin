@@ -18,11 +18,11 @@ interface PaginationData {
 
 /** Default paging parameters */
 const defaultPaginationData: DefaultPaginationData = {
+  total: 0,
   currentPage: 1,
-  layout: 'total, sizes, prev, pager, next, jumper',
-  pageSize: 10,
   pageSizes: [10, 20, 50],
-  total: 0
+  pageSize: 10,
+  layout: 'total, sizes, prev, pager, next, jumper'
 }
 
 export function usePagination(initialPaginationData: PaginationData = {}) {
@@ -37,5 +37,5 @@ export function usePagination(initialPaginationData: PaginationData = {}) {
     paginationData.pageSize = value
   }
 
-  return { handleCurrentChange, handleSizeChange, paginationData }
+  return { paginationData, handleCurrentChange, handleSizeChange }
 }

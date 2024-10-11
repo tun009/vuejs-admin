@@ -11,9 +11,9 @@ const SELECT_RESPONSE_DATA = {
       value: 2
     },
     {
-      disabled: true,
       label: 'Tangerine',
-      value: 3
+      value: 3,
+      disabled: true
     }
   ],
   message: 'Obtain select data successfully'

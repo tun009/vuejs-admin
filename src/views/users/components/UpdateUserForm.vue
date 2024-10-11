@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { Check, Close, Lock } from '@element-plus/icons-vue'
-import { ElMessage, FormRules } from 'element-plus'
-import { reactive, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-
 import { UpdateUserRequestModel, RoleEnum, roleSelectOptions } from '@/@types/pages/users'
 import Input from '@/components/common/Input.vue'
 import Select from '@/components/common/Select.vue'
 import { requireRule } from '@/utils/validate'
+import { Check, Close, Lock } from '@element-plus/icons-vue'
+import { ElMessage, FormRules } from 'element-plus'
+import { reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 interface Emits {
   (event: 'close'): void
@@ -23,18 +22,18 @@ const { t } = useI18n()
 const loading = ref(false)
 const updateUserFormRef = ref()
 const updateUserFormData: UpdateUserRequestModel = reactive({
-  block: false,
   name: '',
-  role: RoleEnum.ADMIN,
+  username: '',
   sol: '',
-  username: ''
+  role: RoleEnum.ADMIN,
+  block: false
 })
 
 const updateUserFormRules: FormRules = {
   name: [],
-  role: [requireRule('change')],
+  username: [],
   sol: [requireRule('change')],
-  username: []
+  role: [requireRule('change')]
 }
 
 const handleUpdateUser = () => {
@@ -44,9 +43,9 @@ const handleUpdateUser = () => {
       setTimeout(() => {
         loading.value = false
         ElMessage({
-          message: t('notification.description.createSuccess'),
           showClose: true,
-          type: 'success'
+          type: 'success',
+          message: t('notification.description.createSuccess')
         })
         handleClose()
       }, 2000)

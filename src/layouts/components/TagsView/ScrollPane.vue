@@ -1,12 +1,11 @@
 <script lang="ts" setup>
 import { ref, nextTick } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
-import { ElScrollbar } from 'element-plus'
-import { ArrowLeft, ArrowRight } from '@element-plus/icons-vue'
-
 import { useSettingsStore } from '@/store/modules/settings'
 import { useRouteListener } from '@/hooks/useRouteListener'
 import Screenfull from '@/components/Screenfull/index.vue'
+import { ElScrollbar } from 'element-plus'
+import { ArrowLeft, ArrowRight } from '@element-plus/icons-vue'
 
 interface Props {
   tagRefs: InstanceType<typeof RouterLink>[]
@@ -51,7 +50,7 @@ const getWidth = () => {
   /** The remaining scrollable width */
   const lastDistance = scrollbarContentRefWidth - scrollbarRefWidth - currentScrollLeft
 
-  return { lastDistance, scrollbarContentRefWidth, scrollbarRefWidth }
+  return { scrollbarContentRefWidth, scrollbarRefWidth, lastDistance }
 }
 
 /** 左右滚动 */

@@ -32,7 +32,10 @@
     "screenfull": "6.0.2",
     "vue": "3.5.6",
     "vue-i18n": "^10.0.3",
-    "vue-router": "4.4.5"
+    "vue-router": "4.4.5",
+    "vxe-table": "4.6.19",
+    "vxe-table-plugin-element": "4.0.4",
+    "xe-utils": "3.5.30"
   },
   "devDependencies": {
     "@tailwindcss/aspect-ratio": "^0.2.0",
@@ -51,10 +54,7 @@
     "@vue/test-utils": "2.4.6",
     "autoprefixer": "^10.4.20",
     "eslint": "8.57.1",
-    "eslint-import-resolver-alias": "^1.1.2",
-    "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-prettier": "5.2.1",
-    "eslint-plugin-sort-keys-fix": "^1.1.2",
     "eslint-plugin-vue": "9.28.0",
     "husky": "9.1.6",
     "jsdom": "25.0.0",

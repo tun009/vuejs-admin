@@ -98,7 +98,6 @@ import { handleComingSoon, renderLabelByValue } from '@/utils/common'
 import Drawer from '@/components/common/Drawer.vue'
 
 const { t } = useI18n()
-
 const searchQuery = ref('')
 const tableData = ref<DocumentModel[]>([])
 const dialogVisible = ref(false)

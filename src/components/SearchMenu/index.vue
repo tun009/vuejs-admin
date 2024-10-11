@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-
 import SearchModal from './SearchModal.vue'
 
 /** Control modal visibility */

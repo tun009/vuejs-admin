@@ -1,7 +1,5 @@
 import { type RouteRecordRaw, createRouter } from 'vue-router'
-
 import { history, flatMultiLevelRoutes } from './helper'
-
 import routeSettings from '@/config/route'
 import {
   DASHBOARD_PAGE,
@@ -30,152 +28,152 @@ const Layouts = () => import('@/layouts/index.vue')
 export const constantRoutes: RouteRecordRaw[] = [
   // Public router
   {
-    children: [
-      {
-        component: () => import('@/views/redirect/index.vue'),
-        path: ':path(.*)'
-      }
-    ],
+    path: REDIRECT_PAGE,
     component: Layouts,
     meta: {
       hidden: true
     },
-    path: REDIRECT_PAGE
+    children: [
+      {
+        path: ':path(.*)',
+        component: () => import('@/views/redirect/index.vue')
+      }
+    ]
   },
   {
+    path: _403_PAGE,
     component: () => import('@/views/error-page/403.vue'),
     meta: {
       hidden: true
-    },
-    path: _403_PAGE
+    }
   },
   {
-    alias: '/:pathMatch(.*)*',
+    path: _404_PAGE,
     component: () => import('@/views/error-page/404.vue'),
     meta: {
       hidden: true
     },
-    path: _404_PAGE
+    alias: '/:pathMatch(.*)*'
   },
   {
+    path: LOGIN_PAGE,
     component: () => import('@/views/login/index.vue'),
     meta: {
       hidden: true
-    },
-    path: LOGIN_PAGE
+    }
   },
 
   // Private router
   {
-    children: [
-      {
-        component: () => import('@/views/dashboard/index.vue'),
-        meta: {
-          affix: true,
-          svgIcon: 'ic-home',
-          title: 'dashboard'
-        },
-        name: 'Dashboard',
-        path: DASHBOARD_PAGE
-      },
-      {
-        component: () => import('@/views/profile/index.vue'),
-        meta: {
-          hidden: true,
-          keepAlive: true,
-          title: 'profile'
-        },
-        name: 'Profile',
-        path: PROFILE_PAGE
-      }
-    ],
-    component: Layouts,
     path: MAIN_PAGE,
-    redirect: DASHBOARD_PAGE
-  },
-  {
-    children: [
-      {
-        component: () => import('@/views/docs/documents/index.vue'),
-        meta: {
-          keepAlive: true,
-          title: 'dataProcessing'
-        },
-        name: 'Data procesing',
-        path: DOCS_PAGE + DOCUMENT_PAGE
-      },
-      {
-        component: () => import('@/views/docs/reports/index.vue'),
-        meta: {
-          keepAlive: true,
-          title: 'reports'
-        },
-        name: 'Reports',
-        path: DOCS_PAGE + REPORTS_PAGE
-      },
-      {
-        component: () => import('@/views/docs/settings/index.vue'),
-        meta: {
-          keepAlive: true,
-          title: 'settings'
-        },
-        name: 'Settings',
-        path: DOCS_PAGE + SETTINGS_PAGE
-      }
-    ],
     component: Layouts,
-    meta: {
-      svgIcon: 'ic-model-group',
-      title: 'document'
-    },
-    path: DOCS_PAGE,
-    redirect: DOCS_PAGE + DOCUMENT_PAGE
-  },
-  {
+    redirect: DASHBOARD_PAGE,
     children: [
       {
-        component: () => import('@/views/users/index.vue'),
+        path: DASHBOARD_PAGE,
+        component: () => import('@/views/dashboard/index.vue'),
+        name: 'Dashboard',
         meta: {
-          keepAlive: true,
-          svgIcon: 'ic-user-group',
-          title: 'users'
-        },
-        name: 'Users',
-        path: 'list'
+          title: 'dashboard',
+          svgIcon: 'ic-home',
+          affix: true
+        }
+      },
+      {
+        path: PROFILE_PAGE,
+        component: () => import('@/views/profile/index.vue'),
+        name: 'Profile',
+        meta: {
+          title: 'profile',
+          hidden: true,
+          keepAlive: true
+        }
       }
-    ],
+    ]
+  },
+  {
+    path: DOCS_PAGE,
+    component: Layouts,
+    redirect: DOCS_PAGE + DOCUMENT_PAGE,
+    meta: {
+      title: 'document',
+      svgIcon: 'ic-model-group'
+    },
+    children: [
+      {
+        path: DOCS_PAGE + DOCUMENT_PAGE,
+        component: () => import('@/views/docs/documents/index.vue'),
+        name: 'Data procesing',
+        meta: {
+          title: 'dataProcessing',
+          keepAlive: true
+        }
+      },
+      {
+        path: DOCS_PAGE + REPORTS_PAGE,
+        component: () => import('@/views/docs/reports/index.vue'),
+        name: 'Reports',
+        meta: {
+          title: 'reports',
+          keepAlive: true
+        }
+      },
+      {
+        path: DOCS_PAGE + SETTINGS_PAGE,
+        component: () => import('@/views/docs/settings/index.vue'),
+        name: 'Settings',
+        meta: {
+          title: 'settings',
+          keepAlive: true
+        }
+      }
+    ]
+  },
+  {
+    path: USERS_PAGE,
     component: Layouts,
     name: 'Users',
-    path: USERS_PAGE
-  },
-  {
     children: [
       {
-        component: () => import('@/views/rules/ucp-isbp/index.vue'),
+        path: 'list',
+        component: () => import('@/views/users/index.vue'),
+        name: 'Users',
         meta: {
-          keepAlive: true,
-          title: 'ruleUI'
-        },
-        name: 'Rule UCP/ISBP',
-        path: RULES_PAGE + UCP_ISBP_PAGE
-      },
-      {
-        component: () => import('@/views/rules/invalid-category/index.vue'),
-        meta: {
-          keepAlive: true,
-          title: 'invalidCategory'
-        },
-        name: 'Invalid category',
-        path: RULES_PAGE + INVALID_CATEGORY_PAGE
+          title: 'users',
+          svgIcon: 'ic-user-group',
+          keepAlive: true
+        }
       }
-    ],
+    ]
+  },
+  {
+    path: RULES_PAGE,
+    redirect: RULES_PAGE + UCP_ISBP_PAGE,
     component: Layouts,
     meta: {
-      svgIcon: 'ic-round-rule',
-      title: 'rules'
+      title: 'rules',
+      svgIcon: 'ic-round-rule'
     },
-    path: RULES_PAGE,
-    redirect: RULES_PAGE + UCP_ISBP_PAGE
+    children: [
+      {
+        path: RULES_PAGE + UCP_ISBP_PAGE,
+        component: () => import('@/views/rules/ucp-isbp/index.vue'),
+        name: 'Rule UCP/ISBP',
+        meta: {
+          title: 'ruleUI',
+          keepAlive: true
+        }
+      },
+      {
+        path: RULES_PAGE + INVALID_CATEGORY_PAGE,
+        component: () => import('@/views/rules/invalid-category/index.vue'),
+        name: 'Invalid category',
+        meta: {
+          title: 'invalidCategory',
+          keepAlive: true
+        }
+      }
+    ]
   }
 ]
 

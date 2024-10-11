@@ -1,13 +1,11 @@
 <script lang="ts" setup>
 import { watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
-import { Refresh } from '@element-plus/icons-vue'
-
-import SelectLayoutMode from './SelectLayoutMode.vue'
-
 import { useSettingsStore } from '@/store/modules/settings'
 import { useLayoutMode } from '@/hooks/useLayoutMode'
 import { resetConfigLayout } from '@/utils'
+import SelectLayoutMode from './SelectLayoutMode.vue'
+import { Refresh } from '@element-plus/icons-vue'
 
 const { isLeft } = useLayoutMode()
 const settingsStore = useSettingsStore()
@@ -30,18 +28,18 @@ const {
 
 /** Define switch settings */
 const switchSettings = {
-  cacheTagsView: cacheTagsView,
-  fixedHeader: fixedHeader,
-  showColorWeakness: showColorWeakness,
-  showFooter: showFooter,
-  showGreyMode: showGreyMode,
+  showTagsView: showTagsView,
   showLogo: showLogo,
+  fixedHeader: fixedHeader,
+  showFooter: showFooter,
   showNotify: showNotify,
+  showThemeSwitch: showThemeSwitch,
   showScreenfull: showScreenfull,
   showSearchMenu: showSearchMenu,
-  showTagsView: showTagsView,
-  showThemeSwitch: showThemeSwitch,
-  showWatermark: showWatermark
+  cacheTagsView: cacheTagsView,
+  showWatermark: showWatermark,
+  showGreyMode: showGreyMode,
+  showColorWeakness: showColorWeakness
 }
 
 /** When not in left mode, the Header is in fixed layout */
