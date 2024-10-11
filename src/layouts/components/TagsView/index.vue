@@ -83,13 +83,6 @@ const refreshSelectedTag = (view: TagView) => {
   router.replace({ path: '/redirect' + view.path, query: view.query })
 }
 
-/** Close the tab currently being right-clicked */
-const closeSelectedTag = (view: TagView) => {
-  tagsViewStore.delVisitedView(view)
-  tagsViewStore.delCachedView(view)
-  isActive(view) && toLastView(tagsViewStore.visitedViews, view)
-}
-
 /** Close other tabs */
 const closeOthersTags = () => {
   const fullPath = selectedTag.value.fullPath
@@ -98,14 +91,6 @@ const closeOthersTags = () => {
   }
   tagsViewStore.delOthersVisitedViews(selectedTag.value)
   tagsViewStore.delOthersCachedViews(selectedTag.value)
-}
-
-/** Close all tabs */
-const closeAllTags = (view: TagView) => {
-  tagsViewStore.delAllVisitedViews()
-  tagsViewStore.delAllCachedViews()
-  if (affixTags.some((tag) => tag.path === route.path)) return
-  toLastView(tagsViewStore.visitedViews, view)
 }
 
 /** Jump to the last tab */
@@ -123,6 +108,21 @@ const toLastView = (visitedViews: TagView[], view: TagView) => {
       router.push('/')
     }
   }
+}
+
+/** Close the tab currently being right-clicked */
+const closeSelectedTag = (view: TagView) => {
+  tagsViewStore.delVisitedView(view)
+  tagsViewStore.delCachedView(view)
+  isActive(view) && toLastView(tagsViewStore.visitedViews, view)
+}
+
+/** Close all tabs */
+const closeAllTags = (view: TagView) => {
+  tagsViewStore.delAllVisitedViews()
+  tagsViewStore.delAllCachedViews()
+  if (affixTags.some((tag) => tag.path === route.path)) return
+  toLastView(tagsViewStore.visitedViews, view)
 }
 
 /** Open the right-click menu panel */

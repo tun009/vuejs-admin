@@ -1,23 +1,3 @@
-<template>
-  <el-dropdown trigger="click">
-    <div>
-      <el-tooltip effect="dark" :content="$t('layouts.config.language')" placement="bottom">
-        <SvgIcon :name="languageOption?.flag ?? ''" className="!w-5 !h-5" />
-      </el-tooltip>
-    </div>
-    <template #dropdown>
-      <el-dropdown-menu>
-        <el-dropdown-item v-for="item in languages" :key="item.value" :disabled="language == item.value">
-          <div class="flex flex-row gap-2 items-center" @click="handleSetLanguage(item.value)">
-            <SvgIcon :name="item.flag" className="!w-5 !h-5" />
-            <span>{{ item.name }}</span>
-          </div>
-        </el-dropdown-item>
-      </el-dropdown-menu>
-    </template>
-  </el-dropdown>
-</template>
-
 <script setup lang="ts">
 import { useSettingsStore } from '@/store/modules/settings'
 import { TLanguage } from '@/@types/common'
@@ -58,6 +38,26 @@ const handleSetLanguage = (lang: 'vi' | 'en') => {
   locale.value = lang
 }
 </script>
+
+<template>
+  <el-dropdown trigger="click">
+    <div>
+      <el-tooltip effect="dark" :content="$t('layouts.config.language')" placement="bottom">
+        <SvgIcon :name="languageOption?.flag ?? ''" className="!w-5 !h-5" />
+      </el-tooltip>
+    </div>
+    <template #dropdown>
+      <el-dropdown-menu>
+        <el-dropdown-item v-for="item in languages" :key="item.value" :disabled="language == item.value">
+          <div class="flex flex-row gap-2 items-center" @click="handleSetLanguage(item.value)">
+            <SvgIcon :name="item.flag" className="!w-5 !h-5" />
+            <span>{{ item.name }}</span>
+          </div>
+        </el-dropdown-item>
+      </el-dropdown-menu>
+    </template>
+  </el-dropdown>
+</template>
 
 <style lang="scss" scoped>
 .icon-lang {

@@ -13,10 +13,6 @@ interface DataItem {
   list: ListItem[]
 }
 
-/** The current value of the index */
-const badgeValue = computed(() => {
-  return data.value.reduce((sum, item) => sum + item.list.length, 0)
-})
 /** Maximum value of corner mark */
 const badgeMax = 99
 /** Panel width */
@@ -44,6 +40,10 @@ const data = ref<DataItem[]>([
     list: todoData
   }
 ])
+/** The current value of the index */
+const badgeValue = computed(() => {
+  return data.value.reduce((sum, item) => sum + item.list.length, 0)
+})
 
 const handleHistory = () => {
   ElMessage.success(`Jump to${activeName.value}history page`)

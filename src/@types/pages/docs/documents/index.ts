@@ -258,3 +258,103 @@ export const documentResultOptions: SelectOptionModel[] = [
     value: 1
   }
 ]
+
+export interface DocumentFileModel {
+  id: number | string
+  stt: number
+  fileName: string
+  status: string
+  createdAt: string
+  createdBy: string
+}
+
+export const fileListColumnConfigs: ColumnConfigModel[] = [
+  {
+    field: 'stt',
+    label: 'docs.document.stt'
+  },
+  {
+    field: 'fileName',
+    label: 'docs.document.fileName',
+    minWidth: 200
+  },
+  {
+    field: 'status',
+    label: 'docs.document.status',
+    minWidth: 150
+  },
+  {
+    field: 'createdAt',
+    label: 'docs.document.createdAt',
+    minWidth: 150
+  },
+  {
+    field: 'createdBy',
+    label: 'docs.document.createdBy',
+    minWidth: 150
+  },
+  {
+    field: 'actions',
+    label: 'docs.document.actions',
+    minWidth: 150
+  }
+]
+
+export interface DocumentResultModel {
+  id: string | number
+  fileName: string
+  testResults: DocumentResultEnum
+  numberSatisfiesRequirement: string
+}
+
+export const documentResultListColumnConfigs: ColumnConfigModel[] = [
+  {
+    field: 'stt',
+    label: 'docs.document.#',
+    minWidth: 80
+  },
+  {
+    field: 'fileName',
+    label: 'docs.document.documentName_1',
+    minWidth: 200
+  },
+  {
+    field: 'testResults',
+    label: 'docs.document.testResults',
+    minWidth: 150
+  },
+  {
+    field: 'numberSatisfiesRequirement',
+    label: 'docs.document.numberSatisfiesRequirement',
+    minWidth: 250
+  },
+  {
+    field: 'actions',
+    label: 'docs.document.actions',
+    minWidth: 150
+  }
+]
+
+export interface ApproveProcessDocumentModel {
+  id: string | number
+  name: string
+  username: string
+}
+
+export const approveProcessDocumentColumnConfigs: ColumnConfigModel[] = [
+  {
+    field: 'stt',
+    label: 'docs.document.stt',
+    width: 80
+  },
+  {
+    field: 'select',
+    label: 'docs.document.select',
+    width: 80
+  },
+  {
+    field: 'checker',
+    label: 'docs.document.checkerName',
+    minWidth: 200
+  }
+]

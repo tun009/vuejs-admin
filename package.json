@@ -64,6 +64,7 @@
     "husky": "9.1.6",
     "jsdom": "25.0.0",
     "lint-staged": "15.2.10",
+    "madge": "^8.0.0",
     "postcss": "^8.4.47",
     "prettier": "3.3.3",
     "sass": "1.78.0",

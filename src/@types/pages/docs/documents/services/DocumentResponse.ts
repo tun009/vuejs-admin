@@ -1,4 +1,11 @@
+import { ApproveProcessDocumentModel, DocumentFileModel, DocumentModel, DocumentResultModel } from '..'
+
 import { BaseListResponseModel } from '@/@types/common'
-import { DocumentModel } from '..'
 
 export type GetDocumentResponseModel = BaseListResponseModel<DocumentModel>
+
+export type GetDocumentFileResponseModel = BaseListResponseModel<DocumentFileModel>
+
+export type GetDocumentResultsResponseModel = BaseListResponseModel<DocumentResultModel>
+
+export type GetCheckersResponseModel = BaseListResponseModel<ApproveProcessDocumentModel>

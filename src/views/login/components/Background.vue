@@ -1,3 +1,7 @@
+<script setup lang="ts">
+import { EximbankLogo, LoginBackgound, LoginBackgoundIcon } from '@/assets'
+</script>
+
 <template>
   <div class="flex flex-row overflow-y-hidden max-h-[100vh]">
     <div class="relative max-w-[50%]">
@@ -13,7 +17,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { EximbankLogo, LoginBackgound, LoginBackgoundIcon } from '@/assets'
-</script>

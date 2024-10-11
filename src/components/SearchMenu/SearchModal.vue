@@ -32,6 +32,15 @@ const modalWidth = computed(() => (isMobile.value ? '80vw' : '40vw'))
 /** Tree menu */
 const menusData = computed(() => cloneDeep(usePermissionStore().routes))
 
+/** Flatten the tree menu into a one-dimensional array for menu search */
+const flatTree = (arr: RouteRecordRaw[], result: RouteRecordRaw[] = []) => {
+  arr.forEach((item) => {
+    result.push(item)
+    item.children && flatTree(item.children, result)
+  })
+  return result
+}
+
 /** Search (Anti-shake) */
 const handleSearch = debounce(() => {
   const flatMenusData = flatTree(menusData.value)
@@ -46,15 +55,6 @@ const handleSearch = debounce(() => {
   const length = resultList.value?.length
   activeRouteName.value = length > 0 ? resultList.value[0].name : undefined
 }, 500)
-
-/** Flatten the tree menu into a one-dimensional array for menu search */
-const flatTree = (arr: RouteRecordRaw[], result: RouteRecordRaw[] = []) => {
-  arr.forEach((item) => {
-    result.push(item)
-    item.children && flatTree(item.children, result)
-  })
-  return result
-}
 
 /** Close the search dialog */
 const handleClose = () => {

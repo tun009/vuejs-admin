@@ -56,6 +56,6 @@ export const uploadDocumentColumnConfig: ColumnConfigModel[] = [
   {
     field: 'actions',
     label: 'docs.document.actions',
-    width: 80
+    width: 110
   }
 ]

@@ -38,6 +38,15 @@ export const useUserStore = defineStore('user', () => {
     // Refresh the page instead of re-login
     window.location.reload()
   }
+
+  /** Reset Visited Views and Cached Views */
+  const _resetTagsView = () => {
+    if (!settingsStore.cacheTagsView) {
+      tagsViewStore.delAllVisitedViews()
+      tagsViewStore.delAllCachedViews()
+    }
+  }
+
   /** Sign out */
   const logout = () => {
     removeToken()
@@ -51,13 +60,6 @@ export const useUserStore = defineStore('user', () => {
     removeToken()
     token.value = ''
     roles.value = []
-  }
-  /** Reset Visited Views and Cached Views */
-  const _resetTagsView = () => {
-    if (!settingsStore.cacheTagsView) {
-      tagsViewStore.delAllVisitedViews()
-      tagsViewStore.delAllCachedViews()
-    }
   }
 
   return { token, roles, username, login, getInfo, changeRoles, logout, resetToken }

@@ -38,6 +38,11 @@ const changePasswordFormRules: FormRules = {
   confirmPassword: [requireRule(), passwordRule(), { validator: validateConfirmPass, trigger: 'blur' }]
 }
 
+const handleClose = () => {
+  emits('close')
+  changePasswordFormRef.value.resetFields()
+}
+
 const handleChangePassword = () => {
   changePasswordFormRef.value?.validate((valid: boolean, fields: any) => {
     if (valid) {
@@ -55,11 +60,6 @@ const handleChangePassword = () => {
       console.error('Form validation failed', fields)
     }
   })
-}
-
-const handleClose = () => {
-  emits('close')
-  changePasswordFormRef.value.resetFields()
 }
 
 defineExpose<Exposes>({

@@ -1,70 +1,3 @@
-<template>
-  <el-dialog v-model="localModelValue" :title="$t('docs.document.addDocument')" width="75%" :before-close="handleClose">
-    <el-form
-      ref="addDocumentFormRef"
-      :model="addDocumentFormData"
-      :rules="addDocumentFormRules"
-      @keyup.enter="handleAddDocument"
-      class="flex flex-col gap-3"
-    >
-      <div>
-        <div class="grid grid-cols-2 gap-x-4">
-          <Select
-            v-model="addDocumentFormData.businessType"
-            name="businessType"
-            :options="businessTypeOptions.slice(0, 1)"
-            :label="$t('docs.document.businessType')"
-            is-row
-          />
-          <Input
-            :label="$t('docs.document.documentName')"
-            :placeholder="$t('docs.document.enterName')"
-            name="documentName"
-            v-model="addDocumentFormData.documentName"
-            required
-            is-row
-            class="col-start-1"
-          />
-          <Select
-            v-model="addDocumentFormData.sol"
-            name="sol"
-            :options="MOCK_SOLS"
-            :label="$t('docs.document.selectSOL')"
-            is-row
-          />
-          <Input
-            :label="$t('docs.document.customerName')"
-            :placeholder="$t('docs.document.enterName')"
-            name="customerName"
-            v-model="addDocumentFormData.customerName"
-            required
-            is-row
-          />
-          <Input
-            :label="$t('docs.document.cifCode')"
-            :placeholder="$t('docs.document.cifCode')"
-            name="cif"
-            v-model="addDocumentFormData.cif"
-            is-row
-          />
-        </div>
-      </div>
-    </el-form>
-    <template #footer>
-      <div class="dialog-footer flex flex-row justify-between items-center">
-        <span class="text-sm text-gray-600">{{ $t('docs.document.uploadNote') }}</span>
-        <div>
-          <el-button @click="localModelValue = false">{{ $t('button.cancel') }}</el-button>
-          <el-button :loading="loading" type="primary" @click="handleAddDocument">
-            {{ $t('button.confirm') }}
-          </el-button>
-        </div>
-      </div>
-    </template>
-    <Upload :files="files" @add-files="addFiles" @set-files="setFiles" />
-  </el-dialog>
-</template>
-
 <script setup lang="ts">
 import { BusinessTypeEnum, businessTypeOptions } from '@/@types/pages/docs/documents'
 import { AddDocumentRequestData } from '@/@types/pages/docs/documents/services/DocumentRequest'
@@ -166,9 +99,9 @@ const handleAddDocument = () => {
       setTimeout(() => {
         loading.value = false
         ElMessage({
+          message: t('notification.description.createSuccess'),
           showClose: true,
-          type: 'success',
-          message: t('notification.description.updateSuccess')
+          type: 'success'
         })
         emits('update:model-value', false)
       }, 2000)
@@ -178,3 +111,70 @@ const handleAddDocument = () => {
   })
 }
 </script>
+
+<template>
+  <el-dialog v-model="localModelValue" :title="$t('docs.document.addDocument')" width="75%" :before-close="handleClose">
+    <el-form
+      ref="addDocumentFormRef"
+      :model="addDocumentFormData"
+      :rules="addDocumentFormRules"
+      @keyup.enter="handleAddDocument"
+      class="flex flex-col gap-3"
+    >
+      <div>
+        <div class="grid grid-cols-2 gap-x-4">
+          <Select
+            v-model="addDocumentFormData.businessType"
+            name="businessType"
+            :options="businessTypeOptions.slice(0, 1)"
+            :label="$t('docs.document.businessType')"
+            is-row
+          />
+          <Input
+            :label="$t('docs.document.documentName')"
+            :placeholder="$t('docs.document.enterName')"
+            name="documentName"
+            v-model="addDocumentFormData.documentName"
+            required
+            is-row
+            class="col-start-1"
+          />
+          <Select
+            v-model="addDocumentFormData.sol"
+            name="sol"
+            :options="MOCK_SOLS"
+            :label="$t('docs.document.selectSOL')"
+            is-row
+          />
+          <Input
+            :label="$t('docs.document.customerName')"
+            :placeholder="$t('docs.document.enterName')"
+            name="customerName"
+            v-model="addDocumentFormData.customerName"
+            required
+            is-row
+          />
+          <Input
+            :label="$t('docs.document.cifCode')"
+            :placeholder="$t('docs.document.cifCode')"
+            name="cif"
+            v-model="addDocumentFormData.cif"
+            is-row
+          />
+        </div>
+      </div>
+    </el-form>
+    <template #footer>
+      <div class="dialog-footer flex flex-row justify-between items-center">
+        <span class="text-sm text-gray-600">{{ $t('docs.document.uploadNote') }}</span>
+        <div>
+          <el-button @click="localModelValue = false">{{ $t('button.cancel') }}</el-button>
+          <el-button :loading="loading" type="primary" @click="handleAddDocument">
+            {{ $t('button.confirm') }}
+          </el-button>
+        </div>
+      </div>
+    </template>
+    <Upload :files="files" @add-files="addFiles" @set-files="setFiles" />
+  </el-dialog>
+</template>

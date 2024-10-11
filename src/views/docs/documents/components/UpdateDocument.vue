@@ -36,6 +36,11 @@ const upadateDocumentFormRules: FormRules = {
   sol: []
 }
 
+const handleClose = () => {
+  emits('close')
+  upadateDocumentFormRef.value.resetFields()
+}
+
 const handleUpdateDocument = () => {
   upadateDocumentFormRef.value?.validate((valid: boolean, fields: any) => {
     if (valid) {
@@ -53,11 +58,6 @@ const handleUpdateDocument = () => {
       console.error('Form validation failed', fields)
     }
   })
-}
-
-const handleClose = () => {
-  emits('close')
-  upadateDocumentFormRef.value.resetFields()
 }
 
 defineExpose<Exposes>({
