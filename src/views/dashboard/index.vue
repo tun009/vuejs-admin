@@ -2,13 +2,13 @@
   <div class="dashboard-container">
     <div class="chart-title">Tổng quan về dữ liệu</div>
     <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
-      <div class="p-4 box-container-top dark:bg-[#181818]">
+      <div class="p-4 box-container-top bg-white dark:bg-[#181818]">
         <div class="chart-box-title">THÔNG TIN CHUNG</div>
         <div class="flex justify-center">
           <apexchart class="w-3/4" type="donut" :options="chartOptions" :series="series" />
         </div>
       </div>
-      <div class="p-4 box-container-top dark:bg-[#181818]">
+      <div class="p-4 box-container-top bg-white dark:bg-[#181818]">
         <div class="h-1/2">
           <div class="chart-box-title">THÔNG TIN CHỨNG TỪ ĐÃ PHÊ DUYỆT</div>
           <div class="flex pt-2 px-2">
@@ -63,7 +63,7 @@
           </div>
         </div>
       </div>
-      <div class="p-4 box-container-bottom dark:bg-[#181818]">
+      <div class="p-4 box-container-bottom bg-white dark:bg-[#181818]">
         <div class="chart-box-title flex justify-between items-center">
           <span>TOP 20 TỈ LỆ SỬA TRƯỜNG DỮ LIỆU</span>
           <el-select v-model="valueFilterField" class="w-32" @change="getFieldChanged">
@@ -89,7 +89,7 @@
           </template>
         </Table>
       </div>
-      <div class="p-4 box-container-bottom dark:bg-[#181818]">
+      <div class="p-4 box-container-bottom bg-white dark:bg-[#181818]">
         <div class="chart-box-title py-2">DANH SÁCH XỬ LÝ THEO SOLS</div>
         <Table
           :columnConfigs="SOLListColumnConfigs"
