@@ -1,11 +1,5 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
-
-import { ThemeName } from '@/hooks/useTheme'
 import { useTagsViewStore } from '@/store/modules/tags-view'
-import { getActiveThemeName } from '@/utils/cache/local-storage'
-const DEFAULT_THEME_NAME = 'dark'
-const activeThemeName = ref<ThemeName>(getActiveThemeName() || DEFAULT_THEME_NAME)
 
 // import { useSettingsStore } from '@/store/modules/settings'
 // import Footer from './Footer/index.vue'
@@ -15,7 +9,7 @@ const tagsViewStore = useTagsViewStore()
 </script>
 
 <template>
-  <section class="app-main" :class="activeThemeName === 'normal' && 'bg-normal'">
+  <section class="app-main bg-[#f8f9fa] dark:bg-[#141414]">
     <div class="app-scrollbar">
       <!-- Using route.path and route.fullPath as key has different effects, path is more general in most cases -->
       <router-view v-slot="{ Component, route }">

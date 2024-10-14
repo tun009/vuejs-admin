@@ -13,7 +13,11 @@
           <div class="chart-box-title">THÔNG TIN CHỨNG TỪ ĐÃ PHÊ DUYỆT</div>
           <div class="flex pt-2 px-2">
             <div class="w-1/2 flex">
-              <DoughnutChart :labels="labelsValid" :bgcolor="bgcolorValid" :share_percentage="share_percentage_valid" />
+              <DoughnutChart
+                :labels="LABEL_VALID_CHARTS"
+                :bgcolor="BG_COLOR_VALID_CHARTS"
+                :share_percentage="share_percentage_valid"
+              />
               <div class="box-subinfo">
                 <div class="big-title">900<span class="text-base"> /1000</span></div>
                 <div class="big-title-text">Bộ đã phê duyệt</div>
@@ -38,7 +42,7 @@
             <span>THÔNG TIN CHỨNG TỪ ĐẠT YÊU CẦU</span>
           </div>
           <div class="flex pt-2 px-2">
-            <DoughnutChart :bgcolor="bgcolorInValid" :share_percentage="share_percentage_invalid" />
+            <DoughnutChart :bgcolor="BG_COLOR_INVALID_CHARTS" :share_percentage="share_percentage_invalid" />
             <div class="box-subinfo">
               <div class="big-title">764<span class="text-base"> /900</span></div>
               <div class="big-title-text flex">
@@ -113,16 +117,12 @@ import {
   SOLModel,
   SOLListColumnConfigs,
   chartOptionsSumary,
-  optionsFieldChanged,
-  bgcolorValidChart,
-  bgcolorInValidChart,
-  labelsValidChart
+  optionsFieldChanged
 } from '@/@types/pages/dashboard'
 import { getFieldsChanged, getSOLs } from '@/api/dashboard'
-const labelsValid = labelsValidChart
-const bgcolorValid = bgcolorValidChart
+import { BG_COLOR_INVALID_CHARTS, BG_COLOR_VALID_CHARTS, LABEL_VALID_CHARTS } from '@/constants/chart'
+
 const share_percentage_valid = [800, 100, 100]
-const bgcolorInValid = bgcolorInValidChart
 const share_percentage_invalid = [746, 154]
 const series = ref<number[]>([100, 36, 60, 900, 4, 0])
 const fieldsChangedData = ref<fieldChangedModel[]>([])

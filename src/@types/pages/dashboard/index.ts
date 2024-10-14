@@ -102,6 +102,3 @@ export const optionsFieldChanged = [
     value: 'description'
   }
 ]
-export const labelsValidChart = ['BCT hợp lệ', 'BCT bất hợp lệ', 'Khác']
-export const bgcolorValidChart = ['#7048e8', '#d6336c', '#ced4da']
-export const bgcolorInValidChart = ['#087f5b', '#ced4da']
