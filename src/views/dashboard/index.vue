@@ -113,13 +113,16 @@ import {
   SOLModel,
   SOLListColumnConfigs,
   chartOptionsSumary,
-  optionsFieldChanged
+  optionsFieldChanged,
+  bgcolorValidChart,
+  bgcolorInValidChart,
+  labelsValidChart
 } from '@/@types/pages/dashboard'
 import { getFieldsChanged, getSOLs } from '@/api/dashboard'
-const labelsValid = ['BCT hợp lệ', 'BCT bất hợp lệ', 'Khác']
-const bgcolorValid = ['#7048e8', '#d6336c', '#ced4da']
+const labelsValid = labelsValidChart
+const bgcolorValid = bgcolorValidChart
 const share_percentage_valid = [800, 100, 100]
-const bgcolorInValid = ['#087f5b', '#ced4da']
+const bgcolorInValid = bgcolorInValidChart
 const share_percentage_invalid = [746, 154]
 const series = ref<number[]>([100, 36, 60, 900, 4, 0])
 const fieldsChangedData = ref<fieldChangedModel[]>([])

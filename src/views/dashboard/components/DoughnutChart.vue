@@ -36,7 +36,7 @@ ChartJS.register({
 })
 
 const props = defineProps<{
-  labels: string[]
+  labels?: string[]
   bgcolor: string[]
   share_percentage: number[]
 }>()
@@ -50,7 +50,7 @@ const chartData = computed(() => ({
       data: props.share_percentage
     }
   ],
-  labels: props.labels
+  labels1: props.labels
 }))
 
 const chartOptions = computed(() => ({
@@ -70,8 +70,7 @@ const chartOptions = computed(() => ({
       text: `90.0%`
     },
     legend: {
-      display: false,
-      position: 'bottom'
+      display: false
     },
     tooltip: {
       callbacks: {

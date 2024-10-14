@@ -1,4 +1,4 @@
-import { fieldChangedModel } from '..'
+import { SOLModel, fieldChangedModel } from '..'
 
 import { BaseResponseModel } from '@/@types/common'
 
