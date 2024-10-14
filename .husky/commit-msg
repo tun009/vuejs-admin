@@ -1,8 +1,5 @@
 #!/bin/sh
 
-# Define valid prefixes (case-insensitive)
-valid_prefixes=(feat fix perf style refactor revert test docs chore workflow ci types wip)
-
 # Check if a file was provided
 if [ -z "$1" ]; then
   echo "Error: No commit message file provided."
@@ -14,7 +11,7 @@ commit_message=$(cat "$1")
 
 # Check if the commit message starts with a valid prefix (case-insensitive)
 if ! echo "$commit_message" | grep -qE '^(feat|fix|perf|style|refactor|revert|test|docs|chore|workflow|ci|types|wip): '; then
-  echo "Error: Commit message must start with one of the following prefixes (case-insensitive): $valid_prefixes_list"
+  echo "Error: Commit message must start with one of the following prefixes (case-insensitive): (feat|fix|perf|style|refactor|revert|test|docs|chore|workflow|ci|types|wip): "
   exit 1
 fi
 
