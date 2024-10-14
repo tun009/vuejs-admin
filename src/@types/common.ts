@@ -3,6 +3,7 @@ export interface ColumnConfigModel {
   label: string
   minWidth?: number
   width?: number
+  html?: boolean
 }
 
 export interface PaginationModel {

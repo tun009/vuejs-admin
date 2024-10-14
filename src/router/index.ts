@@ -17,7 +17,8 @@ import {
   USERS_PAGE,
   _403_PAGE,
   _404_PAGE,
-  DOCUMENT_DETAIL_PAGE
+  DOCUMENT_DETAIL_PAGE,
+  COMPARE_DOCUMENT_DETAIL_PAGE
 } from '@/constants/router'
 
 const Layouts = () => import('@/layouts/index.vue')
@@ -186,7 +187,7 @@ export const constantRoutes: RouteRecordRaw[] = [
         }
       }
     ]
-  }
+  },
   // {
   //   component: () => import('@/views/docs/documents/DocumentDetail.vue'),
   //   meta: {
@@ -197,6 +198,13 @@ export const constantRoutes: RouteRecordRaw[] = [
   //   name: 'Document detail',
   //   path: DOCUMENT_DETAIL_PAGE()
   // }
+  {
+    path: COMPARE_DOCUMENT_DETAIL_PAGE(),
+    component: () => import('@/views/docs/documents/compare/index.vue'),
+    meta: {
+      hidden: true
+    }
+  }
 ]
 
 /**

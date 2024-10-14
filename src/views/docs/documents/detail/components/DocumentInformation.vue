@@ -15,6 +15,10 @@ import Table from '@/components/common/Table.vue'
 import { handleComingSoon } from '@/utils/common'
 import { PROGRESS_COLORS } from '@/constants/color'
 import Drawer from '@/components/common/Drawer.vue'
+import { useRouter } from 'vue-router'
+import { COMPARE_DOCUMENT_DETAIL_PAGE } from '@/constants/router'
+
+const router = useRouter()
 
 const status = ref(1)
 const documentStatus = ref(2)
@@ -24,7 +28,7 @@ const documentResultListTableRef = ref<InstanceType<typeof Table>>()
 const openApproveProcessDrawer = ref(false)
 
 const handleViewDocument = (_id: string | number) => {
-  handleComingSoon()
+  router.push(COMPARE_DOCUMENT_DETAIL_PAGE(_id))
 }
 
 const handleGetDocumentResults = async () => {
@@ -180,12 +184,12 @@ onMounted(() => {
               v-else-if="status === 1"
               class="rounded-md px-3 py-2 bg-[#fff4e6] flex flex-row gap-2 items-center w-fit text-[#d9480f]"
             >
-              <el-icon size="18"><WarnTriangleFilled /></el-icon>
-              <span class="text-lg">Bất hợp lệ</span>
+              <el-icon size="24"><WarnTriangleFilled /></el-icon>
+              <span class="text-base">Bất hợp lệ</span>
             </div>
             <div v-else class="rounded-md px-3 py-2 bg-[#e6fcf5] flex flex-row gap-2 items-center w-fit text-[#099268]">
-              <el-icon size="18"><CircleCheckFilled /></el-icon>
-              <span class="text-lg">Hợp lệ</span>
+              <el-icon size="24"><CircleCheckFilled /></el-icon>
+              <span class="text-base">Hợp lệ</span>
             </div>
           </div>
           <div v-if="!!status" class="flex flex-col gap-2 flex-[2]">

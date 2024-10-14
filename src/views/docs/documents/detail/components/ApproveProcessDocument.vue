@@ -20,7 +20,6 @@ const emits = defineEmits<Emits>()
 
 const radio = ref()
 const loading = ref(false)
-const addUserFormRef = ref()
 const tableData = ref<ApproveProcessDocumentModel[]>([])
 const checkerTableRef = ref<InstanceType<typeof Table>>()
 
@@ -40,7 +39,6 @@ const handleGetChecker = async () => {
 
 const handleClose = () => {
   emits('close')
-  addUserFormRef.value.resetFields()
 }
 
 const handleSelectChecker = () => {

@@ -358,3 +358,22 @@ export const approveProcessDocumentColumnConfigs: ColumnConfigModel[] = [
     minWidth: 200
   }
 ]
+
+export const documentTypeOptions: SelectOptionModel[] = [
+  {
+    label: 'Invoice',
+    value: 0
+  },
+  {
+    label: 'Bill of lading',
+    value: 1
+  },
+  {
+    label: 'Drafts',
+    value: 2
+  },
+  {
+    label: 'Giấy Xuất trình chứng từ',
+    value: 3
+  }
+]

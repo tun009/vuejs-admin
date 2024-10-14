@@ -113,7 +113,8 @@ defineExpose<Exposes>({
       >
         <template v-slot:default="scope">
           <slot :name="column.field" :column="column" :row="scope.row" :index="scope.$index" class="cursor-pointer">
-            <span>{{ scope.row[column.field] }}</span>
+            <div v-if="column?.html" v-html="scope.row[column.field]" />
+            <span v-else>{{ scope.row[column.field] }}</span>
           </slot>
         </template>
       </el-table-column>
