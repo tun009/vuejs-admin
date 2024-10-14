@@ -23,6 +23,7 @@ export interface SelectOptionModel {
   description?: string
 }
 
+export type BaseResponseModel<T> = ApiResponseData<T>
 export type TLanguage = 'vi' | 'en'
 
 export enum DocumentStatusEnum {
@@ -58,3 +59,4 @@ export const uploadDocumentColumnConfig: ColumnConfigModel[] = [
     width: 110
   }
 ]
+export type BaseResponseModel<T> = ApiResponseData<T>
