@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { documentTypeOptions } from '@/@types/pages/docs/documents'
-import Select from '@/components/common/EIBSelect.vue'
+import EIBSelect from '@/components/common/EIBSelect.vue'
 import { documentCompareResultConfigs, documentCompareResults } from '@/mocks/document'
 import { handleComingSoon, scrollIntoViewParent } from '@/utils/common'
 import { ArrowLeft, Check, CircleCheckFilled, Close, WarnTriangleFilled } from '@element-plus/icons-vue'
@@ -100,7 +100,7 @@ watch(
               </div>
             </div>
             <el-divider />
-            <Select v-model="documentType" :options="documentTypeOptions" label="Chứng từ đang kiểm tra" />
+            <EIBSelect v-model="documentType" :options="documentTypeOptions" label="Chứng từ đang kiểm tra" />
             <div class="flex-1 flex flex-col gap-3">
               <span>Kết quả kiểm tra</span>
               <div

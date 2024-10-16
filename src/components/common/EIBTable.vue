@@ -88,7 +88,7 @@ defineExpose<Exposes>({
 </script>
 
 <template>
-  <div class="flex flex-col gap-5 w-full">
+  <div class="flex flex-col gap-5 w-full eib-table">
     <el-table
       ref="multipleTableRef"
       border
@@ -101,6 +101,9 @@ defineExpose<Exposes>({
       @selection-change="handleSelectionChange"
       @row-click="(row) => $emit('row-click', row)"
     >
+      <caption>
+        Design by Viettel IDP
+      </caption>
       <el-table-column v-if="!hiddenChecked" fixed type="selection" :selectable="selectable" width="40" />
       <el-table-column
         v-for="column in columnConfigs"
@@ -175,7 +178,7 @@ defineExpose<Exposes>({
 </template>
 
 <style lang="css" scoped>
-:deep(.el-table tr th) {
+.eib-table :deep(.el-table tr th) {
   background-color: #005d98 !important;
   color: white;
 }

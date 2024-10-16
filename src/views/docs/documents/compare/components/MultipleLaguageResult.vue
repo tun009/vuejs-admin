@@ -4,8 +4,8 @@ import {
   documentResultRuleOptions,
   documentResultValidOptions
 } from '@/@types/pages/docs/documents'
-import Input from '@/components/common/EIBInput.vue'
-import Select from '@/components/common/EIBSelect.vue'
+import EIBInput from '@/components/common/EIBInput.vue'
+import EIBSelect from '@/components/common/EIBSelect.vue'
 import { handleComingSoon } from '@/utils/common'
 import { ElMessage, FormRules } from 'element-plus'
 import { ref } from 'vue'
@@ -129,14 +129,14 @@ const handleSaveRule = () => {
           <span class="c-text-des">Chỉnh sửa thông tin</span>
           <div class="flex flex-row items-center">
             <span class="min-w-48 text-sm">Kết quả kiểm tra</span>
-            <Select :options="documentResultValidOptions" v-model="documentResultFormData.status" hidden-error />
+            <EIBSelect :options="documentResultValidOptions" v-model="documentResultFormData.status" hidden-error />
           </div>
         </div>
         <div class="flex flex-col gap-1">
           <span class="c-text-des">Tiếng Anh</span>
           <div class="flex flex-row items-center">
             <span class="min-w-48 text-sm">Lý do</span>
-            <Input name="reasonEn" v-model="documentResultFormData.reasonEn" hidden-error />
+            <EIBInput name="reasonEn" v-model="documentResultFormData.reasonEn" hidden-error />
             <el-button
               color="#005d98"
               plain
@@ -150,14 +150,14 @@ const handleSaveRule = () => {
           </div>
           <div class="flex flex-row items-center">
             <span class="min-w-48 text-sm">Dẫn chứng Rule</span>
-            <Select :options="documentResultRuleOptions" v-model="documentResultFormData.rule" hidden-error />
+            <EIBSelect :options="documentResultRuleOptions" v-model="documentResultFormData.rule" hidden-error />
           </div>
         </div>
         <div class="flex flex-col gap-1">
           <span class="c-text-des">Tiếng Việt</span>
           <div class="flex flex-row items-center">
             <span class="min-w-48 text-sm">Lý do</span>
-            <Input name="reasonVi" v-model="documentResultFormData.reasonVi" hidden-error />
+            <EIBInput name="reasonVi" v-model="documentResultFormData.reasonVi" hidden-error />
           </div>
         </div>
       </el-form>

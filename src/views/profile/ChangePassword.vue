@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ChangePasswordRequestModel } from '@/@types/pages/profile/services/ProfileRequest'
-import Input from '@/components/common/EIBInput.vue'
+import EIBInput from '@/components/common/EIBInput.vue'
 import { passwordRule, requireRule } from '@/utils/validate'
 import { ElMessage, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
@@ -75,7 +75,7 @@ defineExpose<Exposes>({
     @keyup.enter="handleChangePassword"
     class="flex flex-col gap-1"
   >
-    <Input
+    <EIBInput
       label="profile.password"
       placeholder="profile.enterCurrentPassword"
       name="password"
@@ -83,7 +83,7 @@ defineExpose<Exposes>({
       required
       show-limit
     />
-    <Input
+    <EIBInput
       label="profile.newPassword"
       placeholder="profile.enterNewPassword"
       name="newPassword"
@@ -91,7 +91,7 @@ defineExpose<Exposes>({
       required
       show-limit
     />
-    <Input
+    <EIBInput
       label="profile.confirmPassword"
       placeholder="profile.enterNewPasswordAgain"
       name="confirmPassword"

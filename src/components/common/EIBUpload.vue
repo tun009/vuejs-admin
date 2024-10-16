@@ -7,7 +7,7 @@ import { truncateFileName } from '@/utils/common'
 import { warningNotification } from '@/utils/notification'
 import { Delete, Plus } from '@element-plus/icons-vue'
 import { computed, ref } from 'vue'
-import Table from './EIBTable.vue'
+import EIBTable from './EIBTable.vue'
 
 interface Props {
   files: File[]
@@ -114,7 +114,7 @@ const handleDeleteFile = (index: number) => {
     </div>
     <div v-if="files.length" class="flex-[2] flex flex-col gap-y-2 overflow-x-auto">
       <p>{{ $t('docs.document.uploadList') }}</p>
-      <Table
+      <EIBTable
         :column-configs="uploadDocumentColumnConfig"
         :data="tableFiles"
         hiddenPagination
@@ -127,7 +127,7 @@ const handleDeleteFile = (index: number) => {
             ><Delete
           /></el-icon>
         </template>
-      </Table>
+      </EIBTable>
     </div>
   </div>
 </template>

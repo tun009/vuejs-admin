@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { UpdateUserRequestModel, RoleEnum, roleSelectOptions } from '@/@types/pages/users'
-import Input from '@/components/common/EIBInput.vue'
-import Select from '@/components/common/EIBSelect.vue'
+import EIBInput from '@/components/common/EIBInput.vue'
+import EIBSelect from '@/components/common/EIBSelect.vue'
 import { requireRule } from '@/utils/validate'
 import { Check, Close, Lock } from '@element-plus/icons-vue'
 import { ElMessage, FormRules } from 'element-plus'
@@ -73,22 +73,22 @@ defineExpose<Exposes>({
     @keyup.enter="handleUpdateUser"
     class="flex flex-col gap-1"
   >
-    <Input
+    <EIBInput
       label="user.addUser.name"
       placeholder="user.addUser.enterName"
       name="name"
       v-model="updateUserFormData.name"
       disabled
     />
-    <Input
+    <EIBInput
       label="user.addUser.username"
       name="username"
       placeholder="user.addUser.enterUsername"
       v-model="updateUserFormData.username"
       disabled
     />
-    <Select v-model="updateUserFormData.sol" name="sol" :options="roleSelectOptions" label="user.addUser.sol" />
-    <Select v-model="updateUserFormData.role" name="role" :options="roleSelectOptions" label="user.addUser.role" />
+    <EIBSelect v-model="updateUserFormData.sol" name="sol" :options="roleSelectOptions" label="user.addUser.sol" />
+    <EIBSelect v-model="updateUserFormData.role" name="role" :options="roleSelectOptions" label="user.addUser.role" />
     <div class="flex flex-col gap-2 mb-[26px]">
       <span>{{ $t('user.updateUser.password') }}</span>
       <el-button class="w-fit" :icon="Lock" color="#005d98" plain>{{ $t('user.updateUser.resetPassword') }}</el-button>

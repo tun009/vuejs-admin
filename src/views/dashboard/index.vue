@@ -70,7 +70,7 @@
             <el-option v-for="item in optionsField" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </div>
-        <Table
+        <EIBTable
           class="table-container pt-2"
           :columnConfigs="fieldChangedListColumnConfigs"
           :data="fieldsChangedData"
@@ -87,11 +87,11 @@
           <template #rate="{ row }">
             <span>{{ renderRate(row.rate) }} </span>
           </template>
-        </Table>
+        </EIBTable>
       </div>
       <div class="p-4 box-container-bottom bg-white dark:bg-[#181818]">
         <div class="chart-box-title py-2">DANH SÁCH XỬ LÝ THEO SOLS</div>
-        <Table
+        <EIBTable
           :columnConfigs="SOLListColumnConfigs"
           :data="SOLData"
           hiddenChecked
@@ -110,7 +110,7 @@ import VueApexCharts from 'vue3-apexcharts'
 
 import DoughnutChart from './components/DoughnutChart.vue'
 
-import Table from '@/components/common/EIBTable.vue'
+import EIBTable from '@/components/common/EIBTable.vue'
 import {
   fieldChangedModel,
   fieldChangedListColumnConfigs,

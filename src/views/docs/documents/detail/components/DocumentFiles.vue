@@ -4,11 +4,11 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import Upload from '@/components/common/EIBUpload.vue'
+import EIBUpload from '@/components/common/EIBUpload.vue'
 import { warningNotification } from '@/utils/notification'
 import { DocumentFileModel, fileListColumnConfigs } from '@/@types/pages/docs/documents'
 import { getDocumentFiles } from '@/api/docs/document'
-import Table from '@/components/common/EIBTable.vue'
+import EIBTable from '@/components/common/EIBTable.vue'
 
 const { t } = useI18n()
 
@@ -16,7 +16,7 @@ const dialogVisible = ref<boolean>(false)
 const loading = ref<boolean>(false)
 const files = ref<File[]>([])
 const tableData = ref<DocumentFileModel[]>([])
-const fileListTableRef = ref<InstanceType<typeof Table>>()
+const fileListTableRef = ref<InstanceType<typeof EIBTable>>()
 
 const addFiles = (fileList: FileList) => {
   files.value.push(...Array.from(fileList))
@@ -93,7 +93,7 @@ const handleDeleteFile = (id: number | string) => {
       </div>
       <!-- add file dialog -->
       <el-dialog v-model="dialogVisible" :title="$t('docs.document.addFile')" width="75%" :before-close="handleClose">
-        <Upload :files="files" @add-files="addFiles" @set-files="setFiles" />
+        <EIBUpload :files="files" @add-files="addFiles" @set-files="setFiles" />
         <template #footer>
           <div class="dialog-footer flex flex-row justify-between items-center">
             <span class="text-sm text-gray-600">{{ $t('docs.document.uploadNote') }}</span>
@@ -106,7 +106,7 @@ const handleDeleteFile = (id: number | string) => {
           </div>
         </template>
       </el-dialog>
-      <Table
+      <EIBTable
         ref="fileListTableRef"
         locales
         hidden-pagination
@@ -123,7 +123,7 @@ const handleDeleteFile = (id: number | string) => {
         </template>
         <template #stt="{ index }">
           <span>{{ index + 1 }}</span>
-        </template></Table
+        </template></EIBTable
       >
     </div>
   </el-card>

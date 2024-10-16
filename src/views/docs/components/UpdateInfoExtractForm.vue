@@ -4,7 +4,7 @@ import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { RoleEnum, UpdateUserRequestModel } from '@/@types/pages/users'
-import Input from '@/components/common/EIBInput.vue'
+import EIBInput from '@/components/common/EIBInput.vue'
 import { requireRule } from '@/utils/validate'
 
 interface Emits {
@@ -72,14 +72,14 @@ defineExpose<Exposes>({
     @keyup.enter="handleUpdateUser"
     class="flex flex-col gap-1"
   >
-    <Input
+    <EIBInput
       label="Tên trường trích xuất"
       placeholder="Nhập tên trường trích xuất"
       name="name"
       v-model="updateUserFormData.name"
     />
-    <Input label="Core key" name="username" placeholder="" v-model="updateUserFormData.username" disabled />
-    <Input label="Mô tả" placeholder="Nhập mô tả" name="name" v-model="updateUserFormData.name" />
+    <EIBInput label="Core key" name="username" placeholder="" v-model="updateUserFormData.username" disabled />
+    <EIBInput label="Mô tả" placeholder="Nhập mô tả" name="name" v-model="updateUserFormData.name" />
   </el-form>
   <div>
     <el-button :loading="loading" @click.prevent="handleUpdateUser" type="primary">{{ $t('button.update') }}</el-button>

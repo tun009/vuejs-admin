@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { AddUserRequestModel, RoleEnum, roleSelectOptions } from '@/@types/pages/users'
-import Input from '@/components/common/EIBInput.vue'
-import Select from '@/components/common/EIBSelect.vue'
+import EIBInput from '@/components/common/EIBInput.vue'
+import EIBSelect from '@/components/common/EIBSelect.vue'
 import { PASSWORD_DEFAULT } from '@/constants/common'
 import { requireRule } from '@/utils/validate'
 import { ElMessage, FormRules } from 'element-plus'
@@ -73,7 +73,7 @@ defineExpose<Exposes>({
     @keyup.enter="handleAddUser"
     class="flex flex-col gap-1"
   >
-    <Input
+    <EIBInput
       label="user.addUser.name"
       placeholder="user.addUser.enterName"
       name="name"
@@ -81,7 +81,7 @@ defineExpose<Exposes>({
       required
       show-limit
     />
-    <Input
+    <EIBInput
       label="user.addUser.username"
       name="username"
       placeholder="user.addUser.enterUsername"
@@ -90,9 +90,9 @@ defineExpose<Exposes>({
       show-limit
       :max-length="200"
     />
-    <Input label="user.addUser.password" name="password" :model-value="PASSWORD_DEFAULT" disabled />
-    <Select v-model="addUserFormData.sol" name="sol" :options="MOCK_SOLS" label="user.addUser.sol" required />
-    <Select
+    <EIBInput label="user.addUser.password" name="password" :model-value="PASSWORD_DEFAULT" disabled />
+    <EIBSelect v-model="addUserFormData.sol" name="sol" :options="MOCK_SOLS" label="user.addUser.sol" required />
+    <EIBSelect
       v-model="addUserFormData.role"
       name="role"
       :options="roleSelectOptions"
