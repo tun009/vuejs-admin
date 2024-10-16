@@ -7,10 +7,10 @@ import ApproveProcessDocument from './ApproveProcessDocument.vue'
 import { DocumentResultModel, documentResultListColumnConfigs } from '@/@types/pages/docs/documents'
 import { getDocumentResults } from '@/api/docs/document'
 import Loading from '@/components/common/EIBLoading.vue'
-import Table from '@/components/common/EIBTable.vue'
+import EIBTable from '@/components/common/EIBTable.vue'
 import { handleComingSoon } from '@/utils/common'
 import { PROGRESS_COLORS } from '@/constants/color'
-import Drawer from '@/components/common/EIBDrawer.vue'
+import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import { useRouter } from 'vue-router'
 import { COMPARE_DOCUMENT_DETAIL_PAGE } from '@/constants/router'
 import { DOCUMENT_RESULT_NAME_LIST } from '@/constants/select'
@@ -21,7 +21,7 @@ const status = ref(1)
 const documentStatus = ref(2)
 const percentage = ref<number>(0)
 const tableData = ref<DocumentResultModel[]>([])
-const documentResultListTableRef = ref<InstanceType<typeof Table>>()
+const documentResultListTableRef = ref<InstanceType<typeof EIBTable>>()
 const openApproveProcessDrawer = ref(false)
 
 const handleViewDocument = (_id: string | number) => {
@@ -195,7 +195,7 @@ onMounted(() => {
             <span><span class="font-semibold mr-2">Trong thời hạn xuất trình chứng từ: </span><span>Hợp lệ</span></span>
           </div>
         </div>
-        <Table
+        <EIBTable
           v-if="!!status"
           ref="documentResultListTableRef"
           locales
@@ -226,13 +226,13 @@ onMounted(() => {
           </template>
           <template #stt="{ index }">
             <span>{{ index + 1 }}</span>
-          </template></Table
+          </template></EIBTable
         >
       </div>
     </template>
   </el-card>
 
-  <Drawer v-model="openApproveProcessDrawer" title="Trình checker phê duyệt bộ chứng từ">
+  <EIBDrawer v-model="openApproveProcessDrawer" title="Trình checker phê duyệt bộ chứng từ">
     <template #default>
       <ApproveProcessDocument
         ref="updateUserFormRef"
@@ -240,7 +240,7 @@ onMounted(() => {
         @close="openApproveProcessDrawer = false"
       />
     </template>
-  </Drawer>
+  </EIBDrawer>
 </template>
 
 <style scoped></style>

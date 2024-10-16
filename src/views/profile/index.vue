@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Drawer from '@/components/common/EIBDrawer.vue'
-import Input from '@/components/common/EIBInput.vue'
+import EIBDrawer from '@/components/common/EIBDrawer.vue'
+import EIBInput from '@/components/common/EIBInput.vue'
 import { Title } from '@/layouts/components'
 import { phoneNumberRule, requireRule } from '@/utils/validate'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
@@ -64,7 +64,7 @@ const handleUpdateProfile = () => {
         @keyup.enter="handleUpdateProfile"
         class="flex flex-col gap-3"
       >
-        <Input
+        <EIBInput
           label="profile.name"
           placeholder="profile.enterName"
           name="name"
@@ -73,7 +73,7 @@ const handleUpdateProfile = () => {
           show-limit
           :readonly="!isEdit"
         />
-        <Input
+        <EIBInput
           label="profile.username"
           placeholder="profile.enterUsername"
           name="namename"
@@ -81,7 +81,7 @@ const handleUpdateProfile = () => {
           disabled
           :readonly="!isEdit"
         />
-        <Input
+        <EIBInput
           label="profile.phoneNumber"
           placeholder="profile.enterPhoneNumber"
           name="phoneNumber"
@@ -90,15 +90,15 @@ const handleUpdateProfile = () => {
           :readonly="!isEdit"
         />
         <div class="flex flex-row items-center justify-between" v-if="!isEdit">
-          <Input label="profile.password" readonly model-value="*********" />
-          <Drawer title="profile.changePassword" :text-button="$t('profile.changePassword')" v-model="openDrawer">
+          <EIBInput label="profile.password" readonly model-value="*********" />
+          <EIBDrawer title="profile.changePassword" :text-button="$t('profile.changePassword')" v-model="openDrawer">
             <template #default>
               <div class="mt-3 flex flex-col gap-5">
                 <el-text>{{ $t('profile.changePasswordDes') + '*&^%#@!' }}</el-text>
                 <ChangePassword ref="changePasswordRef" @close="openDrawer = false" />
               </div>
             </template>
-          </Drawer>
+          </EIBDrawer>
         </div>
       </el-form>
       <div class="mt-2">

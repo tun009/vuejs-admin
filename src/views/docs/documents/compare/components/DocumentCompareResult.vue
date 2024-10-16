@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import EIBList from '@/components/common/EIBList.vue'
-import Table from '@/components/common/EIBTable.vue'
+import EIBTable from '@/components/common/EIBTable.vue'
 import { DocumentCompareResultModel } from '@/mocks/document'
 import { debounce } from 'lodash-es'
 import { onMounted, ref } from 'vue'
@@ -69,7 +69,7 @@ onMounted(() => {})
             </template>
             <template v-else-if="block?.type === 'table'">
               <span class="c-text-des">{{ block?.label }}</span>
-              <Table
+              <EIBTable
                 :column-configs="block.columnConfigs"
                 :data="block?.dataTable"
                 hidden-checked

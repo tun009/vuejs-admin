@@ -18,11 +18,11 @@ import {
   processingStepOptions
 } from '@/@types/pages/docs/documents'
 import { getDocuments } from '@/api/docs/document'
-import Input from '@/components/common/EIBInput.vue'
-import Table from '@/components/common/EIBTable.vue'
+import EIBInput from '@/components/common/EIBInput.vue'
+import EIBTable from '@/components/common/EIBTable.vue'
 import { Title } from '@/layouts/components'
 import { handleComingSoon, renderLabelByValue } from '@/utils/common'
-import Drawer from '@/components/common/EIBDrawer.vue'
+import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import { DOCUMENT_DETAIL_PAGE } from '@/constants/router'
 
 const { t } = useI18n()
@@ -33,7 +33,7 @@ const tableData = ref<DocumentModel[]>([])
 const dialogVisible = ref(false)
 const openDrawer = ref(false)
 const checkedItems = ref<DocumentModel[]>([])
-const documentTableRef = ref<InstanceType<typeof Table>>()
+const documentTableRef = ref<InstanceType<typeof EIBTable>>()
 
 const handleGetDocuments = async (pagination: PaginationModel) => {
   try {
@@ -101,7 +101,7 @@ const handleDeleteDocument = (name?: string) => {
   <div class="flex flex-col gap-5">
     <div class="flex flex-row justify-between gap-10">
       <div class="flex flex-row gap5 items-center _filter gap-5">
-        <Input
+        <EIBInput
           v-model="searchQuery"
           custom-class="w-[300px]"
           placeholder="docs.document.searchByName"
@@ -115,7 +115,7 @@ const handleDeleteDocument = (name?: string) => {
       </div>
     </div>
     <el-card>
-      <Table
+      <EIBTable
         ref="documentTableRef"
         locales
         :columnConfigs="docListColumnConfigs"
@@ -149,15 +149,15 @@ const handleDeleteDocument = (name?: string) => {
             /></el-icon>
           </div>
         </template>
-      </Table>
+      </EIBTable>
     </el-card>
   </div>
   <UploadDocuments v-if="dialogVisible" v-model="dialogVisible" />
-  <Drawer title="docs.document.updateDocument" v-model="openDrawer">
+  <EIBDrawer title="docs.document.updateDocument" v-model="openDrawer">
     <template #default>
       <UpdateDocument @close="openDrawer = false" />
     </template>
-  </Drawer>
+  </EIBDrawer>
   <Transition :duration="300" name="nested" class="fixed bottom-0 -ml-5">
     <div v-if="!!checkedItems.length" class="outer px-5 py-3 w-full shadow-md border border-[#f8f9fa] bg-[#4f4f4f1a]">
       <div class="inner flex flex-row gap-x-5 items-center">

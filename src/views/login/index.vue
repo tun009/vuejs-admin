@@ -8,7 +8,7 @@ import Background from './components/Background.vue'
 import { Lock, User } from '@element-plus/icons-vue'
 import ThemeSwitch from '@/components/ThemeSwitch/index.vue'
 import LanguageSwitch from '@/components/LanguageSwitch/index.vue'
-import Input from '@/components/common/EIBInput.vue'
+import EIBInput from '@/components/common/EIBInput.vue'
 import { DASHBOARD_PAGE } from '@/constants/router'
 import { limitLengthRule, requireRule } from '@/utils/validate'
 import { useI18n } from 'vue-i18n'
@@ -71,7 +71,7 @@ const handleLogin = () => {
             @keyup.enter="handleLogin"
             class="w-full max-w-[500px] mx-auto"
           >
-            <Input
+            <EIBInput
               name="username"
               label="login.username"
               placeholder="login.enterUsername"
@@ -79,7 +79,7 @@ const handleLogin = () => {
               :model-value="loginFormData.username"
               @update:modelValue="(val: string) => (loginFormData.username = val)"
             />
-            <Input
+            <EIBInput
               name="password"
               label="login.password"
               placeholder="login.enterPassword"

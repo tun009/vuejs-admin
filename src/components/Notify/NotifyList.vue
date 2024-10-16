@@ -21,7 +21,7 @@ const props = defineProps<Props>()
           <div class="card-time">{{ item.datetime }}</div>
         </div>
         <div v-if="item.avatar" class="card-avatar">
-          <img :src="item.avatar" alt="" width="34" />
+          <img :src="item.avatar" alt="notify" width="34" />
         </div>
       </div>
     </template>

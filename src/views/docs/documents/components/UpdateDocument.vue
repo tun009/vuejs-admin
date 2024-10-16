@@ -4,8 +4,8 @@ import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { UpdateDocumentRequestModel } from '@/@types/pages/docs/documents/services/DocumentRequest'
-import Input from '@/components/common/EIBInput.vue'
-import Select from '@/components/common/EIBSelect.vue'
+import EIBInput from '@/components/common/EIBInput.vue'
+import EIBSelect from '@/components/common/EIBSelect.vue'
 import { MOCK_SOLS } from '@/mocks/user'
 import { requireRule } from '@/utils/validate'
 
@@ -73,7 +73,7 @@ defineExpose<Exposes>({
     @keyup.enter="handleUpdateDocument"
     class="flex flex-col gap-1"
   >
-    <Input
+    <EIBInput
       label="docs.document.documentName"
       placeholder="docs.document.documentName"
       name="documentName"
@@ -81,15 +81,15 @@ defineExpose<Exposes>({
       required
       show-limit
     />
-    <Select v-model="upadateDocumentFormData.sol" name="sol" :options="MOCK_SOLS" label="docs.document.solDes" />
-    <Input
+    <EIBSelect v-model="upadateDocumentFormData.sol" name="sol" :options="MOCK_SOLS" label="docs.document.solDes" />
+    <EIBInput
       label="docs.document.cifCode"
       placeholder="docs.document.enterCifCode"
       name="cif"
       v-model="upadateDocumentFormData.cif"
       show-limit
     />
-    <Input
+    <EIBInput
       label="docs.document.customerName"
       placeholder="docs.document.enterCustomerName"
       name="customerName"

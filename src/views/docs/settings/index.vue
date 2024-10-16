@@ -6,9 +6,9 @@ import UpdateInfoExtractForm from '../components/UpdateInfoExtractForm.vue'
 import { PaginationModel } from '@/@types/common'
 import { SettingModel, dataSelectDocs, infoListColumnConfigs } from '@/@types/pages/docs/settings'
 import { getSettings } from '@/api/docs/settings'
-import Drawer from '@/components/common/EIBDrawer.vue'
-import Select from '@/components/common/EIBSelect.vue'
-import Table from '@/components/common/EIBTable.vue'
+import EIBDrawer from '@/components/common/EIBDrawer.vue'
+import EIBSelect from '@/components/common/EIBSelect.vue'
+import EIBTable from '@/components/common/EIBTable.vue'
 
 const docs = ref<string>('')
 const activeName = ref('first')
@@ -32,14 +32,14 @@ const openUpdateInfoExtractDrawer = ref(false)
     <div class="text-[#495057] mb-5">Cài đặt</div>
     <el-tabs v-model="activeName" class="demo-tabs">
       <el-tab-pane label="Trường thông tin trích xuất" name="first">
-        <Select
+        <EIBSelect
           v-model="docs"
           name="docs"
           :options="dataSelectDocs"
           label="Thông tin trường trích xuất cho loại chứng từ"
         />
 
-        <Table
+        <EIBTable
           :columnConfigs="infoListColumnConfigs"
           :data="tableData"
           :hiddenChecked="true"
@@ -52,7 +52,7 @@ const openUpdateInfoExtractDrawer = ref(false)
               <el-icon :size="18" class="cursor-pointer" @click="openUpdateInfoExtractDrawer = true"><Edit /></el-icon>
             </div>
           </template>
-        </Table>
+        </EIBTable>
       </el-tab-pane>
       <el-tab-pane label="Độ tin cậy" name="second">
         <div>Cấu hình màu sắc độ tin cậy của dữ liệu</div>
@@ -60,9 +60,9 @@ const openUpdateInfoExtractDrawer = ref(false)
       <el-tab-pane label="Tự động hóa" name="third" />
     </el-tabs>
   </div>
-  <Drawer v-model="openUpdateInfoExtractDrawer" title="Cập nhật trường trích xuất">
+  <EIBDrawer v-model="openUpdateInfoExtractDrawer" title="Cập nhật trường trích xuất">
     <template #default>
       <UpdateInfoExtractForm ref="updateInfoExtractFormRef" @close="openUpdateInfoExtractDrawer = false" />
     </template>
-  </Drawer>
+  </EIBDrawer>
 </template>
