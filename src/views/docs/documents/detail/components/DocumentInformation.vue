@@ -4,19 +4,16 @@ import { onMounted, ref } from 'vue'
 
 import ApproveProcessDocument from './ApproveProcessDocument.vue'
 
-import {
-  DOCUMENT_RESULT_NAME_LIST,
-  DocumentResultModel,
-  documentResultListColumnConfigs
-} from '@/@types/pages/docs/documents'
+import { DocumentResultModel, documentResultListColumnConfigs } from '@/@types/pages/docs/documents'
 import { getDocumentResults } from '@/api/docs/document'
-import Loading from '@/components/common/Loading.vue'
-import Table from '@/components/common/Table.vue'
+import Loading from '@/components/common/EIBLoading.vue'
+import Table from '@/components/common/EIBTable.vue'
 import { handleComingSoon } from '@/utils/common'
 import { PROGRESS_COLORS } from '@/constants/color'
-import Drawer from '@/components/common/Drawer.vue'
+import Drawer from '@/components/common/EIBDrawer.vue'
 import { useRouter } from 'vue-router'
 import { COMPARE_DOCUMENT_DETAIL_PAGE } from '@/constants/router'
+import { DOCUMENT_RESULT_NAME_LIST } from '@/constants/select'
 
 const router = useRouter()
 

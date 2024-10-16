@@ -1,73 +1,88 @@
 <script lang="ts" setup>
-import { ArrowLeft, Check, CircleCheckFilled, Close, WarnTriangleFilled } from '@element-plus/icons-vue'
-import ResizableSplitter from './components/ResizableSplitter.vue'
-import Select from '@/components/common/Select.vue'
-import { ref } from 'vue'
 import { documentTypeOptions } from '@/@types/pages/docs/documents'
+import Select from '@/components/common/EIBSelect.vue'
+import { documentCompareResultConfigs, documentCompareResults } from '@/mocks/document'
+import { handleComingSoon, scrollIntoViewParent } from '@/utils/common'
+import { ArrowLeft, Check, CircleCheckFilled, Close, WarnTriangleFilled } from '@element-plus/icons-vue'
+import { ElMessageBox } from 'element-plus'
+import { computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 import DocumentCompareResult from './components/DocumentCompareResult.vue'
+import ResizableSplitter from './components/ResizableSplitter.vue'
+import { useLoading } from '@/hooks/useLoading'
 
-const documentType = ref(0)
-const checked = ref(0)
-const activeName = ref('result')
+const router = useRouter()
+const { startLoading, stopLoading } = useLoading()
 
-const temp = [
-  {
-    label: 'Số bản xuất trình',
-    status: 'valid'
-  },
-  {
-    label: 'Tên chứng từ',
-    status: 'valid'
-  },
-  {
-    label: 'Ngày lập hóa đơn, người lập invoice',
-    status: 'invalid'
-  },
-  {
-    label: 'Hóa đơn phát hành cho Applicant ',
-    status: 'valid'
-  },
-  {
-    label: 'Chữ ký',
-    status: 'valid'
-  },
-  {
-    label: 'Nội dung thể hiện trên Invoice không mẫu thuẫn nhau',
-    status: 'valid'
-  },
-  {
-    label: 'Sự đồng nhất thông tin Invoice với các chứng từ khác (1:1)',
-    status: 'valid'
-  },
-  {
-    label: 'Thông tin hàng hóa',
-    status: 'invalid'
-  },
-  {
-    label: 'Thông tin yêu cầu từ 46A (LC)',
-    status: 'valid'
-  },
-  {
-    label: 'Thông tin yêu cầu từ 47A (LC)',
-    status: 'inprogress'
+const { t } = useI18n()
+const documentType = ref<number>(0)
+const conditionSelect = ref<number>(0)
+const activeName = ref<'result' | 'history'>('result')
+
+const handleCheckCompareResult = (index: number) => {
+  try {
+    conditionSelect.value = index
+    const id = `document-compare-${index}`
+    scrollIntoViewParent(id)
+  } catch (error) {
+    console.error(error)
   }
-]
+}
+
+const handleBack = () => {
+  ElMessageBox.confirm(t('notification.description.confirmClose'))
+    .then(() => {
+      setTimeout(() => {
+        router.back()
+      }, 200)
+    })
+    .catch(() => {
+      // catch error
+    })
+}
+
+const compareResults = computed(() => {
+  return documentCompareResults[documentType.value]
+})
+
+const compareResultsConfigs = computed(() => {
+  return documentCompareResultConfigs[documentType.value]
+})
+
+const documentTypeLabel = computed(() => {
+  return documentTypeOptions.find((i) => i.value === documentType.value)?.label
+})
+
+const isValid = computed(() => {
+  return compareResults.value.every((i) => i.status === 'valid')
+})
+
+watch(
+  () => documentType.value,
+  () => {
+    startLoading()
+    setTimeout(() => {
+      stopLoading()
+    }, 2000)
+  }
+)
 </script>
 
 <template>
   <div
-    class="flex flex-row justify-between py-2 px-4 border border-[#ced4da] fixed top-0 left-0 w-full bg-white dark:bg-[#141414]"
+    class="flex flex-row justify-between py-2 px-4 border border-[#ced4da] fixed top-0 left-0 w-full bg-white dark:bg-[#141414] z-[10]"
   >
-    <el-button plain :icon="ArrowLeft">Trở lại</el-button>
-    <el-text>Kiểm tra chứng từ Invoice</el-text>
+    <el-button color="#005d98" plain :icon="ArrowLeft" @click="handleBack">Trở lại</el-button>
+    <el-text class="text-[24px]">Kiểm tra chứng từ {{ documentTypeLabel }}</el-text>
     <div class="flex flex-row gap-3">
-      <el-button type="danger" :icon="Close">Từ chối</el-button>
-      <el-button type="success" :icon="Check">Xác nhận</el-button>
+      <el-button type="danger" :icon="Close" @click="handleComingSoon">Từ chối</el-button>
+      <el-button type="success" :icon="Check" @click="handleComingSoon">Xác nhận</el-button>
     </div>
   </div>
-  <div>
-    <div class="mt-20 border border-t-[#e9ecef]">
-      <ResizableSplitter>
+  <div class="pt-20">
+    <div class="border border-t-[#e9ecef]">
+      <ResizableSplitter custom-class="h-[calc(100vh_-_90px)]" :default-left-width="400">
         <template #left>
           <div class="flex flex-col">
             <div class="flex flex-col gap-4">
@@ -88,8 +103,18 @@ const temp = [
             <Select v-model="documentType" :options="documentTypeOptions" label="Chứng từ đang kiểm tra" />
             <div class="flex-1 flex flex-col gap-3">
               <span>Kết quả kiểm tra</span>
-              <div class="rounded-md px-3 py-2 bg-[#fff4e6] flex flex-row gap-2 items-center w-fit text-[#d9480f]">
-                <el-icon size="24"><WarnTriangleFilled /></el-icon>
+              <div
+                v-if="isValid"
+                class="rounded-md px-3 py-2 bg-[#e6fcf5] flex flex-row gap-2 items-center w-fit text-[#099268]"
+              >
+                <el-icon size="20"><CircleCheckFilled /></el-icon>
+                <span class="text-base">Hợp lệ</span>
+              </div>
+              <div
+                v-else
+                class="rounded-md px-3 py-2 bg-[#fff4e6] flex flex-row gap-2 items-center w-fit text-[#d9480f]"
+              >
+                <el-icon size="20"><WarnTriangleFilled /></el-icon>
                 <span class="text-base">Bất hợp lệ</span>
               </div>
             </div>
@@ -97,19 +122,20 @@ const temp = [
               <span>Danh sách kiểm tra</span>
               <div class="flex flex-col gap-1">
                 <div
-                  v-for="(step, index) in temp"
+                  v-for="(step, index) in compareResults"
                   :key="index"
                   class="flex flex-row gap-2 items-start cursor-pointer"
-                  @click="checked = index"
+                  @click="() => handleCheckCompareResult(index)"
                 >
                   <el-icon class="mt-1" size="18">
                     <CircleCheckFilled class="text-[#099268]" v-if="step.status === 'valid'" />
                     <WarnTriangleFilled class="text-[#e03131]" v-if="step.status === 'invalid'" />
                     <CircleCheckFilled class="text-[#d8d8d8]" v-if="step.status === 'inprogress'" />
                   </el-icon>
-                  <span :class="{ 'font-bold': index === checked }" class="text-[#005d98]"
-                    >{{ index + 1 }}. {{ step.label }}</span
-                  >
+                  <!-- <span :class="{ 'font-semibold': index === conditionSelect }" class="c-text-primary"
+                    >{{ index }}. {{ step.label }}</span
+                  > -->
+                  <span class="c-text-primary">{{ index + 1 }}. {{ step.label }}</span>
                 </div>
               </div>
             </div>
@@ -118,7 +144,11 @@ const temp = [
         <template #right>
           <el-tabs v-model="activeName" class="demo-tabs">
             <el-tab-pane label="Kết quả" name="result">
-              <DocumentCompareResult />
+              <DocumentCompareResult
+                :configs="compareResultsConfigs"
+                :condition-select="conditionSelect"
+                @update:condition="(condition: number) => (conditionSelect = condition)"
+              />
             </el-tab-pane>
             <el-tab-pane label="Lịch sử chỉnh sửa" name="history">Lịch sử chỉnh sửa</el-tab-pane>
           </el-tabs>

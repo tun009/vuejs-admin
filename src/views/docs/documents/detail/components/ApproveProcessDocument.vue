@@ -4,7 +4,7 @@ import { onMounted, ref } from 'vue'
 
 import { ApproveProcessDocumentModel, approveProcessDocumentColumnConfigs } from '@/@types/pages/docs/documents'
 import { getCheckers } from '@/api/docs/document'
-import Table from '@/components/common/Table.vue'
+import Table from '@/components/common/EIBTable.vue'
 import { warningNotification } from '@/utils/notification'
 
 interface Emits {

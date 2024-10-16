@@ -110,7 +110,7 @@ import VueApexCharts from 'vue3-apexcharts'
 
 import DoughnutChart from './components/DoughnutChart.vue'
 
-import Table from '@/components/common/Table.vue'
+import Table from '@/components/common/EIBTable.vue'
 import {
   fieldChangedModel,
   fieldChangedListColumnConfigs,

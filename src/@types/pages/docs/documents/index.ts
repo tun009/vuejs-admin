@@ -139,25 +139,34 @@ export const PROCESSING_STEP_LIST = [
   ProcessingStepEnum.APPROVE
 ]
 
-export const DOCUMENT_STATUS_NAME_LIST = [
-  'Mới',
-  'Đang phân loại',
-  'Đã phân loại',
-  'Đang xử lý OCR',
-  'Đã đối sánh',
-  'Chờ kiểm tra',
-  'Đã kiểm tra',
-  'Chờ phê duyệt',
-  'Cần điều chỉnh',
-  'Đã phê duyệt',
-  'Từ chối',
-  'Lỗi phân loại',
-  'Lỗi nhận dạng',
-  'Lỗi đối sánh'
-]
-export const BUSINESS_TYPE_NAME_LIST = ['LC Xuất', 'LC Nhập']
-export const PROCESSING_STEP_NAME_LIST = ['Tạo mới yêu cầu', 'Đang xử lý', 'Kiểm tra', 'Phê duyệt']
-export const DOCUMENT_RESULT_NAME_LIST = ['Hợp lệ', 'Bất hợp lệ']
+export interface DocumentFileModel {
+  id: number | string
+  stt: number
+  fileName: string
+  status: string
+  createdAt: string
+  createdBy: string
+}
+
+export interface DocumentResultModel {
+  id: string | number
+  fileName: string
+  testResults: DocumentResultEnum
+  numberSatisfiesRequirement: string
+}
+
+export interface ApproveProcessDocumentModel {
+  id: string | number
+  name: string
+  username: string
+}
+
+export interface DocumentResultDataModel {
+  status: 'valid' | 'invalid' | 'na'
+  reasonEn?: string
+  reasonVi?: string
+  rule?: string
+}
 
 export const documentStatusOptions: SelectOptionModel[] = [
   {
@@ -259,14 +268,31 @@ export const documentResultOptions: SelectOptionModel[] = [
   }
 ]
 
-export interface DocumentFileModel {
-  id: number | string
-  stt: number
-  fileName: string
-  status: string
-  createdAt: string
-  createdBy: string
-}
+export const documentResultValidOptions: SelectOptionModel[] = [
+  {
+    label: 'Hợp lệ',
+    value: 'valid'
+  },
+  {
+    label: 'Bất hợp lệ',
+    value: 'invalid'
+  },
+  {
+    label: 'N/A',
+    value: 'na'
+  }
+]
+
+export const documentResultRuleOptions: SelectOptionModel[] = [
+  {
+    label: 'Ref: UCP 600, Art.14i, : A document may ',
+    value: 0
+  },
+  {
+    label: 'Ref: UCP 600, Art.14i, : A document may Meo',
+    value: 1
+  }
+]
 
 export const fileListColumnConfigs: ColumnConfigModel[] = [
   {
@@ -300,13 +326,6 @@ export const fileListColumnConfigs: ColumnConfigModel[] = [
   }
 ]
 
-export interface DocumentResultModel {
-  id: string | number
-  fileName: string
-  testResults: DocumentResultEnum
-  numberSatisfiesRequirement: string
-}
-
 export const documentResultListColumnConfigs: ColumnConfigModel[] = [
   {
     field: 'stt',
@@ -334,12 +353,6 @@ export const documentResultListColumnConfigs: ColumnConfigModel[] = [
     minWidth: 150
   }
 ]
-
-export interface ApproveProcessDocumentModel {
-  id: string | number
-  name: string
-  username: string
-}
 
 export const approveProcessDocumentColumnConfigs: ColumnConfigModel[] = [
   {

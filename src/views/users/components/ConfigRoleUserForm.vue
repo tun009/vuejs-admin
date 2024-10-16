@@ -76,7 +76,7 @@ const handleAddUser = () => {
           type: 'success'
         })
         handleClose()
-      }, 5000)
+      }, 3000)
     } else {
       console.error('Form validation failed', fields)
     }

@@ -4,6 +4,7 @@ export interface ColumnConfigModel {
   minWidth?: number
   width?: number
   html?: boolean
+  columns?: ColumnConfigModel[]
 }
 
 export interface PaginationModel {

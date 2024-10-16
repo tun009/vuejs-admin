@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { UpdateUserRequestModel, RoleEnum, roleSelectOptions } from '@/@types/pages/users'
-import Input from '@/components/common/Input.vue'
-import Select from '@/components/common/Select.vue'
+import Input from '@/components/common/EIBInput.vue'
+import Select from '@/components/common/EIBSelect.vue'
 import { requireRule } from '@/utils/validate'
 import { Check, Close, Lock } from '@element-plus/icons-vue'
 import { ElMessage, FormRules } from 'element-plus'

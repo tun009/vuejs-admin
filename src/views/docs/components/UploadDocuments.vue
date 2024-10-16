@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { BusinessTypeEnum, businessTypeOptions } from '@/@types/pages/docs/documents'
 import { AddDocumentRequestData } from '@/@types/pages/docs/documents/services/DocumentRequest'
-import Input from '@/components/common/Input.vue'
-import Select from '@/components/common/Select.vue'
-import Upload from '@/components/common/Upload.vue'
+import Input from '@/components/common/EIBInput.vue'
+import Select from '@/components/common/EIBSelect.vue'
+import Upload from '@/components/common/EIBUpload.vue'
 import { MOCK_SOLS } from '@/mocks/user'
 import { warningNotification } from '@/utils/notification'
 import { requireRule } from '@/utils/validate'

@@ -4,8 +4,8 @@ import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { UpdateDocumentRequestModel } from '@/@types/pages/docs/documents/services/DocumentRequest'
-import Input from '@/components/common/Input.vue'
-import Select from '@/components/common/Select.vue'
+import Input from '@/components/common/EIBInput.vue'
+import Select from '@/components/common/EIBSelect.vue'
 import { MOCK_SOLS } from '@/mocks/user'
 import { requireRule } from '@/utils/validate'
 
@@ -53,7 +53,7 @@ const handleUpdateDocument = () => {
           type: 'success'
         })
         handleClose()
-      }, 5000)
+      }, 3000)
     } else {
       console.error('Form validation failed', fields)
     }

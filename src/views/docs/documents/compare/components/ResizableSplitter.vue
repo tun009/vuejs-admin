@@ -4,6 +4,7 @@ import { ref, onBeforeUnmount } from 'vue'
 interface Props {
   minWidth?: number
   defaultLeftWidth?: number
+  customClass?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -57,15 +58,29 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div>
-    <div class="flex h-[100vh]">
-      <div :style="{ width: leftWidth }" class="p-5 overflow-x-hidden">
-        <slot name="left" />
-      </div>
-      <div class="w-[1px] hover:w-[2px] transition-all bg-[#e9ecef] cursor-col-resize" @mousedown="startDrag" />
-      <div :style="{ width: rightWidth }" class="p-5 overflow-x-hidden">
-        <slot name="right" />
-      </div>
+  <div class="flex">
+    <div
+      :style="{ width: leftWidth }"
+      class="p-5 overflow-x-hidden hidden-scrollbar"
+      :class="customClass && customClass"
+    >
+      <slot name="left" />
+    </div>
+    <div class="w-0.5 hover:w-1 transition-all bg-[#e9ecef] cursor-col-resize" @mousedown="startDrag" />
+    <div
+      :style="{ width: rightWidth }"
+      class="p-5 overflow-x-hidden resizable-block"
+      :class="customClass && customClass"
+    >
+      <slot name="right" />
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+@import '@/styles/mixins.scss';
+
+.resizable-block {
+  @extend %scrollbar;
+}
+</style>

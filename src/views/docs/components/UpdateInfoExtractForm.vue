@@ -4,7 +4,7 @@ import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { RoleEnum, UpdateUserRequestModel } from '@/@types/pages/users'
-import Input from '@/components/common/Input.vue'
+import Input from '@/components/common/EIBInput.vue'
 import { requireRule } from '@/utils/validate'
 
 interface Emits {
@@ -47,7 +47,7 @@ const handleUpdateUser = () => {
           type: 'success'
         })
         handleClose()
-      }, 5000)
+      }, 3000)
     } else {
       console.error('Form validation failed', fields)
     }

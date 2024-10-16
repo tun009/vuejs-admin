@@ -30,3 +30,17 @@ export const truncateFileName = (fileName: string) => {
 
   return fileName
 }
+
+export const scrollIntoViewParent = (id: string) => {
+  const element = document.getElementById(id)
+  if (!element) return
+  element?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
+export function resetNullUndefinedFields(obj: Record<string, any>): void {
+  Object.keys(obj).forEach((key) => {
+    if (obj[key] === null || obj[key] === undefined) {
+      obj[key] = ''
+    }
+  })
+}

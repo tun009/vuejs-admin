@@ -4,13 +4,12 @@ import { ref } from 'vue'
 import UpdateInfoExtractForm from '../components/UpdateInfoExtractForm.vue'
 
 import { PaginationModel } from '@/@types/common'
-import { SettingModel, infoListColumnConfigs } from '@/@types/pages/docs/settings'
+import { SettingModel, dataSelectDocs, infoListColumnConfigs } from '@/@types/pages/docs/settings'
 import { getSettings } from '@/api/docs/settings'
-import Drawer from '@/components/common/Drawer.vue'
-import Select from '@/components/common/Select.vue'
-import Table from '@/components/common/Table.vue'
+import Drawer from '@/components/common/EIBDrawer.vue'
+import Select from '@/components/common/EIBSelect.vue'
+import Table from '@/components/common/EIBTable.vue'
 
-const dataSelectDocs: any = [{ label: 'INVOICE', value: 1519 }]
 const docs = ref<string>('')
 const activeName = ref('first')
 const tableData = ref<SettingModel[]>([])

@@ -10,8 +10,12 @@
     @apply c-text-value font-bold;
   }
 
+  .c-text-primary {
+    @apply text-[#005d98] dark:text-[#168dd9];
+  }
+
   .c-text-title-primary {
-    @apply text-[#005d98] text-base font-semibold;
+    @apply c-text-primary text-base font-semibold;
   }
 
   .c-text-des {
@@ -20,5 +24,9 @@
 
   .c-text-success {
     @apply text-base text-[#099268];
+  }
+
+  .c-text-compare-error {
+    @apply text-[#c92a2a];
   }
 }
