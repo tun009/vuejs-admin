@@ -12,6 +12,7 @@ interface Props {
   required?: boolean
   name?: string
   isRow?: boolean
+  hiddenError?: boolean
 }
 
 interface Emits {
@@ -28,9 +29,10 @@ const updateValue = (value: string) => {
 
 <template>
   <div
-    class="flex flex-col mb-2 text-sm input-component"
+    class="flex flex-col mb-2 text-sm input-component w-full"
     :class="{
-      '!flex-row justify-center gap-4': isRow
+      '!flex-row justify-center gap-4': isRow,
+      '!mb-0': hiddenError
     }"
   >
     <div class="flex flex-row items-center justify-between">
@@ -44,7 +46,7 @@ const updateValue = (value: string) => {
         ><span v-if="required && !readonly" class="text-red-600 mr-1">*</span>{{ $t(label) }}</label
       >
     </div>
-    <el-form-item :prop="name" class="w-full">
+    <el-form-item :prop="name" class="w-full" :class="{ '!mb-0': hiddenError }">
       <el-select
         :model-value="modelValue"
         :placeholder="placeholder"

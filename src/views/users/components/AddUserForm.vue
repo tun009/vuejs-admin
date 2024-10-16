@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { AddUserRequestModel, RoleEnum, roleSelectOptions } from '@/@types/pages/users'
-import Input from '@/components/common/Input.vue'
-import Select from '@/components/common/Select.vue'
+import Input from '@/components/common/EIBInput.vue'
+import Select from '@/components/common/EIBSelect.vue'
 import { PASSWORD_DEFAULT } from '@/constants/common'
 import { requireRule } from '@/utils/validate'
 import { ElMessage, FormRules } from 'element-plus'
@@ -53,7 +53,7 @@ const handleAddUser = () => {
           message: t('notification.description.createSuccess')
         })
         handleClose()
-      }, 5000)
+      }, 3000)
     } else {
       console.error('Form validation failed', fields)
     }

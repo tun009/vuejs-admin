@@ -18,11 +18,11 @@ import {
   processingStepOptions
 } from '@/@types/pages/docs/documents'
 import { getDocuments } from '@/api/docs/document'
-import Input from '@/components/common/Input.vue'
-import Table from '@/components/common/Table.vue'
+import Input from '@/components/common/EIBInput.vue'
+import Table from '@/components/common/EIBTable.vue'
 import { Title } from '@/layouts/components'
 import { handleComingSoon, renderLabelByValue } from '@/utils/common'
-import Drawer from '@/components/common/Drawer.vue'
+import Drawer from '@/components/common/EIBDrawer.vue'
 import { DOCUMENT_DETAIL_PAGE } from '@/constants/router'
 
 const { t } = useI18n()
@@ -106,6 +106,7 @@ const handleDeleteDocument = (name?: string) => {
           custom-class="w-[300px]"
           placeholder="docs.document.searchByName"
           :prefix-icon="Search"
+          hidden-error
         />
         <el-button :icon="Filter" @click="handleComingSoon">{{ $t('docs.document.filter') }}</el-button>
       </div>
@@ -175,7 +176,7 @@ const handleDeleteDocument = (name?: string) => {
   </Transition>
 </template>
 
-<style lang="css" scoped>
+<style lang="css">
 ._filter :deep(.el-form-item),
 ._filter :deep(.input-component) {
   margin-bottom: 0px;

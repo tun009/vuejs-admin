@@ -27,5 +27,6 @@
   },
   "[scss]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "sonarlint.output.showAnalyzerLogs": true
 }

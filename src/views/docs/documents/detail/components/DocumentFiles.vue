@@ -4,11 +4,11 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import Upload from '@/components/common/Upload.vue'
+import Upload from '@/components/common/EIBUpload.vue'
 import { warningNotification } from '@/utils/notification'
 import { DocumentFileModel, fileListColumnConfigs } from '@/@types/pages/docs/documents'
 import { getDocumentFiles } from '@/api/docs/document'
-import Table from '@/components/common/Table.vue'
+import Table from '@/components/common/EIBTable.vue'
 
 const { t } = useI18n()
 

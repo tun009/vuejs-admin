@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Drawer from '@/components/common/Drawer.vue'
-import Input from '@/components/common/Input.vue'
+import Drawer from '@/components/common/EIBDrawer.vue'
+import Input from '@/components/common/EIBInput.vue'
 import { Title } from '@/layouts/components'
 import { phoneNumberRule, requireRule } from '@/utils/validate'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
@@ -45,7 +45,7 @@ const handleUpdateProfile = () => {
           message: t('notification.description.updateSuccess')
         })
         isEdit.value = false
-      }, 5000)
+      }, 3000)
     } else {
       console.error('Form validation failed', fields)
     }

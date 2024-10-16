@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, withDefaults, Component } from 'vue'
+import { Component } from 'vue'
 import { ElInput } from 'element-plus'
 
 interface Props {
@@ -19,6 +19,7 @@ interface Props {
   customClass?: string
   noForm?: boolean
   isRow?: boolean
+  hiddenError?: boolean
 }
 
 interface Emits {
@@ -41,9 +42,10 @@ const updateValue = (value: string) => {
 
 <template>
   <div
-    class="flex flex-col mb-2 text-sm input-component"
+    class="flex flex-col mb-2 text-sm input-component w-full"
     :class="{
-      '!flex-row justify-center gap-4': isRow
+      '!flex-row justify-center gap-4': isRow,
+      '!mb-0': hiddenError
     }"
   >
     <div class="flex flex-row items-center justify-between">
@@ -61,7 +63,7 @@ const updateValue = (value: string) => {
       }}</span>
     </div>
     <span v-if="readonly" class="text-[18px] leading-[24px] font-normal">{{ modelValue }}</span>
-    <el-form-item :prop="name" v-else class="w-full">
+    <el-form-item :prop="name" v-else class="w-full" :class="{ '!mb-0': hiddenError }">
       <el-input
         v-bind="props"
         :model-value="modelValue"

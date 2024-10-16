@@ -14,7 +14,8 @@
       "confirmClose": "Bạn chắc chắn thoát khỏi?",
       "limitSize": "Dung lượng file không vượt quá 16MB!",
       "limitQuantity": "Tổng số file không vượt quá 10!",
-      "emptyFiles": "Vui lòng chọn ít nhất 1 file!"
+      "emptyFiles": "Vui lòng chọn ít nhất 1 file!",
+      "saveSuccess": "Lưu thành công"
     }
   },
   "layouts": {

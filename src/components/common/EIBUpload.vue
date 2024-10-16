@@ -7,7 +7,7 @@ import { truncateFileName } from '@/utils/common'
 import { warningNotification } from '@/utils/notification'
 import { Delete, Plus } from '@element-plus/icons-vue'
 import { computed, ref } from 'vue'
-import Table from './Table.vue'
+import Table from './EIBTable.vue'
 
 interface Props {
   files: File[]

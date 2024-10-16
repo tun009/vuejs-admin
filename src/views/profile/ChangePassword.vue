@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ChangePasswordRequestModel } from '@/@types/pages/profile/services/ProfileRequest'
-import Input from '@/components/common/Input.vue'
+import Input from '@/components/common/EIBInput.vue'
 import { passwordRule, requireRule } from '@/utils/validate'
 import { ElMessage, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
@@ -55,7 +55,7 @@ const handleChangePassword = () => {
           message: t('notification.description.updateSuccess')
         })
         handleClose()
-      }, 5000)
+      }, 3000)
     } else {
       console.error('Form validation failed', fields)
     }
