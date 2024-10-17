@@ -100,21 +100,6 @@ const goToProfile = () => {
       display: none;
     }
   }
-  .sidebar {
-    flex: 1;
-    min-width: 0px;
-    :deep(.el-menu) {
-      background-color: transparent;
-      // background-color: var(--el-menu-bg-color);
-    }
-    :deep(.el-sub-menu) {
-      &.is-active {
-        .el-sub-menu__title {
-          color: var(--el-color-primary) !important;
-        }
-      }
-    }
-  }
   .right-menu {
     margin-right: 10px;
     height: 100%;
@@ -131,6 +116,26 @@ const goToProfile = () => {
         }
         span {
           font-size: 16px;
+        }
+      }
+    }
+  }
+}
+</style>
+
+<style lang="scss">
+.navigation-bar {
+  .sidebar {
+    flex: 1;
+    min-width: 0px;
+    .el-menu {
+      background-color: transparent;
+      // background-color: var(--el-menu-bg-color);
+    }
+    .el-sub-menu {
+      &.is-active {
+        .el-sub-menu__title {
+          color: var(--el-color-primary) !important;
         }
       }
     }

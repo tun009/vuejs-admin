@@ -177,21 +177,23 @@ defineExpose<Exposes>({
   </div>
 </template>
 
-<style lang="css" scoped>
-.eib-table :deep(.el-table tr th) {
+<style lang="css">
+.el-table tr th {
   background-color: #005d98 !important;
   color: white;
 }
 
-:deep(.text-total-records) {
+.text-total-records {
   color: #005d98;
 }
 
-:deep(.el-checkbox.is-checked),
-:deep(.el-checkbox__input.is-indeterminate) {
+.el-checkbox.is-checked,
+.el-checkbox__input.is-indeterminate {
   border: 1px solid #fff;
 }
+</style>
 
+<style lang="css" scoped>
 .custom-table {
   transition: height 0.4s;
 }

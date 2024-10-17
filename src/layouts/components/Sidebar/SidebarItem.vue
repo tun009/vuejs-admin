@@ -106,13 +106,11 @@ const { activeThemeName } = useTheme()
 }
 
 .el-menu-item.is-active,
-.el-menu-item:hover,
-:deep(.el-sub-menu__title:hover) {
+.el-menu-item:hover {
   background-color: #4192cd !important;
 }
 
-.el-menu-item,
-:deep(.el-sub-menu__title) {
+.el-menu-item {
   color: #ffffff;
   font-weight: 500;
 }
@@ -123,5 +121,16 @@ const { activeThemeName } = useTheme()
 
 .sidebar-item {
   background-color: var(--el-menu-bg-color);
+}
+</style>
+
+<style lang="scss">
+.el-sub-menu__title {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.el-sub-menu__title:hover {
+  background-color: #4192cd !important;
 }
 </style>
