@@ -132,9 +132,6 @@ watch(
                     <WarnTriangleFilled class="text-[#e03131]" v-if="step.status === 'invalid'" />
                     <CircleCheckFilled class="text-[#d8d8d8]" v-if="step.status === 'inprogress'" />
                   </el-icon>
-                  <!-- <span :class="{ 'font-semibold': index === conditionSelect }" class="c-text-primary"
-                    >{{ index }}. {{ step.label }}</span
-                  > -->
                   <span class="c-text-primary">{{ index + 1 }}. {{ step.label }}</span>
                 </div>
               </div>
@@ -157,5 +154,3 @@ watch(
     </div>
   </div>
 </template>
-
-<style scoped></style>

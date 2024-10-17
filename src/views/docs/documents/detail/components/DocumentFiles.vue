@@ -128,5 +128,3 @@ const handleDeleteFile = (id: number | string) => {
     </div>
   </el-card>
 </template>
-
-<style scoped></style>

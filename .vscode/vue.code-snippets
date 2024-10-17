@@ -6,7 +6,6 @@
       "<template>",
       "\t<div class=\"app-container\">Meo Meo Meo</div>",
       "</template>\n",
-      "<style scoped></style>",
       "$1"
     ],
     "description": "Vue3 SFC"
