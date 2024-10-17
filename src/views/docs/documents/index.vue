@@ -100,7 +100,7 @@ const handleDeleteDocument = (name?: string) => {
   <Title :title="$t('docs.title')" />
   <div class="flex flex-col gap-5">
     <div class="flex flex-row justify-between gap-10">
-      <div class="flex flex-row gap5 items-center _filter gap-5">
+      <div class="flex flex-row gap5 items-center gap-5">
         <EIBInput
           v-model="searchQuery"
           custom-class="w-[300px]"
@@ -177,11 +177,6 @@ const handleDeleteDocument = (name?: string) => {
 </template>
 
 <style lang="css">
-._filter :deep(.el-form-item),
-._filter :deep(.input-component) {
-  margin-bottom: 0px;
-}
-
 .nested-enter-active,
 .nested-leave-active {
   transition: all 0.3s ease-in-out;

@@ -93,16 +93,14 @@ onMounted(() => {})
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import '@/styles/mixins.scss';
 
 .scroll-block {
   @extend %scrollbar;
 }
 
-.el-image {
-  :deep(.el-image__inner) {
-    width: fit-content;
-  }
+.el-image__inner {
+  width: fit-content;
 }
 </style>

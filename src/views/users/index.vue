@@ -72,12 +72,13 @@ const handleDeleteUser = (name: string) => {
   <Title :title="$t('user.title')" />
   <div class="flex flex-col gap-5">
     <div class="flex flex-row justify-between gap-10">
-      <div class="flex flex-row gap5 items-center _filter gap-5">
+      <div class="flex flex-row gap5 items-center gap-5">
         <EIBInput
           v-model="searchQuery"
           custom-class="w-[300px]"
           placeholder="user.searchByName"
           :prefix-icon="Search"
+          hidden-error
         />
         <el-button :icon="Filter" @click="handleComingSoon">{{ $t('user.filter') }}</el-button>
       </div>
@@ -146,9 +147,4 @@ const handleDeleteUser = (name: string) => {
   </EIBDrawer>
 </template>
 
-<style lang="css" scoped>
-._filter :deep(.el-form-item),
-._filter :deep(.input-component) {
-  margin-bottom: 0px;
-}
-</style>
+<style lang="css" scoped></style>

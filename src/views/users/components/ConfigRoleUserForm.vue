@@ -141,10 +141,3 @@ defineExpose<Exposes>({
     <el-button :disabled="loading" @click="handleClose" type="default">{{ $t('button.cancel') }}</el-button>
   </div>
 </template>
-
-<style lang="css" scoped>
-:deep(.el-table tr th) {
-  background-color: #005d98 !important;
-  color: white;
-}
-</style>
