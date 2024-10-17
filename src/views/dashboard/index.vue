@@ -112,7 +112,7 @@ import DoughnutChart from './components/DoughnutChart.vue'
 
 import EIBTable from '@/components/common/EIBTable.vue'
 import {
-  fieldChangedModel,
+  FieldChangedModel,
   fieldChangedListColumnConfigs,
   SOLModel,
   SOLListColumnConfigs,
@@ -125,7 +125,7 @@ import { BG_COLOR_INVALID_CHARTS, BG_COLOR_VALID_CHARTS, LABEL_VALID_CHARTS } fr
 const share_percentage_valid = [800, 100, 100]
 const share_percentage_invalid = [746, 154]
 const series = ref<number[]>([100, 36, 60, 900, 4, 0])
-const fieldsChangedData = ref<fieldChangedModel[]>([])
+const fieldsChangedData = ref<FieldChangedModel[]>([])
 const valueFilterField = ref('-1')
 const SOLData = ref<SOLModel[]>([])
 const apexchart = VueApexCharts

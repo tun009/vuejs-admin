@@ -131,7 +131,7 @@ onMounted(() => {
           />
           <div class="text-gray-700 dark:text-slate-300 flex flex-col gap-1">
             <span><span class="text-2xl">0</span> / 0</span>
-            <span>Tổng trị giá LC đã sử dụng (USD)</span>
+            <span>Tổng trị giá LC đã sử dụng (USD) / Tổng giá trị LC</span>
           </div>
         </div>
         <div class="flex-[3] grid grid-cols-2 font-semibold">
@@ -242,5 +242,3 @@ onMounted(() => {
     </template>
   </EIBDrawer>
 </template>
-
-<style scoped></style>
