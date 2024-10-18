@@ -17,7 +17,6 @@ const messages = {
 
 export const getLocale = () => {
   const settingsStore = getConfigLayout()
-  console.log(settingsStore?.language)
   return settingsStore?.language ?? 'vi'
 }
 

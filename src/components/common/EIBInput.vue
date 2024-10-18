@@ -3,7 +3,7 @@ import { Component } from 'vue'
 import { ElInput } from 'element-plus'
 
 interface Props {
-  modelValue?: string
+  modelValue?: string | number
   label?: string
   prefixIcon?: string | Component
   type?: 'text' | 'number' | 'password' | 'checkbox' | 'radio'
@@ -59,7 +59,7 @@ const updateValue = (value: string) => {
         ><span v-if="required && !readonly" class="text-red-600 mr-1">*</span>{{ $t(label) }}</label
       >
       <span v-if="showLimit && !readonly && !disabled">{{
-        $t('base.input.limit', { length: modelValue.length, maxLength: maxLength })
+        $t('base.input.limit', { length: modelValue.toString().length, maxLength: maxLength })
       }}</span>
     </div>
     <span v-if="readonly" class="text-[18px] leading-[24px] font-normal">{{ modelValue }}</span>

@@ -4,7 +4,9 @@ interface Props {
   color?: string
 }
 
-defineProps<Props>()
+withDefaults(defineProps<Props>(), {
+  color: '#495057'
+})
 </script>
 
 <template>

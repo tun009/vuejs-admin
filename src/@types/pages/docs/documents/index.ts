@@ -1,5 +1,5 @@
 import { ColumnConfigModel, DocumentStatusEnum, SelectOptionModel } from '@/@types/common'
-import { RoleEnum } from '../../users'
+import { RoleEnum } from '@/@types/pages/users'
 
 export enum BusinessTypeEnum {
   EXPORT_LC,
@@ -33,6 +33,18 @@ export interface DocumentModel {
   createdBy: string
   result: DocumentResultEnum
   completionDate: string
+}
+
+export interface CompareRejectFormModel {
+  reason: string
+}
+
+export interface CompareContentFormModel {
+  field: number
+}
+
+export interface UpdateLCFormModel {
+  amount: number
 }
 
 export const docListColumnConfigs: ColumnConfigModel[] = [

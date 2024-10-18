@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChangePasswordRequestModel } from '@/@types/pages/profile/services/ProfileRequest'
+import { ChangePasswordFormModel } from '@/@types/pages/profile/services/ProfileRequest'
 import EIBInput from '@/components/common/EIBInput.vue'
 import { passwordRule, requireRule } from '@/utils/validate'
 import { ElMessage, FormRules } from 'element-plus'
@@ -19,7 +19,7 @@ const emits = defineEmits<Emits>()
 const { t } = useI18n()
 const loading = ref(false)
 const changePasswordFormRef = ref()
-const changePasswordFormData: ChangePasswordRequestModel = reactive({
+const changePasswordFormData: ChangePasswordFormModel = reactive({
   password: '',
   newPassword: '',
   confirmPassword: ''

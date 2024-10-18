@@ -7,7 +7,7 @@ import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ChangePassword from './ChangePassword.vue'
-import { ChangeProfileRequestModel } from '@/@types/pages/profile/services/ProfileRequest'
+import { ChangeProfileFormModel } from '@/@types/pages/profile/services/ProfileRequest'
 
 defineOptions({
   name: 'Profile'
@@ -21,7 +21,7 @@ const isEdit = ref(false)
 const openDrawer = ref(false)
 const changePasswordRef = ref<InstanceType<typeof ChangePassword>>()
 
-const changeProfileFormData: ChangeProfileRequestModel = reactive({
+const changeProfileFormData: ChangeProfileFormModel = reactive({
   username: 'admin',
   name: 'HuyDV',
   phoneNumber: '0963648426'

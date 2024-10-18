@@ -81,7 +81,8 @@
     "ruleUI": "Luật UCP/ISBP",
     "invalidCategory": "Danh mục bất hợp lệ",
     "profile": "Thông tin tài khoản",
-    "documentDetail": "Chi tiết chứng từ"
+    "documentDetail": "Chi tiết chứng từ",
+    "documentCompare": "Đối sánh chứng từ"
   },
   "profile": {
     "title": "Thông tin tài khoản",
