@@ -18,7 +18,8 @@ import {
   _403_PAGE,
   _404_PAGE,
   DOCUMENT_DETAIL_PAGE,
-  EXTRACT_PAGE
+  EXTRACT_PAGE,
+  COMPARE_DOCUMENT_DETAIL_PAGE
 } from '@/constants/router'
 
 const Layouts = () => import('@/layouts/index.vue')
@@ -60,6 +61,7 @@ export const constantRoutes: RouteRecordRaw[] = [
   {
     path: LOGIN_PAGE,
     component: () => import('@/views/login/index.vue'),
+    name: 'Login',
     meta: {
       hidden: true
     }
@@ -196,7 +198,7 @@ export const constantRoutes: RouteRecordRaw[] = [
       hidden: true,
       keepAlive: false
     }
-  }
+  },
   // {
   //   component: () => import('@/views/docs/documents/DocumentDetail.vue'),
   //   meta: {
@@ -207,6 +209,13 @@ export const constantRoutes: RouteRecordRaw[] = [
   //   name: 'Document detail',
   //   path: DOCUMENT_DETAIL_PAGE()
   // }
+  {
+    path: COMPARE_DOCUMENT_DETAIL_PAGE(),
+    component: () => import('@/views/docs/documents/compare/index.vue'),
+    meta: {
+      hidden: true
+    }
+  }
 ]
 
 /**

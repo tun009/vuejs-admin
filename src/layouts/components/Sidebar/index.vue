@@ -76,45 +76,10 @@ const hiddenScrollbarVerticalBar = computed(() => {
 </template>
 
 <style lang="scss" scoped>
-%tip-line {
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: v-bind(tipLineWidth);
-    height: 100%;
-    background-color: var(--prefix-sidebar-menu-tip-line-bg-color);
-  }
-}
-
 .has-logo {
   .el-scrollbar {
     // The 1% increase is to prevent the 1px white line at the bottom of the sidebar from being displayed in left mode
     height: calc(101% - var(--prefix-header-height));
-  }
-}
-
-.el-scrollbar {
-  // 1% more is to prevent vertical scrolling in top mode
-  height: 101%;
-  :deep(.scrollbar-wrapper) {
-    // Limit horizontal width
-    overflow-x: hidden !important;
-    .el-scrollbar__view {
-      height: 100%;
-    }
-  }
-  // Scrollbars
-  :deep(.el-scrollbar__bar) {
-    &.is-horizontal {
-      // Hide horizontal scroll bar
-      display: none;
-    }
-    &.is-vertical {
-      // Hide vertical scrollbar when in top mode
-      display: v-bind(hiddenScrollbarVerticalBar);
-    }
   }
 }
 
@@ -127,11 +92,48 @@ const hiddenScrollbarVerticalBar = computed(() => {
 .el-menu--horizontal {
   height: v-bind(sidebarMenuItemHeight);
 }
+</style>
 
-:deep(.el-menu-item),
-:deep(.el-sub-menu__title),
-:deep(.el-sub-menu .el-menu-item),
-:deep(.el-menu--horizontal .el-menu-item) {
+<style lang="scss">
+%tip-line {
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: v-bind(tipLineWidth);
+    height: 100%;
+    background-color: var(--prefix-sidebar-menu-tip-line-bg-color);
+  }
+}
+
+.el-scrollbar {
+  // 1% more is to prevent vertical scrolling in top mode
+  height: 101%;
+  .scrollbar-wrapper {
+    // Limit horizontal width
+    overflow-x: hidden !important;
+    .el-scrollbar__view {
+      height: 100%;
+    }
+  }
+  // Scrollbars
+  .el-scrollbar__bar {
+    &.is-horizontal {
+      // Hide horizontal scroll bar
+      display: none;
+    }
+    &.is-vertical {
+      // Hide vertical scrollbar when in top mode
+      display: v-bind(hiddenScrollbarVerticalBar);
+    }
+  }
+}
+
+.el-menu-item,
+.el-sub-menu__title,
+.el-sub-menu .el-menu-item,
+.el-menu--horizontal .el-menu-item {
   height: v-bind(sidebarMenuItemHeight);
   line-height: v-bind(sidebarMenuItemHeight);
   &.is-active,
@@ -140,7 +142,7 @@ const hiddenScrollbarVerticalBar = computed(() => {
   }
 }
 
-:deep(.el-sub-menu) {
+.el-sub-menu {
   &.is-active {
     > .el-sub-menu__title {
       color: v-bind(activeTextColor) !important;
@@ -148,12 +150,12 @@ const hiddenScrollbarVerticalBar = computed(() => {
   }
 }
 
-:deep(.el-menu-item.is-active) {
+.el-menu-item.is-active {
   @extend %tip-line;
 }
 
 .el-menu--collapse {
-  :deep(.el-sub-menu.is-active) {
+  .el-sub-menu.is-active {
     .el-sub-menu__title {
       @extend %tip-line;
     }
@@ -161,19 +163,19 @@ const hiddenScrollbarVerticalBar = computed(() => {
 }
 
 .is-collapse {
-  :deep(.el-sub-menu__icon-arrow) {
+  .el-sub-menu__icon-arrow {
     display: none;
   }
 
-  :deep(.svg-icon) {
+  .svg-icon {
     font-size: 24px;
   }
 
-  :deep(.el-menu-tooltip__trigger) {
+  .el-menu-tooltip__trigger {
     padding-left: 16px;
   }
 
-  :deep(.el-tooltip__trigger) {
+  .el-tooltip__trigger {
     padding-left: 16px;
   }
 }

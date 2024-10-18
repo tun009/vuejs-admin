@@ -16,3 +16,4 @@ export const PROFILE_PAGE = '/profile'
 export const EXTRACT_PAGE = '/extract'
 
 export const DOCUMENT_DETAIL_PAGE = (id: string | number = ':id') => `/docs/document/${id}`
+export const COMPARE_DOCUMENT_DETAIL_PAGE = (id: string | number = ':id') => `/document-compare/${id}`

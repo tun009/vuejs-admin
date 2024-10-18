@@ -31,5 +31,3 @@ const activeName = ref('docInfo')
     </el-tabs>
   </div>
 </template>
-
-<style scoped></style>

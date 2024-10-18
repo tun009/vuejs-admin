@@ -61,20 +61,23 @@ const scrollTo = (direction: 'left' | 'right', distance: number = translateDista
 /** Move to target location */
 const moveTo = () => {
   const tagRefs = props.tagRefs
-  for (let i = 0; i < tagRefs.length; i++) {
+
+  for (const tagRef of tagRefs) {
     // @ts-ignore
-    if (route.path === tagRefs[i].$props.to.path) {
+    if (route.path === tagRef.$props.to.path) {
       // @ts-ignore
-      const el: HTMLElement = tagRefs[i].$el
+      const el: HTMLElement = tagRef.$el
       const offsetWidth = el.offsetWidth
       const offsetLeft = el.offsetLeft
       const { scrollbarRefWidth } = getWidth()
+
       // When the current tag is on the left side of the visible area
       if (offsetLeft < currentScrollLeft) {
         const distance = currentScrollLeft - offsetLeft
         scrollTo('left', distance)
         return
       }
+
       // When the current tag is on the right side of the visible area
       const width = scrollbarRefWidth + currentScrollLeft - offsetWidth
       if (offsetLeft > width) {

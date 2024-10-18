@@ -129,9 +129,9 @@ const closeAllTags = (view: TagView) => {
 const openMenu = (tag: TagView, e: MouseEvent) => {
   const menuMinWidth = 105
   // The distance between the current component and the left end of the browser
-  const offsetLeft = instance!.proxy!.$el.getBoundingClientRect().left
+  const offsetLeft = instance?.proxy?.$el.getBoundingClientRect().left
   // Current component width
-  const offsetWidth = instance!.proxy!.$el.offsetWidth
+  const offsetWidth = instance?.proxy?.$el.offsetWidth
   // Maximum left margin of the panel
   const maxLeft = offsetWidth - menuMinWidth
   // The distance between the panel and the mouse pointer

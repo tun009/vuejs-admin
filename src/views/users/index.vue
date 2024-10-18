@@ -4,9 +4,9 @@ import ConfigRoleUserForm from './components/ConfigRoleUserForm.vue'
 import { PaginationModel } from '@/@types/common'
 import { UserModel, userListColumnConfigs } from '@/@types/pages/users'
 import { getUsers } from '@/api/users'
-import Drawer from '@/components/common/Drawer.vue'
-import Input from '@/components/common/Input.vue'
-import Table from '@/components/common/Table.vue'
+import EIBDrawer from '@/components/common/EIBDrawer.vue'
+import EIBInput from '@/components/common/EIBInput.vue'
+import EIBTable from '@/components/common/EIBTable.vue'
 import { Title } from '@/layouts/components'
 import { Delete, Edit, Filter, Plus, Search, Tools } from '@element-plus/icons-vue'
 import { ref } from 'vue'
@@ -72,31 +72,37 @@ const handleDeleteUser = (name: string) => {
   <Title :title="$t('user.title')" />
   <div class="flex flex-col gap-5">
     <div class="flex flex-row justify-between gap-10">
-      <div class="flex flex-row gap5 items-center _filter gap-5">
-        <Input v-model="searchQuery" custom-class="w-[300px]" placeholder="user.searchByName" :prefix-icon="Search" />
+      <div class="flex flex-row gap5 items-center gap-5">
+        <EIBInput
+          v-model="searchQuery"
+          custom-class="w-[300px]"
+          placeholder="user.searchByName"
+          :prefix-icon="Search"
+          hidden-error
+        />
         <el-button :icon="Filter" @click="handleComingSoon">{{ $t('user.filter') }}</el-button>
       </div>
       <div class="flex flex-row gap-3">
-        <Drawer title="Cấu hình vai trò" size="50%" v-model="openConfigRoleUserDrawer">
+        <EIBDrawer title="Cấu hình vai trò" size="50%" v-model="openConfigRoleUserDrawer">
           <template #button>
             <el-button plain type="primary" :icon="Tools">{{ $t('button.roleSetting') }}</el-button>
           </template>
           <template #default>
             <ConfigRoleUserForm ref="configRoleUserFormRef" @close="openConfigRoleUserDrawer = false" />
           </template>
-        </Drawer>
-        <Drawer title="user.addUser.title" v-model="openAddUserDrawer">
+        </EIBDrawer>
+        <EIBDrawer title="user.addUser.title" v-model="openAddUserDrawer">
           <template #button>
             <el-button type="primary" :icon="Plus">{{ $t('button.add') }}</el-button>
           </template>
           <template #default>
             <AddUserForm ref="addUserFormRef" @close="openAddUserDrawer = false" />
           </template>
-        </Drawer>
+        </EIBDrawer>
       </div>
     </div>
     <el-card>
-      <Table
+      <EIBTable
         :columnConfigs="userListColumnConfigs"
         :data="tableData"
         :callback="handleGetUser"
@@ -124,26 +130,21 @@ const handleDeleteUser = (name: string) => {
             /></el-icon>
           </div>
         </template>
-      </Table>
+      </EIBTable>
     </el-card>
   </div>
 
-  <Drawer v-if="openAddUserDrawer" title="user.addUser.title" v-model="openAddUserDrawer">
+  <EIBDrawer v-if="openAddUserDrawer" title="user.addUser.title" v-model="openAddUserDrawer">
     <template #default>
       <AddUserForm @close="openAddUserDrawer = false" />
     </template>
-  </Drawer>
+  </EIBDrawer>
 
-  <Drawer v-if="openUpdateUserDrawer" v-model="openUpdateUserDrawer" title="user.updateUser.title">
+  <EIBDrawer v-if="openUpdateUserDrawer" v-model="openUpdateUserDrawer" title="user.updateUser.title">
     <template #default>
       <UpdateUserForm @close="openUpdateUserDrawer = false" />
     </template>
-  </Drawer>
+  </EIBDrawer>
 </template>
 
-<style lang="css" scoped>
-._filter :deep(.el-form-item),
-._filter :deep(.input-component) {
-  margin-bottom: 0px;
-}
-</style>
+<style lang="css" scoped></style>

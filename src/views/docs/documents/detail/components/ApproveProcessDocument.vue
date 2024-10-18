@@ -4,7 +4,7 @@ import { onMounted, ref } from 'vue'
 
 import { ApproveProcessDocumentModel, approveProcessDocumentColumnConfigs } from '@/@types/pages/docs/documents'
 import { getCheckers } from '@/api/docs/document'
-import Table from '@/components/common/Table.vue'
+import EIBTable from '@/components/common/EIBTable.vue'
 import { warningNotification } from '@/utils/notification'
 
 interface Emits {
@@ -20,9 +20,8 @@ const emits = defineEmits<Emits>()
 
 const radio = ref()
 const loading = ref(false)
-const addUserFormRef = ref()
 const tableData = ref<ApproveProcessDocumentModel[]>([])
-const checkerTableRef = ref<InstanceType<typeof Table>>()
+const checkerTableRef = ref<InstanceType<typeof EIBTable>>()
 
 const handleGetChecker = async () => {
   try {
@@ -40,7 +39,6 @@ const handleGetChecker = async () => {
 
 const handleClose = () => {
   emits('close')
-  addUserFormRef.value.resetFields()
 }
 
 const handleSelectChecker = () => {
@@ -71,7 +69,7 @@ defineExpose<Exposes>({
   <div class="flex flex-col gap-5">
     <span>Danh sách checker</span>
     <el-radio-group v-model="radio" class="w-full">
-      <Table
+      <EIBTable
         ref="checkerTableRef"
         locales
         hiddenChecked
@@ -92,7 +90,7 @@ defineExpose<Exposes>({
             <span class="!text-blue-500">{{ row.username }}</span>
           </div>
         </template>
-      </Table>
+      </EIBTable>
     </el-radio-group>
   </div>
   <div>

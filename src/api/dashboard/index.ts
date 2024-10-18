@@ -1,5 +1,5 @@
 import { GetFieldChangedResponseModel, GetSOLsResponseModel } from '@/@types/pages/dashboard/service/DashboardResponse'
-import { fieldChangedModel, SOLModel } from '@/@types/pages/dashboard'
+import { FieldChangedModel, SOLModel } from '@/@types/pages/dashboard'
 import { FIELD_CHANGED, SOLS } from '@/mocks/dashboard'
 
 export function getFieldsChanged(type: string): Promise<GetFieldChangedResponseModel> {
@@ -7,7 +7,7 @@ export function getFieldsChanged(type: string): Promise<GetFieldChangedResponseM
     setTimeout(() => {
       return resolve({
         code: 1,
-        data: (type === '-1' ? FIELD_CHANGED : FIELD_CHANGED.filter((x) => x.name === type)) as fieldChangedModel[],
+        data: (type === '-1' ? FIELD_CHANGED : FIELD_CHANGED.filter((x) => x.name === type)) as FieldChangedModel[],
         message: ''
       })
     }, 500)

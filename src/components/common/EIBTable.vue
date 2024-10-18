@@ -88,7 +88,7 @@ defineExpose<Exposes>({
 </script>
 
 <template>
-  <div class="flex flex-col gap-5 w-full">
+  <div class="flex flex-col gap-5 w-full eib-table">
     <el-table
       ref="multipleTableRef"
       border
@@ -97,10 +97,13 @@ defineExpose<Exposes>({
       lazy
       style="width: 100%; overflow-y: auto"
       :height="height === 'unset' ? undefined : (height ?? 600)"
-      class="custom-table hidden-scroll-bar"
+      class="custom-table hidden-scrollbar"
       @selection-change="handleSelectionChange"
       @row-click="(row) => $emit('row-click', row)"
     >
+      <caption>
+        Design by Viettel IDP
+      </caption>
       <el-table-column v-if="!hiddenChecked" fixed type="selection" :selectable="selectable" width="40" />
       <el-table-column
         v-for="column in columnConfigs"
@@ -111,10 +114,35 @@ defineExpose<Exposes>({
         :prop="column.field"
         :label="locales ? $t(column.label) : column.label"
       >
-        <template v-slot:default="scope">
+        <template v-if="!column?.columns" v-slot:default="scope">
           <slot :name="column.field" :column="column" :row="scope.row" :index="scope.$index" class="cursor-pointer">
-            <span>{{ scope.row[column.field] }}</span>
+            <div v-if="column?.html" v-html="scope.row[column.field]" />
+            <span v-else>{{ scope.row[column.field] }}</span>
           </slot>
+        </template>
+        <template v-if="!!column?.columns">
+          <el-table-column
+            v-for="columnChil in column?.columns"
+            :min-width="columnChil?.minWidth"
+            :width="columnChil?.width"
+            :fixed="columnChil.field === 'actions' ? 'right' : false"
+            :key="columnChil.field"
+            :prop="columnChil.field"
+            :label="locales ? $t(columnChil.label) : columnChil.label"
+          >
+            <template v-slot:default="scope">
+              <slot
+                :name="columnChil.field"
+                :columnChil="columnChil"
+                :row="scope.row"
+                :index="scope.$index"
+                class="cursor-pointer"
+              >
+                <div v-if="columnChil?.html" v-html="scope.row[columnChil.field]" />
+                <span v-else>{{ scope.row[columnChil.field] }}</span>
+              </slot>
+            </template>
+          </el-table-column>
         </template>
       </el-table-column>
       <template #empty>
@@ -149,21 +177,23 @@ defineExpose<Exposes>({
   </div>
 </template>
 
-<style lang="css" scoped>
-:deep(.el-table tr th) {
+<style lang="css">
+.el-table tr th {
   background-color: #005d98 !important;
   color: white;
 }
 
-:deep(.text-total-records) {
+.text-total-records {
   color: #005d98;
 }
 
-:deep(.el-checkbox.is-checked),
-:deep(.el-checkbox__input.is-indeterminate) {
+.el-checkbox.is-checked,
+.el-checkbox__input.is-indeterminate {
   border: 1px solid #fff;
 }
+</style>
 
+<style lang="css" scoped>
 .custom-table {
   transition: height 0.4s;
 }

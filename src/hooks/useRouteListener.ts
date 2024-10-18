@@ -39,8 +39,8 @@ export function useRouteListener() {
 
   /** Remove listener before component destruction */
   onBeforeUnmount(() => {
-    for (let i = 0; i < callbackList.length; i++) {
-      removeRouteListener(callbackList[i])
+    for (const callback of callbackList) {
+      removeRouteListener(callback)
     }
   })
 

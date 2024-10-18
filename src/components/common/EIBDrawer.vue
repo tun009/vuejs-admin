@@ -33,7 +33,7 @@ const localModelValue = computed({
   }
 })
 
-const beforeClose = (done: any) => {
+const beforeClose = (done: () => void) => {
   ElMessageBox.confirm(t('notification.description.confirmClose'))
     .then(() => {
       setTimeout(() => {

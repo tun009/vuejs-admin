@@ -4,27 +4,28 @@ import { onMounted, ref } from 'vue'
 
 import ApproveProcessDocument from './ApproveProcessDocument.vue'
 
-import {
-  DOCUMENT_RESULT_NAME_LIST,
-  DocumentResultModel,
-  documentResultListColumnConfigs
-} from '@/@types/pages/docs/documents'
+import { DocumentResultModel, documentResultListColumnConfigs } from '@/@types/pages/docs/documents'
 import { getDocumentResults } from '@/api/docs/document'
-import Loading from '@/components/common/Loading.vue'
-import Table from '@/components/common/Table.vue'
+import Loading from '@/components/common/EIBLoading.vue'
+import EIBTable from '@/components/common/EIBTable.vue'
 import { handleComingSoon } from '@/utils/common'
 import { PROGRESS_COLORS } from '@/constants/color'
-import Drawer from '@/components/common/Drawer.vue'
+import EIBDrawer from '@/components/common/EIBDrawer.vue'
+import { useRouter } from 'vue-router'
+import { COMPARE_DOCUMENT_DETAIL_PAGE } from '@/constants/router'
+import { DOCUMENT_RESULT_NAME_LIST } from '@/constants/select'
+
+const router = useRouter()
 
 const status = ref(1)
 const documentStatus = ref(2)
 const percentage = ref<number>(0)
 const tableData = ref<DocumentResultModel[]>([])
-const documentResultListTableRef = ref<InstanceType<typeof Table>>()
+const documentResultListTableRef = ref<InstanceType<typeof EIBTable>>()
 const openApproveProcessDrawer = ref(false)
 
 const handleViewDocument = (_id: string | number) => {
-  handleComingSoon()
+  router.push(COMPARE_DOCUMENT_DETAIL_PAGE(_id))
 }
 
 const handleGetDocumentResults = async () => {
@@ -130,7 +131,7 @@ onMounted(() => {
           />
           <div class="text-gray-700 dark:text-slate-300 flex flex-col gap-1">
             <span><span class="text-2xl">0</span> / 0</span>
-            <span>Tổng trị giá LC đã sử dụng (USD)</span>
+            <span>Tổng trị giá LC đã sử dụng (USD) / Tổng giá trị LC</span>
           </div>
         </div>
         <div class="flex-[3] grid grid-cols-2 font-semibold">
@@ -180,12 +181,12 @@ onMounted(() => {
               v-else-if="status === 1"
               class="rounded-md px-3 py-2 bg-[#fff4e6] flex flex-row gap-2 items-center w-fit text-[#d9480f]"
             >
-              <el-icon size="18"><WarnTriangleFilled /></el-icon>
-              <span class="text-lg">Bất hợp lệ</span>
+              <el-icon size="24"><WarnTriangleFilled /></el-icon>
+              <span class="text-base">Bất hợp lệ</span>
             </div>
             <div v-else class="rounded-md px-3 py-2 bg-[#e6fcf5] flex flex-row gap-2 items-center w-fit text-[#099268]">
-              <el-icon size="18"><CircleCheckFilled /></el-icon>
-              <span class="text-lg">Hợp lệ</span>
+              <el-icon size="24"><CircleCheckFilled /></el-icon>
+              <span class="text-base">Hợp lệ</span>
             </div>
           </div>
           <div v-if="!!status" class="flex flex-col gap-2 flex-[2]">
@@ -194,7 +195,7 @@ onMounted(() => {
             <span><span class="font-semibold mr-2">Trong thời hạn xuất trình chứng từ: </span><span>Hợp lệ</span></span>
           </div>
         </div>
-        <Table
+        <EIBTable
           v-if="!!status"
           ref="documentResultListTableRef"
           locales
@@ -225,13 +226,13 @@ onMounted(() => {
           </template>
           <template #stt="{ index }">
             <span>{{ index + 1 }}</span>
-          </template></Table
+          </template></EIBTable
         >
       </div>
     </template>
   </el-card>
 
-  <Drawer v-model="openApproveProcessDrawer" title="Trình checker phê duyệt bộ chứng từ">
+  <EIBDrawer v-model="openApproveProcessDrawer" title="Trình checker phê duyệt bộ chứng từ">
     <template #default>
       <ApproveProcessDocument
         ref="updateUserFormRef"
@@ -239,7 +240,5 @@ onMounted(() => {
         @close="openApproveProcessDrawer = false"
       />
     </template>
-  </Drawer>
+  </EIBDrawer>
 </template>
-
-<style scoped></style>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { BusinessTypeEnum, businessTypeOptions } from '@/@types/pages/docs/documents'
 import { AddDocumentRequestData } from '@/@types/pages/docs/documents/services/DocumentRequest'
-import Input from '@/components/common/Input.vue'
-import Select from '@/components/common/Select.vue'
-import Upload from '@/components/common/Upload.vue'
+import EIBInput from '@/components/common/EIBInput.vue'
+import EIBSelect from '@/components/common/EIBSelect.vue'
+import EIBUpload from '@/components/common/EIBUpload.vue'
 import { MOCK_SOLS } from '@/mocks/user'
 import { warningNotification } from '@/utils/notification'
 import { requireRule } from '@/utils/validate'
@@ -123,14 +123,14 @@ const handleAddDocument = () => {
     >
       <div>
         <div class="grid grid-cols-2 gap-x-4">
-          <Select
+          <EIBSelect
             v-model="addDocumentFormData.businessType"
             name="businessType"
             :options="businessTypeOptions.slice(0, 1)"
             :label="$t('docs.document.businessType')"
             is-row
           />
-          <Input
+          <EIBInput
             :label="$t('docs.document.documentName')"
             :placeholder="$t('docs.document.enterName')"
             name="documentName"
@@ -139,14 +139,14 @@ const handleAddDocument = () => {
             is-row
             class="col-start-1"
           />
-          <Select
+          <EIBSelect
             v-model="addDocumentFormData.sol"
             name="sol"
             :options="MOCK_SOLS"
             :label="$t('docs.document.selectSOL')"
             is-row
           />
-          <Input
+          <EIBInput
             :label="$t('docs.document.customerName')"
             :placeholder="$t('docs.document.enterName')"
             name="customerName"
@@ -154,7 +154,7 @@ const handleAddDocument = () => {
             required
             is-row
           />
-          <Input
+          <EIBInput
             :label="$t('docs.document.cifCode')"
             :placeholder="$t('docs.document.cifCode')"
             name="cif"
@@ -175,6 +175,6 @@ const handleAddDocument = () => {
         </div>
       </div>
     </template>
-    <Upload :files="files" @add-files="addFiles" @set-files="setFiles" />
+    <EIBUpload :files="files" @add-files="addFiles" @set-files="setFiles" />
   </el-dialog>
 </template>

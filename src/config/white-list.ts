@@ -4,7 +4,7 @@ import { type RouteLocationNormalized } from 'vue-router'
 const whiteListByPath: string[] = ['/login']
 
 /** Login-free whitelist (matching route name) */
-const whiteListByName: string[] = []
+const whiteListByName: string[] = ['Login']
 
 /** Determine whether it is in the whitelist */
 const isWhiteList = (to: RouteLocationNormalized) => {

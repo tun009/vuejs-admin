@@ -44,13 +44,11 @@ const flatTree = (arr: RouteRecordRaw[], result: RouteRecordRaw[] = []) => {
 /** Search (Anti-shake) */
 const handleSearch = debounce(() => {
   const flatMenusData = flatTree(menusData.value)
-  resultList.value = flatMenusData.filter((menu) =>
-    keyword.value
-      ? (menu.meta?.title ? removeAccents(t('router.' + menu.meta?.title)) : '')
-          ?.toLocaleLowerCase()
-          .includes(removeAccents(keyword.value.toLocaleLowerCase().trim()))
-      : false
-  )
+  const keywordTrimmed = keyword.value ? removeAccents(keyword.value.toLocaleLowerCase().trim()) : ''
+  resultList.value = flatMenusData.filter((menu) => {
+    const menuTitle = menu.meta?.title ? removeAccents(t('router.' + menu.meta?.title)) : ''
+    return keywordTrimmed ? menuTitle.toLocaleLowerCase().includes(keywordTrimmed) : false
+  })
   // The first search result is selected by default
   const length = resultList.value?.length
   activeRouteName.value = length > 0 ? resultList.value[0].name : undefined

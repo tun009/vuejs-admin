@@ -1,4 +1,4 @@
-export interface fieldChangedModel {
+export interface FieldChangedModel {
   name: string
   field: string
   rate: number
