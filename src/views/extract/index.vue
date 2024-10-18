@@ -79,7 +79,7 @@ onMounted(() => {
 
 <template>
   <div>
-    <div class="flex h-screen text-[14px]">
+    <div class="flex h-screen text-[14px] extract-page">
       <div class="w-[70%]">
         <div class="flex flex-row h-full">
           <div class="w-[180px]">
@@ -116,10 +116,10 @@ onMounted(() => {
         </div>
         <el-tabs class="tabs-infor" v-model="activeName">
           <el-tab-pane label="Kết quả OCR" name="ocr">
-            <div v-if="docementDetail?.result?.data.length > 0">
+            <div v-if="(docementDetail?.result?.data ?? []).length > 0">
               <template v-if="isLoadedPdf">
                 <div
-                  v-for="(item, index) in docementDetail.result.data"
+                  v-for="(item, index) in docementDetail?.result.data"
                   :key="index"
                   class="mt-[12px] py-[5px] px-[6px] item-dossier cursor-pointer"
                   :class="renderClassOcr(item.confidence)"
@@ -149,7 +149,7 @@ onMounted(() => {
               </template>
               <template v-else>
                 <div
-                  v-for="(item, index) in docementDetail.result.data"
+                  v-for="(item, index) in docementDetail?.result.data"
                   :key="index"
                   class="mt-[12px] py-[5px] px-[6px] item-dossier cursor-wait"
                 >
@@ -186,29 +186,27 @@ onMounted(() => {
     </div>
   </div>
 </template>
-<style scoped>
-.btn-go-back {
-  box-shadow:
-    inset -1px 0 0 0 #ebebeb,
-    0 2px 4px 0 #aaa;
+<style lang="scss">
+.extract-page {
+  .el-tabs__nav-scroll {
+    padding: 0 16px;
+  }
+  .btn-go-back {
+    box-shadow:
+      inset -1px 0 0 0 #ebebeb,
+      0 2px 4px 0 #aaa;
+  }
+  .el-tabs__item:not(.is-active) {
+    color: #adb5bd;
+  }
+  .trust-hight > div {
+    border-color: #0c8599;
+  }
+  .trust-medium > div {
+    border-color: #ee0033;
+  }
+  .item-dossier:hover {
+    background-color: #e1edfe;
+  }
 }
-:deep(.el-tabs__nav-scroll) {
-  padding: 0 16px;
-}
-:deep(.el-tabs__item:not(.is-active)) {
-  color: #adb5bd;
-}
-.trust-hight > div {
-  border-color: #0c8599;
-}
-.trust-medium > div {
-  border-color: #ee0033;
-}
-.item-dossier:hover {
-  background-color: #e1edfe;
-}
-/* ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-} */
 </style>

@@ -12,9 +12,6 @@ const emit = defineEmits<{
 }>()
 const scale = ref(1)
 const currentPage = ref(1)
-// function onLoaded(value: any) {
-//   // console.log(value, 'loz')
-// }
 const rotation = ref(1)
 const { pdf, pages } = usePDF(props.url)
 const scrollToPage = () => {
@@ -33,8 +30,7 @@ const zoomOut = () => {
     scale.value = Math.max(scale.value - 0.1, 0.1)
   }
 }
-const onLoadedPDF = (page: number) => {
-  console.log(page, 'page')
+const onLoadedPDF = () => {
   emit('loaded-data')
 }
 const tagLabelToPage = (boxInfo: ExtractBboxModel) => {
@@ -49,7 +45,10 @@ const tagLabelToPage = (boxInfo: ExtractBboxModel) => {
   pElement.style.height = caculatorDistance(getRectangle(boxInfo?.bbox, 'height'))
   pElement.style.top = caculatorDistance(getRectangle(boxInfo?.bbox, 'top'))
   pElement.style.left = caculatorDistance(getRectangle(boxInfo?.bbox, 'left'))
-  console.log(pElement, 'pElement')
+  pElement.style.backgroundColor = 'rgba(240, 91, 91, 0.3) '
+  pElement.style.border = '2px solid #e03'
+  pElement.style.position = 'absolute'
+
   const elementPage = document.getElementById('page-' + (boxInfo.page_id + 1))
   if (elementPage) elementPage.appendChild(pElement)
   const elementScrollTo = pElement ?? elementPage
@@ -58,7 +57,7 @@ const tagLabelToPage = (boxInfo: ExtractBboxModel) => {
 const caculatorDistance = (unit: number) => {
   return `${unit.toString()}%`
 }
-const getRectangle = (bbox: any[], style: string) => {
+const getRectangle = (bbox: number[][], style: string) => {
   const result: any = {}
   const listX = []
   const listY = []
@@ -119,7 +118,7 @@ const toggleFullScreen = () => {
 </script>
 
 <template>
-  <div class="flex justify-between my-2">
+  <div class="flex justify-between my-2 pdf-view-component">
     <div
       class="bg-[#4a5c6f] flex w-[320px] h-[40px] text-[#fff] rounded-[4px] justify-start items-start gap-2.5 p-2.5 px-5 pt-2.5 pl-4"
     >
@@ -131,7 +130,7 @@ const toggleFullScreen = () => {
         max="2"
         step="0.1"
         v-model="scale"
-        @input="scale = Number($event.target.value)"
+        @input="scale = Number(($event?.target as HTMLInputElement)?.value)"
       />
       <SvgIcon title="Phóng to" name="zoom-in" class="cursor-pointer !h-[22px] !w-[22px]" @click="zoomIn()" />
       <span class="text-[14px]">{{ (scale * 100).toFixed(0) }}%</span>
@@ -163,7 +162,7 @@ const toggleFullScreen = () => {
         :page="page"
         :scale="scale"
         :rotation="rotation"
-        @loaded="onLoadedPDF(page)"
+        @loaded="onLoadedPDF()"
       />
       <div class="text-center my-2">Trang {{ page }}</div>
     </div>
@@ -171,12 +170,6 @@ const toggleFullScreen = () => {
 </template>
 
 <style lang="scss" scoped>
-:deep(.box-label) {
-  background: rgba(241, 85, 108, 0.212) !important;
-  border: 2px solid rgba(241, 85, 108, 0.729) !important;
-  opacity: 1 !important;
-  position: absolute;
-}
 .page-pdf > div {
   width: fit-content;
 }
