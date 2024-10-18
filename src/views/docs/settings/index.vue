@@ -9,35 +9,14 @@ import { getSettings } from '@/api/docs/settings'
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
 import EIBTable from '@/components/common/EIBTable.vue'
+import { CONFIDENCES } from '@/constants/setting'
 
 const docs = ref<string>('')
 const activeName = ref('first')
 const tableData = ref<SettingModel[]>([])
 const disabledIds = [1]
-const ruleForm = ref({
-  toConfidence1: 24.9,
-  toConfidence2: 49.9,
-  toConfidence3: 74.9,
-  toConfidence4: 100
-})
-const dataInput = ref({
-  toConfidence1: {
-    confidence: 24.9,
-    color: '#EF0606'
-  },
-  toConfidence2: {
-    confidence: 49.9,
-    color: '#EF0606'
-  },
-  toConfidence3: {
-    confidence: 74.9,
-    color: '#EF0606'
-  },
-  toConfidence4: {
-    confidence: 100,
-    color: '#01B516'
-  }
-})
+const ruleForm = ref(CONFIDENCES)
+const dataInput = ref(CONFIDENCES)
 const ruleForm1 = ref({
   dataSource: 0
 })
@@ -192,6 +171,23 @@ const openUpdateInfoExtractDrawer = ref(false)
   </EIBDrawer>
 </template>
 
+<style>
+:deep(.auto-validation .el-form-item) {
+  margin-bottom: 0 !important;
+}
+:deep(.tab-pane) {
+  padding: 24px 16px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px 0 #c1c9db;
+  border: solid 1px #f1f3f5;
+  background-color: #fff;
+}
+
+:deep(.el-radio__label) {
+  padding-top: 26px;
+}
+</style>
+
 <style scoped>
 .g-6 {
   gap: 24px;
@@ -214,16 +210,6 @@ const openUpdateInfoExtractDrawer = ref(false)
 }
 .gap-20 {
   gap: 20px;
-}
-:deep() .auto-validation .el-form-item {
-  margin-bottom: 0 !important;
-}
-:deep(.tab-pane) {
-  padding: 24px 16px;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px 0 #c1c9db;
-  border: solid 1px #f1f3f5;
-  background-color: #fff;
 }
 
 .el-color-picker__trigger,
@@ -259,9 +245,6 @@ const openUpdateInfoExtractDrawer = ref(false)
 
 .el-radio__input.is-checked + .el-radio__label {
   color: inherit;
-}
-:deep(.el-radio__label) {
-  padding-top: 26px;
 }
 
 .radio-label {
