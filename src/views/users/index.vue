@@ -19,7 +19,6 @@ defineOptions({
   name: 'Users'
 })
 
-const addUserFormRef = ref<InstanceType<typeof AddUserForm>>()
 const configRoleUserFormRef = ref<InstanceType<typeof ConfigRoleUserForm>>()
 
 const openAddUserDrawer = ref(false)
@@ -83,22 +82,10 @@ const handleDeleteUser = (name: string) => {
         <el-button :icon="Filter" @click="handleComingSoon">{{ $t('user.filter') }}</el-button>
       </div>
       <div class="flex flex-row gap-3">
-        <EIBDrawer title="Cấu hình vai trò" size="50%" v-model="openConfigRoleUserDrawer">
-          <template #button>
-            <el-button plain type="primary" :icon="Tools">{{ $t('button.roleSetting') }}</el-button>
-          </template>
-          <template #default>
-            <ConfigRoleUserForm ref="configRoleUserFormRef" @close="openConfigRoleUserDrawer = false" />
-          </template>
-        </EIBDrawer>
-        <EIBDrawer title="user.addUser.title" v-model="openAddUserDrawer">
-          <template #button>
-            <el-button type="primary" :icon="Plus">{{ $t('button.add') }}</el-button>
-          </template>
-          <template #default>
-            <AddUserForm ref="addUserFormRef" @close="openAddUserDrawer = false" />
-          </template>
-        </EIBDrawer>
+        <el-button plain type="primary" :icon="Tools" @click="openConfigRoleUserDrawer = true">{{
+          $t('button.roleSetting')
+        }}</el-button>
+        <el-button type="primary" :icon="Plus" @click="openAddUserDrawer = true">{{ $t('button.add') }}</el-button>
       </div>
     </div>
     <el-card>
@@ -133,6 +120,15 @@ const handleDeleteUser = (name: string) => {
       </EIBTable>
     </el-card>
   </div>
+
+  <EIBDrawer title="Cấu hình vai trò" size="50%" v-model="openConfigRoleUserDrawer">
+    <template #button>
+      <el-button plain type="primary" :icon="Tools">{{ $t('button.roleSetting') }}</el-button>
+    </template>
+    <template #default>
+      <ConfigRoleUserForm ref="configRoleUserFormRef" @close="openConfigRoleUserDrawer = false" />
+    </template>
+  </EIBDrawer>
 
   <EIBDrawer v-if="openAddUserDrawer" title="user.addUser.title" v-model="openAddUserDrawer">
     <template #default>
