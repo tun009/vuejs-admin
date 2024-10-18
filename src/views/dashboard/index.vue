@@ -106,6 +106,7 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
 import { InfoFilled } from '@element-plus/icons-vue'
+// @ts-ignore
 import VueApexCharts from 'vue3-apexcharts'
 
 import DoughnutChart from './components/DoughnutChart.vue'
