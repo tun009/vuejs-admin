@@ -35,12 +35,6 @@ const getDossiersDetail = async () => {
     const response = await getDossierDetailApi()
     docementDetail.value = response.data
     bboxsIDs.value = response.data?.result?.bboxes
-    // const { pdf: pdfRef, pages: pagesRef } = usePDF(response.data?.file)
-    // // console.log(pdf, pages)
-    // pdfDoc.value = { ...pdfRef.value }
-    // pagesDoc.value = pagesRef.value
-    // console.log(pdfDoc, 'pdfDoc')
-    // console.log(pagesDoc, 'pagesDoc')
   } catch (error: any) {
     throw new Error(error)
   }
