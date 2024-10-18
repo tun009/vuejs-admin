@@ -1,6 +1,7 @@
 import { ElNotification } from 'element-plus'
 import i18n from '@/locales'
 
+//#region Notification
 export const successNotification = (message: string) => {
   ElNotification({
     title: i18n.global.t('notification.title.success'),

@@ -61,7 +61,6 @@ export const constantRoutes: RouteRecordRaw[] = [
   {
     path: LOGIN_PAGE,
     component: () => import('@/views/login/index.vue'),
-    name: 'Login',
     meta: {
       hidden: true
     }
@@ -115,15 +114,6 @@ export const constantRoutes: RouteRecordRaw[] = [
         name: 'Data procesing'
       },
       {
-        path: DOCS_PAGE + REPORTS_PAGE,
-        component: () => import('@/views/docs/reports/index.vue'),
-        name: 'Reports',
-        meta: {
-          title: 'reports',
-          keepAlive: true
-        }
-      },
-      {
         path: DOCS_PAGE + SETTINGS_PAGE,
         component: () => import('@/views/docs/settings/index.vue'),
         name: 'Settings',
@@ -141,6 +131,23 @@ export const constantRoutes: RouteRecordRaw[] = [
         },
         name: 'Document detail',
         path: DOCUMENT_DETAIL_PAGE()
+      }
+    ]
+  },
+  {
+    path: MAIN_PAGE,
+    component: Layouts,
+    redirect: DASHBOARD_PAGE,
+    children: [
+      {
+        path: REPORTS_PAGE,
+        component: () => import('@/views/docs/reports/index.vue'),
+        name: 'Reports',
+        meta: {
+          svgIcon: 'ic-report',
+          title: 'reports',
+          keepAlive: true
+        }
       }
     ]
   },
@@ -213,7 +220,8 @@ export const constantRoutes: RouteRecordRaw[] = [
     path: COMPARE_DOCUMENT_DETAIL_PAGE(),
     component: () => import('@/views/docs/documents/compare/index.vue'),
     meta: {
-      hidden: true
+      hidden: true,
+      title: 'documentCompare'
     }
   }
 ]

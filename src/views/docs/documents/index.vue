@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import { Delete, Edit, Filter, Plus, Search } from '@element-plus/icons-vue'
+import { Delete, Filter, Plus, Search } from '@element-plus/icons-vue'
 import { ref } from 'vue'
-import { ElMessageBox, ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
@@ -18,15 +17,17 @@ import {
   processingStepOptions
 } from '@/@types/pages/docs/documents'
 import { getDocuments } from '@/api/docs/document'
+import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import EIBInput from '@/components/common/EIBInput.vue'
 import EIBTable from '@/components/common/EIBTable.vue'
+import { DOCUMENT_DETAIL_PAGE } from '@/constants/router'
+import { useConfirmModal } from '@/hooks/useConfirm'
 import { Title } from '@/layouts/components'
 import { handleComingSoon, renderLabelByValue } from '@/utils/common'
-import EIBDrawer from '@/components/common/EIBDrawer.vue'
-import { DOCUMENT_DETAIL_PAGE } from '@/constants/router'
 
 const { t } = useI18n()
 const router = useRouter()
+const { showConfirmModal } = useConfirmModal()
 
 const searchQuery = ref('')
 const tableData = ref<DocumentModel[]>([])
@@ -55,44 +56,17 @@ const handleClearAllChecked = () => {
 }
 
 const handleDeleteDocument = (name?: string) => {
-  ElMessageBox.confirm(
-    t('docs.document.deleteDocsConfirm', { name: name ?? t('docs.document.selectedDocs') }),
-    t('docs.document.deleteDocsTitle'),
-    {
-      beforeClose: (action, instance, done) => {
-        if (action === 'confirm') {
-          instance.confirmButtonLoading = true
-          instance.confirmButtonText = 'Loading...'
-          setTimeout(() => {
-            done()
-            setTimeout(() => {
-              instance.confirmButtonLoading = false
-            }, 300)
-          }, 3000)
-        } else {
-          done()
-        }
-      },
-      cancelButtonText: t('button.cancel_1'),
-      confirmButtonText: t('button.confirmDelete'),
-      dangerouslyUseHTMLString: true,
-      draggable: true,
-      type: 'warning'
+  showConfirmModal({
+    message: t('docs.document.deleteDocsConfirm', { name: name ?? t('docs.document.selectedDocs') }),
+    title: t('docs.document.deleteDocsTitle'),
+    successCallback: handleClearAllChecked,
+    onConfirm: (instance, done) => {
+      setTimeout(() => {
+        done()
+        instance.confirmButtonLoading = false
+      }, 3000)
     }
-  )
-    .then(() => {
-      handleClearAllChecked()
-      ElMessage({
-        message: 'Delete document completed',
-        type: 'success'
-      })
-    })
-    .catch(() => {
-      ElMessage({
-        message: 'Delete document canceled',
-        type: 'info'
-      })
-    })
+  })
 }
 </script>
 
@@ -139,7 +113,7 @@ const handleDeleteDocument = (name?: string) => {
         </template>
         <template #actions="{ row }">
           <div class="flex flex-row gap-2" @click.stop>
-            <el-icon :size="18" class="cursor-pointer" @click.stop="openDrawer = true"><Edit /></el-icon>
+            <SvgIcon :size="18" name="edit-info" @click.stop="openDrawer = true" class="cursor-pointer" />
             <el-icon
               :size="18"
               color="#e03131"

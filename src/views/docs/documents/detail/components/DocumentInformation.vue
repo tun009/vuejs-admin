@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { CircleCheckFilled, View, WarnTriangleFilled } from '@element-plus/icons-vue'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
 import ApproveProcessDocument from './ApproveProcessDocument.vue'
 
@@ -11,11 +11,14 @@ import EIBTable from '@/components/common/EIBTable.vue'
 import { handleComingSoon } from '@/utils/common'
 import { PROGRESS_COLORS } from '@/constants/color'
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { COMPARE_DOCUMENT_DETAIL_PAGE } from '@/constants/router'
 import { DOCUMENT_RESULT_NAME_LIST } from '@/constants/select'
+import UpdateLCForm from './UpdateLCForm.vue'
+import EIBDialog from '@/components/common/EIBDialog.vue'
 
 const router = useRouter()
+const route = useRoute()
 
 const status = ref(1)
 const documentStatus = ref(2)
@@ -23,6 +26,9 @@ const percentage = ref<number>(0)
 const tableData = ref<DocumentResultModel[]>([])
 const documentResultListTableRef = ref<InstanceType<typeof EIBTable>>()
 const openApproveProcessDrawer = ref(false)
+const dialogVisible = ref(false)
+const loadingConfirm = ref(false)
+const updateLCFormRef = ref<InstanceType<typeof UpdateLCForm>>()
 
 const handleViewDocument = (_id: string | number) => {
   router.push(COMPARE_DOCUMENT_DETAIL_PAGE(_id))
@@ -61,9 +67,23 @@ onMounted(() => {
   // }, 3000)
   handleGetDocumentResults()
 })
+
+const documentId = computed(() => route.params?.id as string)
 </script>
 
 <template>
+  <EIBDialog
+    title="Cập nhập Tổng trị giá LC đã sử dụng"
+    v-model="dialogVisible"
+    :loading="loadingConfirm"
+    @on-confirm="updateLCFormRef?.onConfirm"
+  >
+    <UpdateLCForm
+      ref="updateLCFormRef"
+      @update:loading="(loading: boolean) => (loadingConfirm = loading)"
+      @update:visible="(visible: boolean) => (dialogVisible = visible)"
+    />
+  </EIBDialog>
   <el-card>
     <template #header>
       <div class="card-header">
@@ -117,8 +137,14 @@ onMounted(() => {
       <span class="text-[#005d98] dark:text-[#409eff] font-semibold text-base">Thông tin LC</span>
       <div class="flex flex-row gap-8">
         <div
-          class="flex-[2] border border-slate-200 dark:border-gray-600 rounded-md p-5 flex flex-row items-center gap-8"
+          class="flex-[2] relative border border-slate-200 dark:border-gray-600 rounded-md p-5 flex flex-row items-center gap-8"
         >
+          <SvgIcon
+            :size="24"
+            name="edit-info"
+            @click.stop="dialogVisible = true"
+            class="cursor-pointer absolute top-3 right-3"
+          />
           <el-progress
             :width="120"
             type="circle"
@@ -168,6 +194,7 @@ onMounted(() => {
             :disabled="status === 1"
             :type="status === 1 ? 'info' : 'primary'"
             class="flex flex-row items-center"
+            @click.stop="handleComingSoon"
           >
             <SvgIcon name="download-inline" class="w-4 h-4 mr-2" />
             <span>Tải kết quả</span></el-button
@@ -181,11 +208,11 @@ onMounted(() => {
               v-else-if="status === 1"
               class="rounded-md px-3 py-2 bg-[#fff4e6] flex flex-row gap-2 items-center w-fit text-[#d9480f]"
             >
-              <el-icon size="24"><WarnTriangleFilled /></el-icon>
+              <el-icon size="20"><WarnTriangleFilled /></el-icon>
               <span class="text-base">Bất hợp lệ</span>
             </div>
             <div v-else class="rounded-md px-3 py-2 bg-[#e6fcf5] flex flex-row gap-2 items-center w-fit text-[#099268]">
-              <el-icon size="24"><CircleCheckFilled /></el-icon>
+              <el-icon size="20"><CircleCheckFilled /></el-icon>
               <span class="text-base">Hợp lệ</span>
             </div>
           </div>
@@ -205,9 +232,11 @@ onMounted(() => {
           :data="tableData"
           height="unset"
         >
-          <template #actions="{ row }">
+          <template #actions>
             <div class="flex flex-row gap-2">
-              <el-button type="primary" :icon="View" @click="() => handleViewDocument(row.id)"> Chi tiết </el-button>
+              <el-button type="primary" :icon="View" @click="() => handleViewDocument(documentId)">
+                Chi tiết
+              </el-button>
             </div>
           </template>
           <template #testResults>

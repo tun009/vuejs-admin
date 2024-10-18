@@ -1,24 +1,33 @@
 <script lang="ts" setup>
 import { documentTypeOptions } from '@/@types/pages/docs/documents'
+import EIBDialog from '@/components/common/EIBDialog.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
+import { DOCUMENT_DETAIL_PAGE } from '@/constants/router'
+import { useConfirmModal } from '@/hooks/useConfirm'
+import { useLoading } from '@/hooks/useLoading'
 import { documentCompareResultConfigs, documentCompareResults } from '@/mocks/document'
-import { handleComingSoon, scrollIntoViewParent } from '@/utils/common'
+import { scrollIntoViewParent } from '@/utils/common'
 import { ArrowLeft, Check, CircleCheckFilled, Close, WarnTriangleFilled } from '@element-plus/icons-vue'
 import { ElMessageBox } from 'element-plus'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import CompareRejectForm from './components/CompareRejectForm.vue'
 import DocumentCompareResult from './components/DocumentCompareResult.vue'
 import ResizableSplitter from './components/ResizableSplitter.vue'
-import { useLoading } from '@/hooks/useLoading'
 
 const router = useRouter()
+const route = useRoute()
 const { startLoading, stopLoading } = useLoading()
+const { showConfirmModal } = useConfirmModal()
 
 const { t } = useI18n()
 const documentType = ref<number>(0)
 const conditionSelect = ref<number>(0)
 const activeName = ref<'result' | 'history'>('result')
+const dialogVisible = ref(false)
+const loadingConfirm = ref(false)
+const compareRejectFormRef = ref<InstanceType<typeof CompareRejectForm>>()
 
 const handleCheckCompareResult = (index: number) => {
   try {
@@ -33,13 +42,28 @@ const handleCheckCompareResult = (index: number) => {
 const handleBack = () => {
   ElMessageBox.confirm(t('notification.description.confirmClose'))
     .then(() => {
-      setTimeout(() => {
-        router.back()
-      }, 200)
+      router.push(DOCUMENT_DETAIL_PAGE(route.params?.id as string))
     })
     .catch(() => {
       // catch error
     })
+}
+
+const handleConfirmCompare = () => {
+  showConfirmModal({
+    title: 'Xác nhận kết quả kiểm tra bộ chứng từ',
+    message:
+      'Sau khi nhấn vào nút “Xác nhận”, hệ thống ghi nhận việc kiểm tra kết quả đã hoàn tất, chuyển sang trạng thái “Đã kiểm tra”</br ></br />Bạn xác nhận hoàn thành kiểm tra chứ?',
+    successCallback: () => {
+      router.push(DOCUMENT_DETAIL_PAGE(route.params?.id as string))
+    },
+    onConfirm: (instance, done) => {
+      setTimeout(() => {
+        done()
+        instance.confirmButtonLoading = false
+      }, 3000)
+    }
+  })
 }
 
 const compareResults = computed(() => {
@@ -64,20 +88,33 @@ watch(
     startLoading()
     setTimeout(() => {
       stopLoading()
-    }, 2000)
+    }, 500)
   }
 )
 </script>
 
 <template>
+  <EIBDialog
+    title="Xác nhận “Từ chối” bộ chứng từ"
+    v-model="dialogVisible"
+    :loading="loadingConfirm"
+    @on-confirm="compareRejectFormRef?.onConfirm"
+  >
+    <CompareRejectForm
+      ref="compareRejectFormRef"
+      @update:loading="(loading: boolean) => (loadingConfirm = loading)"
+      @update:visible="(visible: boolean) => (dialogVisible = visible)"
+    />
+  </EIBDialog>
+
   <div
     class="flex flex-row justify-between py-2 px-4 border border-[#ced4da] fixed top-0 left-0 w-full bg-white dark:bg-[#141414] z-[10]"
   >
     <el-button color="#005d98" plain :icon="ArrowLeft" @click="handleBack">Trở lại</el-button>
     <el-text class="text-[24px]">Kiểm tra chứng từ {{ documentTypeLabel }}</el-text>
     <div class="flex flex-row gap-3">
-      <el-button type="danger" :icon="Close" @click="handleComingSoon">Từ chối</el-button>
-      <el-button type="success" :icon="Check" @click="handleComingSoon">Xác nhận</el-button>
+      <el-button type="danger" :icon="Close" @click="dialogVisible = true">Từ chối</el-button>
+      <el-button type="success" :icon="Check" @click="handleConfirmCompare">Xác nhận</el-button>
     </div>
   </div>
   <div class="pt-20">

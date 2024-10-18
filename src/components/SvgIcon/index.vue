@@ -5,18 +5,20 @@ interface Props {
   prefix?: string
   name: string
   className?: string
+  size?: number | string
 }
 
 const props = withDefaults(defineProps<Props>(), {
   prefix: 'icon',
-  className: ''
+  className: '',
+  size: 16
 })
 
 const symbolId = computed(() => `#${props.prefix}-${props.name}`)
 </script>
 
 <template>
-  <svg class="svg-icon" :class="className" aria-hidden="true">
+  <svg class="svg-icon" :class="className" :style="{ width: size, height: size }" aria-hidden="true">
     <use :href="symbolId" />
   </svg>
 </template>

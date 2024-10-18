@@ -1,9 +1,12 @@
 <script lang="ts" setup>
+import EIBDialog from '@/components/common/EIBDialog.vue'
 import EIBList from '@/components/common/EIBList.vue'
 import EIBTable from '@/components/common/EIBTable.vue'
 import { DocumentCompareResultModel } from '@/mocks/document'
+import { Plus } from '@element-plus/icons-vue'
 import { debounce } from 'lodash-es'
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
+import AddCompareContentForm from './AddCompareContentForm.vue'
 import MultipleLaguageResult from './MultipleLaguageResult.vue'
 
 interface Props {
@@ -18,6 +21,9 @@ interface Emits {
 const props = defineProps<Props>()
 const emits = defineEmits<Emits>()
 
+const dialogVisible = ref(false)
+const loadingConfirm = ref(false)
+const addCompareContentFormRef = ref<InstanceType<typeof AddCompareContentForm>>()
 const scrollBlock = ref<HTMLElement | null>(null)
 
 const onScroll = debounce(() => {
@@ -40,19 +46,32 @@ const checkElementsInView = () => {
     }
   }
 }
-
-onMounted(() => {})
 </script>
 
 <template>
+  <EIBDialog
+    title="Bổ sung nội dung đối sánh"
+    v-model="dialogVisible"
+    :loading="loadingConfirm"
+    @on-confirm="addCompareContentFormRef?.onConfirm"
+  >
+    <AddCompareContentForm
+      ref="addCompareContentFormRef"
+      @update:loading="(loading: boolean) => (loadingConfirm = loading)"
+      @update:visible="(visible: boolean) => (dialogVisible = visible)"
+    />
+  </EIBDialog>
   <div
-    class="flex flex-col gap-6 pl-2 mt-3 h-[calc(100vh_-_200px)] overflow-y-auto scroll-block"
+    class="flex flex-col gap-6 px-2 mt-3 h-[calc(100vh_-_200px)] overflow-y-auto scroll-block"
     ref="scrollBlock"
     @scroll="onScroll"
   >
     <div v-for="(compareResult, index) in configs" :key="index" class="relative" :id="`document-compare-${index}`">
-      <div class="c-text-title-primary sticky top-0 py-2 dark:bg-[#121212] bg-white shadow-transparent z-[5]">
-        {{ index + 1 }}. {{ compareResult?.label }}
+      <div
+        class="c-text-title-primary sticky top-0 py-2 dark:bg-[#121212] bg-white shadow-transparent z-[5] flex justify-between"
+      >
+        <span>{{ index + 1 }}. {{ compareResult?.label }}</span>
+        <el-button :icon="Plus" color="#005d98" plain @click="dialogVisible = true" />
       </div>
       <div class="w-full h-[1px] bg-[#ebebeb] mt-2 mb-4" />
       <div v-for="(child, idx) in compareResult?.childrens" :key="idx">
