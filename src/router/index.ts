@@ -17,7 +17,8 @@ import {
   USERS_PAGE,
   _403_PAGE,
   _404_PAGE,
-  DOCUMENT_DETAIL_PAGE
+  DOCUMENT_DETAIL_PAGE,
+  EXTRACT_PAGE
 } from '@/constants/router'
 
 const Layouts = () => import('@/layouts/index.vue')
@@ -186,6 +187,15 @@ export const constantRoutes: RouteRecordRaw[] = [
         }
       }
     ]
+  },
+  {
+    path: EXTRACT_PAGE,
+    component: () => import('@/views/extract/index.vue'),
+    meta: {
+      title: 'Trích xuất thông tin',
+      hidden: true,
+      keepAlive: false
+    }
   }
   // {
   //   component: () => import('@/views/docs/documents/DocumentDetail.vue'),
