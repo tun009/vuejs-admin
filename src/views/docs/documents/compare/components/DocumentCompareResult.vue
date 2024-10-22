@@ -8,6 +8,7 @@ import { debounce } from 'lodash-es'
 import { ref } from 'vue'
 import AddCompareContentForm from './AddCompareContentForm.vue'
 import MultipleLaguageResult from './MultipleLaguageResult.vue'
+import SafeHtmlRenderer from '@/components/SafeHtmlRenderer.vue'
 
 interface Props {
   conditionSelect: number
@@ -84,7 +85,7 @@ const checkElementsInView = () => {
             </template>
             <template v-else-if="block?.type === 'html'">
               <span class="c-text-des">{{ block?.label }}</span>
-              <div class="text-base" v-html="block?.value" />
+              <SafeHtmlRenderer class="text-base" :html="block?.value ?? ''" />
             </template>
             <template v-else-if="block?.type === 'table'">
               <span class="c-text-des">{{ block?.label }}</span>

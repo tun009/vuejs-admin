@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue'
 import type { TableInstance } from 'element-plus'
 import { ColumnConfigModel, PaginationModel } from '@/@types/common'
 import { PAGE_SIZE_LIST_DEFAULT } from '@/constants/common'
+import SafeHtmlRenderer from '../SafeHtmlRenderer.vue'
 
 interface Props {
   hiddenChecked?: boolean
@@ -116,7 +117,7 @@ defineExpose<Exposes>({
       >
         <template v-if="!column?.columns" v-slot:default="scope">
           <slot :name="column.field" :column="column" :row="scope.row" :index="scope.$index" class="cursor-pointer">
-            <div v-if="column?.html" v-html="scope.row[column.field]" />
+            <SafeHtmlRenderer v-if="column?.html" :html="scope.row[column.field]" />
             <span v-else>{{ scope.row[column.field] }}</span>
           </slot>
         </template>
@@ -138,7 +139,7 @@ defineExpose<Exposes>({
                 :index="scope.$index"
                 class="cursor-pointer"
               >
-                <div v-if="columnChil?.html" v-html="scope.row[columnChil.field]" />
+                <SafeHtmlRenderer v-if="columnChil?.html" :html="scope.row[columnChil.field]" />
                 <span v-else>{{ scope.row[columnChil.field] }}</span>
               </slot>
             </template>

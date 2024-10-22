@@ -1,5 +1,6 @@
 import { SelectOptionModel } from '@/@types/common'
 import { ElMessageBox } from 'element-plus'
+import DOMPurify from 'dompurify'
 
 export const getDataWithPagination = <T>(array: T[], pageNum: number, pageSize: number): T[] => {
   const start = pageNum * pageSize
@@ -43,4 +44,8 @@ export function resetNullUndefinedFields(obj: Record<string, any>): void {
       obj[key] = ''
     }
   })
+}
+
+export const sanitizeString = (symbolId: string) => {
+  return DOMPurify.sanitize(symbolId)
 }
