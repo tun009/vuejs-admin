@@ -1,6 +1,4 @@
 <script setup lang="ts">
-// import ConfigRoleUserForm from './components/ConfigRoleUserForm.vue'
-
 import { PaginationModel } from '@/@types/common'
 import { ruleListColumnConfigs, RuleModel } from '@/@types/pages/rules'
 import { getRules } from '@/api/rules/'
@@ -8,23 +6,16 @@ import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import EIBInput from '@/components/common/EIBInput.vue'
 import EIBTable from '@/components/common/EIBTable.vue'
 import { Title } from '@/layouts/components'
-import { Edit, Search, Tools } from '@element-plus/icons-vue'
+import { Edit, Search } from '@element-plus/icons-vue'
 import { ref } from 'vue'
-// import AddUserForm from './components/AddUserForm.vue'
 import UpdateRuleForm from '../components/UpdateRuleForm.vue'
-// import { handleComingSoon } from '@/utils/common'
-// import { ElMessage, ElMessageBox } from 'element-plus'
 
-defineOptions({
-  name: 'Rules'
-})
+// defineOptions({
+//   name: 'Rules'
+// })
 
-// const configRoleUserFormRef = ref<InstanceType<typeof ConfigRoleUserForm>>()
-
-const openAddUserDrawer = ref(false)
 const openUpdateRuleDrawer = ref(false)
 const searchQuery = ref('')
-const openConfigRoleUserDrawer = ref(false)
 
 const disabledIds = [1]
 
@@ -87,21 +78,6 @@ const handleGetRule = async (pagination: PaginationModel) => {
     </el-card>
   </div>
 
-  <EIBDrawer title="Cấu hình vai trò" size="50%" v-model="openConfigRoleUserDrawer">
-    <template #button>
-      <el-button plain type="primary" :icon="Tools">{{ $t('button.roleSetting') }}</el-button>
-    </template>
-    <template #default>
-      <ConfigRoleUserForm ref="configRoleUserFormRef" @close="openConfigRoleUserDrawer = false" />
-    </template>
-  </EIBDrawer>
-
-  <EIBDrawer v-if="openAddUserDrawer" title="user.addUser.title" v-model="openAddUserDrawer">
-    <template #default>
-      <AddUserForm @close="openAddUserDrawer = false" />
-    </template>
-  </EIBDrawer>
-
   <EIBDrawer v-if="openUpdateRuleDrawer" v-model="openUpdateRuleDrawer" title="Cập nhật thông tin luật">
     <template #default>
       <UpdateRuleForm @close="openUpdateRuleDrawer = false" />
@@ -109,9 +85,9 @@ const handleGetRule = async (pagination: PaginationModel) => {
   </EIBDrawer>
 </template>
 
-<style lang="css" scoped>
-._filter :deep(.el-form-item),
-._filter :deep(.input-component) {
+<style lang="css">
+.el-form-item,
+.input-component {
   margin-bottom: 0px;
 }
 </style>

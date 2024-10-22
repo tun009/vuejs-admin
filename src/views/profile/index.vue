@@ -9,9 +9,9 @@ import { useI18n } from 'vue-i18n'
 import ChangePassword from './ChangePassword.vue'
 import { ChangeProfileFormModel } from '@/@types/pages/profile/services/ProfileRequest'
 
-defineOptions({
-  name: 'Profile'
-})
+// defineOptions({
+//   name: 'Profile'
+// })
 
 const { t } = useI18n()
 

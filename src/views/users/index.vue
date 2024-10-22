@@ -15,9 +15,9 @@ import UpdateUserForm from './components/UpdateUserForm.vue'
 import { handleComingSoon } from '@/utils/common'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
-defineOptions({
-  name: 'Users'
-})
+// defineOptions({
+//   name: 'Users'
+// })
 
 const configRoleUserFormRef = ref<InstanceType<typeof ConfigRoleUserForm>>()
 
