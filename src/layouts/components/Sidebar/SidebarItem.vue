@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { isExternal } from '@/utils/validate'
 import path from 'path-browserify'
-import { computed, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { type RouteRecordRaw } from 'vue-router'
 import SidebarItemLink from './SidebarItemLink.vue'
 // import { useTheme } from '@/hooks/useTheme'
@@ -59,6 +59,7 @@ const resolvePath = (routePath: string) => {
 }
 
 const hover = ref<boolean>(false)
+const sidebarItemRef = ref()
 
 const handleMouseOver = () => {
   hover.value = true
@@ -68,12 +69,26 @@ const handleMouseOut = () => {
   hover.value = false
 }
 
+onMounted(() => {
+  const sidebarItem = sidebarItemRef.value.querySelector('.el-sub-menu__title')
+  if (!sidebarItem) return
+  sidebarItem.addEventListener('mouseover', handleMouseOver)
+  sidebarItem.addEventListener('mouseout', handleMouseOut)
+})
+
+onUnmounted(() => {
+  const sidebarItem = sidebarItemRef.value.querySelector('.el-sub-menu__title')
+  if (!sidebarItem) return
+  sidebarItem.removeEventListener('mouseover', handleMouseOver)
+  sidebarItem.removeEventListener('mouseout', handleMouseOut)
+})
+
 // const { activeThemeName } = useTheme()
 </script>
 
 <template>
   <!-- <div class="shadow-sm shadow-[#3784a9]" :class="{ 'sidebar-item': activeThemeName !== 'dark' }"> -->
-  <div class="sidebar-item">
+  <div class="sidebar-item" ref="sidebarItemRef">
     <template v-if="!alwaysShowRootMenu && theOnlyOneChild && !theOnlyOneChild.children">
       <SidebarItemLink v-if="theOnlyOneChild.meta" :to="resolvePath(theOnlyOneChild.path)">
         <el-menu-item
@@ -99,7 +114,7 @@ const handleMouseOut = () => {
     </template>
     <el-sub-menu v-else :index="resolvePath(props.item.path)" teleported>
       <template #title>
-        <div class="flex flex-row items-center" @mouseover="handleMouseOver" @mouseout="handleMouseOut">
+        <div class="flex flex-row items-center">
           <SvgIcon
             v-if="props.item.meta?.svgIcon"
             :name="
