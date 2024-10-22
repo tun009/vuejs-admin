@@ -8,7 +8,7 @@ import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import EIBInput from '@/components/common/EIBInput.vue'
 import EIBTable from '@/components/common/EIBTable.vue'
 import { Title } from '@/layouts/components'
-import { Delete, Edit, Filter, Plus, Search, Tools } from '@element-plus/icons-vue'
+import { Delete, Filter, Plus, Search, Tools } from '@element-plus/icons-vue'
 import { ref } from 'vue'
 import AddUserForm from './components/AddUserForm.vue'
 import UpdateUserForm from './components/UpdateUserForm.vue'
@@ -111,7 +111,7 @@ const handleDeleteUser = (name: string) => {
         </template>
         <template #actions="{ row }">
           <div class="flex flex-row gap-2">
-            <el-icon :size="18" class="cursor-pointer" @click="openUpdateUserDrawer = true"><Edit /></el-icon>
+            <SvgIcon :size="18" name="edit-info" @click.stop="openUpdateUserDrawer = true" class="cursor-pointer" />
             <el-icon :size="18" color="#e03131" class="cursor-pointer" @click="handleDeleteUser(row.name)"
               ><Delete
             /></el-icon>
