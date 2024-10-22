@@ -10,11 +10,11 @@ sonar:
   script:
     - echo "scanning sonar"
     - sonar-scanner -Dsonar.projectKey=eximbank-ui -Dsonar.sources=. -Dsonar.host.url=https://sonar.cyberspace.vn/ -Dsonar.login=sqp_51b2de09b4acb6c7fd019fb238f4c7d1fcad2e91
-  only:
-    - develop
+  # only:
+  #   - develop
   tags:
     - sonar
-    - develop
+    # - develop
 
 test:
   stage: test
