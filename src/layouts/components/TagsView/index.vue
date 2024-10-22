@@ -1,14 +1,14 @@
 <script lang="ts" setup>
-import { getCurrentInstance, onMounted, ref, watch } from 'vue'
-import { type RouteLocationNormalizedLoaded, type RouteRecordRaw, RouterLink, useRoute, useRouter } from 'vue-router'
+import { onMounted, ref, watch } from 'vue'
+import { type RouteLocationNormalizedLoaded, type RouteRecordRaw, useRoute, useRouter } from 'vue-router'
 import { type TagView, useTagsViewStore } from '@/store/modules/tags-view'
 import { usePermissionStore } from '@/store/modules/permission'
 import { useRouteListener } from '@/hooks/useRouteListener'
 import path from 'path-browserify'
-import ScrollPane from './ScrollPane.vue'
-import { Close } from '@element-plus/icons-vue'
+// import ScrollPane from './ScrollPane.vue'
+// import { Close } from '@element-plus/icons-vue'
 
-const instance = getCurrentInstance()
+// const instance = getCurrentInstance()
 const router = useRouter()
 const route = useRoute()
 const tagsViewStore = useTagsViewStore()
@@ -16,7 +16,7 @@ const permissionStore = usePermissionStore()
 const { listenerRouteChange } = useRouteListener()
 
 /** An array of references to tab component elements */
-const tagRefs = ref<InstanceType<typeof RouterLink>[]>([])
+// const tagRefs = ref<InstanceType<typeof RouterLink>[]>([])
 
 /** Status of the right-click menu */
 const visible = ref(false)
@@ -126,23 +126,23 @@ const closeAllTags = (view: TagView) => {
 }
 
 /** Open the right-click menu panel */
-const openMenu = (tag: TagView, e: MouseEvent) => {
-  const menuMinWidth = 105
-  // The distance between the current component and the left end of the browser
-  const offsetLeft = instance?.proxy?.$el.getBoundingClientRect().left
-  // Current component width
-  const offsetWidth = instance?.proxy?.$el.offsetWidth
-  // Maximum left margin of the panel
-  const maxLeft = offsetWidth - menuMinWidth
-  // The distance between the panel and the mouse pointer
-  const left15 = e.clientX - offsetLeft + 15
-  left.value = left15 > maxLeft ? maxLeft : left15
-  top.value = e.clientY
-  // Display panel
-  visible.value = true
-  // Update the tab currently being right-clicked
-  selectedTag.value = tag
-}
+// const openMenu = (tag: TagView, e: MouseEvent) => {
+//   const menuMinWidth = 105
+//   // The distance between the current component and the left end of the browser
+//   const offsetLeft = instance?.proxy?.$el.getBoundingClientRect().left
+//   // Current component width
+//   const offsetWidth = instance?.proxy?.$el.offsetWidth
+//   // Maximum left margin of the panel
+//   const maxLeft = offsetWidth - menuMinWidth
+//   // The distance between the panel and the mouse pointer
+//   const left15 = e.clientX - offsetLeft + 15
+//   left.value = left15 > maxLeft ? maxLeft : left15
+//   top.value = e.clientY
+//   // Display panel
+//   visible.value = true
+//   // Update the tab currently being right-clicked
+//   selectedTag.value = tag
+// }
 
 /** Close the right-click menu panel */
 const closeMenu = () => {
@@ -164,7 +164,7 @@ onMounted(() => {
 
 <template>
   <div class="tags-view-container">
-    <ScrollPane class="tags-view-wrapper" :tag-refs="tagRefs">
+    <!-- <ScrollPane class="tags-view-wrapper" :tag-refs="tagRefs">
       <router-link
         ref="tagRefs"
         v-for="tag in tagsViewStore.visitedViews"
@@ -180,7 +180,7 @@ onMounted(() => {
           <Close />
         </el-icon>
       </router-link>
-    </ScrollPane>
+    </ScrollPane> -->
     <ul v-show="visible" class="contextmenu" :style="{ left: left + 'px', top: top + 'px' }">
       <li @click="refreshSelectedTag(selectedTag)">Refresh</li>
       <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">Close</li>
@@ -192,7 +192,7 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .tags-view-container {
-  height: var(--prefix-tagsview-height);
+  // height: var(--prefix-tagsview-height);
   width: 100%;
   color: var(--prefix-tagsview-text-color);
   overflow: hidden;

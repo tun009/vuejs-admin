@@ -5,10 +5,12 @@ import { useAppStore } from '@/store/modules/app'
 import { usePermissionStore } from '@/store/modules/permission'
 import { useSettingsStore } from '@/store/modules/settings'
 import { getCssVariableValue } from '@/utils'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import Logo from '../Logo/index.vue'
 import SidebarItem from './SidebarItem.vue'
+import { MenuItemClicked } from 'element-plus'
+import Hamburger from '../Hamburger/index.vue'
 
 const v3SidebarMenuBgColor = getCssVariableValue('--prefix-sidebar-menu-bg-color')
 const v3SidebarMenuTextColor = getCssVariableValue('--prefix-sidebar-menu-text-color')
@@ -47,12 +49,26 @@ const tipLineWidth = computed(() => {
 const hiddenScrollbarVerticalBar = computed(() => {
   return isTop.value ? 'none' : 'block'
 })
+
+const pathActive = ref<string>(route.path)
+
+const handleSelect = (index: string, _indexPath: string[], _item: MenuItemClicked) => {
+  pathActive.value = index
+}
+
+/** Toggle Sidebar */
+const toggleSidebar = () => {
+  appStore.toggleSidebar(false)
+}
 </script>
 
 <template>
   <div :class="{ 'has-logo': isLogo }">
     <Logo v-if="isLogo" :collapse="isCollapse" />
-    <el-scrollbar wrap-class="scrollbar-wrapper" :class="{ 'is-collapse': isCollapse }">
+    <el-scrollbar
+      wrap-class="scrollbar-wrapper"
+      :class="{ 'is-collapse': isCollapse, 'active-sidebar': appStore.sidebar.opened }"
+    >
       <el-menu
         :default-active="activeMenu"
         :collapse="isCollapse && !isTop"
@@ -62,6 +78,7 @@ const hiddenScrollbarVerticalBar = computed(() => {
         :unique-opened="true"
         :collapse-transition="false"
         :mode="isTop && !isMobile ? 'horizontal' : 'vertical'"
+        @select="handleSelect"
       >
         <SidebarItem
           v-for="route in noHiddenRoutes"
@@ -69,9 +86,25 @@ const hiddenScrollbarVerticalBar = computed(() => {
           :item="route"
           :base-path="route.path"
           :is-collapse="isCollapse"
+          :path-active="pathActive"
         />
       </el-menu>
     </el-scrollbar>
+    <div class="flex" :class="{ 'px-3': appStore.sidebar.opened }">
+      <div
+        class="border-t-[#d9d9d9] border-t w-full flex items-center justify-end h-11"
+        :class="{ 'justify-center': !appStore.sidebar.opened }"
+      >
+        <Hamburger
+          v-if="!isTop || isMobile"
+          :is-active="appStore.sidebar.opened"
+          class="hamburger"
+          @toggle-click="toggleSidebar"
+          color="#fff"
+          :size="24"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -79,7 +112,7 @@ const hiddenScrollbarVerticalBar = computed(() => {
 .has-logo {
   .el-scrollbar {
     // The 1% increase is to prevent the 1px white line at the bottom of the sidebar from being displayed in left mode
-    height: calc(101% - var(--prefix-header-height));
+    height: calc(101% - var(--prefix-header-height) - 52px);
   }
 }
 
@@ -104,6 +137,12 @@ const hiddenScrollbarVerticalBar = computed(() => {
     width: v-bind(tipLineWidth);
     height: 100%;
     background-color: var(--prefix-sidebar-menu-tip-line-bg-color);
+  }
+}
+
+.el-scrollbar.active-sidebar .scrollbar-wrapper {
+  .el-scrollbar__view {
+    padding: 0 12px;
   }
 }
 
@@ -178,5 +217,9 @@ const hiddenScrollbarVerticalBar = computed(() => {
   .el-tooltip__trigger {
     padding-left: 16px;
   }
+}
+
+li::before {
+  display: none;
 }
 </style>

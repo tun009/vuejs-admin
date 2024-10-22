@@ -120,7 +120,8 @@ $transition-time: 0.35s;
     min-height: calc(100vh - var(--prefix-header-height));
   }
   .fixed-header + .app-main {
-    padding-top: var(--prefix-header-height);
+    // padding-top: var(--prefix-header-height);
+    padding-top: 56px;
   }
 }
 

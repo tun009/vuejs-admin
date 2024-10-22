@@ -15,7 +15,7 @@ ElNotification({
   title: t('notification.title.joinWeb'),
   type: 'success',
   dangerouslyUseHTMLString: true,
-  message: `<a style='color: teal' target='_blank' href='https://www.youtube.com/watch?v=jfpQHBsPzkU'>${t('notification.description.joinWeb')}</a>`,
+  message: t('notification.description.joinWeb'),
   duration: 0
 })
 </script>
