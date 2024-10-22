@@ -1,9 +1,10 @@
 import { ColumnConfigModel, SelectOptionModel } from '@/@types/common'
 
 export enum RoleEnum {
-  ADMIN = 'ADMIN',
-  MARKER = 'MARKER',
-  CHECKER = 'CHECKER'
+  ADMIN = 'admin',
+  MAKER = 'maker',
+  CHECKER = 'checker',
+  VIEWER = 'viewer'
 }
 
 export enum UserStatusEnum {
@@ -39,22 +40,22 @@ export interface UpdateUserRequestModel extends AddUserRequestModel {
 export const roleSelectOptions: SelectOptionModel[] = [
   {
     label: 'Admin',
-    value: 'ADMIN',
+    value: 'admin',
     description: 'Quyền hạn cao nhất và cũng có thể thực hiện các chức năng tương tự như Checker'
   },
   {
     label: 'Checker',
-    value: 'CHECKER',
+    value: 'checker',
     description: 'Xác nhận và phê duyệt Bộ chứng từ'
   },
   {
-    label: 'Marker',
-    value: 'MARKER',
+    label: 'Maker',
+    value: 'maker',
     description: 'Upload chứng từ, kiểm tra Bộ chứng từ sau khi hệ thống xử lý thành công'
   },
   {
     label: 'Viewer',
-    value: 'VIEWER',
+    value: 'viewer',
     description: 'Chỉ có quyền xem'
   }
 ]

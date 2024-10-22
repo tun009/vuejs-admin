@@ -124,7 +124,7 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
 ]
 
 // mock data
-export const HANDLER_LIST = [RoleEnum.MARKER, RoleEnum.CHECKER]
+export const HANDLER_LIST = [RoleEnum.MAKER, RoleEnum.CHECKER]
 export const DOCUMENT_STATUS_LIST = [
   DocumentStatusEnum.NEW,
   DocumentStatusEnum.CLASSIFYING,
