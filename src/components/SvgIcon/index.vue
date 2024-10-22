@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { sanitizeString } from '@/utils/common'
 import { computed } from 'vue'
 
 interface Props {
@@ -19,7 +20,7 @@ const symbolId = computed(() => `#${props.prefix}-${props.name}`)
 
 <template>
   <svg class="svg-icon" :class="className" :style="{ width: size, height: size }" aria-hidden="true">
-    <use :href="symbolId" />
+    <use :href="sanitizeString(symbolId)" />
   </svg>
 </template>
 

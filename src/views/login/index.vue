@@ -19,8 +19,8 @@ const { t } = useI18n()
 
 const loading = ref(false)
 const loginFormData: LoginRequestData = reactive({
-  username: 'admin',
-  password: '12345678',
+  username: '',
+  password: '',
   code: ''
 })
 
