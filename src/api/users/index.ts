@@ -6,7 +6,7 @@ import { getDataWithPagination } from '@/utils/common'
 // import { request } from '@/api/service'
 
 // mock data
-const ROLE_LIST = [RoleEnum.ADMIN, RoleEnum.MARKER, RoleEnum.CHECKER]
+const ROLE_LIST = [RoleEnum.ADMIN, RoleEnum.MAKER, RoleEnum.CHECKER]
 const USER_STATUS_LIST = [UserStatusEnum.ACTIVE, UserStatusEnum.UNACTIVE, UserStatusEnum.BLOCK]
 
 /** Log in and return token */

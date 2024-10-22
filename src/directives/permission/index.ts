@@ -11,7 +11,7 @@ export const permission: Directive = {
       // hasPermission || (el.style.display = "none") // hide
       hasPermission || el.parentNode?.removeChild(el) // destroy
     } else {
-      throw new Error(`need roles! Like v-permission="['admin','editor']"`)
+      throw new Error(`need roles! Like v-permission="['admin','checker']"`)
     }
   }
 }

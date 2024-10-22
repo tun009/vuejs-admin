@@ -6,7 +6,7 @@ export const checkPermission = (permissionRoles: string[]): boolean => {
     const { roles } = useUserStoreHook()
     return roles.some((role) => permissionRoles.includes(role))
   } else {
-    console.error("Need roles! Like checkPermission(['admin','editor'])")
+    console.error("Need roles! Like checkPermission(['admin','checker'])")
     return false
   }
 }

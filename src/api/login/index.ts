@@ -46,8 +46,10 @@ export function getUserInfoApi(): Promise<Login.UserInfoResponseData> {
       return resolve({
         code: 0,
         data: {
-          username: 'admin',
-          roles: ['admin']
+          // username: 'Admin',
+          // roles: ['admin']
+          username: 'Checker',
+          roles: ['checker']
         },
         message: 'Meo'
       })

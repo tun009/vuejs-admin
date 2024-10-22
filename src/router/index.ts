@@ -21,6 +21,7 @@ import {
   EXTRACT_PAGE,
   COMPARE_DOCUMENT_DETAIL_PAGE
 } from '@/constants/router'
+import { RoleEnum } from '@/@types/pages/users'
 
 const Layouts = () => import('@/layouts/index.vue')
 
@@ -119,7 +120,8 @@ export const constantRoutes: RouteRecordRaw[] = [
         name: 'Settings',
         meta: {
           title: 'settings',
-          keepAlive: true
+          keepAlive: true,
+          roles: [RoleEnum.ADMIN]
         }
       },
       {
@@ -240,7 +242,7 @@ export const dynamicRoutes: RouteRecordRaw[] = [
   //   meta: {
   //     title: 'Permissions',
   //     svgIcon: 'lock',
-  //     roles: ['admin', 'editor'], // Roles can be set in the root route
+  //     roles: ['admin', 'checker'], // Roles can be set in the root route
   //     alwaysShow: true // The root menu will always be displayed
   //   },
   //   children: [
