@@ -1,18 +1,18 @@
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
-import { storeToRefs } from 'pinia'
-import { useAppStore } from '@/store/modules/app'
-import { useSettingsStore } from '@/store/modules/settings'
+// import { storeToRefs } from 'pinia'
+// import { useAppStore } from '@/store/modules/app'
+// import { useSettingsStore } from '@/store/modules/settings'
 import { useUserStore } from '@/store/modules/user'
 import { UserFilled } from '@element-plus/icons-vue'
-import Hamburger from '../Hamburger/index.vue'
+// import Hamburger from '../Hamburger/index.vue'
 import Breadcrumb from '../Breadcrumb/index.vue'
 import Sidebar from '../Sidebar/index.vue'
-import Notify from '@/components/Notify/index.vue'
-import ThemeSwitch from '@/components/ThemeSwitch/index.vue'
-import Screenfull from '@/components/Screenfull/index.vue'
-import SearchMenu from '@/components/SearchMenu/index.vue'
-import LanguageSwitch from '@/components/LanguageSwitch/index.vue'
+// import Notify from '@/components/Notify/index.vue'
+// import ThemeSwitch from '@/components/ThemeSwitch/index.vue'
+// import Screenfull from '@/components/Screenfull/index.vue'
+// import SearchMenu from '@/components/SearchMenu/index.vue'
+// import LanguageSwitch from '@/components/LanguageSwitch/index.vue'
 import { useDevice } from '@/hooks/useDevice'
 import { useLayoutMode } from '@/hooks/useLayoutMode'
 import { LOGIN_PAGE, PROFILE_PAGE } from '@/constants/router'
@@ -20,15 +20,15 @@ import { LOGIN_PAGE, PROFILE_PAGE } from '@/constants/router'
 const { isMobile } = useDevice()
 const { isTop } = useLayoutMode()
 const router = useRouter()
-const appStore = useAppStore()
+// const appStore = useAppStore()
 const userStore = useUserStore()
-const settingsStore = useSettingsStore()
-const { showNotify, showThemeSwitch, showScreenfull, showSearchMenu } = storeToRefs(settingsStore)
+// const settingsStore = useSettingsStore()
+// const { showNotify, showThemeSwitch, showScreenfull, showSearchMenu } = storeToRefs(settingsStore)
 
 /** Toggle Sidebar */
-const toggleSidebar = () => {
-  appStore.toggleSidebar(false)
-}
+// const toggleSidebar = () => {
+//   appStore.toggleSidebar(false)
+// }
 
 /** Sign out */
 const logout = () => {
@@ -44,24 +44,24 @@ const goToProfile = () => {
 
 <template>
   <div class="navigation-bar">
-    <Hamburger
+    <!-- <Hamburger
       v-if="!isTop || isMobile"
       :is-active="appStore.sidebar.opened"
       class="hamburger"
       @toggle-click="toggleSidebar"
-    />
+    /> -->
     <Breadcrumb v-if="!isTop || isMobile" class="breadcrumb" />
     <Sidebar v-if="isTop && !isMobile" class="sidebar" />
     <div class="right-menu">
-      <SearchMenu v-if="showSearchMenu" class="right-menu-item" />
+      <!-- <SearchMenu v-if="showSearchMenu" class="right-menu-item" />
       <Screenfull v-if="showScreenfull" class="right-menu-item" />
       <ThemeSwitch v-if="showThemeSwitch" class="right-menu-item" />
       <LanguageSwitch class="right-menu-item" />
-      <Notify v-if="showNotify" class="right-menu-item" />
+      <Notify v-if="showNotify" class="right-menu-item" /> -->
       <el-dropdown class="right-menu-item">
         <div class="right-menu-avatar">
-          <el-avatar :icon="UserFilled" :size="30" />
           <span>{{ userStore.username }}</span>
+          <el-avatar :icon="UserFilled" :size="30" />
         </div>
         <template #dropdown>
           <el-dropdown-menu>
@@ -82,10 +82,12 @@ const goToProfile = () => {
 
 <style lang="scss" scoped>
 .navigation-bar {
-  height: var(--prefix-navigationbar-height);
+  padding: 6px 20px;
+  // height: var(--prefix-navigationbar-height);
   overflow: hidden;
   color: var(--prefix-navigationbar-text-color);
   display: flex;
+  align-items: center;
   justify-content: space-between;
   .hamburger {
     display: flex;
@@ -112,7 +114,7 @@ const goToProfile = () => {
         display: flex;
         align-items: center;
         .el-avatar {
-          margin-right: 10px;
+          margin-left: 10px;
         }
         span {
           font-size: 16px;

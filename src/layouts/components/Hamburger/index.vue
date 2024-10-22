@@ -3,10 +3,13 @@ import { Expand, Fold } from '@element-plus/icons-vue'
 
 interface Props {
   isActive?: boolean
+  color?: string
+  size?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  isActive: false
+  isActive: false,
+  size: 20
 })
 
 /** Vue 3.3+ defineEmits syntax*/
@@ -20,10 +23,10 @@ const toggleClick = () => {
 </script>
 
 <template>
-  <div @click="toggleClick">
-    <el-icon :size="20" class="icon">
-      <Fold v-if="props.isActive" />
-      <Expand v-else />
+  <div @click="toggleClick" class="cursor-pointer">
+    <el-icon :size="size" class="icon hamburger-icon">
+      <Fold v-if="props.isActive" :style="{ color }" />
+      <Expand v-else :style="{ color }" />
     </el-icon>
   </div>
 </template>

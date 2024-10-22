@@ -1,16 +1,17 @@
 <script lang="ts" setup>
 import { isExternal } from '@/utils/validate'
 import path from 'path-browserify'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { type RouteRecordRaw } from 'vue-router'
 import SidebarItemLink from './SidebarItemLink.vue'
-import { useTheme } from '@/hooks/useTheme'
+// import { useTheme } from '@/hooks/useTheme'
 import { useAppStore } from '@/store/modules/app'
 
 interface Props {
   item: RouteRecordRaw
   basePath?: string
   isCollapse?: boolean
+  pathActive?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -57,15 +58,38 @@ const resolvePath = (routePath: string) => {
   }
 }
 
-const { activeThemeName } = useTheme()
+const hover = ref<boolean>(false)
+
+const handleMouseOver = () => {
+  hover.value = true
+}
+
+const handleMouseOut = () => {
+  hover.value = false
+}
+
+// const { activeThemeName } = useTheme()
 </script>
 
 <template>
-  <div class="shadow-sm shadow-[#3784a9]" :class="{ 'sidebar-item': activeThemeName !== 'dark' }">
+  <!-- <div class="shadow-sm shadow-[#3784a9]" :class="{ 'sidebar-item': activeThemeName !== 'dark' }"> -->
+  <div class="sidebar-item">
     <template v-if="!alwaysShowRootMenu && theOnlyOneChild && !theOnlyOneChild.children">
       <SidebarItemLink v-if="theOnlyOneChild.meta" :to="resolvePath(theOnlyOneChild.path)">
-        <el-menu-item :index="resolvePath(theOnlyOneChild.path)">
-          <SvgIcon v-if="theOnlyOneChild.meta.svgIcon" :name="theOnlyOneChild.meta.svgIcon" class="!w-6 !h-6" />
+        <el-menu-item
+          :index="resolvePath(theOnlyOneChild.path)"
+          @mouseover="handleMouseOver"
+          @mouseout="handleMouseOut"
+        >
+          <SvgIcon
+            v-if="theOnlyOneChild.meta.svgIcon"
+            :name="
+              hover || resolvePath(theOnlyOneChild?.path ?? '') === pathActive
+                ? theOnlyOneChild.meta.svgIcon + '-active'
+                : theOnlyOneChild.meta.svgIcon
+            "
+            class="!w-6 !h-6 sidebar-item-svg"
+          />
           <component v-else-if="theOnlyOneChild.meta.elIcon" :is="theOnlyOneChild.meta.elIcon" class="el-icon" />
           <template v-if="theOnlyOneChild.meta.title" #title>
             {{ $t('router.' + theOnlyOneChild.meta.title) }}
@@ -75,11 +99,25 @@ const { activeThemeName } = useTheme()
     </template>
     <el-sub-menu v-else :index="resolvePath(props.item.path)" teleported>
       <template #title>
-        <SvgIcon v-if="props.item.meta?.svgIcon" :name="props.item.meta.svgIcon" class="!w-6 !h-6" />
-        <component v-else-if="props.item.meta?.elIcon" :is="props.item.meta.elIcon" class="el-icon" />
-        <span v-if="props.item.meta?.title && !isCollapse">{{ $t('router.' + props.item.meta.title) }}</span>
+        <div class="flex flex-row items-center" @mouseover="handleMouseOver" @mouseout="handleMouseOut">
+          <SvgIcon
+            v-if="props.item.meta?.svgIcon"
+            :name="
+              hover || resolvePath(theOnlyOneChild?.path ?? '') === pathActive
+                ? props.item.meta.svgIcon + '-active'
+                : props.item.meta.svgIcon
+            "
+            class="!w-6 !h-6 sidebar-item-svg"
+          />
+          <component v-else-if="props.item.meta?.elIcon" :is="props.item.meta.elIcon" class="el-icon" />
+          <span v-if="props.item.meta?.title && !isCollapse">{{ $t('router.' + props.item.meta.title) }}</span>
+        </div>
       </template>
-      <div v-if="props.item.children" class="relative">
+      <div
+        v-if="props.item.children"
+        class="relative sidebar-sub-item"
+        :class="{ 'active-sidebar': appStore.sidebar.opened }"
+      >
         <SidebarItem
           v-for="child in showingChildren"
           :key="child.path"
@@ -107,17 +145,20 @@ const { activeThemeName } = useTheme()
 
 .el-menu-item.is-active,
 .el-menu-item:hover {
-  background-color: #4192cd !important;
+  background-color: #e7f5ff !important;
+  color: var(--el-color-primary);
 }
 
 .el-menu-item {
   color: #ffffff;
   font-weight: 500;
+  min-height: 56px;
+  border-radius: 8px;
 }
 
-.el-menu-item[role='menuitem']:not(:has(.svg-icon)) {
-  padding-left: 56px !important;
-}
+// .el-menu-item[role='menuitem']:not(:has(.svg-icon)) {
+//   padding-left: 56px !important;
+// }
 
 .sidebar-item {
   background-color: var(--el-menu-bg-color);
@@ -128,9 +169,21 @@ const { activeThemeName } = useTheme()
 .el-sub-menu__title {
   color: #ffffff;
   font-weight: 500;
+  border-radius: 8px;
 }
 
-.el-sub-menu__title:hover {
-  background-color: #4192cd !important;
+.el-menu .el-sub-menu .el-sub-menu__title:hover {
+  background-color: #e7f5ff !important;
+  color: var(--el-color-primary) !important;
+}
+
+.sidebar-sub-item.active-sidebar {
+  .sidebar-item {
+    padding-left: 40px;
+
+    .el-menu-item {
+      padding-left: 20px !important;
+    }
+  }
 }
 </style>

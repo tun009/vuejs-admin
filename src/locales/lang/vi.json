@@ -7,7 +7,7 @@
       "error": "Thất bại"
     },
     "description": {
-      "joinWeb": "Chào mừng bạn đến với web hiệu chỉnh, nghe nhạc tại đây!",
+      "joinWeb": "Chào mừng bạn đến với web hiệu chỉnh!",
       "loginSuccess": "Đăng nhập thành công",
       "updateSuccess": "Cập nhật thành công",
       "createSuccess": "Thêm mới thành công",
@@ -73,7 +73,7 @@
   "router": {
     "dashboard": "Tổng quan",
     "document": "Quản lý chứng từ",
-    "dataProcessing": "Xử lý dữ liệu",
+    "dataProcessing": "Kiểm tra chứng từ",
     "reports": "Báo cáo",
     "settings": "Cài đặt",
     "users": "Quản lý người dùng",
