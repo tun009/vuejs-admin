@@ -10,9 +10,7 @@
   --prefix-body-text-color: var(--el-text-color-primary);
   --prefix-body-bg-color: var(--el-bg-color-page);
   /** Header area = NavigationBar component + TagsView component */
-  --prefix-header-height: calc(
-    var(--prefix-navigationbar-height) + var(--prefix-tagsview-height) + var(--prefix-header-border-bottom-width)
-  );
+  --prefix-header-height: calc(var(--prefix-navigationbar-height) + 29px + var(--prefix-header-border-bottom-width));
   --prefix-header-bg-color: var(--el-bg-color);
   --prefix-header-box-shadow: var(--el-box-shadow-lighter);
   --prefix-header-border-bottom-width: 1px;

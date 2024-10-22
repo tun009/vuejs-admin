@@ -70,14 +70,14 @@ const handleMouseOut = () => {
 }
 
 onMounted(() => {
-  const sidebarItem = sidebarItemRef.value.querySelector('.el-sub-menu__title')
+  const sidebarItem = sidebarItemRef.value?.querySelector('.el-sub-menu__title')
   if (!sidebarItem) return
   sidebarItem.addEventListener('mouseover', handleMouseOver)
   sidebarItem.addEventListener('mouseout', handleMouseOut)
 })
 
 onUnmounted(() => {
-  const sidebarItem = sidebarItemRef.value.querySelector('.el-sub-menu__title')
+  const sidebarItem = sidebarItemRef.value?.querySelector('.el-sub-menu__title')
   if (!sidebarItem) return
   sidebarItem.removeEventListener('mouseover', handleMouseOver)
   sidebarItem.removeEventListener('mouseout', handleMouseOut)
