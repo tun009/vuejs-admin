@@ -17,7 +17,7 @@ export const fieldChangedListColumnConfigs = [
   {
     field: 'rate',
     label: 'Tỉ lệ chỉnh sửa (%)',
-    width: 150
+    width: 200
   }
 ]
 export const SOLListColumnConfigs = [

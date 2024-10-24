@@ -48,7 +48,7 @@
               <div class="big-title-text flex">
                 Bộ đạt yêu cầu
                 <el-dropdown placement="top">
-                  <el-icon :size="18" class="cursor-pointer ml-1"><InfoFilled /></el-icon>
+                  <el-icon :size="18" class="cursor-pointer ml-1 outline-[0px]"><InfoFilled /></el-icon>
                   <template #dropdown>
                     <el-dropdown-menu>
                       <div class="px-1">
@@ -74,6 +74,7 @@
           class="table-container pt-2"
           :columnConfigs="fieldChangedListColumnConfigs"
           :data="fieldsChangedData"
+          height="100%"
           hiddenChecked
           hiddenPagination
         >
@@ -90,10 +91,11 @@
         </EIBTable>
       </div>
       <div class="p-4 box-container-bottom bg-white dark:bg-[#181818]">
-        <div class="chart-box-title py-2">DANH SÁCH XỬ LÝ THEO SOLS</div>
+        <div class="chart-box-title pt-2 pb-[10px]">DANH SÁCH XỬ LÝ THEO SOLS</div>
         <EIBTable
           :columnConfigs="SOLListColumnConfigs"
           :data="SOLData"
+          height="100%"
           hiddenChecked
           hiddenPagination
           class="table-container"
@@ -202,10 +204,10 @@ onMounted(() => {
   height: 300px !important;
 }
 .box-container-top {
-  height: 30vh;
+  height: 32vh;
 }
 .box-container-bottom {
-  height: 48vh;
+  height: 50vh;
 }
 .table-container {
   height: 90%;
