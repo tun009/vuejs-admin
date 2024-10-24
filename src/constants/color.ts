@@ -5,3 +5,7 @@ export const PROGRESS_COLORS = [
   { color: '#1989fa', percentage: 80 },
   { color: '#6f7ad3', percentage: 100 }
 ]
+
+export const COLORS = {
+  primary: '#005d98'
+}

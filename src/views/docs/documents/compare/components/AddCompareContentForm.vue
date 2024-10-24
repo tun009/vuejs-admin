@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { CompareContentFormModel, documentResultRuleOptions } from '@/@types/pages/docs/documents'
 import EIBSelect from '@/components/common/EIBSelect.vue'
-import { ElMessage, FormRules } from 'element-plus'
+import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
 
 interface Emits {
@@ -15,7 +15,7 @@ interface Exposes {
 
 const emits = defineEmits<Emits>()
 
-const compareContentRef = ref()
+const compareContentRef = ref<FormInstance | null>()
 const compareContentFormData: CompareContentFormModel = reactive({
   field: 0
 })
@@ -25,7 +25,7 @@ const compareContentFormRules: FormRules = {
 }
 
 const onConfirm = () => {
-  compareContentRef.value?.validate((valid: boolean, fields: any) => {
+  compareContentRef.value?.validate((valid: boolean, fields) => {
     if (valid) {
       emits('update:loading', true)
       setTimeout(() => {

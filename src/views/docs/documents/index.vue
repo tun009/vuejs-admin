@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { Delete, Filter, Plus, Search } from '@element-plus/icons-vue'
-import { ref } from 'vue'
+import { ArrowDownBold, Delete, Filter, Plus, Search } from '@element-plus/icons-vue'
+import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
@@ -10,6 +10,7 @@ import UpdateDocument from './components/UpdateDocument.vue'
 import { PaginationModel } from '@/@types/common'
 import {
   DocumentModel,
+  FilterDocumentModel,
   businessTypeOptions,
   docListColumnConfigs,
   documentResultOptions,
@@ -17,28 +18,40 @@ import {
   processingStepOptions
 } from '@/@types/pages/docs/documents'
 import { getDocuments } from '@/api/docs/document'
+import EIBMultipleFilter from '@/components/Filter/EIBMultipleFilter.vue'
+import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import EIBInput from '@/components/common/EIBInput.vue'
 import EIBTable from '@/components/common/EIBTable.vue'
+import { formatYYYYMMDD, formatYYYYMMDD_HHMM, shortcutsDateRange } from '@/constants/date'
 import { DOCUMENT_DETAIL_PAGE } from '@/constants/router'
 import { useConfirmModal } from '@/hooks/useConfirm'
 import { Title } from '@/layouts/components'
-import { handleComingSoon, renderLabelByValue } from '@/utils/common'
+import { MOCK_SOLS } from '@/mocks/user'
+import { omitPropertyFromObject, renderLabelByValue, withAllSelection } from '@/utils/common'
+import { defaultDateRange, formatDate } from '@/utils/date'
 
 const { t } = useI18n()
 const router = useRouter()
 const { showConfirmModal } = useConfirmModal()
 
-const searchQuery = ref('')
+const openFilter = ref(false)
 const tableData = ref<DocumentModel[]>([])
 const dialogVisible = ref(false)
 const openDrawer = ref(false)
 const checkedItems = ref<DocumentModel[]>([])
 const documentTableRef = ref<InstanceType<typeof EIBTable>>()
+const uploadTimes = ref(defaultDateRange())
+const filterValue = reactive<FilterDocumentModel>({} as FilterDocumentModel)
 
 const handleGetDocuments = async (pagination: PaginationModel) => {
   try {
-    const response = await getDocuments({ ...pagination, searchQuery: searchQuery.value })
+    const response = await getDocuments({
+      ...pagination,
+      ...omitPropertyFromObject(filterValue, -1),
+      beginDate: uploadTimes.value[0],
+      endDate: uploadTimes.value[1]
+    })
     tableData.value = response.data.list
     return response
   } catch (error: any) {
@@ -68,25 +81,73 @@ const handleDeleteDocument = (name?: string) => {
     }
   })
 }
+
+const handleResetFilter = () => {
+  filterValue.bizType = -1
+  filterValue.branchId = -1
+  filterValue.result = -1
+  filterValue.status = []
+}
 </script>
 
 <template>
-  <Title :title="$t('docs.title')" />
-  <div class="flex flex-col gap-5">
-    <div class="flex flex-row justify-between gap-10">
+  <div class="flex flex-row justify-between items-center">
+    <Title :title="$t('docs.title')" />
+    <div class="flex flex-row gap-5 items-center">
+      <span class="font-semibold italic text-base">Ngày upload:</span>
+      <el-date-picker
+        v-model="uploadTimes"
+        type="daterange"
+        class="w-fit"
+        unlink-panels
+        range-separator="đến"
+        start-placeholder="Bắt đầu"
+        end-placeholder="Kết thúc"
+        :shortcuts="shortcutsDateRange"
+        :format="formatYYYYMMDD"
+        :value-format="formatYYYYMMDD"
+      />
+    </div>
+  </div>
+  <div class="flex flex-col mt-2">
+    <div class="flex flex-row justify-between gap-10 items-center mb-5">
       <div class="flex flex-row gap5 items-center gap-5">
         <EIBInput
-          v-model="searchQuery"
-          custom-class="w-[300px]"
+          v-model="filterValue.name"
+          custom-class="w-[360px]"
           placeholder="docs.document.searchByName"
           :prefix-icon="Search"
           hidden-error
         />
-        <el-button :icon="Filter" @click="handleComingSoon">{{ $t('docs.document.filter') }}</el-button>
+        <div class="flex flex-row gap-5 items-center">
+          <div class="flex flex-row gap-1 items-center p-1 cursor-pointer" @click="openFilter = !openFilter">
+            <el-icon><Filter /></el-icon>
+            <span class="whitespace-nowrap">Bộ lọc</span>
+            <el-icon
+              class="ml-2 transition-all duration-300"
+              :class="{ 'rotate-180': openFilter, 'rotate-0': !openFilter }"
+              ><ArrowDownBold
+            /></el-icon>
+          </div>
+          <el-divider direction="vertical" />
+          <span class="text-primary whitespace-nowrap cursor-pointer" @click="handleResetFilter"
+            >Khôi phục mặc định</span
+          >
+          <el-button type="primary" plain @click="() => documentTableRef?.handleGetData()">Tìm kiếm</el-button>
+        </div>
       </div>
       <div class="flex flex-row gap-3">
         <el-button type="primary" :icon="Plus" @click="dialogVisible = true">{{ $t('button.add') }}</el-button>
       </div>
+    </div>
+    <div
+      class="transition-all duration-300 overflow-hidden flex flex-row items-center gap-5"
+      :class="{ 'h-10 mb-2': openFilter, 'h-0': !openFilter }"
+    >
+      <EIBSingleFilter v-model="filterValue.bizType" title="Loại nghiệp vụ" :options="businessTypeOptions" />
+      <EIBMultipleFilter v-model="filterValue.status" title="Loại nghiệp vụ" :options="documentStatusOptions" />
+      <EIBSingleFilter v-model="filterValue.result" title="Kết quả" :options="documentResultOptions" />
+      <EIBSingleFilter v-model="filterValue.branchId" title="SOL" :options="withAllSelection(MOCK_SOLS)" />
     </div>
     <el-card>
       <EIBTable
@@ -95,8 +156,8 @@ const handleDeleteDocument = (name?: string) => {
         :columnConfigs="docListColumnConfigs"
         :data="tableData"
         :callback="handleGetDocuments"
-        @update:selection="(val) => (checkedItems = val)"
-        :height="!!checkedItems.length ? 550 : 600"
+        @update:selection="(val: DocumentModel[]) => (checkedItems = val)"
+        :height="!!checkedItems.length && openFilter ? 520 : !checkedItems.length && !openFilter ? 600 : 560"
         @row-click="handleRedirectToDocumentDetail"
       >
         <template #status="{ row }">
@@ -110,6 +171,9 @@ const handleDeleteDocument = (name?: string) => {
         </template>
         <template #result="{ row }">
           <span>{{ renderLabelByValue(documentResultOptions, row.result) }}</span>
+        </template>
+        <template #createdAt="{ row }">
+          <span>{{ formatDate(row.createdAt, formatYYYYMMDD_HHMM) }}</span>
         </template>
         <template #actions="{ row }">
           <div class="flex flex-row gap-2" @click.stop>
@@ -149,41 +213,3 @@ const handleDeleteDocument = (name?: string) => {
     </div>
   </Transition>
 </template>
-
-<style lang="css">
-.nested-enter-active,
-.nested-leave-active {
-  transition: all 0.3s ease-in-out;
-}
-/* delay leave of parent element */
-.nested-leave-active {
-  transition-delay: 0.25s;
-}
-
-.nested-enter-from,
-.nested-leave-to {
-  transform: translateY(30px);
-  opacity: 0;
-}
-
-/* we can also transition nested elements using nested selectors */
-.nested-enter-active .inner,
-.nested-leave-active .inner {
-  transition: all 0.3s ease-in-out;
-}
-/* delay enter of nested element */
-.nested-enter-active .inner {
-  transition-delay: 0.25s;
-}
-
-.nested-enter-from .inner,
-.nested-leave-to .inner {
-  transform: translateX(30px);
-  /*
-  	Hack around a Chrome 96 bug in handling nested opacity transitions.
-    This is not needed in other browsers or Chrome 99+ where the bug
-    has been fixed.
-  */
-  opacity: 0.001;
-}
-</style>

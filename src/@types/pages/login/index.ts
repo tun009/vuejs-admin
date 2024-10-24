@@ -1,14 +1,21 @@
-export interface LoginRequestData {
-  /** admin or editor */
-  username: string
-  /** password */
-  password: string
-  /** code */
+import { RoleEnum } from '../users'
+
+export interface BranchModel {
+  id: number
+  name: string
   code: string
 }
 
-export type LoginCodeResponseData = ApiResponseData<string>
+export interface UserInfoModel {
+  id: number
+  name: string
+  username: string
+  phoneNumber: string
+  role: RoleEnum
+  branch: BranchModel
+}
 
-export type LoginResponseData = ApiResponseData<{ token: string }>
-
-export type UserInfoResponseData = ApiResponseData<{ username: string; roles: string[] }>
+export interface LoginFormModel {
+  username: string
+  password: string
+}

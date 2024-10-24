@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { ChangePasswordFormModel } from '@/@types/pages/profile/services/ProfileRequest'
+import { ChangePasswordFormModel } from '@/@types/pages/profile'
+import { changeUserPassword } from '@/api/users'
 import EIBInput from '@/components/common/EIBInput.vue'
+import { useUserStore } from '@/store/modules/user'
+import { warningNotification } from '@/utils/notification'
 import { passwordRule, requireRule } from '@/utils/validate'
-import { ElMessage, FormRules } from 'element-plus'
+import { FormInstance, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -17,14 +20,18 @@ interface Exposes {
 const emits = defineEmits<Emits>()
 
 const { t } = useI18n()
+const { logout } = useUserStore()
+
 const loading = ref(false)
-const changePasswordFormRef = ref()
+const changePasswordFormRef = ref<FormInstance | null>()
 const changePasswordFormData: ChangePasswordFormModel = reactive({
-  password: '',
+  oldPassword: '',
   newPassword: '',
   confirmPassword: ''
 })
-const validateConfirmPass = (_rule: any, value: any, callback: (error?: Error) => void) => {
+
+// validate compare password
+const validateConfirmPassword = (_rule: any, value: string, callback: (error?: Error) => void) => {
   if (value !== changePasswordFormData.newPassword) {
     callback(new Error(t('validate.passwordNotMatch')))
   } else {
@@ -32,32 +39,45 @@ const validateConfirmPass = (_rule: any, value: any, callback: (error?: Error) =
   }
 }
 
-const changePasswordFormRules: FormRules = {
-  password: [requireRule()],
-  newPassword: [requireRule(), passwordRule()],
-  confirmPassword: [requireRule(), passwordRule(), { validator: validateConfirmPass, trigger: 'blur' }]
+const validateNewPassword = (_rule: any, value: string, callback: (error?: Error) => void) => {
+  if (value === changePasswordFormData.oldPassword) {
+    callback(new Error(t('validate.passwordOld')))
+  } else {
+    callback()
+  }
+}
+
+const changePasswordFormRules: FormRules<ChangePasswordFormModel> = {
+  oldPassword: [requireRule()],
+  newPassword: [requireRule(), passwordRule(), { validator: validateNewPassword, trigger: 'blur' }],
+  confirmPassword: [requireRule(), passwordRule(), { validator: validateConfirmPassword, trigger: 'blur' }]
 }
 
 const handleClose = () => {
   emits('close')
-  changePasswordFormRef.value.resetFields()
+  changePasswordFormRef.value?.resetFields()
 }
 
 const handleChangePassword = () => {
-  changePasswordFormRef.value?.validate((valid: boolean, fields: any) => {
-    if (valid) {
-      loading.value = true
-      setTimeout(() => {
-        loading.value = false
-        ElMessage({
-          showClose: true,
-          type: 'success',
-          message: t('notification.description.updateSuccess')
+  changePasswordFormRef.value?.validate(async (valid: boolean, fields) => {
+    try {
+      if (valid) {
+        loading.value = true
+        await changeUserPassword({
+          oldPassword: changePasswordFormData.oldPassword,
+          newPassword: changePasswordFormData.newPassword
         })
         handleClose()
-      }, 3000)
-    } else {
-      console.error('Form validation failed', fields)
+
+        warningNotification('Bạn đã thay đổi mật khẩu thành công, vui lòng đăng nhập lại!')
+        logout()
+      } else {
+        console.error('Form validation failed', fields)
+      }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      loading.value = false
     }
   })
 }
@@ -78,8 +98,8 @@ defineExpose<Exposes>({
     <EIBInput
       label="profile.password"
       placeholder="profile.enterCurrentPassword"
-      name="password"
-      v-model="changePasswordFormData.password"
+      name="oldPassword"
+      v-model="changePasswordFormData.oldPassword"
       required
       show-limit
     />

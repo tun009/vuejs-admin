@@ -60,7 +60,7 @@ const goToProfile = () => {
       <Notify v-if="showNotify" class="right-menu-item" /> -->
       <el-dropdown class="right-menu-item">
         <div class="right-menu-avatar">
-          <span>{{ userStore.username }}</span>
+          <span>{{ userStore.userInfo.name }}</span>
           <el-avatar :icon="UserFilled" :size="30" />
         </div>
         <template #dropdown>

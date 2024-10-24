@@ -1,11 +1,7 @@
-export interface ChangeProfileFormModel {
-  username: string
-  name: string
-  phoneNumber: string
+import { ChangePasswordFormModel, ChangeProfileFormModel } from '..'
+
+export interface ChangeProfileRequestModel extends ChangeProfileFormModel {
+  id: number
 }
 
-export interface ChangePasswordFormModel {
-  password: string
-  newPassword: string
-  confirmPassword: string
-}
+export type ChangePasswordRequestModel = Omit<ChangePasswordFormModel, 'confirmPassword'>

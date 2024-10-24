@@ -34,7 +34,7 @@ export function getRules(params: GetRuleRequestModel): Promise<GetRuleResponseMo
           pageNum: params.pageNum,
           pageSize: params.pageSize
         },
-        message: 'Meo'
+        msg: 'Meo'
       })
     }, 2000)
   })

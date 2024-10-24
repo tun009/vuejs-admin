@@ -25,6 +25,7 @@ interface Emits {
 interface Exposes {
   clearSelection: () => void
   setLoading: (status: boolean) => void
+  handleGetData: () => void
 }
 
 const props = defineProps<Props>()
@@ -49,9 +50,7 @@ const handleGetData = async () => {
     if (!props.callback) return
     loading.value = true
     const response = await props.callback(pagination.value)
-    if (response?.data?.total) {
-      totalItems.value = response.data.total
-    }
+    totalItems.value = response.data.total
   } catch (error: any) {
     throw new Error(error)
   } finally {
@@ -84,7 +83,8 @@ onMounted(async () => {
 
 defineExpose<Exposes>({
   clearSelection: handleClearSelection,
-  setLoading
+  setLoading,
+  handleGetData
 })
 </script>
 
@@ -100,7 +100,7 @@ defineExpose<Exposes>({
       :height="height === 'unset' ? undefined : (height ?? 600)"
       class="custom-table hidden-scrollbar"
       @selection-change="handleSelectionChange"
-      @row-click="(row) => $emit('row-click', row)"
+      @row-click="(row: any) => $emit('row-click', row)"
     >
       <caption>
         Design by Viettel IDP
@@ -108,8 +108,8 @@ defineExpose<Exposes>({
       <el-table-column v-if="!hiddenChecked" fixed type="selection" :selectable="selectable" width="40" />
       <el-table-column
         v-for="column in columnConfigs"
-        :min-width="column?.minWidth"
-        :width="column?.width"
+        :min-width="column?.minWidth ?? column?.width ?? 200"
+        :width="column?.width ?? column?.minWidth ?? 200"
         :fixed="column.field === 'actions' ? 'right' : false"
         :key="column.field"
         :prop="column.field"
@@ -191,6 +191,14 @@ defineExpose<Exposes>({
 .el-checkbox.is-checked,
 .el-checkbox__input.is-indeterminate {
   border: 1px solid #fff;
+}
+
+.el-scrollbar .el-scrollbar__bar.is-horizontal {
+  display: unset !important;
+}
+
+.el-scrollbar__bar.is-horizontal {
+  height: 10px !important;
 }
 </style>
 

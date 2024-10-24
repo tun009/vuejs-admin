@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ElMessage, FormRules } from 'element-plus'
+import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -21,7 +21,7 @@ const emits = defineEmits<Emits>()
 
 const { t } = useI18n()
 const loading = ref(false)
-const upadateDocumentFormRef = ref()
+const upadateDocumentFormRef = ref<FormInstance | null>()
 const upadateDocumentFormData: UpdateDocumentRequestModel = reactive({
   cif: '',
   customerName: '',
@@ -38,11 +38,11 @@ const upadateDocumentFormRules: FormRules = {
 
 const handleClose = () => {
   emits('close')
-  upadateDocumentFormRef.value.resetFields()
+  upadateDocumentFormRef.value?.resetFields()
 }
 
 const handleUpdateDocument = () => {
-  upadateDocumentFormRef.value?.validate((valid: boolean, fields: any) => {
+  upadateDocumentFormRef.value?.validate((valid: boolean, fields) => {
     if (valid) {
       loading.value = true
       setTimeout(() => {

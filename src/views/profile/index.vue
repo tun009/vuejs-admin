@@ -7,13 +7,18 @@ import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ChangePassword from './ChangePassword.vue'
-import { ChangeProfileFormModel } from '@/@types/pages/profile/services/ProfileRequest'
+import { useUserStore } from '@/store/modules/user'
+import { updateUserInfo } from '@/api/users'
+import { ChangeProfileFormModel } from '@/@types/pages/profile'
+import { storeToRefs } from 'pinia'
 
 // defineOptions({
 //   name: 'Profile'
 // })
 
 const { t } = useI18n()
+const userStore = useUserStore()
+const { userInfo } = storeToRefs(userStore)
 
 const changeProfileFormRef = ref<FormInstance | null>(null)
 const loading = ref(false)
@@ -22,34 +27,46 @@ const openDrawer = ref(false)
 const changePasswordRef = ref<InstanceType<typeof ChangePassword>>()
 
 const changeProfileFormData: ChangeProfileFormModel = reactive({
-  username: 'admin',
-  name: 'HuyDV',
-  phoneNumber: '0963648426'
+  name: userInfo.value.name,
+  phoneNumber: userInfo.value.phoneNumber
 })
 
-const changeProfileFormRules: FormRules = {
+const changeProfileFormRules: FormRules<ChangeProfileFormModel> = {
   name: [requireRule()],
-  username: [],
   phoneNumber: [requireRule(), phoneNumberRule()]
 }
 
 const handleUpdateProfile = () => {
-  changeProfileFormRef.value?.validate((valid: boolean, fields) => {
-    if (valid) {
-      loading.value = true
-      setTimeout(() => {
-        loading.value = false
+  changeProfileFormRef.value?.validate(async (valid: boolean, fields) => {
+    try {
+      if (valid) {
+        loading.value = true
+        const { data } = await updateUserInfo({
+          ...changeProfileFormData,
+          id: userInfo.value.id
+        })
+        userStore.setUserInfo({ ...userInfo, ...data })
         ElMessage({
           showClose: true,
           type: 'success',
           message: t('notification.description.updateSuccess')
         })
         isEdit.value = false
-      }, 3000)
-    } else {
-      console.error('Form validation failed', fields)
+      } else {
+        console.error('Form validation failed', fields)
+      }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      loading.value = false
     }
   })
+}
+
+const handleCancelUpdateProfile = () => {
+  changeProfileFormData.name = userInfo.value.name
+  changeProfileFormData.phoneNumber = userInfo.value.phoneNumber
+  isEdit.value = false
 }
 </script>
 
@@ -77,7 +94,7 @@ const handleUpdateProfile = () => {
           label="profile.username"
           placeholder="profile.enterUsername"
           name="namename"
-          v-model="changeProfileFormData.username"
+          v-model="userInfo.username"
           disabled
           :readonly="!isEdit"
         />
@@ -106,7 +123,9 @@ const handleUpdateProfile = () => {
           <el-button :loading="loading" @click.prevent="handleUpdateProfile" type="primary">{{
             $t('button.update')
           }}</el-button>
-          <el-button :disabled="loading" @click="isEdit = false" type="default">{{ $t('button.cancel') }}</el-button>
+          <el-button :disabled="loading" @click="handleCancelUpdateProfile" type="default">{{
+            $t('button.cancel')
+          }}</el-button>
         </div>
         <div v-else>
           <el-button type="primary" plain @click="isEdit = true">{{ $t('profile.updateProfile') }}</el-button>

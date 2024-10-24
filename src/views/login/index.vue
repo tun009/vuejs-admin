@@ -1,27 +1,27 @@
 <script lang="ts" setup>
-import { type LoginRequestData } from '@/api/login/types/login'
-import { useUserStore } from '@/store/modules/user'
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
-import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import Background from './components/Background.vue'
-import { Lock, User } from '@element-plus/icons-vue'
-import ThemeSwitch from '@/components/ThemeSwitch/index.vue'
-import LanguageSwitch from '@/components/LanguageSwitch/index.vue'
+import { LoginFormModel } from '@/@types/pages/login'
+// import LanguageSwitch from '@/components/LanguageSwitch/index.vue'
+// import ThemeSwitch from '@/components/ThemeSwitch/index.vue'
 import EIBInput from '@/components/common/EIBInput.vue'
 import { DASHBOARD_PAGE } from '@/constants/router'
+import { useUserStore } from '@/store/modules/user'
 import { limitLengthRule, requireRule } from '@/utils/validate'
+import { Lock, User } from '@element-plus/icons-vue'
+import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
+import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
+import Background from './components/Background.vue'
 
 const router = useRouter()
 const loginFormRef = ref<FormInstance | null>(null)
 const { t } = useI18n()
+const { login } = useUserStore()
 
 const loading = ref(false)
-const loginFormData: LoginRequestData = reactive({
+const loginFormData: LoginFormModel = reactive({
   username: '',
-  password: '',
-  code: ''
+  password: ''
 })
 
 const loginFormRules: FormRules = {
@@ -30,27 +30,25 @@ const loginFormRules: FormRules = {
   code: []
 }
 const handleLogin = () => {
-  loginFormRef.value?.validate((valid: boolean, fields) => {
-    if (valid) {
-      loading.value = true
-      useUserStore()
-        .login(loginFormData)
-        .then(() => {
-          ElMessage({
-            showClose: true,
-            type: 'success',
-            message: t('notification.description.loginSuccess')
-          })
-          router.push({ path: DASHBOARD_PAGE })
+  loginFormRef.value?.validate(async (valid: boolean, fields) => {
+    try {
+      if (valid) {
+        loading.value = true
+        await login(loginFormData)
+        ElMessage({
+          showClose: true,
+          type: 'success',
+          message: t('notification.description.loginSuccess')
         })
-        .catch(() => {
-          loginFormData.password = ''
-        })
-        .finally(() => {
-          loading.value = false
-        })
-    } else {
-      console.error('Form validation failed', fields)
+        router.push({ path: DASHBOARD_PAGE })
+      } else {
+        console.error('Form validation failed', fields)
+      }
+    } catch (error) {
+      loginFormData.password = ''
+      console.error(error)
+    } finally {
+      loading.value = false
     }
   })
 }
@@ -58,8 +56,8 @@ const handleLogin = () => {
 
 <template>
   <div>
-    <ThemeSwitch class="fixed top-8 right-10 pointer" />
-    <LanguageSwitch class="fixed top-8 right-20 pointer" />
+    <!-- <ThemeSwitch class="fixed top-8 right-10 pointer" />
+    <LanguageSwitch class="fixed top-8 right-20 pointer" /> -->
     <Background>
       <template #form>
         <div class="flex flex-col gap-14 w-full h-full items-center justify-center relative">
