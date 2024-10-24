@@ -23,12 +23,22 @@ export const DOSSIER_LIST = [
     id: 16944,
     name: 'Drafts',
     status: 2
+  },
+  {
+    id: 16944,
+    name: 'Drafts',
+    status: 2
+  },
+  {
+    id: 16937,
+    name: 'LC MT 700',
+    status: 2
   }
 ]
 export const DOSSIER_DOCUMENT = {
   id: 16942,
   name: 'Bảng kê chi phí khám chữa bệnh',
-  file: 'https://idp-staging.viettelai.vn/bic-app/api/v1/files?src=2024-10-14/01/11167/18369.pdf',
+  file: 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf',
   status: 2,
   result: {
     bboxes: [
@@ -193,3 +203,129 @@ export const DOSSIER_DOCUMENT = {
   dossierFileId: 18368,
   dossierFileName: 'test1_hstn-hscn.pdf'
 }
+export const HISTORIES_TAB = [
+  {
+    date: '02/10/2024',
+    histories: [
+      {
+        time: '14:00',
+        user: 'Dưong',
+        role: 'checker',
+        actions: [
+          {
+            field: 'shipper_address',
+            before: '829-8, Chungseo-Ro, Guhang-myeon, HongSeong-Gun,',
+            after: '829-8, Chungseo-Ro, Guhang-myeon, HongSeong-Gun, Choungcheongnam-Do, Korea.',
+            type: 'change_data'
+          }
+        ]
+      }
+    ]
+  },
+  {
+    date: '01/10/2024',
+    histories: [
+      {
+        time: '14:00',
+        user: 'An',
+        role: 'maker',
+        actions: [
+          {
+            before: 'Thực hiện đối sánh bộ chứng từ',
+            after: '',
+            type: 'others',
+            field: ''
+          }
+        ]
+      }
+    ]
+  },
+  {
+    date: '30/09/2024',
+    histories: [
+      {
+        time: '11:10',
+        user: 'An',
+        role: 'maker',
+        actions: [
+          {
+            before: 'PYUNGTE4K PORT, KOREA',
+            after: 'PYUNGTE4K PORT, KOREA1',
+            type: 'change_data',
+            field: 'loading_port'
+          }
+        ]
+      },
+      {
+        time: '11:16',
+        user: 'An',
+        role: 'maker',
+        actions: [
+          {
+            field: 'carrier_name',
+            before: 'DONGJIN AUBE 005lW Kim Sang-sik ',
+            after: 'DONGJIN AUBE 0051W Jeonbuk',
+            type: 'change_data'
+          },
+          {
+            field: 'invoice_no',
+            before: 'S.W-2019048',
+            after: 'S.W-2019043',
+            type: 'change_data'
+          }
+        ]
+      }
+    ]
+  }
+]
+export const NOTES_TAB = [
+  {
+    content: 'Đã kiểm tra toàn bộ thông tin, có lỗi chính tả trên invoice về tiêu đề trường ABC, với lỗi thiếu chữ a',
+    create_at: '26/09/2024 - 13:12',
+    create_by: 'Trần Thị B (b.tt1)',
+    stt: 1
+  }
+]
+export const DOSSIER_CLASSIFY = [
+  {
+    id: 118417,
+    file: {
+      id: 144605,
+      name: 'Hồ sơ ngoại trú 02.pdf.pdf',
+      size: 2003810,
+      mimetype: 'image/pdf',
+      rawFile: 'https://ipa.viettelai.vn/bic-app/api/v1/files?src=2024-10-22/01/109873/118417.pdf',
+      pageNums: 5
+    },
+    result: [
+      {
+        confidence: 1,
+        name: 'Giấy yêu cầu trả tiền bảo hiểm',
+        documentType: 'CLAIM_FORM',
+        pages: [0, 1],
+        images: []
+      },
+      {
+        confidence: 1,
+        name: 'Hóa đơn',
+        documentType: 'INVOICE',
+        pages: [1],
+        images: []
+      },
+      {
+        confidence: 1,
+        name: 'Hóa đơn',
+        documentType: 'INVOICE',
+        pages: [2],
+        images: []
+      },
+      {
+        confidence: 0.75,
+        name: 'Khác',
+        documentType: 'OTHERS',
+        pages: [3, 4],
+        images: []
+      }
+    ]
+  }
+]
