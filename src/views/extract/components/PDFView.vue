@@ -127,7 +127,7 @@ const toggleFullScreen = () => {
         class="w-full cursor-pointer h-full accent-[#7f8b98]"
         type="range"
         min="0.1"
-        max="2"
+        max="2.5"
         step="0.1"
         v-model="scale"
         @input="scale = Number(($event?.target as HTMLInputElement)?.value)"
@@ -147,14 +147,6 @@ const toggleFullScreen = () => {
     </div>
   </div>
   <div class="overflow-auto h-[calc(100vh-58px)]" id="view-pdf" @scroll="scrollToPage()">
-    <!-- <div>
-      <button @click="scale.value = scale.value > 0.25 ? scale.value - 0.25 : scale.value">-</button>
-      <span>{{ (scale.value * 100).toFixed(0) }}%</span>
-      <button @click="scale.value = scale.value < 2 ? scale.value + 0.25 : scale.value">+</button>
-      <button @click="rotation = rotation - 90">-90</button>
-      <span>{{ rotation }}</span>
-      <button @click="rotation = rotation + 90">+90</button>
-    </div> -->
     <div v-for="page in pages" :key="page" class="mx-auto relative w-fit">
       <VuePDF
         :id="'page-' + page"
