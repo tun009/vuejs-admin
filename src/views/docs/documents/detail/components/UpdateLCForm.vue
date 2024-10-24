@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { UpdateLCFormModel } from '@/@types/pages/docs/documents'
 import EIBInput from '@/components/common/EIBInput.vue'
-import { ElMessage, FormRules } from 'element-plus'
+import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
 
 interface Emits {
@@ -15,7 +15,7 @@ interface Exposes {
 
 const emits = defineEmits<Emits>()
 
-const updateLCRef = ref()
+const updateLCRef = ref<FormInstance | null>()
 const updateLCFormData: UpdateLCFormModel = reactive({
   amount: 0
 })
@@ -25,7 +25,7 @@ const updateLCFormRules: FormRules = {
 }
 
 const onConfirm = () => {
-  updateLCRef.value?.validate((valid: boolean, fields: any) => {
+  updateLCRef.value?.validate((valid: boolean, fields) => {
     if (valid) {
       emits('update:loading', true)
       setTimeout(() => {

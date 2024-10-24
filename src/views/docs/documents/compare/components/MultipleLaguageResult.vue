@@ -7,7 +7,7 @@ import {
 import EIBInput from '@/components/common/EIBInput.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
 import { handleComingSoon } from '@/utils/common'
-import { ElMessage, FormRules } from 'element-plus'
+import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -29,7 +29,7 @@ const defaultValue = {
 const isEdit = ref(false)
 const loading = ref(false)
 const loadingRule = ref(false)
-const documentResultFormRef = ref()
+const documentResultFormRef = ref<FormInstance | null>()
 const documentResultFormData = ref<DocumentResultDataModel>({ ...defaultValue })
 
 const documentResultFormRules: FormRules = {
@@ -45,7 +45,7 @@ const handleClose = () => {
 }
 
 const handleUpdateCompareResult = () => {
-  documentResultFormRef.value?.validate((valid: boolean, fields: any) => {
+  documentResultFormRef.value?.validate((valid: boolean, fields) => {
     if (valid) {
       loading.value = true
       setTimeout(() => {

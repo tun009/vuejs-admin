@@ -1,38 +1,57 @@
 import { ColumnConfigModel, DocumentStatusEnum, SelectOptionModel } from '@/@types/common'
 import { RoleEnum } from '@/@types/pages/users'
 
+// document enum
 export enum BusinessTypeEnum {
-  EXPORT_LC,
-  IMPORT_LC
+  NA,
+  LC_IN,
+  LC_OUT
 }
 
 export enum DocumentResultEnum {
-  VALID,
-  INVALID
+  COMPLIED,
+  DISCREPANCY
 }
 
 export enum ProcessingStepEnum {
-  CREATE_NEW_REQUEST,
-  PROCESSING,
+  NEW,
+  OCR,
   CHECK,
-  APPROVE
+  VALIDATE
+}
+
+export enum DossierDocStatusEnum {
+  NEW,
+  OCRING,
+  OCRED
+}
+
+export enum FileStatusEnum {
+  NEW,
+  CLASSIFYING,
+  CLASSIFIED,
+  DELETED
+}
+
+export enum OcrSourceEnum {
+  OCR,
+  NLP
 }
 
 export interface DocumentModel {
   id: number
-  stt: number
-  documentName: string
-  businessType: BusinessTypeEnum
+  dossierName: string
+  bizType: BusinessTypeEnum
   status: DocumentStatusEnum
-  processingStep: ProcessingStepEnum
-  sol: string
+  step: ProcessingStepEnum
+  branchName: string
   cif: string
   customerName: string
-  amount: string
+  totalAmount: string
   createdAt: string
-  createdBy: string
+  handleBy: string
   result: DocumentResultEnum
-  completionDate: string
+  doneAt: string
 }
 
 export interface CompareRejectFormModel {
@@ -53,12 +72,12 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
     label: 'docs.document.stt'
   },
   {
-    field: 'documentName',
+    field: 'dossierName',
     label: 'docs.document.documentName',
     minWidth: 200
   },
   {
-    field: 'businessType',
+    field: 'bizType',
     label: 'docs.document.businessType',
     minWidth: 150
   },
@@ -68,17 +87,17 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
     minWidth: 150
   },
   {
-    field: 'handler',
+    field: 'handleBy',
     label: 'docs.document.handler',
     minWidth: 150
   },
   {
-    field: 'processingStep',
+    field: 'step',
     label: 'docs.document.processingStep',
     minWidth: 150
   },
   {
-    field: 'sol',
+    field: 'branchName',
     label: 'docs.document.sol',
     minWidth: 100
   },
@@ -92,7 +111,7 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
     minWidth: 150
   },
   {
-    field: 'amount',
+    field: 'totalAmount',
     label: 'docs.document.amount',
     minWidth: 120
   },
@@ -112,7 +131,7 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
     minWidth: 150
   },
   {
-    field: 'completionDate',
+    field: 'doneAt',
     label: 'docs.document.completionDate',
     minWidth: 150
   },
@@ -132,23 +151,22 @@ export const DOCUMENT_STATUS_LIST = [
   DocumentStatusEnum.OCRING,
   DocumentStatusEnum.MATCHED,
   DocumentStatusEnum.WAIT_FOR_CHECK,
+  DocumentStatusEnum.CHECKING,
   DocumentStatusEnum.CHECKED,
   DocumentStatusEnum.WAIT_FOR_APPROVAL,
   DocumentStatusEnum.NEED_ADJUSTMENT,
   DocumentStatusEnum.APPROVED,
   DocumentStatusEnum.REJECTED,
-  DocumentStatusEnum.CLASSIFITION_ERROR,
-  DocumentStatusEnum.IDENTIFICATION_ERROR,
-  DocumentStatusEnum.MATCHING_ERROR
+  DocumentStatusEnum.ERROR
 ]
 
-export const BUSINESS_TYPE_LIST = [BusinessTypeEnum.EXPORT_LC, BusinessTypeEnum.IMPORT_LC]
-export const DOCUMENT_RESULT_LIST = [DocumentResultEnum.VALID, DocumentResultEnum.INVALID]
+export const BUSINESS_TYPE_LIST = [BusinessTypeEnum.NA, BusinessTypeEnum.LC_OUT, BusinessTypeEnum.LC_IN]
+export const DOCUMENT_RESULT_LIST = [DocumentResultEnum.COMPLIED, DocumentResultEnum.DISCREPANCY]
 export const PROCESSING_STEP_LIST = [
-  ProcessingStepEnum.CREATE_NEW_REQUEST,
-  ProcessingStepEnum.PROCESSING,
+  ProcessingStepEnum.NEW,
+  ProcessingStepEnum.OCR,
   ProcessingStepEnum.CHECK,
-  ProcessingStepEnum.APPROVE
+  ProcessingStepEnum.VALIDATE
 ]
 
 export interface DocumentFileModel {
@@ -183,100 +201,104 @@ export interface DocumentResultDataModel {
 export const documentStatusOptions: SelectOptionModel[] = [
   {
     label: 'Mới',
-    value: 0
+    value: DocumentStatusEnum.NEW
   },
   {
     label: 'Đang phân loại',
-    value: 1
+    value: DocumentStatusEnum.CLASSIFYING
   },
   {
     label: 'Đã phân loại',
-    value: 2
+    value: DocumentStatusEnum.CLASSIFIED
   },
   {
     label: 'Đang xử lý OCR',
-    value: 3
+    value: DocumentStatusEnum.OCRING
   },
   {
     label: 'Đã đối sánh',
-    value: 4
+    value: DocumentStatusEnum.MATCHED
   },
   {
     label: 'Chờ kiểm tra',
-    value: 5
+    value: DocumentStatusEnum.WAIT_FOR_CHECK
+  },
+  {
+    label: 'Đang kiểm tra',
+    value: DocumentStatusEnum.CHECKING
   },
   {
     label: 'Đã kiểm tra',
-    value: 6
+    value: DocumentStatusEnum.CHECKED
   },
   {
     label: 'Chờ phê duyệt',
-    value: 7
+    value: DocumentStatusEnum.WAIT_FOR_APPROVAL
   },
   {
     label: 'Cần điều chỉnh',
-    value: 8
+    value: DocumentStatusEnum.NEED_ADJUSTMENT
   },
   {
     label: 'Đã phê duyệt',
-    value: 9
+    value: DocumentStatusEnum.APPROVED
   },
   {
     label: 'Từ chối',
-    value: 10
+    value: DocumentStatusEnum.REJECTED
   },
   {
-    label: 'Lỗi phân loại',
-    value: 11
-  },
-  {
-    label: 'Lỗi nhận dạng',
-    value: 12
-  },
-  {
-    label: 'Lỗi đối sánh',
-    value: 13
+    label: 'Lỗi',
+    value: DocumentStatusEnum.ERROR
   }
 ]
 
 export const businessTypeOptions: SelectOptionModel[] = [
   {
+    label: 'Tất cả',
+    value: -1
+  },
+  {
     label: 'LC Xuất',
-    value: 0
+    value: BusinessTypeEnum.LC_IN
   },
   {
     label: 'LC Nhập',
-    value: 1
+    value: BusinessTypeEnum.LC_OUT
   }
 ]
 
 export const processingStepOptions: SelectOptionModel[] = [
   {
     label: 'Tạo mới yêu cầu',
-    value: 0
+    value: ProcessingStepEnum.NEW
   },
   {
     label: 'Đang xử lý',
-    value: 1
+    value: ProcessingStepEnum.OCR
   },
   {
     label: 'Kiểm tra',
-    value: 2
+    value: ProcessingStepEnum.CHECK
   },
   {
     label: 'Phê duyệt',
-    value: 3
+    value: ProcessingStepEnum.VALIDATE
   }
 ]
 
 export const documentResultOptions: SelectOptionModel[] = [
   {
+    label: 'Tất cả',
+    value: -1
+  },
+  {
     label: 'Hợp lệ',
-    value: 0
+    value: DocumentResultEnum.COMPLIED
   },
   {
     label: 'Bất hợp lệ',
-    value: 1
+    value: DocumentResultEnum.DISCREPANCY
   }
 ]
 
@@ -402,3 +424,13 @@ export const documentTypeOptions: SelectOptionModel[] = [
     value: 3
   }
 ]
+
+export interface FilterDocumentModel {
+  name: string
+  status: number[]
+  result: number
+  bizType: number
+  branchId: number
+  beginDate: string
+  endDate: string
+}

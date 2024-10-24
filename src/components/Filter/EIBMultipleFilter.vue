@@ -1,0 +1,69 @@
+<template>
+  <el-text
+    ref="buttonRef"
+    v-click-outside="onClickOutside"
+    class="cursor-pointer flex flex-row items-center gap-1 w-fit"
+  >
+    <span class="font-semibold">{{ title }}:</span>
+    <div class="text-[#005d98] w-5">+{{ modelValue.length }}</div>
+    <el-icon class="ml-2 transition-all duration-300" :class="{ 'rotate-180': isShow, 'rotate-0': !isShow }"
+      ><ArrowDownBold
+    /></el-icon>
+  </el-text>
+
+  <el-popover
+    placement="bottom-start"
+    ref="popoverRef"
+    :virtual-ref="buttonRef"
+    trigger="click"
+    virtual-triggering
+    v-model:visible="isShow"
+  >
+    <el-checkbox-group v-model="localModelValue">
+      <el-checkbox v-for="option in options" :key="option.value" :label="option.label" :value="option.value">
+        {{ option.label }}
+      </el-checkbox>
+    </el-checkbox-group>
+  </el-popover>
+</template>
+
+<script setup lang="ts">
+import { computed, ref, unref } from 'vue'
+import { ClickOutside as vClickOutside } from 'element-plus'
+import { SelectOptionModel } from '@/@types/common'
+import { ArrowDownBold } from '@element-plus/icons-vue'
+
+interface Props {
+  title: string
+  modelValue: string[] | number[]
+  multiple?: boolean
+  options: SelectOptionModel[]
+}
+
+interface Emits {
+  (event: 'update:model-value', value: string[] | number[]): void
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  options: () => [],
+  modelValue: () => []
+})
+const emits = defineEmits<Emits>()
+
+const isShow = ref<boolean>(false)
+
+const localModelValue = computed({
+  get() {
+    return props.modelValue
+  },
+  set(newValue) {
+    emits('update:model-value', newValue)
+  }
+})
+
+const buttonRef = ref()
+const popoverRef = ref()
+const onClickOutside = () => {
+  unref(popoverRef).popperRef?.delayHide?.()
+}
+</script>

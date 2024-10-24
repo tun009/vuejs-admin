@@ -49,3 +49,20 @@ export function resetNullUndefinedFields(obj: Record<string, any>): void {
 export const sanitizeString = (symbolId: string) => {
   return DOMPurify.sanitize(symbolId)
 }
+
+export const withAllSelection = (options: SelectOptionModel[]): SelectOptionModel[] => {
+  return [{ label: 'Tất cả', value: -1 }, ...options]
+}
+
+export const omitPropertyFromObject = (
+  obj: Record<string, any>,
+  filterValue: string | number | boolean
+): Record<string, any> => {
+  const newObj: Record<string, any> = {}
+  for (const key in obj) {
+    if (obj[key] !== filterValue) {
+      newObj[key] = obj[key]
+    }
+  }
+  return newObj
+}

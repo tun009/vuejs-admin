@@ -11,7 +11,7 @@ export function getDossierListApi(): Promise<ExtractDossierResponseModel> {
       return resolve({
         code: 1,
         data: DOSSIER_LIST as ExtractDossierModel[],
-        message: ''
+        msg: ''
       })
     }, 500)
   })
@@ -22,7 +22,7 @@ export function getDossierDetailApi(): Promise<ExtractDocumentResponseModel> {
       return resolve({
         code: 1,
         data: DOSSIER_DOCUMENT as ExtractDocumentModel,
-        message: ''
+        msg: ''
       })
     }, 500)
   })

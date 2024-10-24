@@ -57,7 +57,7 @@ const addDocumentFormRef = ref<FormInstance | null>(null)
 const loading = ref(false)
 
 const addDocumentFormData: AddDocumentRequestData = reactive({
-  businessType: BusinessTypeEnum.EXPORT_LC,
+  businessType: BusinessTypeEnum.LC_OUT,
   cif: '',
   customerName: '',
   documentName: '',

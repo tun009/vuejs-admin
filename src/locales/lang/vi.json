@@ -88,7 +88,7 @@
     "title": "Thông tin tài khoản",
     "name": "Họ tên",
     "username": "Tên đăng nhập",
-    "phoneNumber": "Tên đăng nhập",
+    "phoneNumber": "Số điện thoại",
     "password": "Mật khẩu",
     "updateProfile": "Cập nhật thông tin",
     "changePassword": "Thay đổi mật khẩu",
@@ -108,7 +108,8 @@
     "phoneNumber": "Vui lòng nhập định dạng số điện thoại",
     "limit": "Độ dài nằm giữa { min } và { max } ký tự",
     "password": "Vui lòng nhập đúng định dạng mật khẩu",
-    "passwordNotMatch": "Mật khẩu không khớp"
+    "passwordNotMatch": "Mật khẩu không khớp",
+    "passwordOld": "Mật khẩu mới không được giống mật khẩu cũ"
   },
   "base": {
     "input": {

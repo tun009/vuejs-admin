@@ -8,7 +8,7 @@ export function getFieldsChanged(type: string): Promise<GetFieldChangedResponseM
       return resolve({
         code: 1,
         data: (type === '-1' ? FIELD_CHANGED : FIELD_CHANGED.filter((x) => x.name === type)) as FieldChangedModel[],
-        message: ''
+        msg: ''
       })
     }, 500)
   })
@@ -19,7 +19,7 @@ export function getSOLs(): Promise<GetSOLsResponseModel> {
       return resolve({
         code: 1,
         data: SOLS as SOLModel[],
-        message: ''
+        msg: ''
       })
     }, 500)
   })

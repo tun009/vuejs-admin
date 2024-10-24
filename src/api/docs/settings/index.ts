@@ -35,7 +35,7 @@ export function getSettings(_params: PaginationModel): Promise<GetSettingRespons
           pageSize: 200,
           total: 200
         },
-        message: 'Meo'
+        msg: 'Meo'
       })
     }, 2000)
   })

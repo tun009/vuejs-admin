@@ -35,14 +35,13 @@ export enum DocumentStatusEnum {
   OCRING,
   MATCHED,
   WAIT_FOR_CHECK,
+  CHECKING,
   CHECKED,
   WAIT_FOR_APPROVAL,
   NEED_ADJUSTMENT,
   APPROVED,
   REJECTED,
-  CLASSIFITION_ERROR,
-  IDENTIFICATION_ERROR,
-  MATCHING_ERROR
+  ERROR
 }
 
 export const uploadDocumentColumnConfig: ColumnConfigModel[] = [

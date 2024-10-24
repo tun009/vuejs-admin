@@ -2,7 +2,7 @@
 import { CompareRejectFormModel } from '@/@types/pages/docs/documents'
 import EIBInput from '@/components/common/EIBInput.vue'
 import { DOCUMENT_DETAIL_PAGE } from '@/constants/router'
-import { ElMessage, FormRules } from 'element-plus'
+import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -20,7 +20,7 @@ const emits = defineEmits<Emits>()
 const router = useRouter()
 const route = useRoute()
 
-const compareRejectRef = ref()
+const compareRejectRef = ref<FormInstance | null>()
 const compareRejectFormData: CompareRejectFormModel = reactive({
   reason: ''
 })
@@ -30,7 +30,7 @@ const compareRejectFormRules: FormRules = {
 }
 
 const onConfirm = () => {
-  compareRejectRef.value?.validate((valid: boolean, fields: any) => {
+  compareRejectRef.value?.validate((valid: boolean, fields) => {
     if (valid) {
       emits('update:loading', true)
       setTimeout(() => {

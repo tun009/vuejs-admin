@@ -7,7 +7,6 @@ import { getToken } from '../utils/cache/cookies'
 /** Log out and force refresh the page (will redirect to the login page) */
 function logout() {
   useUserStoreHook().logout()
-  location.reload()
 }
 
 /** Create a request instance */
@@ -36,7 +35,7 @@ function createService() {
         return Promise.reject(new Error('Not the interface of this system'))
       }
       switch (code) {
-        case 0:
+        case 200:
           // This system uses code === 0 to indicate no business error
           return apiData
         case 401:

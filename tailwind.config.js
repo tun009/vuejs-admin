@@ -4,6 +4,10 @@ module.exports = {
   darkMode: 'class',
   plugins: [],
   theme: {
-    extend: {}
+    extend: {
+      colors: {
+        primary: '#005d98'
+      }
+    }
   }
 }

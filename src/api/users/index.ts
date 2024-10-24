@@ -1,15 +1,19 @@
+import { ChangePasswordRequestModel, ChangeProfileRequestModel } from '@/@types/pages/profile/services/ProfileRequest'
+import {
+  ChangePasswordResponseModel,
+  ChangeProfileResponseModel
+} from '@/@types/pages/profile/services/ProfileResponse'
 import { RoleEnum, UserModel, UserStatusEnum } from '@/@types/pages/users'
 import { GetUserRequestModel } from '@/@types/pages/users/services/UserRequest'
 import { GetUserResponseModel } from '@/@types/pages/users/services/UserResponse'
 import { getDataWithPagination } from '@/utils/common'
-// import { GetUserResponseModel } from '@/@types/pages/users/service/UserResponse'
-// import { request } from '@/api/service'
+import { request } from '../service'
 
 // mock data
 const ROLE_LIST = [RoleEnum.ADMIN, RoleEnum.MAKER, RoleEnum.CHECKER]
 const USER_STATUS_LIST = [UserStatusEnum.ACTIVE, UserStatusEnum.UNACTIVE, UserStatusEnum.BLOCK]
 
-/** Log in and return token */
+/** Get users */
 // export function getUsers(params: GetUserRequestModel) {
 //   return request<GetUserResponseModel>({
 //     url: 'users/login',
@@ -42,8 +46,26 @@ export function getUsers(params: GetUserRequestModel): Promise<GetUserResponseMo
           pageNum: params.pageNum,
           pageSize: params.pageSize
         },
-        message: 'Meo'
+        msg: 'Meo'
       })
     }, 2000)
+  })
+}
+
+/** Update user */
+export function updateUserInfo(data: ChangeProfileRequestModel) {
+  return request<ChangeProfileResponseModel>({
+    url: 'users',
+    method: 'put',
+    data
+  })
+}
+
+/** Change user password */
+export function changeUserPassword(data: ChangePasswordRequestModel) {
+  return request<ChangePasswordResponseModel>({
+    url: 'users/change-password',
+    method: 'post',
+    data
   })
 }

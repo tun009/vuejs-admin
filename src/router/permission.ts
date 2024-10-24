@@ -10,6 +10,7 @@ import isWhiteList from '@/config/white-list'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import i18n from '@/locales/index'
+import { LOGIN_PAGE, MAIN_PAGE } from '@/constants/router'
 
 const { setTitle } = useTitle()
 NProgress.configure({ showSpinner: false })
@@ -25,12 +26,12 @@ router.beforeEach(async (to, _from, next) => {
     // If in the whitelist without login, enter directly
     if (isWhiteList(to)) return next()
     // Other pages without access rights will be redirected to the login page
-    return next('/login')
+    return next(LOGIN_PAGE)
   }
 
   // If you are already logged in and are ready to enter the Login page, redirect to the home page
-  if (to.path === '/login') {
-    return next({ path: '/' })
+  if (to.path === LOGIN_PAGE) {
+    return next({ path: MAIN_PAGE })
   }
 
   // If the user has obtained his permission role
@@ -39,7 +40,7 @@ router.beforeEach(async (to, _from, next) => {
   // Otherwise, re-acquire the permission role
   try {
     await userStore.getInfo()
-    // Note: Roles must be an array! For example: ["admin"] or ["developer", "editor"]
+    // Note: Roles must be an array! For example: ["admin"]
     const roles = userStore.roles
     // Generate accessible Routes
     routeSettings.dynamic ? permissionStore.setRoutes(roles) : permissionStore.setAllRoutes()
@@ -52,7 +53,7 @@ router.beforeEach(async (to, _from, next) => {
     // If any error occurs during the process, reset the Token directly and redirect to the login page
     userStore.resetToken()
     ElMessage.error(err.message || 'Error in route guard process')
-    next('/login')
+    next(LOGIN_PAGE)
   }
 })
 
