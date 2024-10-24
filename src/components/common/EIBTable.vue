@@ -108,8 +108,8 @@ defineExpose<Exposes>({
       <el-table-column v-if="!hiddenChecked" fixed type="selection" :selectable="selectable" width="40" />
       <el-table-column
         v-for="column in columnConfigs"
-        :min-width="column?.minWidth ?? column?.width ?? 200"
-        :width="column?.width ?? column?.minWidth ?? 200"
+        :min-width="column?.minWidth"
+        :width="column?.width"
         :fixed="column.field === 'actions' ? 'right' : false"
         :key="column.field"
         :prop="column.field"
