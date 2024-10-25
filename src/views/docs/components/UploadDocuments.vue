@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { BusinessTypeEnum, businessTypeOptions } from '@/@types/pages/docs/documents'
 import { AddDocumentRequestData } from '@/@types/pages/docs/documents/services/DocumentRequest'
+import { addDocument } from '@/api/docs/document'
 import EIBInput from '@/components/common/EIBInput.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
 import EIBUpload from '@/components/common/EIBUpload.vue'
@@ -17,6 +18,7 @@ interface Props {
 
 interface Emits {
   (event: 'update:model-value', value: boolean): void
+  (event: 'refresh'): void
 }
 
 const props = defineProps<Props>()
@@ -57,56 +59,59 @@ const addDocumentFormRef = ref<FormInstance | null>(null)
 const loading = ref(false)
 
 const addDocumentFormData: AddDocumentRequestData = reactive({
-  businessType: BusinessTypeEnum.LC_OUT,
+  bizType: BusinessTypeEnum.LC_OUT,
   cif: '',
   customerName: '',
-  documentName: '',
-  sol: ''
+  name: '',
+  amountClaimed: 0
 })
 
-const addDocumentFormRules: FormRules = {
-  businessType: [],
+const addDocumentFormRules: FormRules<AddDocumentRequestData> = {
+  bizType: [],
   cif: [],
   customerName: [requireRule()],
-  documentName: [requireRule()],
-  sol: []
+  name: [requireRule()],
+  branchId: [],
+  amountClaimed: [requireRule()]
 }
 
 const handleAddDocument = () => {
-  addDocumentFormRef.value?.validate((valid: boolean, fields) => {
-    if (valid) {
-      loading.value = true
-      if (!files.value.length) {
-        warningNotification(t('notification.description.emptyFiles'))
-        return
-      }
+  addDocumentFormRef.value?.validate(async (valid: boolean, fields) => {
+    try {
+      if (valid) {
+        loading.value = true
+        if (!files.value.length) {
+          warningNotification(t('notification.description.emptyFiles'))
+          return
+        }
 
-      const formData = new FormData()
-      for (const file of files.value) {
-        formData.append('files', file)
-      }
+        const formData = new FormData()
+        for (const file of files.value) {
+          formData.append('files', file)
+        }
 
-      // append data for formData
+        // append data for formData
+        Object.entries(addDocumentFormData).forEach(([key, value]) => {
+          if (!value) return
+          formData.append(key, value)
+        })
 
-      // formData.append('businessType', addDocumentFormData.businessType.toString())
-      // formData.append('cif', addDocumentFormData.cif)
-      // formData.append('customerName', addDocumentFormData.customerName)
-      // formData.append('documentName', addDocumentFormData.documentName)
-      // formData.append('sol', addDocumentFormData.sol)
-
-      // call api upload
-
-      setTimeout(() => {
-        loading.value = false
+        // call api upload
+        await addDocument(formData)
         ElMessage({
           message: t('notification.description.createSuccess'),
           showClose: true,
           type: 'success'
         })
+        emits('refresh')
         emits('update:model-value', false)
-      }, 2000)
-    } else {
-      console.error('Form validation failed', fields)
+      } else {
+        console.error('Form validation failed', fields)
+      }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      loading.value = false
     }
   })
 }
@@ -123,29 +128,24 @@ const handleAddDocument = () => {
     >
       <div>
         <div class="grid grid-cols-2 gap-x-4">
-          <EIBSelect
-            v-model="addDocumentFormData.businessType"
-            name="businessType"
-            :options="businessTypeOptions.slice(0, 1)"
-            :label="$t('docs.document.businessType')"
-            is-row
-          />
           <EIBInput
             :label="$t('docs.document.documentName')"
             :placeholder="$t('docs.document.enterName')"
-            name="documentName"
-            v-model="addDocumentFormData.documentName"
+            name="name"
+            v-model="addDocumentFormData.name"
             required
             is-row
             class="col-start-1"
           />
           <EIBSelect
-            v-model="addDocumentFormData.sol"
-            name="sol"
-            :options="MOCK_SOLS"
-            :label="$t('docs.document.selectSOL')"
+            v-model="addDocumentFormData.bizType"
+            name="bizType"
+            :options="businessTypeOptions.slice(1, 2)"
+            :label="$t('docs.document.businessType')"
             is-row
+            default-first-option
           />
+
           <EIBInput
             :label="$t('docs.document.customerName')"
             :placeholder="$t('docs.document.enterName')"
@@ -154,6 +154,23 @@ const handleAddDocument = () => {
             required
             is-row
           />
+          <EIBSelect
+            v-model="addDocumentFormData.branchId"
+            name="branchId"
+            :options="MOCK_SOLS"
+            :label="$t('docs.document.selectSOL')"
+            is-row
+          />
+
+          <EIBInput
+            :label="$t('docs.document.totalAmount')"
+            :placeholder="$t('docs.document.totalAmount')"
+            name="amountClaimed"
+            v-model="addDocumentFormData.amountClaimed"
+            required
+            is-row
+          />
+
           <EIBInput
             :label="$t('docs.document.cifCode')"
             :placeholder="$t('docs.document.cifCode')"

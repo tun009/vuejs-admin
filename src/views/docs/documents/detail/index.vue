@@ -1,19 +1,45 @@
 <script lang="ts" setup>
 import { ArrowLeft, ArrowRight } from '@element-plus/icons-vue'
-import { ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
 import DocumentInformation from './components/DocumentInformation.vue'
 import DocumentFiles from './components/DocumentFiles.vue'
 
 import { handleComingSoon } from '@/utils/common'
+import { getBatchDetail } from '@/api/docs/document'
+import { useRoute } from 'vue-router'
+import { BatchDetailModel } from '@/@types/pages/docs/documents/services/DocumentResponse'
+import { useLoading } from '@/hooks/useLoading'
+import { DocumentStatusEnum } from '@/@types/common'
+
+const route = useRoute()
+const { startLoading, stopLoading } = useLoading()
 
 const activeName = ref('docInfo')
+const documentDetail = ref<BatchDetailModel>({} as BatchDetailModel)
+const documentId = computed(() => route.params?.id as string)
+
+const handleGetDocumentDetail = async () => {
+  try {
+    startLoading()
+    const { data } = await getBatchDetail(documentId.value)
+    documentDetail.value = data
+  } catch (error) {
+    console.error(error)
+  } finally {
+    stopLoading()
+  }
+}
+
+onMounted(() => {
+  handleGetDocumentDetail()
+})
 </script>
 
 <template>
   <div class="">
     <div class="flex flex-row justify-between items-center">
-      <span class="text-2xl">KIEMGOC.2024.00133</span>
+      <span class="text-2xl">{{ documentDetail?.dossierName }}</span>
       <div class="flex flex-row gap-2">
         <el-button :icon="ArrowLeft" type="primary" plain @click="handleComingSoon">Bộ trước</el-button>
         <el-button type="primary" plain @click="handleComingSoon"
@@ -23,7 +49,10 @@ const activeName = ref('docInfo')
     </div>
     <el-tabs v-model="activeName" class="demo-tabs">
       <el-tab-pane label="Thông tin bộ chứng từ" name="docInfo">
-        <DocumentInformation />
+        <DocumentInformation
+          :data="documentDetail"
+          @update:document-status="documentDetail.status = DocumentStatusEnum.WAIT_VALIDATE"
+        />
       </el-tab-pane>
       <el-tab-pane label="Danh sách file giấy từ" name="docFile">
         <DocumentFiles />

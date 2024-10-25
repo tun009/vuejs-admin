@@ -1,4 +1,4 @@
-import { SelectOptionModel } from '@/@types/common'
+import { SelectOptionModel, StatusColorModel } from '@/@types/common'
 import { ElMessageBox } from 'element-plus'
 import DOMPurify from 'dompurify'
 
@@ -14,6 +14,11 @@ export const handleComingSoon = () => {
 export const renderLabelByValue = (options: SelectOptionModel[], value: string | number): string => {
   if (!options || !options.length) return ''
   return options.find((i) => i.value === value)?.label ?? ''
+}
+
+export const renderColorByValue = (options: SelectOptionModel[], value: string | number): StatusColorModel => {
+  if (!options || !options.length) return {} as StatusColorModel
+  return options.find((i) => i.value === value)?.color ?? ({} as StatusColorModel)
 }
 
 export const truncateFileName = (fileName: string) => {

@@ -4,16 +4,18 @@ import { BusinessTypeEnum, FilterDocumentModel } from '..'
 export interface GetDocumentRequestModel extends PaginationModel, Partial<FilterDocumentModel> {}
 
 export interface AddDocumentRequestData {
-  businessType?: BusinessTypeEnum
-  documentName: string
-  sol?: string
+  bizType?: BusinessTypeEnum
+  name: string
+  branchId?: number
   customerName: string
   cif?: string
+  amountClaimed: number
 }
 
 export interface UpdateDocumentRequestModel {
-  documentName: string
-  sol?: string
+  id?: number
+  name: string
+  branchId?: number
   cif?: string
   customerName?: string
 }

@@ -1,4 +1,5 @@
 export const MOCK_SOLS = [
+  { value: 1, label: 'Default for now', description: '1' },
   { value: 1000, label: 'EXIMBANK HỘI SỞ', description: '1000' },
   { value: 1001, label: 'EXIMBANK HÀ NỘI', description: '1001' },
   { value: 1002, label: 'EXIMBANK ĐÀ NẴNG', description: '1002' },

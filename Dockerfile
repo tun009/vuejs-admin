@@ -10,5 +10,4 @@ ENV http_proxy=
 ENV https_proxy=
 EXPOSE 8080
 
-RUN npm run build:prod
 CMD ["pnpm", "run", "preview:prod"]

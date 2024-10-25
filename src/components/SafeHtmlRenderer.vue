@@ -1,5 +1,6 @@
 <template>
-  <div :dangerouslySetInnerHTML="{ __html: sanitizeString(html) }" />
+  <!-- <div :dangerouslySetInnerHTML="{ __html: sanitizeString(html) }" /> -->
+  <div v-html="sanitizeString(html)" />
 </template>
 
 <script setup lang="ts">
