@@ -10,6 +10,7 @@ import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
 import EIBTable from '@/components/common/EIBTable.vue'
 import { CONFIDENCES } from '@/constants/setting'
+import { Title } from '@/layouts/components'
 
 const docs = ref<string>('')
 const activeName = ref('first')
@@ -38,8 +39,8 @@ const openUpdateInfoExtractDrawer = ref(false)
 </script>
 
 <template>
+  <Title title="Cài đặt" />
   <div>
-    <div class="text-[#495057] mb-5">Cài đặt</div>
     <el-tabs v-model="activeName" class="demo-tabs">
       <el-tab-pane label="Trường thông tin trích xuất" name="first">
         <EIBSelect
@@ -59,7 +60,12 @@ const openUpdateInfoExtractDrawer = ref(false)
         >
           <template #actions>
             <div class="flex flex-row gap-2 p-2">
-              <el-icon :size="18" class="cursor-pointer" @click="openUpdateInfoExtractDrawer = true"><Edit /></el-icon>
+              <SvgIcon
+                :size="18"
+                name="edit-info"
+                @click.stop="openUpdateInfoExtractDrawer = true"
+                class="cursor-pointer"
+              />
             </div>
           </template>
         </EIBTable>
@@ -71,7 +77,7 @@ const openUpdateInfoExtractDrawer = ref(false)
             <div class="reliability-wrapper">
               <div class="reliability">
                 <div class="confidence-threshold w-full">
-                  <div class="mb-2">Ngưỡng tin cậy<span class="ml-[10%]">Màu</span></div>
+                  <div class="mb-2">Ngưỡng tin cậy <span class="pl-[170px]"> Màu </span></div>
                   <div class="confidence-threshold">
                     <div
                       class="confidence-threshold-item mb-[22px] bg-[#f8f8fa] p-[10px]"
@@ -172,10 +178,10 @@ const openUpdateInfoExtractDrawer = ref(false)
 </template>
 
 <style>
-:deep(.auto-validation .el-form-item) {
+.auto-validation .el-form-item {
   margin-bottom: 0 !important;
 }
-:deep(.tab-pane) {
+.tab-pane {
   padding: 24px 16px;
   border-radius: 4px;
   box-shadow: 0 2px 4px 0 #c1c9db;
@@ -183,7 +189,7 @@ const openUpdateInfoExtractDrawer = ref(false)
   background-color: #fff;
 }
 
-:deep(.el-radio__label) {
+.el-radio__label {
   padding-top: 26px;
 }
 </style>

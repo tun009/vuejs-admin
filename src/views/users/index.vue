@@ -9,11 +9,13 @@ import EIBInput from '@/components/common/EIBInput.vue'
 import EIBTable from '@/components/common/EIBTable.vue'
 import { Title } from '@/layouts/components'
 import { Delete, Filter, Plus, Search, Tools } from '@element-plus/icons-vue'
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
 import AddUserForm from './components/AddUserForm.vue'
 import UpdateUserForm from './components/UpdateUserForm.vue'
-import { handleComingSoon } from '@/utils/common'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { FilterDocumentModel } from '@/@types/pages/docs/documents'
+import EIBMultipleFilter from '@/components/Filter/EIBMultipleFilter.vue'
+import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
 
 // defineOptions({
 //   name: 'Users'
@@ -27,8 +29,17 @@ const searchQuery = ref('')
 const openConfigRoleUserDrawer = ref(false)
 
 const disabledIds = [1]
+const openFilter = ref(false)
+const filterValue = reactive<FilterDocumentModel>({} as FilterDocumentModel)
 
 const tableData = ref<UserModel[]>([])
+
+const handleResetFilter = () => {
+  filterValue.bizType = -1
+  filterValue.branchId = -1
+  filterValue.result = -1
+  filterValue.status = []
+}
 
 const handleGetUser = async (pagination: PaginationModel) => {
   try {
@@ -79,7 +90,23 @@ const handleDeleteUser = (name: string) => {
           :prefix-icon="Search"
           hidden-error
         />
-        <el-button :icon="Filter" @click="handleComingSoon">{{ $t('user.filter') }}</el-button>
+        <div class="flex flex-row gap-5 items-center">
+          <div class="flex flex-row gap-1 items-center p-1 cursor-pointer" @click="openFilter = !openFilter">
+            <el-icon><Filter /></el-icon>
+            <span class="whitespace-nowrap">Bộ lọc</span>
+            <el-icon
+              class="ml-2 transition-all duration-300"
+              :class="{ 'rotate-180': openFilter, 'rotate-0': !openFilter }"
+              ><ArrowDownBold
+            /></el-icon>
+          </div>
+          <el-divider direction="vertical" />
+          <span class="text-primary whitespace-nowrap cursor-pointer" @click="handleResetFilter"
+            >Khôi phục mặc định</span
+          >
+          <el-button type="primary" plain>Tìm kiếm</el-button>
+        </div>
+        <!-- <el-button :icon="Filter" @click="handleComingSoon">{{ $t('user.filter') }}</el-button> -->
       </div>
       <div class="flex flex-row gap-3">
         <el-button plain type="primary" :icon="Tools" @click="openConfigRoleUserDrawer = true">{{
@@ -87,6 +114,14 @@ const handleDeleteUser = (name: string) => {
         }}</el-button>
         <el-button type="primary" :icon="Plus" @click="openAddUserDrawer = true">{{ $t('button.add') }}</el-button>
       </div>
+    </div>
+    <div
+      class="transition-all duration-300 overflow-hidden flex flex-row items-center gap-5"
+      :class="{ 'h-10 mb-2': openFilter, 'h-0': !openFilter }"
+    >
+      <EIBMultipleFilter title="Vai trò" />
+      <EIBSingleFilter title="SOL" />
+      <EIBSingleFilter title="Trạng thái" />
     </div>
     <el-card>
       <EIBTable
