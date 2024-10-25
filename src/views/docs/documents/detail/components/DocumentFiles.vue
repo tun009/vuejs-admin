@@ -1,16 +1,26 @@
 <script lang="ts" setup>
 import { Delete, Plus } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import EIBUpload from '@/components/common/EIBUpload.vue'
 import { warningNotification } from '@/utils/notification'
-import { DocumentFileModel, fileListColumnConfigs } from '@/@types/pages/docs/documents'
-import { getDocumentFiles } from '@/api/docs/document'
+import { DocumentFileModel, documentStatusOptions, fileListColumnConfigs } from '@/@types/pages/docs/documents'
+import { deleteDocumentFile, getDocumentFiles } from '@/api/docs/document'
 import EIBTable from '@/components/common/EIBTable.vue'
+import { useRoute } from 'vue-router'
+import Status from '@/views/docs/components/Status.vue'
+import { formatDate } from '@/utils/date'
+import { formatYYYYMMDD_HHMM } from '@/constants/date'
+import { DocumentStatusEnum } from '@/@types/common'
+import { useConfirmModal } from '@/hooks/useConfirm'
 
 const { t } = useI18n()
+const route = useRoute()
+const { showConfirmModal } = useConfirmModal()
+
+const batchId = computed(() => route.params?.id as string)
 
 const dialogVisible = ref<boolean>(false)
 const loading = ref<boolean>(false)
@@ -64,9 +74,9 @@ const handleAddDocument = () => {
 const handleGetDocumentFiles = async () => {
   try {
     fileListTableRef.value?.setLoading(true)
-    const response = await getDocumentFiles()
-    if (response?.data?.list) {
-      tableData.value = response?.data?.list
+    const response = await getDocumentFiles({ batchId: batchId.value })
+    if (response?.data) {
+      tableData.value = response?.data
     }
   } catch (error) {
     console.error(error)
@@ -79,9 +89,23 @@ onMounted(() => {
   handleGetDocumentFiles()
 })
 
-const handleDeleteFile = (id: number | string) => {
-  const newFiles = tableData.value.filter((_i) => _i.id !== id)
-  tableData.value = newFiles
+const handleDeleteFile = async (row: DocumentFileModel) => {
+  showConfirmModal({
+    message: `Bạn có chắc chắn xóa file <strong>${row.fileName}</strong> không?`,
+    title: 'Xác nhận xóa file?',
+    onConfirm: async (instance, done) => {
+      try {
+        await deleteDocumentFile(row.id)
+        const newFiles = tableData.value.filter((_i) => _i.id !== row.id)
+        tableData.value = newFiles
+        done()
+      } catch (error) {
+        console.error(error)
+      } finally {
+        instance.confirmButtonLoading = false
+      }
+    }
+  })
 }
 </script>
 
@@ -114,9 +138,20 @@ const handleDeleteFile = (id: number | string) => {
         :columnConfigs="fileListColumnConfigs"
         :data="tableData"
       >
+        <template #status="{ row }">
+          <Status :options="documentStatusOptions" :status="row.status" />
+        </template>
+        <template #createdAt="{ row }">
+          <span>{{ formatDate(row.createdAt, formatYYYYMMDD_HHMM) }}</span>
+        </template>
         <template #actions="{ row }">
           <div class="flex flex-row gap-2">
-            <el-icon :size="18" color="#e03131" class="cursor-pointer" @click="handleDeleteFile(row.id)"
+            <el-icon
+              v-if="row.status === DocumentStatusEnum.NEW"
+              :size="18"
+              color="#e03131"
+              class="cursor-pointer"
+              @click="handleDeleteFile(row)"
               ><Delete
             /></el-icon>
           </div>

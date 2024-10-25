@@ -101,6 +101,7 @@ defineExpose<Exposes>({
       class="custom-table hidden-scrollbar"
       @selection-change="handleSelectionChange"
       @row-click="(row: any) => $emit('row-click', row)"
+      row-class-name="cursor-pointer"
     >
       <caption>
         Design by Viettel IDP
@@ -118,6 +119,9 @@ defineExpose<Exposes>({
         <template v-if="!column?.columns" v-slot:default="scope">
           <slot :name="column.field" :column="column" :row="scope.row" :index="scope.$index" class="cursor-pointer">
             <SafeHtmlRenderer v-if="column?.html" :html="scope.row[column.field]" />
+            <span v-else-if="column.field === 'stt'">{{
+              pagination.pageNum * pagination.pageSize + scope.$index + 1
+            }}</span>
             <span v-else>{{ scope.row[column.field] }}</span>
           </slot>
         </template>

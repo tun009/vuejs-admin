@@ -8,9 +8,16 @@ import EIBInput from '@/components/common/EIBInput.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
 import { MOCK_SOLS } from '@/mocks/user'
 import { requireRule } from '@/utils/validate'
+import { DocumentModel } from '@/@types/pages/docs/documents'
+import { updateDocument } from '@/api/docs/document'
+
+interface Porps {
+  data: DocumentModel
+}
 
 interface Emits {
   (event: 'close'): void
+  (event: 'refresh'): void
 }
 
 interface Exposes {
@@ -18,22 +25,23 @@ interface Exposes {
 }
 
 const emits = defineEmits<Emits>()
+const props = defineProps<Porps>()
 
 const { t } = useI18n()
 const loading = ref(false)
 const upadateDocumentFormRef = ref<FormInstance | null>()
 const upadateDocumentFormData: UpdateDocumentRequestModel = reactive({
-  cif: '',
-  customerName: '',
-  documentName: '',
-  sol: ''
+  cif: props.data?.cif,
+  customerName: props.data?.customerName,
+  name: props.data?.dossierName,
+  branchId: props.data?.branch?.id
 })
 
-const upadateDocumentFormRules: FormRules = {
+const upadateDocumentFormRules: FormRules<UpdateDocumentRequestModel> = {
   cif: [],
   customerName: [],
-  documentName: [requireRule()],
-  sol: []
+  name: [requireRule()],
+  branchId: []
 }
 
 const handleClose = () => {
@@ -42,20 +50,25 @@ const handleClose = () => {
 }
 
 const handleUpdateDocument = () => {
-  upadateDocumentFormRef.value?.validate((valid: boolean, fields) => {
-    if (valid) {
-      loading.value = true
-      setTimeout(() => {
-        loading.value = false
+  upadateDocumentFormRef.value?.validate(async (valid: boolean, fields) => {
+    try {
+      if (valid) {
+        loading.value = true
+        await updateDocument({ ...upadateDocumentFormData, id: props.data.id })
         ElMessage({
           message: t('notification.description.updateSuccess'),
           showClose: true,
           type: 'success'
         })
+        emits('refresh')
         handleClose()
-      }, 3000)
-    } else {
-      console.error('Form validation failed', fields)
+      } else {
+        console.error('Form validation failed', fields)
+      }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      loading.value = false
     }
   })
 }
@@ -76,12 +89,17 @@ defineExpose<Exposes>({
     <EIBInput
       label="docs.document.documentName"
       placeholder="docs.document.documentName"
-      name="documentName"
-      v-model="upadateDocumentFormData.documentName"
+      name="name"
+      v-model="upadateDocumentFormData.name"
       required
       show-limit
     />
-    <EIBSelect v-model="upadateDocumentFormData.sol" name="sol" :options="MOCK_SOLS" label="docs.document.solDes" />
+    <EIBSelect
+      v-model="upadateDocumentFormData.branchId"
+      name="branchId"
+      :options="MOCK_SOLS"
+      label="docs.document.solDes"
+    />
     <EIBInput
       label="docs.document.cifCode"
       placeholder="docs.document.enterCifCode"

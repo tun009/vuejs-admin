@@ -190,7 +190,8 @@
       "testResults": "Kết quả kiểm tra",
       "numberSatisfiesRequirement": "Số kiểm tra thỏa mãn yêu cầu",
       "select": "Select",
-      "checkerName": "Tên checker"
+      "checkerName": "Tên checker",
+      "totalAmount": "Số tiền"
     }
   }
 }

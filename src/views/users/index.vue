@@ -14,8 +14,8 @@ import AddUserForm from './components/AddUserForm.vue'
 import UpdateUserForm from './components/UpdateUserForm.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { FilterDocumentModel } from '@/@types/pages/docs/documents'
-import EIBMultipleFilter from '@/components/Filter/EIBMultipleFilter.vue'
-import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
+// import EIBMultipleFilter from '@/components/Filter/EIBMultipleFilter.vue'
+// import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
 
 // defineOptions({
 //   name: 'Users'
@@ -119,9 +119,9 @@ const handleDeleteUser = (name: string) => {
       class="transition-all duration-300 overflow-hidden flex flex-row items-center gap-5"
       :class="{ 'h-10 mb-2': openFilter, 'h-0': !openFilter }"
     >
-      <EIBMultipleFilter title="Vai trò" />
+      <!-- <EIBMultipleFilter title="Vai trò" />
       <EIBSingleFilter title="SOL" />
-      <EIBSingleFilter title="Trạng thái" />
+      <EIBSingleFilter title="Trạng thái" /> -->
     </div>
     <el-card>
       <EIBTable

@@ -9,7 +9,7 @@ import { Title } from '@/layouts/components'
 import { Search } from '@element-plus/icons-vue'
 import { ref } from 'vue'
 import UpdateRuleForm from '../components/UpdateRuleForm.vue'
-import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
+// import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
 
 // defineOptions({
 //   name: 'Rules'
@@ -46,7 +46,7 @@ const handleGetRule = async (pagination: PaginationModel) => {
         />
         <div class="flex flex-row gap-5 items-center w-[50%]">
           <div class="flex flex-row gap-1 items-center p-1 cursor-pointer">
-            <EIBSingleFilter title="Loại chứng từ" />
+            <!-- <EIBSingleFilter title="Loại chứng từ" /> -->
           </div>
         </div>
       </div>

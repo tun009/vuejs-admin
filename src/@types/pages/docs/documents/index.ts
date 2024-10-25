@@ -1,41 +1,43 @@
 import { ColumnConfigModel, DocumentStatusEnum, SelectOptionModel } from '@/@types/common'
 import { RoleEnum } from '@/@types/pages/users'
+import { STATUS_COLORS } from '@/constants/color'
+import { BranchModel } from '../../login'
 
 // document enum
 export enum BusinessTypeEnum {
-  NA,
-  LC_IN,
-  LC_OUT
+  NA = 'NA',
+  LC_IN = 'LC_IN',
+  LC_OUT = 'LC_OUT'
 }
 
 export enum DocumentResultEnum {
-  COMPLIED,
-  DISCREPANCY
+  COMPLIED = 'COMPLIED',
+  DISCREPANCY = 'DISCREPANCY'
 }
 
 export enum ProcessingStepEnum {
-  NEW,
-  OCR,
-  CHECK,
-  VALIDATE
+  NEW = 'NEW',
+  OCR = 'OCR',
+  CHECK = 'CHECK',
+  VALIDATE = 'VALIDATE'
 }
 
 export enum DossierDocStatusEnum {
-  NEW,
-  OCRING,
-  OCRED
+  NEW = 'NEW',
+  OCRING = 'OCRING',
+  OCRED = 'OCRED'
 }
 
 export enum FileStatusEnum {
-  NEW,
-  CLASSIFYING,
-  CLASSIFIED,
-  DELETED
+  NEW = 'NEW',
+  CLASSIFYING = 'CLASSIFYING',
+  CLASSIFIED = 'CLASSIFIED',
+  DELETED = 'DELETED'
 }
 
 export enum OcrSourceEnum {
-  OCR,
-  NLP
+  OCR = 'OCR',
+  NLP = 'NLP'
 }
 
 export interface DocumentModel {
@@ -44,7 +46,7 @@ export interface DocumentModel {
   bizType: BusinessTypeEnum
   status: DocumentStatusEnum
   step: ProcessingStepEnum
-  branchName: string
+  branch: BranchModel
   cif: string
   customerName: string
   totalAmount: string
@@ -99,11 +101,12 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
   {
     field: 'branchName',
     label: 'docs.document.sol',
-    minWidth: 100
+    minWidth: 150
   },
   {
     field: 'cif',
-    label: 'docs.document.cif'
+    label: 'docs.document.cif',
+    width: 150
   },
   {
     field: 'customerName',
@@ -118,11 +121,6 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
   {
     field: 'createdAt',
     label: 'docs.document.createdAt',
-    minWidth: 120
-  },
-  {
-    field: 'createdBy',
-    label: 'docs.document.createdBy',
     minWidth: 120
   },
   {
@@ -149,14 +147,14 @@ export const DOCUMENT_STATUS_LIST = [
   DocumentStatusEnum.CLASSIFYING,
   DocumentStatusEnum.CLASSIFIED,
   DocumentStatusEnum.OCRING,
-  DocumentStatusEnum.MATCHED,
-  DocumentStatusEnum.WAIT_FOR_CHECK,
+  DocumentStatusEnum.OCRED,
+  DocumentStatusEnum.WAIT_CHECK,
   DocumentStatusEnum.CHECKING,
   DocumentStatusEnum.CHECKED,
-  DocumentStatusEnum.WAIT_FOR_APPROVAL,
-  DocumentStatusEnum.NEED_ADJUSTMENT,
-  DocumentStatusEnum.APPROVED,
-  DocumentStatusEnum.REJECTED,
+  DocumentStatusEnum.WAIT_VALIDATE,
+  DocumentStatusEnum.ADJUST_REQUESTED,
+  DocumentStatusEnum.VALIDATED,
+  DocumentStatusEnum.DENIED,
   DocumentStatusEnum.ERROR
 ]
 
@@ -171,7 +169,6 @@ export const PROCESSING_STEP_LIST = [
 
 export interface DocumentFileModel {
   id: number | string
-  stt: number
   fileName: string
   status: string
   createdAt: string
@@ -201,55 +198,68 @@ export interface DocumentResultDataModel {
 export const documentStatusOptions: SelectOptionModel[] = [
   {
     label: 'Mới',
-    value: DocumentStatusEnum.NEW
+    value: DocumentStatusEnum.NEW,
+    color: STATUS_COLORS.NEW
   },
   {
     label: 'Đang phân loại',
-    value: DocumentStatusEnum.CLASSIFYING
+    value: DocumentStatusEnum.CLASSIFYING,
+    color: STATUS_COLORS.CLASSIFYING
   },
   {
     label: 'Đã phân loại',
-    value: DocumentStatusEnum.CLASSIFIED
+    value: DocumentStatusEnum.CLASSIFIED,
+    color: STATUS_COLORS.OCRED
   },
   {
     label: 'Đang xử lý OCR',
-    value: DocumentStatusEnum.OCRING
+    value: DocumentStatusEnum.OCRING,
+    color: STATUS_COLORS.CLASSIFYING
   },
   {
     label: 'Đã đối sánh',
-    value: DocumentStatusEnum.MATCHED
+    value: DocumentStatusEnum.OCRED,
+    color: STATUS_COLORS.OCRED
   },
   {
     label: 'Chờ kiểm tra',
-    value: DocumentStatusEnum.WAIT_FOR_CHECK
+    value: DocumentStatusEnum.WAIT_CHECK,
+    color: STATUS_COLORS.WAIT_CHECK
   },
   {
     label: 'Đang kiểm tra',
-    value: DocumentStatusEnum.CHECKING
+    value: DocumentStatusEnum.CHECKING,
+    color: STATUS_COLORS.CLASSIFYING
   },
   {
     label: 'Đã kiểm tra',
-    value: DocumentStatusEnum.CHECKED
+    value: DocumentStatusEnum.CHECKED,
+    color: STATUS_COLORS.CHECKED
   },
   {
     label: 'Chờ phê duyệt',
-    value: DocumentStatusEnum.WAIT_FOR_APPROVAL
+    value: DocumentStatusEnum.WAIT_VALIDATE,
+    color: STATUS_COLORS.WAIT_CHECK
   },
   {
     label: 'Cần điều chỉnh',
-    value: DocumentStatusEnum.NEED_ADJUSTMENT
+    value: DocumentStatusEnum.ADJUST_REQUESTED,
+    color: STATUS_COLORS.WAIT_CHECK
   },
   {
     label: 'Đã phê duyệt',
-    value: DocumentStatusEnum.APPROVED
+    value: DocumentStatusEnum.VALIDATED,
+    color: STATUS_COLORS.VALIDATED
   },
   {
     label: 'Từ chối',
-    value: DocumentStatusEnum.REJECTED
+    value: DocumentStatusEnum.DENIED,
+    color: STATUS_COLORS.ERROR
   },
   {
     label: 'Lỗi',
-    value: DocumentStatusEnum.ERROR
+    value: DocumentStatusEnum.ERROR,
+    color: STATUS_COLORS.ERROR
   }
 ]
 
@@ -260,11 +270,11 @@ export const businessTypeOptions: SelectOptionModel[] = [
   },
   {
     label: 'LC Xuất',
-    value: BusinessTypeEnum.LC_IN
+    value: BusinessTypeEnum.LC_OUT
   },
   {
     label: 'LC Nhập',
-    value: BusinessTypeEnum.LC_OUT
+    value: BusinessTypeEnum.LC_IN
   }
 ]
 
@@ -331,7 +341,8 @@ export const documentResultRuleOptions: SelectOptionModel[] = [
 export const fileListColumnConfigs: ColumnConfigModel[] = [
   {
     field: 'stt',
-    label: 'docs.document.stt'
+    label: 'docs.document.stt',
+    width: 80
   },
   {
     field: 'fileName',
@@ -346,7 +357,7 @@ export const fileListColumnConfigs: ColumnConfigModel[] = [
   {
     field: 'createdAt',
     label: 'docs.document.createdAt',
-    minWidth: 150
+    width: 150
   },
   {
     field: 'createdBy',
@@ -356,7 +367,7 @@ export const fileListColumnConfigs: ColumnConfigModel[] = [
   {
     field: 'actions',
     label: 'docs.document.actions',
-    minWidth: 150
+    width: 150
   }
 ]
 
@@ -433,4 +444,8 @@ export interface FilterDocumentModel {
   branchId: number
   beginDate: string
   endDate: string
+  sortItemList: {
+    isAsc: boolean
+    column: string
+  }[]
 }

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ArrowDownBold, Delete, Filter, Plus, Search } from '@element-plus/icons-vue'
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
@@ -17,19 +17,27 @@ import {
   documentStatusOptions,
   processingStepOptions
 } from '@/@types/pages/docs/documents'
-import { getDocuments } from '@/api/docs/document'
+import { deleteDocument, getDocuments } from '@/api/docs/document'
 import EIBMultipleFilter from '@/components/Filter/EIBMultipleFilter.vue'
 import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import EIBInput from '@/components/common/EIBInput.vue'
 import EIBTable from '@/components/common/EIBTable.vue'
-import { formatYYYYMMDD, formatYYYYMMDD_HHMM, shortcutsDateRange } from '@/constants/date'
+import {
+  TIME_FIRST_DAY,
+  TIME_LAST_DAY,
+  formatYYYYMMDD,
+  formatYYYYMMDD_HHMM,
+  shortcutsDateRange
+} from '@/constants/date'
 import { DOCUMENT_DETAIL_PAGE } from '@/constants/router'
 import { useConfirmModal } from '@/hooks/useConfirm'
 import { Title } from '@/layouts/components'
 import { MOCK_SOLS } from '@/mocks/user'
 import { omitPropertyFromObject, renderLabelByValue, withAllSelection } from '@/utils/common'
 import { defaultDateRange, formatDate } from '@/utils/date'
+import { debounce } from 'lodash-es'
+import Status from '../components/Status.vue'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -37,6 +45,7 @@ const { showConfirmModal } = useConfirmModal()
 
 const openFilter = ref(false)
 const tableData = ref<DocumentModel[]>([])
+const rowSelect = ref<DocumentModel>({} as DocumentModel)
 const dialogVisible = ref(false)
 const openDrawer = ref(false)
 const checkedItems = ref<DocumentModel[]>([])
@@ -46,11 +55,19 @@ const filterValue = reactive<FilterDocumentModel>({} as FilterDocumentModel)
 
 const handleGetDocuments = async (pagination: PaginationModel) => {
   try {
+    const { status, ...otherFilter } = filterValue
     const response = await getDocuments({
       ...pagination,
-      ...omitPropertyFromObject(filterValue, -1),
-      beginDate: uploadTimes.value[0],
-      endDate: uploadTimes.value[1]
+      ...omitPropertyFromObject(otherFilter, -1),
+      beginDate: uploadTimes.value[0] + TIME_FIRST_DAY,
+      endDate: uploadTimes.value[1] + TIME_LAST_DAY,
+      sortItemList: [
+        {
+          isAsc: false,
+          column: 'createdAt'
+        }
+      ],
+      ...(status?.length ? { status } : {})
     })
     tableData.value = response.data.list
     return response
@@ -68,16 +85,26 @@ const handleClearAllChecked = () => {
   documentTableRef.value?.clearSelection()
 }
 
-const handleDeleteDocument = (name?: string) => {
+const handleDeleteDocument = (data?: DocumentModel) => {
   showConfirmModal({
-    message: t('docs.document.deleteDocsConfirm', { name: name ?? t('docs.document.selectedDocs') }),
+    message: t('docs.document.deleteDocsConfirm', { name: data?.dossierName ?? t('docs.document.selectedDocs') }),
     title: t('docs.document.deleteDocsTitle'),
     successCallback: handleClearAllChecked,
-    onConfirm: (instance, done) => {
-      setTimeout(() => {
+    onConfirm: async (instance, done) => {
+      try {
+        if (data) {
+          await deleteDocument([data?.id ?? ''])
+        } else {
+          const ids = checkedItems.value.map((i) => i.id)
+          await deleteDocument(ids)
+        }
+        handleGetData()
         done()
+      } catch (error) {
+        console.error(error)
+      } finally {
         instance.confirmButtonLoading = false
-      }, 3000)
+      }
     }
   })
 }
@@ -87,6 +114,23 @@ const handleResetFilter = () => {
   filterValue.branchId = -1
   filterValue.result = -1
   filterValue.status = []
+}
+
+const handleGetData = debounce(() => documentTableRef?.value?.handleGetData(), 300)
+
+watch(
+  [() => filterValue, () => uploadTimes],
+  async () => {
+    handleGetData()
+  },
+  {
+    deep: true
+  }
+)
+
+const handleUpdateDocument = (row: DocumentModel) => {
+  openDrawer.value = true
+  rowSelect.value = row
 }
 </script>
 
@@ -133,7 +177,6 @@ const handleResetFilter = () => {
           <span class="text-primary whitespace-nowrap cursor-pointer" @click="handleResetFilter"
             >Khôi phục mặc định</span
           >
-          <el-button type="primary" plain @click="() => documentTableRef?.handleGetData()">Tìm kiếm</el-button>
         </div>
       </div>
       <div class="flex flex-row gap-3">
@@ -161,28 +204,27 @@ const handleResetFilter = () => {
         @row-click="handleRedirectToDocumentDetail"
       >
         <template #status="{ row }">
-          <span>{{ renderLabelByValue(documentStatusOptions, row.status) }}</span>
+          <Status :options="documentStatusOptions" :status="row.status" />
         </template>
-        <template #businessType="{ row }">
-          <span>{{ renderLabelByValue(businessTypeOptions, row.businessType) }}</span>
+        <template #bizType="{ row }">
+          <span>{{ renderLabelByValue(businessTypeOptions, row.bizType) }}</span>
         </template>
-        <template #processingStep="{ row }">
-          <span>{{ renderLabelByValue(processingStepOptions, row.processingStep) }}</span>
+        <template #step="{ row }">
+          <span>{{ renderLabelByValue(processingStepOptions, row.step) }}</span>
         </template>
         <template #result="{ row }">
-          <span>{{ renderLabelByValue(documentResultOptions, row.result) }}</span>
+          <Status :options="documentResultOptions" :status="row.result" />
         </template>
         <template #createdAt="{ row }">
           <span>{{ formatDate(row.createdAt, formatYYYYMMDD_HHMM) }}</span>
         </template>
+        <template #branchName="{ row }">
+          <span>{{ row.branch.name }}</span>
+        </template>
         <template #actions="{ row }">
           <div class="flex flex-row gap-2" @click.stop>
-            <SvgIcon :size="18" name="edit-info" @click.stop="openDrawer = true" class="cursor-pointer" />
-            <el-icon
-              :size="18"
-              color="#e03131"
-              class="cursor-pointer"
-              @click.stop="handleDeleteDocument(row.documentName)"
+            <SvgIcon :size="18" name="edit-info" @click.stop="handleUpdateDocument(row)" class="cursor-pointer" />
+            <el-icon :size="18" color="#e03131" class="cursor-pointer" @click.stop="handleDeleteDocument(row)"
               ><Delete
             /></el-icon>
           </div>
@@ -190,10 +232,10 @@ const handleResetFilter = () => {
       </EIBTable>
     </el-card>
   </div>
-  <UploadDocuments v-if="dialogVisible" v-model="dialogVisible" />
-  <EIBDrawer title="docs.document.updateDocument" v-model="openDrawer">
+  <UploadDocuments v-if="dialogVisible" v-model="dialogVisible" @refresh="documentTableRef?.handleGetData()" />
+  <EIBDrawer title="docs.document.updateDocument" v-model="openDrawer" v-if="openDrawer">
     <template #default>
-      <UpdateDocument @close="openDrawer = false" />
+      <UpdateDocument @close="openDrawer = false" :data="rowSelect" @refresh="documentTableRef?.handleGetData()" />
     </template>
   </EIBDrawer>
   <Transition :duration="300" name="nested" class="fixed bottom-0 -ml-5">

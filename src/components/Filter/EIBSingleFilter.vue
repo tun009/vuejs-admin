@@ -54,7 +54,7 @@ interface Props {
   title: string
   modelValue: string | number
   multiple?: boolean
-  options: SelectOptionModel[]
+  options?: SelectOptionModel[]
 }
 
 interface Emits {
@@ -62,7 +62,8 @@ interface Emits {
 }
 
 withDefaults(defineProps<Props>(), {
-  modelValue: -1
+  modelValue: -1,
+  options: () => []
 })
 defineEmits<Emits>()
 

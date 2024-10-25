@@ -49,46 +49,47 @@ function createService() {
     },
     (error) => {
       // status is the HTTP status code
-      const status = get(error, 'response.status')
-      switch (status) {
-        case 400:
-          error.message = 'Request error'
-          break
-        case 401:
-          // When the Token expires
-          logout()
-          break
-        case 403:
-          error.message = 'Access denied'
-          break
-        case 404:
-          error.message = 'Request address error'
-          break
-        case 408:
-          error.message = 'Request timeout'
-          break
-        case 500:
-          error.message = 'Server internal error'
-          break
-        case 501:
-          error.message = 'Service not implemented'
-          break
-        case 502:
-          error.message = 'Gateway error'
-          break
-        case 503:
-          error.message = 'Service unavailable'
-          break
-        case 504:
-          error.message = 'Gateway timeout'
-          break
-        case 505:
-          error.message = 'HTTP version not supported'
-          break
-        default:
-          break
-      }
-      ElMessage.error(error.message)
+      // const status = get(error, 'response.status')
+      const msg = get(error, 'response.data.msg')
+      // switch (status) {
+      //   case 400:
+      //     error.message = 'Request error'
+      //     break
+      //   case 401:
+      //     // When the Token expires
+      //     logout()
+      //     break
+      //   case 403:
+      //     error.message = 'Access denied'
+      //     break
+      //   case 404:
+      //     error.message = 'Request address error'
+      //     break
+      //   case 408:
+      //     error.message = 'Request timeout'
+      //     break
+      //   case 500:
+      //     error.message = 'Server internal error'
+      //     break
+      //   case 501:
+      //     error.message = 'Service not implemented'
+      //     break
+      //   case 502:
+      //     error.message = 'Gateway error'
+      //     break
+      //   case 503:
+      //     error.message = 'Service unavailable'
+      //     break
+      //   case 504:
+      //     error.message = 'Gateway timeout'
+      //     break
+      //   case 505:
+      //     error.message = 'HTTP version not supported'
+      //     break
+      //   default:
+      //     break
+      // }
+      ElMessage.error(msg)
       return Promise.reject(error)
     }
   )
@@ -103,11 +104,11 @@ function createRequest(service: AxiosInstance) {
       headers: {
         // Carry Token
         Authorization: token ? `Bearer ${token}` : undefined,
-        'Content-Type': 'application/json'
+        'Content-Type': config.data instanceof FormData ? 'multipart/form-data' : 'application/json'
       },
-      timeout: 5000,
-      baseURL: import.meta.env.VITE_BASE_API,
-      data: {}
+      timeout: 10000,
+      baseURL: import.meta.env.VITE_BASE_API
+      // data: {}
     }
     // Merge the default configuration defaultConfig and the passed-in custom configuration config into mergeConfig
     const mergeConfig = merge(defaultConfig, config)

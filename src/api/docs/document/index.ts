@@ -1,7 +1,12 @@
 import { DocumentResultEnum } from '@/@types/pages/docs/documents'
-import { GetDocumentRequestModel } from '@/@types/pages/docs/documents/services/DocumentRequest'
 import {
+  GetDocumentRequestModel,
+  UpdateDocumentRequestModel
+} from '@/@types/pages/docs/documents/services/DocumentRequest'
+import {
+  GetBatchDetailResponseModel,
   GetCheckersResponseModel,
+  GetDocumentDetailResponseModel,
   GetDocumentFileResponseModel,
   GetDocumentResponseModel,
   GetDocumentResultsResponseModel
@@ -17,27 +22,49 @@ export function getDocuments(data: GetDocumentRequestModel) {
   })
 }
 
-export function getDocumentFiles(): Promise<GetDocumentFileResponseModel> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      return resolve({
-        code: 1,
-        data: {
-          list: Array.from({ length: 10 }, (_, index) => ({
-            createdAt: '01-01-2025',
-            createdBy: '01-01-2025',
-            fileName: '1012ILSEIB210069_NGUY....',
-            id: index + 1,
-            status: 'Mới',
-            stt: index + 1
-          })),
-          pageNum: 0,
-          pageSize: 10,
-          total: 10
-        },
-        msg: 'Meo'
-      })
-    }, 2000)
+/** update document */
+export function updateDocument(data: UpdateDocumentRequestModel) {
+  return request<GetDocumentDetailResponseModel>({
+    url: 'batches/update',
+    method: 'put',
+    data
+  })
+}
+
+export function deleteDocument(ids: (string | number)[]) {
+  return request<GetDocumentDetailResponseModel>({
+    url: 'batches/delete?' + ids.map((id) => `ids=${id}`).join('&'),
+    method: 'delete'
+  })
+}
+
+export function addDocument(data: FormData) {
+  return request<GetDocumentDetailResponseModel>({
+    url: 'batches/create',
+    method: 'post',
+    data
+  })
+}
+
+export function getBatchDetail(id: string | number) {
+  return request<GetBatchDetailResponseModel>({
+    url: 'batches/' + id,
+    method: 'get'
+  })
+}
+
+export function getDocumentFiles(params: { batchId: string | number }) {
+  return request<GetDocumentFileResponseModel>({
+    url: 'dossier-files',
+    method: 'get',
+    params
+  })
+}
+
+export function deleteDocumentFile(id: string | number) {
+  return request<ApiResponseData<number>>({
+    url: 'dossier-files/' + id,
+    method: 'delete'
   })
 }
 

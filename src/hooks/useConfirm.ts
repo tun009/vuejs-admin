@@ -29,7 +29,7 @@ export function useConfirmModal() {
       beforeClose: (action, instance, done) => {
         if (action === 'confirm') {
           instance.confirmButtonLoading = true
-          instance.confirmButtonText = 'Loading...'
+          // instance.confirmButtonText = 'Loading...'
           onConfirm?.(instance, done)
         } else {
           done()
