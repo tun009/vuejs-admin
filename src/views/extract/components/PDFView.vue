@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { VuePDF, usePDF } from '@tato30/vue-pdf'
-import { ExtractBboxModel } from '@/@types/pages/extract'
 import { onMounted, onBeforeUnmount } from 'vue'
 
 const props = defineProps<{
@@ -33,26 +32,30 @@ const zoomOut = () => {
 const onLoadedPDF = () => {
   emit('loaded-data')
 }
-const tagLabelToPage = (boxInfo: ExtractBboxModel) => {
+const tagLabelToPage = (boxInfos: number[][][], pageNum: number) => {
   const listActivesRemove = document.querySelectorAll('.box-label')
   listActivesRemove.forEach((element) => {
     element.remove()
   })
   const pElement = document.createElement('p')
-  pElement.className = 'box-label'
-  pElement.id = `bbox${boxInfo?.id}`
-  pElement.style.width = caculatorDistance(getRectangle(boxInfo?.bbox, 'width'))
-  pElement.style.height = caculatorDistance(getRectangle(boxInfo?.bbox, 'height'))
-  pElement.style.top = caculatorDistance(getRectangle(boxInfo?.bbox, 'top'))
-  pElement.style.left = caculatorDistance(getRectangle(boxInfo?.bbox, 'left'))
-  pElement.style.backgroundColor = 'rgba(240, 91, 91, 0.3) '
-  pElement.style.border = '2px solid #e03'
-  pElement.style.position = 'absolute'
-
-  const elementPage = document.getElementById('page-' + (boxInfo.page_id + 1))
-  if (elementPage) elementPage.appendChild(pElement)
-  const elementScrollTo = pElement ?? elementPage
-  elementScrollTo.scrollIntoView({ behavior: 'smooth' })
+  const elementPage = document.getElementById('page-' + (pageNum + 1))
+  if (boxInfos.length > 0) {
+    boxInfos.forEach((boxInfo, index) => {
+      pElement.className = 'box-label'
+      pElement.style.width = caculatorDistance(getRectangle(boxInfo, 'width'))
+      pElement.style.height = caculatorDistance(getRectangle(boxInfo, 'height'))
+      pElement.style.top = caculatorDistance(getRectangle(boxInfo, 'top'))
+      pElement.style.left = caculatorDistance(getRectangle(boxInfo, 'left'))
+      pElement.style.backgroundColor = 'rgba(240, 91, 91, 0.3) '
+      pElement.style.border = '1px solid #e03'
+      pElement.style.position = 'absolute'
+      if (elementPage) elementPage.appendChild(pElement)
+      if (index === 0) {
+        const elementScrollTo = pElement ?? elementPage
+        elementScrollTo.scrollIntoView({ behavior: 'smooth' })
+      }
+    })
+  } else elementPage?.scrollIntoView({ behavior: 'smooth' })
 }
 const caculatorDistance = (unit: number) => {
   return `${unit.toString()}%`
@@ -84,7 +87,7 @@ const getRectangle = (bbox: number[][], style: string) => {
   }
 }
 interface ExtractPdfViewExpose {
-  tagLabelToPage: (data: ExtractBboxModel) => void
+  tagLabelToPage: (boxInfo: number[][][], pageNum: number) => void
 }
 defineExpose<ExtractPdfViewExpose>({
   tagLabelToPage

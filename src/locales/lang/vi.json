@@ -82,7 +82,8 @@
     "invalidCategory": "Danh mục bất hợp lệ",
     "profile": "Thông tin tài khoản",
     "documentDetail": "Chi tiết chứng từ",
-    "documentCompare": "Đối sánh chứng từ"
+    "documentCompare": "Đối sánh chứng từ",
+    "extract": "Trích xuất thông tin"
   },
   "profile": {
     "title": "Thông tin tài khoản",

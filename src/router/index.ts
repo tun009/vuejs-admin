@@ -200,10 +200,10 @@ export const constantRoutes: RouteRecordRaw[] = [
     ]
   },
   {
-    path: EXTRACT_PAGE,
+    path: EXTRACT_PAGE(),
     component: () => import('@/views/extract/index.vue'),
     meta: {
-      title: 'Trích xuất thông tin',
+      title: 'extract',
       hidden: true,
       keepAlive: false
     }
