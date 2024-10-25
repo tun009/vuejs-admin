@@ -6,9 +6,10 @@ import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import EIBInput from '@/components/common/EIBInput.vue'
 import EIBTable from '@/components/common/EIBTable.vue'
 import { Title } from '@/layouts/components'
-import { Edit, Search } from '@element-plus/icons-vue'
+import { Search } from '@element-plus/icons-vue'
 import { ref } from 'vue'
 import UpdateRuleForm from '../components/UpdateRuleForm.vue'
+import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
 
 // defineOptions({
 //   name: 'Rules'
@@ -36,16 +37,18 @@ const handleGetRule = async (pagination: PaginationModel) => {
   <Title title="Quản lý luật UCP/ISBP" />
   <div class="flex flex-col gap-5">
     <div class="flex flex-row justify-between gap-10">
-      <div class="flex flex-row gap5 items-center _filter gap-5 w-full">
+      <div class="flex flex-row gap5 items-center _filter gap-5">
         <EIBInput
           v-model="searchQuery"
           custom-class="w-[300px]"
           placeholder="Tìm kiếm nội dung"
           :prefix-icon="Search"
-          class="w-[20%]"
         />
-        <div>Loại chứng từ</div>
-        <!-- <el-button :icon="Filter" @click="handleComingSoon">{{ $t('user.filter') }}</el-button> -->
+        <div class="flex flex-row gap-5 items-center w-[50%]">
+          <div class="flex flex-row gap-1 items-center p-1 cursor-pointer">
+            <EIBSingleFilter title="Loại chứng từ" />
+          </div>
+        </div>
       </div>
     </div>
     <el-card>
@@ -71,7 +74,7 @@ const handleGetRule = async (pagination: PaginationModel) => {
         </template>
         <template #actions>
           <div class="flex flex-row gap-2">
-            <el-icon :size="18" class="cursor-pointer" @click="openUpdateRuleDrawer = true"><Edit /></el-icon>
+            <SvgIcon :size="18" name="edit-info" @click.stop="openUpdateRuleDrawer = true" class="cursor-pointer" />
           </div>
         </template>
       </EIBTable>

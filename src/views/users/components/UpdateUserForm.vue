@@ -4,7 +4,7 @@ import EIBInput from '@/components/common/EIBInput.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
 import { requireRule } from '@/utils/validate'
 import { Check, Close, Lock } from '@element-plus/icons-vue'
-import { ElMessage, FormRules } from 'element-plus'
+import { ElMessage, FormRules, ElMessageBox } from 'element-plus'
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -63,6 +63,27 @@ const handleUpdateUser = () => {
 defineExpose<Exposes>({
   handleClose
 })
+
+const handleResetPasswordUser = () => {
+  ElMessageBox.confirm(`Bạn xác nhận khôi phục mật khẩu tài khoản này chứ?`, 'Reset mật khẩu', {
+    confirmButtonText: 'Xác nhận',
+    cancelButtonText: 'Hủy bỏ',
+    dangerouslyUseHTMLString: true,
+    draggable: true
+  })
+    .then(() => {
+      ElMessage({
+        type: 'success',
+        message: 'Reset Password user completed'
+      })
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: 'Reset Password user canceled'
+      })
+    })
+}
 </script>
 
 <template>
@@ -91,7 +112,9 @@ defineExpose<Exposes>({
     <EIBSelect v-model="updateUserFormData.role" name="role" :options="roleSelectOptions" label="user.addUser.role" />
     <div class="flex flex-col gap-2 mb-[26px]">
       <span>{{ $t('user.updateUser.password') }}</span>
-      <el-button class="w-fit" :icon="Lock" color="#005d98" plain>{{ $t('user.updateUser.resetPassword') }}</el-button>
+      <el-button class="w-fit" :icon="Lock" color="#005d98" plain @click="handleResetPasswordUser()">{{
+        $t('user.updateUser.resetPassword')
+      }}</el-button>
     </div>
     <div class="flex flex-col gap-2">
       <span>{{ $t('user.updateUser.blockUser') }}</span>
