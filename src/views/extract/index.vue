@@ -2,16 +2,12 @@
 import { onMounted, ref, nextTick } from 'vue'
 import { getDossierDetailApi, getDossierListApi } from '@/api/extract'
 import { useConfirmModal } from '@/hooks/useConfirm'
-import {
-  ExtractBboxModel,
-  ExtractDocumentModel,
-  ExtractDossierModel,
-  ExtractResultOcrModel
-} from '@/@types/pages/extract'
+import { ExtractDocumentModel, ExtractDossierModel, ExtractResultOcrModel } from '@/@types/pages/extract'
 import PDFView from './components/PDFView.vue'
 import HistoryTab from './components/HistoryTab.vue'
 import NoteTab from './components/NoteTab.vue'
 import ClassifyModal from './components/ClassifyModal.vue'
+import { useRoute } from 'vue-router'
 
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import { renderLabelByValue } from '@/utils/common'
@@ -19,7 +15,6 @@ import { documentStatusOptions } from '@/@types/pages/docs/documents'
 import { ArrowLeft, More, CloseBold, Select } from '@element-plus/icons-vue'
 const dossierListData = ref<ExtractDossierModel[]>([])
 const documentDetail = ref<ExtractDocumentModel>()
-const bboxsIDs = ref<ExtractBboxModel[]>([])
 const activeName = ref('ocr')
 const fieldSelect = ref('')
 const pdfViewRef = ref()
@@ -27,43 +22,47 @@ const classifyModalRef = ref()
 const openClassifyDrawer = ref(false)
 const idDossierActive = ref()
 const { showConfirmModal } = useConfirmModal()
+const route = useRoute()
 
-const getDossiersList = async () => {
+const getDossiersList = async (id: number) => {
   try {
-    const response = await getDossierListApi()
-    dossierListData.value = response.data.map((item) => {
+    const response = await getDossierListApi(id)
+    dossierListData.value = response?.data?.map((item) => {
       return {
         ...item,
-        status: renderLabelByValue(documentStatusOptions, item.status)
+        status: renderLabelByValue(documentStatusOptions, item.status) || 'Đang phân loại'
       }
     })
     // hard code
-    getDossierById(0)
   } catch (error: any) {
     throw new Error(error)
   }
 }
 const getDossierById = (id: number) => {
   idDossierActive.value = id
-  getDossiersDetail()
+  getDossiersDetail(id)
 }
-const getDossiersDetail = async () => {
+const ocrDataDetail = ref<ExtractResultOcrModel[]>([])
+const isFirstViewExtract = ref<boolean>(false)
+const docTypeOcrData = ref()
+const getDossiersDetail = async (id: number) => {
   try {
     documentDetail.value = {} as ExtractDocumentModel
-    bboxsIDs.value = []
-    const response = await getDossierDetailApi()
+    const response = await getDossierDetailApi(id)
     documentDetail.value = response.data
-    bboxsIDs.value = response.data?.result?.bboxes
+    ocrDataDetail.value = documentDetail.value.result[0]
+    docTypeOcrData.value = documentDetail.value?.docType
+    if (docTypeOcrData.value === 'DRAFT') isFirstViewExtract.value = true
+    ocrDataDetail
   } catch (error: any) {
     throw new Error(error)
   }
 }
 const handleClickField = (item: ExtractResultOcrModel) => {
-  fieldSelect.value = item.key
-  const bbox = bboxsIDs.value.filter((box) => box.id === (item.bboxIds[0] ?? ''))
-  if (bbox.length > 0) pdfViewRef.value?.tagLabelToPage(bbox[0])
+  fieldSelect.value = item.coreKey
+  pdfViewRef.value?.tagLabelToPage(item.bboxes, item.pageId)
 }
-const renderClassOcr = (conf: number) => {
+const renderClassOcr = (conf: number = 0) => {
   return conf > 0.75 ? 'trust-hight' : 'trust-medium'
 }
 const formatNumberConfidence = (num: number) => {
@@ -73,8 +72,8 @@ const formatNumberConfidence = (num: number) => {
     return Math.round(num * 10 * 100) / 10
   }
 }
-const renderColorOcr = (cd: number) => {
-  if (cd === 0) return '#7a8da5'
+const renderColorOcr = (cd: number = 0) => {
+  if (cd === 0 || cd === undefined) return '#7a8da5'
   else if (cd <= 25) return '#C4190D'
   else if (cd <= 75) return '#f76707'
   else if (cd <= 90) return '#1c7ed6'
@@ -122,8 +121,27 @@ const handleDeniedDossier = () => {
     }
   })
 }
+const viewFirstExtract = () => {
+  isFirstViewExtract.value = true
+  ocrDataDetail.value = documentDetail.value!.result[0]
+  resetFieldActive()
+}
+const viewSecondExtract = () => {
+  isFirstViewExtract.value = false
+  ocrDataDetail.value = documentDetail.value!.result[1]
+  resetFieldActive()
+}
+const resetFieldActive = () => {
+  fieldSelect.value = ''
+  const listActivesRemove = document.querySelectorAll('.box-label')
+  listActivesRemove.forEach((element) => {
+    element.remove()
+  })
+}
 onMounted(() => {
-  getDossiersList()
+  console.log(route.params)
+  getDossiersList(Number(route?.params?.batchId))
+  getDossierById(Number(route?.params?.dossierDocId))
 })
 </script>
 
@@ -142,9 +160,9 @@ onMounted(() => {
                 :key="index_ds"
                 class="p-3 border-b-[1px] border-b-[#e9ecef] text-[13px] text-[#868e96] hover:bg-[#e7f5ff] cursor-pointer"
                 @click="getDossierById(index_ds)"
-                :class="{ 'dossier-active bg-[#e7f5ff]': index_ds === idDossierActive }"
+                :class="{ 'dossier-active bg-[#e7f5ff]': item.id === idDossierActive }"
               >
-                <div>{{ item.name }}</div>
+                <div>{{ item?.docType?.name }}</div>
                 <div class="mt-2 flex items-center">
                   <span class="w-[8px] h-[8px] bg-[#1098ad] rounded-full mr-[4px]" />
                   <span>{{ item.status }}</span>
@@ -157,9 +175,9 @@ onMounted(() => {
           </div>
           <div class="overflow-auto w-[100%] bg-[#f1f3f5] px-2">
             <PDFView
-              v-if="documentDetail?.file"
+              v-if="documentDetail?.pathFile"
               ref="pdfViewRef"
-              :url="documentDetail?.file"
+              :url="'https://idp-staging.viettelai.vn/bic-app/api/v1/files?src=2024-10-25/01/11202/18405.pdf'"
               @loaded-data="onLoadedPDF()"
             />
           </div>
@@ -167,7 +185,7 @@ onMounted(() => {
       </div>
       <div class="w-[28%]">
         <div class="flex justify-between p-4 font-semibold items-center">
-          <span>{{ documentDetail?.name }}</span>
+          <span>{{ documentDetail?.fileName }}</span>
           <el-dropdown placement="bottom-end" trigger="click">
             <el-button :icon="More" class="p-[8px]" />
             <template #dropdown>
@@ -190,13 +208,30 @@ onMounted(() => {
         </div>
         <el-tabs class="tabs-infor" v-model="activeName">
           <el-tab-pane label="Kết quả OCR" name="ocr">
-            <div class="h-[calc(100vh-185px)] overflow-y-auto">
+            <div v-if="docTypeOcrData === 'DRAFT'" class="flex gap-[15px] justify-center">
+              <el-button
+                class="rounded-[20px]"
+                :class="{ ' bg-[#1c7ed6] text-[#fff] ': isFirstViewExtract }"
+                @click="viewFirstExtract()"
+                >First</el-button
+              >
+              <el-button
+                class="rounded-[20px]"
+                :class="{ ' bg-[#1c7ed6] text-[#fff] ': !isFirstViewExtract }"
+                @click="viewSecondExtract()"
+                >Second</el-button
+              >
+            </div>
+            <div
+              class="overflow-y-auto"
+              :class="docTypeOcrData === 'DRAFT' ? 'h-[calc(100vh-207px)]' : 'h-[calc(100vh-185px)] '"
+            >
               <template v-if="isLoadedPdf">
                 <div
-                  v-for="(item, index) in documentDetail?.result.data"
+                  v-for="(item, index) in ocrDataDetail"
                   :key="index"
                   class="mt-[12px] py-[5px] px-[6px] item-dossier cursor-pointer"
-                  :class="[renderClassOcr(item.confidence), fieldSelect === item.key ? 'bg-[#e1edfe]' : '']"
+                  :class="[renderClassOcr(item?.confidence), fieldSelect === item.coreKey ? 'bg-[#e1edfe]' : '']"
                   @click="handleClickField(item)"
                 >
                   <div class="mx-[16px] border-l-[2px] border-solid">
@@ -205,25 +240,31 @@ onMounted(() => {
                         <span
                           class="text-[#fff] rounded-[3px] px-[4px] text-[12px] py-[2px] font-medium"
                           :style="{
-                            backgroundColor: renderColorOcr(item.confidence * 100)
+                            backgroundColor: renderColorOcr((item.confidence ?? 0) * 100)
                           }"
                         >
-                          {{ formatNumberConfidence(item.confidence) }}%
+                          {{ formatNumberConfidence(item?.confidence ?? 0) }}%
                         </span>
-                        <span class="ml-2 text-[#adb5bd]">{{ item.key }}</span>
+                        <span class="ml-2 text-[#adb5bd]">{{ item.coreKey }}</span>
                       </div>
                       <div class="mt-[8px] min-h-[12px]">
-                        <div v-if="item.key === 'goods_table'">Click để xem</div>
-                        <el-input v-else-if="fieldSelect === item.key" v-model="item.extractionValue" />
+                        <div v-if="item.coreKey === 'goods_table'">Click để xem</div>
+                        <el-input
+                          v-else-if="fieldSelect === item.coreKey && item.type !== 'image'"
+                          v-model="item.extractionValue"
+                        />
+                        <div v-else-if="item.type === 'image'">
+                          <img :src="'data:image/png;base64,' + item.extractionValue" alt="" class="h-[70px]" />
+                        </div>
                         <div v-else>{{ item.extractionValue }}</div>
                       </div>
                     </div>
                   </div>
                 </div>
               </template>
-              <template v-else>
+              <template v-else-if="ocrDataDetail.length > 0">
                 <div
-                  v-for="(item, index) in documentDetail?.result?.data"
+                  v-for="(item, index) in ocrDataDetail"
                   :key="index"
                   class="mt-[12px] py-[5px] px-[6px] item-dossier cursor-wait"
                 >
@@ -238,7 +279,7 @@ onMounted(() => {
                         >
                           {{ formatNumberConfidence(0) }}%
                         </span>
-                        <span class="ml-2 text-[#adb5bd]">{{ item.key }}</span>
+                        <span class="ml-2 text-[#adb5bd]">{{ item.coreKey }}</span>
                       </div>
                       <div class="mt-[8px] min-h-[12px]">
                         <el-skeleton class="w-full" animated>

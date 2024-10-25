@@ -4,37 +4,32 @@ export enum DossierStatusEnum {
   BLOCK
 }
 export interface ExtractResultOcrModel {
-  confidence: number
-  available: number
-  name: string
-  modified: boolean
+  id: number
+  confidence?: number
+  coreKey: string
   extractionValue: string
   validatedValue: string
   type: string
-  key: string
-  bboxIds: number[]
+  bboxes: number[][][]
+  pageId: number
 }
-export interface ExtractBboxModel {
-  bbox: number[][]
+export interface ExtractDossierTypeModel {
   id: number
-  page_id: number
-  value: string
+  name: string
+  key: string
+  type: string
 }
 export interface ExtractDossierModel {
   id: number
-  stt: number
-  name: string
+  docType: ExtractDossierTypeModel
   status: string | number
 }
 export interface ExtractDocumentModel {
   id: number
-  file: string
-  name: string
-  status: DossierStatusEnum
-  result: {
-    bboxes: ExtractBboxModel[]
-    data: ExtractResultOcrModel[]
-  }
+  docType: string
+  pathFile: string
+  fileName: string
+  result: ExtractResultOcrModel[][]
 }
 export interface ExtractHistoryAction {
   field: string
