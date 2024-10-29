@@ -6,7 +6,7 @@ interface Props {
   modelValue?: string | number
   label?: string
   prefixIcon?: string | Component
-  type?: 'text' | 'number' | 'password' | 'checkbox' | 'radio'
+  type?: 'text' | 'number' | 'password' | 'checkbox' | 'radio' | 'textarea'
   size?: 'default' | 'small' | 'large'
   placeholder?: string
   showPassword?: boolean
@@ -20,6 +20,7 @@ interface Props {
   noForm?: boolean
   isRow?: boolean
   hiddenError?: boolean
+  rows?: number
 }
 
 interface Emits {
@@ -72,6 +73,7 @@ const updateValue = (value: string) => {
         @update:model-value="updateValue"
         :disabled="disabled"
         :maxlength="maxLength"
+        :rows="rows"
         :class="[customClass]"
         :placeholder="$t(placeholder ?? '')"
       />

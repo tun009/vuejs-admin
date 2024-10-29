@@ -1,28 +1,32 @@
 <script setup lang="ts">
-import { UpdateRuleRequestModel } from '@/@types/pages/rules'
+import { RuleModel, UpdateRuleRequestModel } from '@/@types/pages/rules'
+import { updateRule } from '@/api/rules'
 import Input from '@/components/common/EIBInput.vue'
 // import { requireRule } from '@/utils/validate'
 import { ElMessage, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
 
 interface Emits {
   (event: 'close'): void
+  (event: 'refresh'): void
 }
 
 interface Exposes {
   handleClose: () => void
 }
+interface Props {
+  data: RuleModel
+}
+const props = defineProps<Props>()
 
 const emits = defineEmits<Emits>()
 
-const { t } = useI18n()
 const loading = ref(false)
 const updateRuleFormRef = ref()
 const updateRuleFormData: UpdateRuleRequestModel = reactive({
-  name: '',
-  code: '',
-  content: ''
+  name: props?.data?.docType,
+  code: props?.data?.code,
+  content: props?.data?.content
 })
 
 const updateRuleFormRules: FormRules = {
@@ -35,20 +39,30 @@ const handleClose = () => {
 }
 
 const handleUpdateRule = () => {
-  updateRuleFormRef.value?.validate((valid: boolean, fields: any) => {
-    if (valid) {
-      loading.value = true
-      setTimeout(() => {
-        loading.value = false
+  updateRuleFormRef.value?.validate(async (valid: boolean, fields: any) => {
+    try {
+      if (valid) {
+        loading.value = true
+        await updateRule({ id: props.data.id, type: props.data.type, content: updateRuleFormData.content })
         ElMessage({
+          message: 'Cập nhật thông tin thành công!',
           showClose: true,
-          type: 'success',
-          message: t('notification.description.createSuccess')
+          type: 'success'
         })
+        emits('refresh')
         handleClose()
-      }, 2000)
-    } else {
-      console.error('Form validation failed', fields)
+      } else {
+        console.error('Form validation failed', fields)
+      }
+    } catch (error) {
+      console.error(error)
+      ElMessage({
+        type: 'error',
+        showClose: true,
+        message: 'Có lỗi xảy ra, vui lòng thử lại!'
+      })
+    } finally {
+      loading.value = false
     }
   })
 }
@@ -68,7 +82,16 @@ defineExpose<Exposes>({
   >
     <Input label="Loại chứng từ" placeholder="" name="name" v-model="updateRuleFormData.name" disabled />
     <Input label="Mã" name="code" placeholder="" v-model="updateRuleFormData.code" disabled />
-    <Input label="Nội dung" name="content" placeholder="" v-model="updateRuleFormData.content" />
+    <Input
+      label="Nội dung"
+      name="content"
+      placeholder=""
+      v-model="updateRuleFormData.content"
+      type="textarea"
+      :rows="5"
+      show-limit
+      :max-length="1200"
+    />
   </el-form>
   <div>
     <el-button :loading="loading" @click.prevent="handleUpdateRule" type="primary">Lưu thay đổi</el-button>

@@ -2,6 +2,7 @@
   <el-text
     ref="buttonRef"
     v-click-outside="onClickOutside"
+    :class="[customClass]"
     class="cursor-pointer flex flex-row items-center gap-1 w-fit"
   >
     <span class="font-semibold">{{ title }}:</span>
@@ -55,6 +56,7 @@ interface Props {
   modelValue: string | number
   multiple?: boolean
   options?: SelectOptionModel[]
+  customClass?: string
 }
 
 interface Emits {
