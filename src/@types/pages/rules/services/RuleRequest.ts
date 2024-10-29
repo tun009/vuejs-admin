@@ -1,5 +1,8 @@
 import { PaginationModel } from '@/@types/common'
+import { DocTypeEnum, RuleTypeEnum } from '..'
 
 export interface GetRuleRequestModel extends PaginationModel {
-  searchQuery: string
+  type?: RuleTypeEnum
+  query?: string
+  documentType?: DocTypeEnum
 }

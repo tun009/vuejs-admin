@@ -1,62 +1,81 @@
 <script setup lang="ts">
 import { PaginationModel } from '@/@types/common'
-import { ruleListColumnConfigs, RuleModel } from '@/@types/pages/rules'
+import { FilterRulesModel, ruleListColumnConfigs, RuleModel, RuleTypeEnum } from '@/@types/pages/rules'
 import { getRules } from '@/api/rules/'
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import EIBInput from '@/components/common/EIBInput.vue'
 import EIBTable from '@/components/common/EIBTable.vue'
 import { Title } from '@/layouts/components'
 import { Search } from '@element-plus/icons-vue'
-import { ref } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import UpdateRuleForm from '../components/UpdateRuleForm.vue'
-// import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
-
+import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
+import { docTypeOptions } from '@/@types/pages/rules'
+import debounce from 'lodash-es/debounce'
+import { omitPropertyFromObject } from '@/utils/common'
 // defineOptions({
 //   name: 'Rules'
 // })
-
+const rulesTableRef = ref<InstanceType<typeof EIBTable>>()
+const filterValue = reactive<FilterRulesModel>({ query: '' } as FilterRulesModel)
+filterValue.type = RuleTypeEnum.LAW
 const openUpdateRuleDrawer = ref(false)
-const searchQuery = ref('')
-
-const disabledIds = [1]
 
 const tableData = ref<RuleModel[]>([])
 
-const handleGetRule = async (pagination: PaginationModel) => {
+const handleGetRules = async (pagination: PaginationModel) => {
   try {
-    const response = await getRules({ ...pagination, searchQuery: searchQuery.value })
+    const response = await getRules({ ...pagination, ...omitPropertyFromObject(filterValue, -1) })
     tableData.value = response.data.list
     return response
   } catch (error: any) {
     throw new Error(error)
   }
 }
+const dataUpdateRule = ref<RuleModel>({} as RuleModel)
+const openModalUpdateRule = (data: RuleModel) => {
+  openUpdateRuleDrawer.value = true
+  dataUpdateRule.value = data
+}
+const handleGetData = debounce(() => rulesTableRef?.value?.handleGetData(), 300)
+
+watch(
+  [() => filterValue],
+  async () => {
+    handleGetData()
+  },
+  {
+    deep: true
+  }
+)
 </script>
 
 <template>
   <Title title="Quản lý luật UCP/ISBP" />
-  <div class="flex flex-col gap-5">
+  <div class="flex flex-col gap-5 rules-page">
     <div class="flex flex-row justify-between gap-10">
       <div class="flex flex-row gap5 items-center _filter gap-5">
         <EIBInput
-          v-model="searchQuery"
+          v-model="filterValue.query"
           custom-class="w-[300px]"
           placeholder="Tìm kiếm nội dung"
           :prefix-icon="Search"
         />
-        <div class="flex flex-row gap-5 items-center w-[50%]">
-          <div class="flex flex-row gap-1 items-center p-1 cursor-pointer">
-            <!-- <EIBSingleFilter title="Loại chứng từ" /> -->
-          </div>
-        </div>
+        <EIBSingleFilter
+          v-model="filterValue.documentType"
+          title="Loại chứng từ"
+          :options="docTypeOptions"
+          custom-class="w-full"
+        />
       </div>
     </div>
     <el-card>
       <EIBTable
+        ref="rulesTableRef"
         :columnConfigs="ruleListColumnConfigs"
         :data="tableData"
-        :callback="handleGetRule"
-        :disabledIds="disabledIds"
+        :callback="handleGetRules"
+        hiddenChecked
       >
         <template #name="{ row }">
           <div>
@@ -72,9 +91,9 @@ const handleGetRule = async (pagination: PaginationModel) => {
             <span class="!text-blue-500">{{ row.solId }}</span>
           </div>
         </template>
-        <template #actions>
+        <template #actions="{ row }">
           <div class="flex flex-row gap-2">
-            <SvgIcon :size="18" name="edit-info" @click.stop="openUpdateRuleDrawer = true" class="cursor-pointer" />
+            <SvgIcon :size="18" name="edit-info" @click.stop="openModalUpdateRule(row)" class="cursor-pointer" />
           </div>
         </template>
       </EIBTable>
@@ -83,14 +102,18 @@ const handleGetRule = async (pagination: PaginationModel) => {
 
   <EIBDrawer v-if="openUpdateRuleDrawer" v-model="openUpdateRuleDrawer" title="Cập nhật thông tin luật">
     <template #default>
-      <UpdateRuleForm @close="openUpdateRuleDrawer = false" />
+      <UpdateRuleForm
+        @close="openUpdateRuleDrawer = false"
+        :data="dataUpdateRule"
+        @refresh="rulesTableRef?.handleGetData()"
+      />
     </template>
   </EIBDrawer>
 </template>
 
 <style lang="css">
-.el-form-item,
-.input-component {
+.rules-page .el-form-item,
+.rules-page .input-component {
   margin-bottom: 0px;
 }
 </style>
