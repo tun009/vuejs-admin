@@ -1,6 +1,7 @@
 import { SelectOptionModel, StatusColorModel } from '@/@types/common'
 import { ElMessageBox } from 'element-plus'
 import DOMPurify from 'dompurify'
+import { BranchModel } from '@/@types/pages/login'
 
 export const getDataWithPagination = <T>(array: T[], pageNum: number, pageSize: number): T[] => {
   const start = pageNum * pageSize
@@ -70,4 +71,12 @@ export const omitPropertyFromObject = (
     }
   }
   return newObj
+}
+
+export const mappingBranches = (branches: BranchModel[]): SelectOptionModel[] => {
+  return branches.map((b: BranchModel) => ({
+    label: b.name,
+    value: b.id,
+    description: b.code
+  }))
 }

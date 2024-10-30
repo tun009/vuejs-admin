@@ -1,10 +1,10 @@
 import { ColumnConfigModel, SelectOptionModel } from '@/@types/common'
 
 export enum RoleEnum {
-  ADMIN = 'admin',
-  MAKER = 'maker',
-  CHECKER = 'checker',
-  VIEWER = 'viewer'
+  ADMIN = 'ADMIN',
+  MAKER = 'MAKER',
+  CHECKER = 'CHECKER',
+  VIEWER = 'VIEWER'
 }
 
 export enum UserStatusEnum {

@@ -6,6 +6,7 @@ import { type RouteRecordRaw } from 'vue-router'
 import SidebarItemLink from './SidebarItemLink.vue'
 // import { useTheme } from '@/hooks/useTheme'
 import { useAppStore } from '@/store/modules/app'
+import { useUserStore } from '@/store/modules/user'
 
 interface Props {
   item: RouteRecordRaw
@@ -19,6 +20,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const appStore = useAppStore()
+const { userInfo } = useUserStore()
 
 /** Whether to always show the root menu */
 const alwaysShowRootMenu = computed(() => props.item.meta?.alwaysShow)
@@ -88,7 +90,11 @@ onUnmounted(() => {
 
 <template>
   <!-- <div class="shadow-sm shadow-[#3784a9]" :class="{ 'sidebar-item': activeThemeName !== 'dark' }"> -->
-  <div class="sidebar-item" ref="sidebarItemRef">
+  <div
+    class="sidebar-item py-1"
+    ref="sidebarItemRef"
+    v-if="!item?.meta?.roles || item?.meta?.roles.includes(userInfo.role)"
+  >
     <template v-if="!alwaysShowRootMenu && theOnlyOneChild && !theOnlyOneChild.children">
       <SidebarItemLink v-if="theOnlyOneChild.meta" :to="resolvePath(theOnlyOneChild.path)">
         <el-menu-item
@@ -114,7 +120,7 @@ onUnmounted(() => {
     </template>
     <el-sub-menu v-else :index="resolvePath(props.item.path)" teleported>
       <template #title>
-        <div class="flex flex-row items-center">
+        <div class="flex flex-row items-center" @mouseover="handleMouseOver" @mouseout="handleMouseOut">
           <SvgIcon
             v-if="props.item.meta?.svgIcon"
             :name="

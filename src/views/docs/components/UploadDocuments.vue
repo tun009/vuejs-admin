@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { BusinessTypeEnum, businessTypeOptions } from '@/@types/pages/docs/documents'
 import { AddDocumentRequestData } from '@/@types/pages/docs/documents/services/DocumentRequest'
-import { addDocument } from '@/api/docs/document'
+import { BranchModel } from '@/@types/pages/login'
+import { addDocument, getBranches } from '@/api/docs/document'
 import EIBInput from '@/components/common/EIBInput.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
 import EIBUpload from '@/components/common/EIBUpload.vue'
-import { MOCK_SOLS } from '@/mocks/user'
+import { mappingBranches } from '@/utils/common'
 import { warningNotification } from '@/utils/notification'
 import { requireRule } from '@/utils/validate'
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus'
-import { computed, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 interface Props {
@@ -27,6 +28,9 @@ const emits = defineEmits<Emits>()
 const { t } = useI18n()
 
 const files = ref<File[]>([])
+const branches = ref<BranchModel[]>([])
+const addDocumentFormRef = ref<FormInstance | null>(null)
+const loading = ref(false)
 
 const addFiles = (fileList: FileList) => {
   files.value.push(...Array.from(fileList))
@@ -55,9 +59,6 @@ const localModelValue = computed({
   }
 })
 
-const addDocumentFormRef = ref<FormInstance | null>(null)
-const loading = ref(false)
-
 const addDocumentFormData: AddDocumentRequestData = reactive({
   bizType: BusinessTypeEnum.LC_OUT,
   cif: '',
@@ -79,11 +80,11 @@ const handleAddDocument = () => {
   addDocumentFormRef.value?.validate(async (valid: boolean, fields) => {
     try {
       if (valid) {
-        loading.value = true
         if (!files.value.length) {
           warningNotification(t('notification.description.emptyFiles'))
           return
         }
+        loading.value = true
 
         const formData = new FormData()
         for (const file of files.value) {
@@ -115,6 +116,19 @@ const handleAddDocument = () => {
     }
   })
 }
+
+const handleGetBranches = async () => {
+  try {
+    const { data } = await getBranches()
+    branches.value = data
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+onMounted(() => {
+  handleGetBranches()
+})
 </script>
 
 <template>
@@ -129,8 +143,8 @@ const handleAddDocument = () => {
       <div>
         <div class="grid grid-cols-2 gap-x-4">
           <EIBInput
-            :label="$t('docs.document.documentName')"
-            :placeholder="$t('docs.document.enterName')"
+            label="docs.document.documentName"
+            placeholder="docs.document.enterName"
             name="name"
             v-model="addDocumentFormData.name"
             required
@@ -141,14 +155,14 @@ const handleAddDocument = () => {
             v-model="addDocumentFormData.bizType"
             name="bizType"
             :options="businessTypeOptions.slice(1, 2)"
-            :label="$t('docs.document.businessType')"
+            label="docs.document.businessType"
             is-row
             default-first-option
           />
 
           <EIBInput
-            :label="$t('docs.document.customerName')"
-            :placeholder="$t('docs.document.enterName')"
+            label="docs.document.customerName"
+            placeholder="docs.document.enterName"
             name="customerName"
             v-model="addDocumentFormData.customerName"
             required
@@ -157,14 +171,14 @@ const handleAddDocument = () => {
           <EIBSelect
             v-model="addDocumentFormData.branchId"
             name="branchId"
-            :options="MOCK_SOLS"
-            :label="$t('docs.document.selectSOL')"
+            :options="mappingBranches(branches)"
+            label="docs.document.selectSOL"
             is-row
           />
 
           <EIBInput
-            :label="$t('docs.document.totalAmount')"
-            :placeholder="$t('docs.document.totalAmount')"
+            label="docs.document.totalAmount"
+            placeholder="docs.document.totalAmount"
             name="amountClaimed"
             v-model="addDocumentFormData.amountClaimed"
             required
@@ -172,8 +186,8 @@ const handleAddDocument = () => {
           />
 
           <EIBInput
-            :label="$t('docs.document.cifCode')"
-            :placeholder="$t('docs.document.cifCode')"
+            label="docs.document.cifCode"
+            placeholder="docs.document.cifCode"
             name="cif"
             v-model="addDocumentFormData.cif"
             is-row

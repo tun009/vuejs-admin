@@ -1,15 +1,18 @@
 import { DocumentResultEnum } from '@/@types/pages/docs/documents'
 import {
   GetDocumentRequestModel,
+  UpdateBatchAmountRequestModel,
   UpdateDocumentRequestModel
 } from '@/@types/pages/docs/documents/services/DocumentRequest'
 import {
+  GetBranchResponseModel,
   GetBatchDetailResponseModel,
   GetCheckersResponseModel,
   GetDocumentDetailResponseModel,
   GetDocumentFileResponseModel,
   GetDocumentResponseModel,
-  GetDocumentResultsResponseModel
+  GetDocumentResultsResponseModel,
+  GetDocumentLCDetailResponseModel
 } from '@/@types/pages/docs/documents/services/DocumentResponse'
 import { request } from '@/api/service'
 
@@ -65,6 +68,28 @@ export function deleteDocumentFile(id: string | number) {
   return request<ApiResponseData<number>>({
     url: 'dossier-files/' + id,
     method: 'delete'
+  })
+}
+
+export function getBranches() {
+  return request<GetBranchResponseModel>({
+    url: 'branches',
+    method: 'get'
+  })
+}
+
+export function getLCDetail(id: number | string) {
+  return request<GetDocumentLCDetailResponseModel>({
+    url: 'batches/details/' + id,
+    method: 'get'
+  })
+}
+
+export function updateBatchAmount(data: UpdateBatchAmountRequestModel) {
+  return request<GetDocumentLCDetailResponseModel>({
+    url: 'batches/update-amount',
+    method: 'put',
+    data
   })
 }
 

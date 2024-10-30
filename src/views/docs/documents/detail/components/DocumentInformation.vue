@@ -4,26 +4,27 @@ import { computed, onMounted, ref } from 'vue'
 
 import ApproveProcessDocument from './ApproveProcessDocument.vue'
 
+import { DocumentStatusEnum } from '@/@types/common'
 import {
   DocumentResultModel,
   businessTypeOptions,
   documentResultListColumnConfigs,
   documentStatusOptions
 } from '@/@types/pages/docs/documents'
+import { BatchDetailModel } from '@/@types/pages/docs/documents/services/DocumentResponse'
 import { getDocumentResults } from '@/api/docs/document'
+import EIBDialog from '@/components/common/EIBDialog.vue'
+import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import Loading from '@/components/common/EIBLoading.vue'
 import EIBTable from '@/components/common/EIBTable.vue'
-import { handleComingSoon, renderLabelByValue } from '@/utils/common'
 import { PROGRESS_COLORS } from '@/constants/color'
-import EIBDrawer from '@/components/common/EIBDrawer.vue'
-import { useRoute, useRouter } from 'vue-router'
 import { COMPARE_DOCUMENT_DETAIL_PAGE } from '@/constants/router'
 import { DOCUMENT_RESULT_NAME_LIST } from '@/constants/select'
-import UpdateLCForm from './UpdateLCForm.vue'
-import EIBDialog from '@/components/common/EIBDialog.vue'
-import { BatchDetailModel } from '@/@types/pages/docs/documents/services/DocumentResponse'
-import { DocumentStatusEnum } from '@/@types/common'
+import { useUserStore } from '@/store/modules/user'
+import { handleComingSoon, renderLabelByValue } from '@/utils/common'
 import Status from '@/views/docs/components/Status.vue'
+import { useRoute, useRouter } from 'vue-router'
+import UpdateLCForm from './UpdateLCForm.vue'
 
 interface Props {
   data: BatchDetailModel
@@ -38,6 +39,7 @@ defineEmits<Emits>()
 
 const router = useRouter()
 const route = useRoute()
+const { isViewer, isMaker } = useUserStore()
 
 const status = ref(1)
 const percentage = ref<number>(0)
@@ -47,6 +49,7 @@ const openApproveProcessDrawer = ref(false)
 const dialogVisible = ref(false)
 const loadingConfirm = ref(false)
 const updateLCFormRef = ref<InstanceType<typeof UpdateLCForm>>()
+const documentId = computed(() => route.params?.id as string)
 
 const handleViewDocument = (_id: string | number) => {
   router.push(COMPARE_DOCUMENT_DETAIL_PAGE(_id))
@@ -78,13 +81,11 @@ onMounted(() => {
   }, 3000)
   handleGetDocumentResults()
 })
-
-const documentId = computed(() => route.params?.id as string)
 </script>
 
 <template>
   <EIBDialog
-    title="Cập nhập Tổng trị giá LC đã sử dụng"
+    :title="$t('docs.detail.updateLcUsed')"
     v-model="dialogVisible"
     :loading="loadingConfirm"
     @on-confirm="updateLCFormRef?.onConfirm"
@@ -99,35 +100,42 @@ const documentId = computed(() => route.params?.id as string)
     <template #header>
       <div class="card-header">
         <div class="flex flex-col gap-3">
-          <span class="text-[#005d98] dark:text-[#409eff] font-semibold text-base">Thông tin chung</span>
+          <span class="text-[#005d98] dark:text-[#409eff] font-semibold text-base">{{
+            $t('docs.detail.generalInfomation')
+          }}</span>
           <div class="flex flex-row">
             <div class="grid grid-cols-2 pl-3 gap-3 flex-[2]">
               <div class="flex flex-row gap-2">
-                <span>Loại nghiệp vụ:</span>
+                <span>{{ $t('docs.document.businessType') }}:</span>
                 <span class="c-text-value">{{ renderLabelByValue(businessTypeOptions, data?.bizType) }}</span>
               </div>
               <div class="flex flex-row gap-2">
-                <span>Tên khách hàng:</span>
+                <span>{{ $t('docs.document.customerName') }}:</span>
                 <span class="c-text-value">{{ data?.customerName }}</span>
               </div>
               <div class="flex flex-row gap-2">
-                <span>SOL:</span>
+                <span>{{ $t('docs.document.sol') }}:</span>
                 <span class="c-text-value">{{ data?.branch?.name }}</span>
               </div>
               <div class="flex flex-row gap-2">
-                <span>Mã CIF:</span>
+                <span>{{ $t('docs.document.cifCode') }}:</span>
                 <span class="c-text-value">{{ data?.cif }}</span>
               </div>
             </div>
             <div class="flex flex-row gap-2 flex-1">
-              <span>Trạng thái:</span>
+              <span>{{ $t('docs.document.status') }}:</span>
               <div v-if="data?.status === DocumentStatusEnum.CHECKED" class="flex flex-col gap-2">
-                <div>
+                <div class="flex gap-1">
                   <Status :options="documentStatusOptions" :status="data?.status" />
-                  <span class="c-text-value">bởi</span> Trần Thị B
+                  <span class="c-text-value">{{ $t('docs.document.by') }}</span> Trần Thị B
                 </div>
-                <el-button size="large" type="primary" class="w-fit text-base" @click="openApproveProcessDrawer = true"
-                  >Trình checker</el-button
+                <el-button
+                  v-if="isMaker"
+                  size="large"
+                  type="primary"
+                  class="w-fit text-base"
+                  @click="openApproveProcessDrawer = true"
+                  >{{ $t('docs.document.presentationChecker') }}</el-button
                 >
               </div>
               <div
@@ -141,16 +149,16 @@ const documentId = computed(() => route.params?.id as string)
                 "
                 class="flex flex-col gap-2"
               >
-                <div>
-                  <Status :options="documentStatusOptions" :status="data?.status" />
-                  <span class="c-text-value">bởi</span> Trần Thị B
+                <div class="flex gap-1">
+                  <Status :options="documentStatusOptions" :status="DocumentStatusEnum.CHECKED" />
+                  <span class="c-text-value">{{ $t('docs.document.by') }}</span> Trần Thị B
                 </div>
-                <div>
+                <div class="flex gap-1">
                   <Status :options="documentStatusOptions" :status="data?.status" />
-                  <span class="c-text-value">bởi</span> Nguyễn Tấn D
+                  <span class="c-text-value">{{ $t('docs.document.by') }}</span> Nguyễn Tấn D
                 </div>
               </div>
-              <div class="c-text-value">
+              <div v-else class="c-text-value">
                 <Status :options="documentStatusOptions" :status="data?.status" />
               </div>
             </div>
@@ -159,12 +167,15 @@ const documentId = computed(() => route.params?.id as string)
       </div>
     </template>
     <div class="flex flex-col gap-3">
-      <span class="text-[#005d98] dark:text-[#409eff] font-semibold text-base">Thông tin LC</span>
+      <span class="text-[#005d98] dark:text-[#409eff] font-semibold text-base">{{
+        $t('docs.detail.lcInformation')
+      }}</span>
       <div class="flex flex-row gap-8">
         <div
           class="flex-[2] relative border border-slate-200 dark:border-gray-600 rounded-md p-5 flex flex-row items-center gap-8"
         >
           <SvgIcon
+            v-if="!isViewer"
             :size="24"
             name="edit-info"
             @click.stop="dialogVisible = true"
@@ -182,47 +193,53 @@ const documentId = computed(() => route.params?.id as string)
           />
           <div class="text-gray-700 dark:text-slate-300 flex flex-col gap-1">
             <span><span class="text-2xl">0</span> / 0</span>
-            <span>Tổng trị giá LC đã sử dụng (USD) / Tổng giá trị LC</span>
+            <span>{{ $t('docs.detail.lcProgress') }}</span>
           </div>
         </div>
-        <div class="flex-[3] grid grid-cols-2 font-semibold">
+        <div class="flex-[3] grid grid-cols-2 font-bold">
           <span
-            >Số LC: <span class="c-text-value">{{ data?.docCreditNo }}</span></span
+            >{{ $t('docs.detail.lcNumber') }}: <span class="c-text-value">{{ data?.docCreditNo }}</span></span
           >
           <span
-            >Ngày lập LC: <span class="c-text-value">{{ data?.dateIssue }}</span></span
+            >{{ $t('docs.detail.createdAtLc') }}: <span class="c-text-value">{{ data?.dateIssue }}</span></span
           >
           <span
-            >Ngày hết hạn LC: <span class="c-text-value">{{ data?.expiryDate }}</span></span
+            >{{ $t('docs.detail.expirationDateLc') }}: <span class="c-text-value">{{ data?.expiryDate }}</span></span
           >
           <span
-            >Nơi hết hạn LC: <span class="c-text-value">{{ data?.expiryPlace }}</span></span
+            >{{ $t('docs.detail.expirationPositionLc') }}:
+            <span class="c-text-value">{{ data?.expiryPlace }}</span></span
           >
           <span
-            >Dung sai: <span class="c-text-value">{{ data?.tolerancePercent }}</span></span
+            >{{ $t('docs.detail.tolerance') }}: <span class="c-text-value">{{ data?.tolerancePercent }}</span></span
           >
           <span
-            >Giao hàng từng phần: <span class="c-text-value">{{ data?.partialShipments }}</span></span
+            >{{ $t('docs.detail.partialDelivery') }}:
+            <span class="c-text-value">{{ data?.partialShipments }}</span></span
           >
           <span
-            >Ngày xuất trình chứng từ: <span class="c-text-value">{{ data?.datePresentation }}</span></span
+            >{{ $t('docs.detail.presentationDateDoc') }}:
+            <span class="c-text-value">{{ data?.datePresentation }}</span></span
           >
           <span
-            >Thời hạn xuất trình chứng từ: <span class="c-text-value">{{ data?.periodPresentation }}</span></span
+            >{{ $t('docs.detail.deadlinePresentingDoc') }}:
+            <span class="c-text-value">{{ data?.periodPresentation }}</span></span
           >
         </div>
       </div>
     </div>
     <el-divider class="w-[calc(100%_+_40px)] -ml-5" />
     <div class="flex flex-col gap-3">
-      <span class="text-[#005d98] dark:text-[#409eff] font-semibold text-base">Thông tin OCR</span>
+      <span class="text-[#005d98] dark:text-[#409eff] font-semibold text-base"
+        >{{ $t('docs.detail.ocrInformation') }}:</span
+      >
       <div class="flex flex-row gap-4 items-center">
         <div v-if="!status" class="flex flex-row gap-4 items-center">
           <Loading />
-          <span>Đang xử lý</span>
+          <span>{{ $t('docs.status.processing') }}:</span>
         </div>
         <el-button :type="!status ? 'info' : 'primary'" :disabled="!status" @click="handleComingSoon">
-          Xem kết quả
+          {{ $t('docs.detail.seeResult') }}
         </el-button>
       </div>
     </div>
@@ -231,36 +248,45 @@ const documentId = computed(() => route.params?.id as string)
         <div class="flex flex-row justify-between items-center">
           <span class="text-[#005d98] dark:text-[#409eff] font-semibold text-base">Thông tin đối sánh</span>
           <el-button
-            v-if="!!status"
+            v-if="!!status && !isViewer"
             :disabled="status === 1"
             :type="status === 1 ? 'info' : 'primary'"
             class="flex flex-row items-center"
             @click.stop="handleComingSoon"
           >
             <SvgIcon name="download-inline" class="w-4 h-4 mr-2" />
-            <span>Tải kết quả</span></el-button
+            <span>{{ $t('docs.detail.downloadResult') }}</span></el-button
           >
         </div>
         <div class="flex flex-row gap-5 pl-3 items-center">
           <div class="flex-1 flex flex-col gap-3">
-            <strong>Kết quả kiểm tra</strong>
-            <p v-if="!status" class="c-text-value">Chưa có thông tin</p>
+            <strong>{{ $t('docs.detail.checkResult') }}</strong>
+            <p v-if="!status" class="c-text-value">{{ $t('docs.detail.noInformation') }}</p>
             <div
               v-else-if="status === 1"
               class="rounded-md px-3 py-2 bg-[#fff4e6] flex flex-row gap-2 items-center w-fit text-[#d9480f]"
             >
               <el-icon size="20"><WarnTriangleFilled /></el-icon>
-              <span class="text-base">Bất hợp lệ</span>
+              <span class="text-base">{{ $t('docs.status.invalid') }}</span>
             </div>
             <div v-else class="rounded-md px-3 py-2 bg-[#e6fcf5] flex flex-row gap-2 items-center w-fit text-[#099268]">
               <el-icon size="20"><CircleCheckFilled /></el-icon>
-              <span class="text-base">Hợp lệ</span>
+              <span class="text-base">{{ $t('docs.status.valid') }}</span>
             </div>
           </div>
           <div v-if="!!status" class="flex flex-col gap-2 flex-[2]">
-            <span><span class="font-semibold mr-2">Thời gian giao hàng so với yêu cầu: </span><span>Hợp lệ</span></span>
-            <span><span class="font-semibold mr-2">Trong hiệu lực LC: </span><span>Hợp lệ</span></span>
-            <span><span class="font-semibold mr-2">Trong thời hạn xuất trình chứng từ: </span><span>Hợp lệ</span></span>
+            <span
+              ><span class="font-semibold mr-2">{{ $t('docs.detail.deliveryTimeRequest') }}: </span
+              ><span>{{ $t('docs.status.valid') }}</span></span
+            >
+            <span
+              ><span class="font-semibold mr-2">{{ $t('docs.detail.inLcEffect') }}: </span
+              ><span>{{ $t('docs.status.valid') }}</span></span
+            >
+            <span
+              ><span class="font-semibold mr-2">{{ $t('docs.detail.periodPresentationDoc') }}: </span
+              ><span>{{ $t('docs.status.valid') }}</span></span
+            >
           </div>
         </div>
         <EIBTable
@@ -276,7 +302,7 @@ const documentId = computed(() => route.params?.id as string)
           <template #actions>
             <div class="flex flex-row gap-2">
               <el-button type="primary" :icon="View" @click="() => handleViewDocument(documentId)">
-                Chi tiết
+                {{ $t('docs.detail.detail') }}
               </el-button>
             </div>
           </template>
@@ -293,16 +319,13 @@ const documentId = computed(() => route.params?.id as string)
             >
               {{ status === 1 ? '8/9' : '8/8' }}
             </span>
-          </template>
-          <template #stt="{ index }">
-            <span>{{ index + 1 }}</span>
           </template></EIBTable
         >
       </div>
     </template>
   </el-card>
 
-  <EIBDrawer v-model="openApproveProcessDrawer" title="Trình checker phê duyệt bộ chứng từ">
+  <EIBDrawer v-model="openApproveProcessDrawer" :title="$t('docs.detail.presentationChecker')">
     <template #default>
       <ApproveProcessDocument
         ref="updateUserFormRef"

@@ -1,7 +1,7 @@
 import router from '@/router'
 import { useUserStoreHook } from '@/store/modules/user'
 import { usePermissionStoreHook } from '@/store/modules/permission'
-import { ElMessage } from 'element-plus'
+// import { ElMessage } from 'element-plus'
 import { setRouteChange } from '@/hooks/useRouteListener'
 import { useTitle } from '@/hooks/useTitle'
 import { getToken } from '@/utils/cache/cookies'
@@ -10,7 +10,7 @@ import isWhiteList from '@/config/white-list'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import i18n from '@/locales/index'
-import { LOGIN_PAGE, MAIN_PAGE } from '@/constants/router'
+import { LOGIN_PAGE, MAIN_PAGE, _403_PAGE } from '@/constants/router'
 
 const { setTitle } = useTitle()
 NProgress.configure({ showSpinner: false })
@@ -34,6 +34,8 @@ router.beforeEach(async (to, _from, next) => {
     return next({ path: MAIN_PAGE })
   }
 
+  if (to?.meta?.roles && !to?.meta?.roles.includes(userStore?.roles?.[0])) return next(_403_PAGE)
+
   // If the user has obtained his permission role
   if (userStore.roles.length !== 0) return next()
 
@@ -49,10 +51,10 @@ router.beforeEach(async (to, _from, next) => {
     // Make sure adding routes is complete
     // Set replace: true, so navigation will not leave history
     next({ ...to, replace: true })
-  } catch (err: any) {
+  } catch {
     // If any error occurs during the process, reset the Token directly and redirect to the login page
     userStore.resetToken()
-    ElMessage.error(err.message || 'Error in route guard process')
+    // ElMessage.error(err.message || 'Error in route guard process')
     next(LOGIN_PAGE)
   }
 })

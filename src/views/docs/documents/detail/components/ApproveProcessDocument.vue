@@ -6,6 +6,7 @@ import { ApproveProcessDocumentModel, approveProcessDocumentColumnConfigs } from
 import { getCheckers } from '@/api/docs/document'
 import EIBTable from '@/components/common/EIBTable.vue'
 import { warningNotification } from '@/utils/notification'
+import { useI18n } from 'vue-i18n'
 
 interface Emits {
   (event: 'close'): void
@@ -17,6 +18,8 @@ interface Exposes {
 }
 
 const emits = defineEmits<Emits>()
+
+const { t } = useI18n()
 
 const radio = ref()
 const loading = ref(false)
@@ -43,12 +46,12 @@ const handleClose = () => {
 
 const handleSelectChecker = () => {
   if (!radio.value) {
-    warningNotification('Vui lòng chọn checker')
+    warningNotification(t('notification.description.pleaseChooseChecker'))
     return
   }
   loading.value = true
   setTimeout(() => {
-    ElMessage.success('Checker được chọn: ' + radio.value.toString())
+    ElMessage.success(t('notification.description.checkerSelected', { name: radio.value.toString() }))
     loading.value = false
     radio.value = undefined
     emits('success')
@@ -67,7 +70,7 @@ defineExpose<Exposes>({
 
 <template>
   <div class="flex flex-col gap-5">
-    <span>Danh sách checker</span>
+    <span>{{ $t('docs.detail.checkerList') }}</span>
     <el-radio-group v-model="radio" class="w-full">
       <EIBTable
         ref="checkerTableRef"
@@ -77,9 +80,6 @@ defineExpose<Exposes>({
         :columnConfigs="approveProcessDocumentColumnConfigs"
         :data="tableData"
       >
-        <template #stt="{ index }">
-          <span>{{ index + 1 }}</span>
-        </template>
         <template #select="{ row }">
           <el-radio :value="row.id" />
         </template>
@@ -94,11 +94,7 @@ defineExpose<Exposes>({
     </el-radio-group>
   </div>
   <div>
-    <span class="underline">Lưu ý:</span
-    ><span>
-      sau khi trình checker thì Hệ thống sẽ ghi nhận bạn đã hoàn tất việc kiểm tra bộ chứng từ, chuyển sang trạng thái
-      “Chờ phê duyệt” và bạn không thể chỉnh sửa được nữa</span
-    >
+    <span class="underline">{{ $t('docs.detail.note') }}:</span><span> {{ $t('docs.detail.noteDes') }}</span>
   </div>
   <div>
     <el-button :loading="loading" @click.prevent="handleSelectChecker" type="primary">{{

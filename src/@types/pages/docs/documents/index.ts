@@ -101,7 +101,7 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
   {
     field: 'branchName',
     label: 'docs.document.sol',
-    minWidth: 150
+    minWidth: 250
   },
   {
     field: 'cif',
@@ -448,4 +448,50 @@ export interface FilterDocumentModel {
     isAsc: boolean
     column: string
   }[]
+}
+
+// compare history mock
+export interface CompareHistoryModel {
+  date: string
+  timeList: CompareHistoryTimeModel[]
+}
+
+export interface CompareHistoryTimeModel {
+  time: string
+  name: string
+  role: RoleEnum
+  actionList: CompareHistoryActionModel[]
+}
+
+export interface CompareHistoryActionModel {
+  actionName: string
+  beforeUpdate?: CompareHistoryActionUpdateModel
+  afterUpdate?: CompareHistoryActionUpdateModel
+  isConfirm?: boolean
+}
+
+export interface CompareHistoryActionUpdateModel {
+  contents?: string[]
+  isComplied?: boolean
+}
+
+export interface DocumentLCDetailModel {
+  batchId: number
+  customerName: string
+  branchCode: string
+  cif: string
+  status: DocumentStatusEnum
+  checkBy: string
+  approveBy: string
+  amountClaimed: number
+  totalAmount: number
+  currency: string
+  docCreditNo: string
+  dateIssue: string
+  expiryDate: string
+  expiryPlace: string
+  tolerancePercent: string
+  partialShipments: string
+  periodPresentation: string
+  datePresentation: string
 }

@@ -19,3 +19,8 @@ export interface UpdateDocumentRequestModel {
   cif?: string
   customerName?: string
 }
+
+export interface UpdateBatchAmountRequestModel {
+  batchId: number
+  amountClaimed: number
+}

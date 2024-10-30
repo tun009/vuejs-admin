@@ -4,6 +4,7 @@ import EIBInput from '@/components/common/EIBInput.vue'
 import { DOCUMENT_DETAIL_PAGE } from '@/constants/router'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 
 interface Emits {
@@ -19,6 +20,7 @@ const emits = defineEmits<Emits>()
 
 const router = useRouter()
 const route = useRoute()
+const { t } = useI18n()
 
 const compareRejectRef = ref<FormInstance | null>()
 const compareRejectFormData: CompareRejectFormModel = reactive({
@@ -34,7 +36,7 @@ const onConfirm = () => {
     if (valid) {
       emits('update:loading', true)
       setTimeout(() => {
-        ElMessage.success('Thành công!')
+        ElMessage.success(t('notification.description.rejectSuccess'))
         emits('update:loading', false)
         emits('update:visible', false)
         router.push(DOCUMENT_DETAIL_PAGE(route.params?.id as string))
@@ -52,7 +54,7 @@ defineExpose<Exposes>({
 
 <template>
   <div class="flex flex-col gap-4">
-    <p>Sau khi nhấn vào nút “Xác nhận”, hệ thống ghi nhận việc “Từ chối” bộ chứng từ, kết thúc giao dịch xử lý</p>
+    <p>{{ $t('docs.compare.compareRejectDes') }}</p>
     <div class="flex flex-col gap-2">
       <el-form
         ref="compareRejectRef"
@@ -61,7 +63,12 @@ defineExpose<Exposes>({
         @keyup.enter="onConfirm"
         class="flex flex-col gap-1"
       >
-        <EIBInput v-model="compareRejectFormData.reason" name="reason" label="Lý do" placeholder="Nhập lý do" />
+        <EIBInput
+          v-model="compareRejectFormData.reason"
+          name="reason"
+          label="docs.compare.reason"
+          placeholder="docs.compare.enterReason"
+        />
       </el-form>
     </div>
   </div>

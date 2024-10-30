@@ -43,7 +43,7 @@ const updateValue = (value: string) => {
 
 <template>
   <div
-    class="flex flex-col mb-2 text-sm input-component w-full"
+    class="flex flex-col mb-2 text-sm w-full"
     :class="{
       '!flex-row justify-center gap-4': isRow,
       '!mb-0': hiddenError
@@ -63,7 +63,7 @@ const updateValue = (value: string) => {
         $t('base.input.limit', { length: modelValue.toString().length, maxLength: maxLength })
       }}</span>
     </div>
-    <span v-if="readonly" class="text-[16px] leading-[24px] font-normal">{{ modelValue }}</span>
+    <span v-if="readonly" class="text-sm leading-[24px] font-normal">{{ modelValue }}</span>
     <el-form-item :prop="name" v-else class="w-full" :class="{ '!mb-0': hiddenError }">
       <el-input
         v-bind="props"

@@ -5,6 +5,7 @@ interface Props {
   title?: string
   modelValue: boolean
   loading?: boolean
+  type?: 'default' | 'text' | 'success' | 'warning' | 'info' | 'primary' | 'danger'
 }
 
 interface Emits {
@@ -13,7 +14,8 @@ interface Emits {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  title: 'Xác nhận'
+  title: 'Xác nhận',
+  type: 'primary'
 })
 const emits = defineEmits<Emits>()
 
@@ -31,9 +33,15 @@ const localModelValue = computed({
   <el-dialog v-model="localModelValue" :title="title" width="500">
     <slot />
     <template #footer>
-      <div class="dialog-footer">
-        <el-button @click="localModelValue = false">Đóng</el-button>
-        <el-button type="primary" @click="$emit('on-confirm')" :loading="loading"> Xác nhận </el-button>
+      <div class="flex flex-row items-center justify-between">
+        <slot name="footer-left" />
+        <div class="ml-auto">
+          <slot name="footer-right" />
+          <el-button @click="localModelValue = false">Đóng</el-button>
+          <el-button :type="type" plain @click="$emit('on-confirm')" :loading="loading" :disabled="loading">
+            Xác nhận
+          </el-button>
+        </div>
       </div>
     </template>
   </el-dialog>

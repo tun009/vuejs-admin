@@ -15,7 +15,7 @@ import Sidebar from '../Sidebar/index.vue'
 // import LanguageSwitch from '@/components/LanguageSwitch/index.vue'
 import { useDevice } from '@/hooks/useDevice'
 import { useLayoutMode } from '@/hooks/useLayoutMode'
-import { LOGIN_PAGE, PROFILE_PAGE } from '@/constants/router'
+import { PROFILE_PAGE } from '@/constants/router'
 
 const { isMobile } = useDevice()
 const { isTop } = useLayoutMode()
@@ -33,7 +33,6 @@ const userStore = useUserStore()
 /** Sign out */
 const logout = () => {
   userStore.logout()
-  router.push(LOGIN_PAGE)
 }
 
 /** Profile */

@@ -1,11 +1,11 @@
 import { LoginFormModel, UserInfoModel } from '@/@types/pages/login'
+import { RoleEnum } from '@/@types/pages/users'
 import { getUserInfoApi, loginApi } from '@/api/login'
-import { LOGIN_PAGE } from '@/constants/router'
-import router, { resetRouter } from '@/router'
+import { resetRouter } from '@/router'
 import store from '@/store'
 import { getToken, removeToken, setToken } from '@/utils/cache/cookies'
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useSettingsStore } from './settings'
 import { useTagsViewStore } from './tags-view'
 
@@ -54,7 +54,6 @@ export const useUserStore = defineStore('user', () => {
     roles.value = []
     resetRouter()
     _resetTagsView()
-    if (router.currentRoute.value.path !== LOGIN_PAGE) return
     location.reload()
   }
   /** Reset Token */
@@ -69,7 +68,26 @@ export const useUserStore = defineStore('user', () => {
     userInfo.value = data
   }
 
-  return { token, roles, userInfo, login, getInfo, changeRoles, logout, resetToken, setUserInfo }
+  const isAdmin = computed(() => userInfo.value.role === RoleEnum.ADMIN)
+  const isChecker = computed(() => userInfo.value.role === RoleEnum.CHECKER)
+  const isMaker = computed(() => userInfo.value.role === RoleEnum.MAKER)
+  const isViewer = computed(() => userInfo.value.role === RoleEnum.VIEWER)
+
+  return {
+    token,
+    roles,
+    userInfo,
+    login,
+    getInfo,
+    changeRoles,
+    logout,
+    resetToken,
+    setUserInfo,
+    isAdmin,
+    isChecker,
+    isMaker,
+    isViewer
+  }
 })
 
 /** For use outside of setup */
