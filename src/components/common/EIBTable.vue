@@ -106,7 +106,14 @@ defineExpose<Exposes>({
       <caption>
         Design by Viettel IDP
       </caption>
-      <el-table-column v-if="!hiddenChecked" fixed type="selection" :selectable="selectable" width="40" />
+      <el-table-column
+        v-if="!hiddenChecked"
+        class-name="action-row"
+        fixed
+        type="selection"
+        :selectable="selectable"
+        width="40"
+      />
       <el-table-column
         v-for="column in columnConfigs"
         :min-width="column?.minWidth"
@@ -115,6 +122,7 @@ defineExpose<Exposes>({
         :key="column.field"
         :prop="column.field"
         :label="locales ? $t(column.label) : column.label"
+        :class-name="column.field === 'actions' ? 'action-row' : ''"
       >
         <template v-if="!column?.columns" v-slot:default="scope">
           <slot :name="column.field" :column="column" :row="scope.row" :index="scope.$index" class="cursor-pointer">
@@ -182,7 +190,7 @@ defineExpose<Exposes>({
   </div>
 </template>
 
-<style lang="css">
+<style lang="scss">
 .el-table tr th {
   background-color: #005d98 !important;
   color: white;
@@ -203,6 +211,24 @@ defineExpose<Exposes>({
 
 .el-scrollbar__bar.is-horizontal {
   height: 10px !important;
+}
+
+td.action-row {
+  padding: 0 !important;
+
+  .cell {
+    padding: 0 !important;
+    min-height: 63px !important;
+
+    > :first-child {
+      height: 63px !important;
+      padding-left: 12px;
+      padding-right: 12px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+  }
 }
 </style>
 

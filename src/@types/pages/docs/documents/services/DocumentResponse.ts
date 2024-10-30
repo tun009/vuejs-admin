@@ -3,6 +3,7 @@ import {
   ApproveProcessDocumentModel,
   BusinessTypeEnum,
   DocumentFileModel,
+  DocumentLCDetailModel,
   DocumentModel,
   DocumentResultModel,
   ProcessingStepEnum
@@ -19,6 +20,10 @@ export type GetDocumentFileResponseModel = ApiResponseData<DocumentFileModel[]>
 export type GetDocumentResultsResponseModel = BaseListResponseModel<DocumentResultModel>
 
 export type GetCheckersResponseModel = BaseListResponseModel<ApproveProcessDocumentModel>
+
+export type GetBranchResponseModel = ApiResponseData<BranchModel[]>
+
+export type GetDocumentLCDetailResponseModel = ApiResponseData<DocumentLCDetailModel>
 
 export interface BatchDetailModel {
   id: number

@@ -29,7 +29,7 @@ const updateValue = (value: string) => {
 
 <template>
   <div
-    class="flex flex-col mb-2 text-sm input-component w-full"
+    class="flex flex-col mb-2 text-sm w-full"
     :class="{
       '!flex-row justify-center gap-4': isRow,
       '!mb-0': hiddenError

@@ -7,8 +7,10 @@
 import { sanitizeString } from '@/utils/common'
 
 interface Props {
-  html: string
+  html?: string
 }
 
-defineProps<Props>()
+withDefaults(defineProps<Props>(), {
+  html: ''
+})
 </script>

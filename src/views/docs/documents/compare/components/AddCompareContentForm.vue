@@ -3,6 +3,7 @@ import { CompareContentFormModel, documentResultRuleOptions } from '@/@types/pag
 import EIBSelect from '@/components/common/EIBSelect.vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 interface Emits {
   (event: 'update:loading', value: boolean): void
@@ -14,6 +15,8 @@ interface Exposes {
 }
 
 const emits = defineEmits<Emits>()
+
+const { t } = useI18n()
 
 const compareContentRef = ref<FormInstance | null>()
 const compareContentFormData: CompareContentFormModel = reactive({
@@ -29,7 +32,7 @@ const onConfirm = () => {
     if (valid) {
       emits('update:loading', true)
       setTimeout(() => {
-        ElMessage.success('Thành công!')
+        ElMessage.success(t('notification.description.createSuccess'))
         emits('update:loading', false)
         emits('update:visible', false)
       }, 2000)
@@ -58,7 +61,7 @@ defineExpose<Exposes>({
           v-model="compareContentFormData.field"
           :options="documentResultRuleOptions"
           name="field"
-          label="Chọn nội dung trường 47A cần bổ sung"
+          label="docs.compare.chooseContent"
         />
       </el-form>
     </div>

@@ -60,6 +60,7 @@ watch(
           custom-class="w-[300px]"
           placeholder="Tìm kiếm nội dung"
           :prefix-icon="Search"
+          hidden-error
         />
         <EIBSingleFilter
           v-model="filterValue.documentType"
@@ -110,10 +111,3 @@ watch(
     </template>
   </EIBDrawer>
 </template>
-
-<style lang="css">
-.rules-page .el-form-item,
-.rules-page .input-component {
-  margin-bottom: 0px;
-}
-</style>

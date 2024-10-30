@@ -47,9 +47,9 @@ defineExpose<Exposes>({
 <template>
   <div class="flex flex-col gap-4">
     <div class="grid grid-cols-3 gap-x-3 gap-y-2">
-      <span class="col-span-2">Tổng trị giá LC:</span>
+      <span class="col-span-2">{{ $t('docs.detail.totalLc') }}:</span>
       <span>110,000</span>
-      <span class="col-span-2">Tổng trị giá LC đã sử dụng hiện tại:</span>
+      <span class="col-span-2">{{ $t('docs.detail.totalLcUsed') }}:</span>
       <span>0</span>
     </div>
     <div class="flex flex-col gap-2">
@@ -64,8 +64,8 @@ defineExpose<Exposes>({
           v-model="updateLCFormData.amount"
           name="amount"
           type="number"
-          label="Số tiền"
-          placeholder="Nhập lý do"
+          label="docs.detail.amount"
+          placeholder="docs.detail.enterReason"
         />
       </el-form>
     </div>

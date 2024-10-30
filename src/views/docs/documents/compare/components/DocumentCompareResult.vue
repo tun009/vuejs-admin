@@ -1,14 +1,15 @@
 <script lang="ts" setup>
+import SafeHtmlRenderer from '@/components/SafeHtmlRenderer.vue'
 import EIBDialog from '@/components/common/EIBDialog.vue'
 import EIBList from '@/components/common/EIBList.vue'
 import EIBTable from '@/components/common/EIBTable.vue'
 import { DocumentCompareResultModel } from '@/mocks/document'
+import { useUserStore } from '@/store/modules/user'
 import { Plus } from '@element-plus/icons-vue'
 import { debounce } from 'lodash-es'
 import { ref } from 'vue'
 import AddCompareContentForm from './AddCompareContentForm.vue'
 import MultipleLaguageResult from './MultipleLaguageResult.vue'
-import SafeHtmlRenderer from '@/components/SafeHtmlRenderer.vue'
 
 interface Props {
   conditionSelect: number
@@ -17,10 +18,13 @@ interface Props {
 
 interface Emits {
   (event: 'update:condition', condition: number): void
+  (event: 'scroll-by-index', index: number): void
 }
 
 const props = defineProps<Props>()
 const emits = defineEmits<Emits>()
+
+const { isViewer } = useUserStore()
 
 const dialogVisible = ref(false)
 const loadingConfirm = ref(false)
@@ -51,7 +55,7 @@ const checkElementsInView = () => {
 
 <template>
   <EIBDialog
-    title="Bổ sung nội dung đối sánh"
+    :title="$t('docs.compare.addCompareContent')"
     v-model="dialogVisible"
     :loading="loadingConfirm"
     @on-confirm="addCompareContentFormRef?.onConfirm"
@@ -69,10 +73,11 @@ const checkElementsInView = () => {
   >
     <div v-for="(compareResult, index) in configs" :key="index" class="relative" :id="`document-compare-${index}`">
       <div
-        class="c-text-title-primary sticky top-0 py-2 dark:bg-[#121212] bg-white shadow-transparent z-[5] flex justify-between"
+        @click.stop="() => emits('scroll-by-index', index)"
+        class="c-text-title-primary cursor-pointer sticky top-0 py-2 dark:bg-[#121212] bg-white shadow-transparent z-[5] flex justify-between"
       >
         <span>{{ index + 1 }}. {{ compareResult?.label }}</span>
-        <el-button :icon="Plus" color="#005d98" plain @click="dialogVisible = true" />
+        <el-button v-if="!isViewer" :icon="Plus" color="#005d98" plain @click="dialogVisible = true" />
       </div>
       <div class="w-full h-[1px] bg-[#ebebeb] mt-2 mb-4" />
       <div v-for="(child, idx) in compareResult?.childrens" :key="idx">

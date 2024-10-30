@@ -4,12 +4,16 @@ import {
   documentResultRuleOptions,
   documentResultValidOptions
 } from '@/@types/pages/docs/documents'
+import EIBDialog from '@/components/common/EIBDialog.vue'
 import EIBInput from '@/components/common/EIBInput.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
+import { useUserStore } from '@/store/modules/user'
 import { handleComingSoon } from '@/utils/common'
+import { InfoFilled } from '@element-plus/icons-vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import SaveDictionaryForm from './SaveDictionaryForm.vue'
 
 interface Props {
   result: DocumentResultDataModel
@@ -18,6 +22,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const { t } = useI18n()
+const { isViewer } = useUserStore()
 
 const defaultValue = {
   reasonEn: '',
@@ -29,8 +34,11 @@ const defaultValue = {
 const isEdit = ref(false)
 const loading = ref(false)
 const loadingRule = ref(false)
+const dialogVisible = ref(false)
+const loadingConfirm = ref(false)
 const documentResultFormRef = ref<FormInstance | null>()
 const documentResultFormData = ref<DocumentResultDataModel>({ ...defaultValue })
+const saveDictionaryFormRef = ref<InstanceType<typeof SaveDictionaryForm>>()
 
 const documentResultFormRules: FormRules = {
   status: [],
@@ -62,35 +70,39 @@ const handleUpdateCompareResult = () => {
     }
   })
 }
-
-const handleSaveRule = () => {
-  loadingRule.value = true
-  setTimeout(() => {
-    loadingRule.value = false
-    ElMessage({
-      showClose: true,
-      type: 'success',
-      message: t('notification.description.saveSuccess')
-    })
-  }, 3000)
-}
 </script>
 
 <template>
+  <EIBDialog
+    :title="$t('docs.compare.editInvalidCategory')"
+    v-model="dialogVisible"
+    :loading="loadingConfirm"
+    @on-confirm="saveDictionaryFormRef?.onConfirm"
+    type="danger"
+  >
+    <SaveDictionaryForm
+      ref="saveDictionaryFormRef"
+      @update:loading="(loading: boolean) => (loadingConfirm = loading)"
+      @update:visible="(visible: boolean) => (dialogVisible = visible)"
+    />
+  </EIBDialog>
   <div class="mt-5">
     <div v-if="!isEdit">
       <div class="flex flex-row gap-2 items-center">
-        <span class="c-text-des">Kết quả</span>
-        <SvgIcon @click="isEdit = !isEdit" class="w-4 h-4 cursor-pointer" name="edit-pen" />
+        <span class="c-text-des">{{ $t('docs.compare.result') }}</span>
+        <SvgIcon v-if="!isViewer" @click="isEdit = !isEdit" class="w-4 h-4 cursor-pointer" name="edit-pen" />
       </div>
       <div class="flex flex-row gap-10">
         <div class="flex flex-col gap-1 flex-1">
-          <span class="c-text-des">Anh</span>
-          <span v-if="documentResultFormData.status === 'valid'" class="c-text-success">Complied</span>
+          <span class="c-text-des">{{ $t('docs.compare.english') }}</span>
+          <span v-if="documentResultFormData.status === 'valid'" class="c-text-success">{{
+            $t('docs.compare.complied')
+          }}</span>
           <div v-else-if="documentResultFormData.status === 'invalid'" class="flex flex-row items-center gap-2">
             <div class="h-1 w-1 bg-[#e8590c] rounded-sm" />
             <span class="text-[#e8590c]"
-              >Discrepancy{{ documentResultFormData?.reasonEn ? ': ' + documentResultFormData?.reasonEn : '' }}</span
+              >{{ $t('docs.compare.discrepancy')
+              }}{{ documentResultFormData?.reasonEn ? ': ' + documentResultFormData?.reasonEn : '' }}</span
             >
             <el-tooltip placement="top" v-if="documentResultFormData?.rule">
               <el-icon :size="18" class="cursor-pointer ml-1"><InfoFilled /></el-icon>
@@ -99,18 +111,21 @@ const handleSaveRule = () => {
               </template>
             </el-tooltip>
           </div>
-          <span v-else>N/A</span>
+          <span v-else>{{ $t('docs.compare.na') }}</span>
         </div>
         <div class="flex flex-col gap-1 flex-1">
-          <span class="c-text-des">Việt</span>
-          <span v-if="documentResultFormData.status === 'valid'" class="c-text-success">Hợp lệ</span>
+          <span class="c-text-des">{{ $t('docs.compare.vietnamese') }}</span>
+          <span v-if="documentResultFormData.status === 'valid'" class="c-text-success">{{
+            $t('docs.status.valid')
+          }}</span>
           <div v-else-if="documentResultFormData.status === 'invalid'" class="flex flex-row items-center gap-2">
             <div class="h-1 w-1 bg-[#e8590c] rounded-sm" />
             <span class="text-[#e8590c]"
-              >Bất hợp lệ{{ documentResultFormData?.reasonVi ? ': ' + documentResultFormData?.reasonVi : '' }}</span
+              >{{ $t('docs.status.invalid')
+              }}{{ documentResultFormData?.reasonVi ? ': ' + documentResultFormData?.reasonVi : '' }}</span
             >
           </div>
-          <span v-else>N/A</span>
+          <span v-else>{{ $t('docs.compare.na') }}</span>
         </div>
       </div>
     </div>
@@ -126,16 +141,16 @@ const handleSaveRule = () => {
         class="flex flex-col gap-1"
       >
         <div class="flex flex-col gap-1">
-          <span class="c-text-des">Chỉnh sửa thông tin</span>
+          <span class="c-text-des">{{ $t('docs.compare.editInformation') }}</span>
           <div class="flex flex-row items-center">
-            <span class="min-w-48 text-sm">Kết quả kiểm tra</span>
+            <span class="min-w-48 text-sm">{{ $t('docs.compare.checkResult') }}</span>
             <EIBSelect :options="documentResultValidOptions" v-model="documentResultFormData.status" hidden-error />
           </div>
         </div>
         <div class="flex flex-col gap-1">
-          <span class="c-text-des">Tiếng Anh</span>
+          <span class="c-text-des">{{ $t('docs.compare.english_1') }}</span>
           <div class="flex flex-row items-center">
-            <span class="min-w-48 text-sm">Lý do</span>
+            <span class="min-w-48 text-sm">{{ $t('docs.compare.reason') }}</span>
             <EIBInput name="reasonEn" v-model="documentResultFormData.reasonEn" hidden-error />
             <el-button
               color="#005d98"
@@ -144,19 +159,19 @@ const handleSaveRule = () => {
               :loading="loadingRule"
               :disabled="documentResultFormData.reasonEn === (result.reasonEn ?? '')"
               :type="documentResultFormData.reasonEn === (result.reasonEn ?? '') ? 'info' : 'default'"
-              @click="handleSaveRule"
-              >Lưu từ điển</el-button
+              @click="dialogVisible = true"
+              >{{ $t('docs.compare.saveDictionary') }}</el-button
             >
           </div>
           <div class="flex flex-row items-center">
-            <span class="min-w-48 text-sm">Dẫn chứng Rule</span>
+            <span class="min-w-48 text-sm">{{ $t('docs.compare.ruleEvidence') }}</span>
             <EIBSelect :options="documentResultRuleOptions" v-model="documentResultFormData.rule" hidden-error />
           </div>
         </div>
         <div class="flex flex-col gap-1">
-          <span class="c-text-des">Tiếng Việt</span>
+          <span class="c-text-des">{{ $t('docs.compare.vietnamese_1') }}</span>
           <div class="flex flex-row items-center">
-            <span class="min-w-48 text-sm">Lý do</span>
+            <span class="min-w-48 text-sm">{{ $t('docs.compare.reason') }}</span>
             <EIBInput name="reasonVi" v-model="documentResultFormData.reasonVi" hidden-error />
           </div>
         </div>

@@ -139,7 +139,6 @@ const resetFieldActive = () => {
   })
 }
 onMounted(() => {
-  console.log(route.params)
   getDossiersList(Number(route?.params?.batchId))
   getDossierById(Number(route?.params?.dossierDocId))
 })

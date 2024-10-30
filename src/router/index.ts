@@ -63,7 +63,8 @@ export const constantRoutes: RouteRecordRaw[] = [
     path: LOGIN_PAGE,
     component: () => import('@/views/login/index.vue'),
     meta: {
-      hidden: true
+      hidden: true,
+      title: 'login'
     }
   },
 
@@ -101,7 +102,8 @@ export const constantRoutes: RouteRecordRaw[] = [
     redirect: DOCS_PAGE + DOCUMENT_PAGE,
     meta: {
       title: 'document',
-      svgIcon: 'ic-model-group'
+      svgIcon: 'ic-model-group',
+      alwaysShow: true
     },
     children: [
       {
@@ -121,7 +123,7 @@ export const constantRoutes: RouteRecordRaw[] = [
         meta: {
           title: 'settings',
           keepAlive: true,
-          roles: [RoleEnum.ADMIN]
+          roles: [RoleEnum.ADMIN, RoleEnum.CHECKER]
         }
       },
       {
@@ -157,6 +159,9 @@ export const constantRoutes: RouteRecordRaw[] = [
     path: USERS_PAGE,
     component: Layouts,
     name: 'Users',
+    meta: {
+      roles: [RoleEnum.ADMIN, RoleEnum.CHECKER]
+    },
     children: [
       {
         path: 'list',
@@ -176,7 +181,8 @@ export const constantRoutes: RouteRecordRaw[] = [
     component: Layouts,
     meta: {
       title: 'rules',
-      svgIcon: 'ic-round-rule'
+      svgIcon: 'ic-round-rule',
+      roles: [RoleEnum.ADMIN, RoleEnum.CHECKER]
     },
     children: [
       {
@@ -208,16 +214,6 @@ export const constantRoutes: RouteRecordRaw[] = [
       keepAlive: false
     }
   },
-  // {
-  //   component: () => import('@/views/docs/documents/DocumentDetail.vue'),
-  //   meta: {
-  //     hidden: true,
-  //     keepAlive: true,
-  //     title: 'documentDetail'
-  //   },
-  //   name: 'Document detail',
-  //   path: DOCUMENT_DETAIL_PAGE()
-  // }
   {
     path: COMPARE_DOCUMENT_DETAIL_PAGE(),
     component: () => import('@/views/docs/documents/compare/index.vue'),
