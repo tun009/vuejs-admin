@@ -237,22 +237,22 @@ onMounted(() => {
         :hidden-checked="isViewer"
       >
         <template #status="{ row }">
-          <Status :options="documentStatusOptions" :status="row.status" />
+          <Status :options="documentStatusOptions" :status="row?.status" />
         </template>
         <template #bizType="{ row }">
-          <span>{{ renderLabelByValue(businessTypeOptions, row.bizType) }}</span>
+          <span>{{ renderLabelByValue(businessTypeOptions, row?.bizType) }}</span>
         </template>
         <template #step="{ row }">
-          <span>{{ renderLabelByValue(processingStepOptions, row.step) }}</span>
+          <span>{{ renderLabelByValue(processingStepOptions, row?.step) }}</span>
         </template>
         <template #result="{ row }">
-          <Status :options="documentResultOptions" :status="row.result" />
+          <Status :options="documentResultOptions" :status="row?.result" />
         </template>
         <template #createdAt="{ row }">
           <span>{{ formatDate(row.createdAt, formatYYYYMMDD_HHMM) }}</span>
         </template>
         <template #branchName="{ row }">
-          <span>{{ row.branch.name }}</span>
+          <span>{{ row?.branch?.name }}</span>
         </template>
         <template #actions="{ row }">
           <div class="flex flex-row gap-2 items-center h-[63px] px-3" @click.stop>
@@ -265,7 +265,7 @@ onMounted(() => {
                 class="cursor-pointer"
               />
             </div>
-            <div class="w-[18px]">
+            <div class="w-[18px] h-[18px]">
               <el-icon :size="18" color="#e03131" class="cursor-pointer" @click.stop="handleDeleteDocument(row)"
                 ><Delete
               /></el-icon>

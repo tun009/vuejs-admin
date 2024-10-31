@@ -2,7 +2,8 @@ import { DocumentResultEnum } from '@/@types/pages/docs/documents'
 import {
   GetDocumentRequestModel,
   UpdateBatchAmountRequestModel,
-  UpdateDocumentRequestModel
+  UpdateDocumentRequestModel,
+  UpdateLCAmountRequestModel
 } from '@/@types/pages/docs/documents/services/DocumentRequest'
 import {
   GetBranchResponseModel,
@@ -12,7 +13,9 @@ import {
   GetDocumentFileResponseModel,
   GetDocumentResponseModel,
   GetDocumentResultsResponseModel,
-  GetDocumentLCDetailResponseModel
+  GetDocumentLCDetailResponseModel,
+  GetDocumentLCAmountResponseModel,
+  GetDocumentDataLCResponseModel
 } from '@/@types/pages/docs/documents/services/DocumentResponse'
 import { request } from '@/api/service'
 
@@ -90,6 +93,30 @@ export function updateBatchAmount(data: UpdateBatchAmountRequestModel) {
     url: 'batches/update-amount',
     method: 'put',
     data
+  })
+}
+
+export function getLCAmount(params: { batchId: number | string }) {
+  return request<GetDocumentLCAmountResponseModel>({
+    url: 'dossiers/amount',
+    method: 'get',
+    params
+  })
+}
+
+export function updateLCAmount(data: UpdateLCAmountRequestModel) {
+  return request<GetDocumentLCAmountResponseModel>({
+    url: 'dossiers/update-amount',
+    method: 'put',
+    data
+  })
+}
+
+export function getDocumentDataLC(params: { batchId: number | string }) {
+  return request<GetDocumentDataLCResponseModel>({
+    url: 'doc-data/lc',
+    method: 'get',
+    params
   })
 }
 

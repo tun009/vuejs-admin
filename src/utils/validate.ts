@@ -110,3 +110,8 @@ export const passwordRule = () => {
   const { t } = useI18n()
   return { pattern: regexPassword, message: t('validate.password'), trigger: 'blur' }
 }
+
+export const maxValueRule = (value: number, trigger: 'change' | 'blur' = 'blur') => {
+  const { t } = useI18n()
+  return { max: value, message: t('validate.maxValue'), trigger }
+}
