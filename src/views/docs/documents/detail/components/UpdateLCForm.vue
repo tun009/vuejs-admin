@@ -3,6 +3,7 @@ import { DocumentLCAmountModel, UpdateLCAmountFormModel } from '@/@types/pages/d
 import { updateLCAmount } from '@/api/docs/document'
 import EIBInput from '@/components/common/EIBInput.vue'
 import { warningNotification } from '@/utils/notification'
+import { requireRule } from '@/utils/validate'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
 
@@ -28,10 +29,8 @@ const updateLCFormData: UpdateLCAmountFormModel = reactive({
   amountUsed: props?.defaultForm?.amountUsed
 })
 
-console.log(props.defaultForm?.totalAmount)
-
 const updateLCFormRules: FormRules<UpdateLCAmountFormModel> = {
-  amountUsed: []
+  amountUsed: [requireRule()]
 }
 
 const onConfirm = () => {

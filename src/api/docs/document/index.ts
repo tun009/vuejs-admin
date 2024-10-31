@@ -6,16 +6,16 @@ import {
   UpdateLCAmountRequestModel
 } from '@/@types/pages/docs/documents/services/DocumentRequest'
 import {
-  GetBranchResponseModel,
   GetBatchDetailResponseModel,
-  GetCheckersResponseModel,
+  GetBranchResponseModel,
+  GetDocumentDataLCResponseModel,
   GetDocumentDetailResponseModel,
   GetDocumentFileResponseModel,
+  GetDocumentLCAmountResponseModel,
+  GetDocumentLCDetailResponseModel,
   GetDocumentResponseModel,
   GetDocumentResultsResponseModel,
-  GetDocumentLCDetailResponseModel,
-  GetDocumentLCAmountResponseModel,
-  GetDocumentDataLCResponseModel
+  PutPresentationCheckerResponseModel
 } from '@/@types/pages/docs/documents/services/DocumentResponse'
 import { request } from '@/api/service'
 
@@ -120,6 +120,14 @@ export function getDocumentDataLC(params: { batchId: number | string }) {
   })
 }
 
+export function putPresentationChecker(batchId: string | number, params: { checkerId: number | string }) {
+  return request<PutPresentationCheckerResponseModel>({
+    url: 'batches/' + batchId + '/submission',
+    method: 'patch',
+    params
+  })
+}
+
 export function getDocumentResults(): Promise<GetDocumentResultsResponseModel> {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -135,27 +143,6 @@ export function getDocumentResults(): Promise<GetDocumentResultsResponseModel> {
           pageNum: 0,
           pageSize: 4,
           total: 4
-        },
-        msg: 'Meo'
-      })
-    }, 2000)
-  })
-}
-
-export function getCheckers(): Promise<GetCheckersResponseModel> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      return resolve({
-        code: 1,
-        data: {
-          list: Array.from({ length: 5 }, (_, index) => ({
-            id: index + 1,
-            name: 'Nguyễn Tấn D',
-            username: 'nt.d'
-          })),
-          pageNum: 0,
-          pageSize: 5,
-          total: 5
         },
         msg: 'Meo'
       })

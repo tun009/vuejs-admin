@@ -3,7 +3,7 @@ import {
   ChangePasswordResponseModel,
   ChangeProfileResponseModel
 } from '@/@types/pages/profile/services/ProfileResponse'
-import { GetUserResponseModel } from '@/@types/pages/users/services/UserResponse'
+import { GetCheckerResponseModel, GetUserResponseModel } from '@/@types/pages/users/services/UserResponse'
 import { request } from '../service'
 import { AddUserRequestModel, GetUserRequestModel } from '@/@types/pages/users/services/UserRequest'
 import { AddUserResponseModel } from '@/@types/pages/users/services/UserResponse'
@@ -14,6 +14,14 @@ export function getUsers(data: GetUserRequestModel) {
     url: 'users/query',
     method: 'post',
     data
+  })
+}
+
+/** get checker */
+export function getChecker() {
+  return request<GetCheckerResponseModel>({
+    url: 'users/list-checker',
+    method: 'get'
   })
 }
 

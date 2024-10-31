@@ -34,7 +34,8 @@ router.beforeEach(async (to, _from, next) => {
     return next({ path: MAIN_PAGE })
   }
 
-  if (to?.meta?.roles && !to?.meta?.roles.includes(userStore?.roles?.[0])) return next(_403_PAGE)
+  if (userStore?.roles?.[0] && to?.meta?.roles && !to?.meta?.roles.includes(userStore?.roles?.[0]))
+    return next(_403_PAGE)
 
   // If the user has obtained his permission role
   if (userStore.roles.length !== 0) return next()

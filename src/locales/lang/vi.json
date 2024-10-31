@@ -228,7 +228,7 @@
       "documentInformation": "Thông tin bộ chứng từ",
       "fileList": "Danh sách file giấy từ",
       "lcInformation": "Thông tin LC",
-      "lcProgress": "Tổng trị giá LC đã sử dụng (USD) / Tổng giá trị LC",
+      "lcProgress": "Tổng trị giá LC đã sử dụng ({ currency }) / Tổng giá trị LC",
       "lcNumber": "Số LC",
       "createdAtLc": "Ngàp lập LC",
       "expirationDateLc": "Ngày hết hạn LC",
