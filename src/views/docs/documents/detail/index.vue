@@ -10,7 +10,6 @@ import { getBatchDetail } from '@/api/docs/document'
 import { useRoute } from 'vue-router'
 import { BatchDetailModel } from '@/@types/pages/docs/documents/services/DocumentResponse'
 import { useLoading } from '@/hooks/useLoading'
-import { DocumentStatusEnum } from '@/@types/common'
 
 const route = useRoute()
 const { startLoading, stopLoading } = useLoading()
@@ -51,10 +50,7 @@ onMounted(() => {
     </div>
     <el-tabs v-model="activeName" class="demo-tabs">
       <el-tab-pane :label="$t('docs.detail.documentInformation')" name="docInfo">
-        <DocumentInformation
-          :data="documentDetail"
-          @update:document-status="documentDetail.status = DocumentStatusEnum.WAIT_VALIDATE"
-        />
+        <DocumentInformation :data="documentDetail" @refresh="handleGetDocumentDetail" />
       </el-tab-pane>
       <el-tab-pane :label="$t('docs.detail.fileList')" name="docFile">
         <DocumentFiles />

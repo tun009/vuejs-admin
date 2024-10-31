@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { ElMessage } from 'element-plus'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
 import { ApproveProcessDocumentModel, approveProcessDocumentColumnConfigs } from '@/@types/pages/docs/documents'
-import { getCheckers } from '@/api/docs/document'
+import { putPresentationChecker } from '@/api/docs/document'
+import { getChecker } from '@/api/users'
 import EIBTable from '@/components/common/EIBTable.vue'
-import { warningNotification } from '@/utils/notification'
-import { useI18n } from 'vue-i18n'
+import { successNotification, warningNotification } from '@/utils/notification'
+import { useRoute } from 'vue-router'
 
 interface Emits {
   (event: 'close'): void
-  (event: 'success'): void
+  (event: 'refresh'): void
 }
 
 interface Exposes {
@@ -19,19 +19,21 @@ interface Exposes {
 
 const emits = defineEmits<Emits>()
 
-const { t } = useI18n()
+const route = useRoute()
 
 const radio = ref()
 const loading = ref(false)
 const tableData = ref<ApproveProcessDocumentModel[]>([])
 const checkerTableRef = ref<InstanceType<typeof EIBTable>>()
 
+const batchId = computed(() => route.params?.id as string)
+
 const handleGetChecker = async () => {
   try {
     checkerTableRef.value?.setLoading(true)
-    const response = await getCheckers()
-    if (response?.data?.list) {
-      tableData.value = response?.data?.list
+    const response = await getChecker()
+    if (response?.data) {
+      tableData.value = response?.data
     }
   } catch (error) {
     console.error(error)
@@ -44,19 +46,23 @@ const handleClose = () => {
   emits('close')
 }
 
-const handleSelectChecker = () => {
+const handleSelectChecker = async () => {
   if (!radio.value) {
-    warningNotification(t('notification.description.pleaseChooseChecker'))
+    warningNotification('notification.description.pleaseChooseChecker')
     return
   }
-  loading.value = true
-  setTimeout(() => {
-    ElMessage.success(t('notification.description.checkerSelected', { name: radio.value.toString() }))
-    loading.value = false
+  try {
+    loading.value = true
+    await putPresentationChecker(batchId.value, { checkerId: radio.value })
+    successNotification('notification.description.updateSuccess')
     radio.value = undefined
-    emits('success')
+    emits('refresh')
     handleClose()
-  }, 2000)
+  } catch (error) {
+    console.error(error)
+  } finally {
+    loading.value = false
+  }
 }
 
 onMounted(() => {
@@ -79,9 +85,10 @@ defineExpose<Exposes>({
         hiddenPagination
         :columnConfigs="approveProcessDocumentColumnConfigs"
         :data="tableData"
+        @row-click="(row) => (radio = row.id)"
       >
         <template #select="{ row }">
-          <el-radio :value="row.id" />
+          <el-radio :value="row.id" :modelValue="radio" />
         </template>
         <template #checker="{ row }">
           <div>

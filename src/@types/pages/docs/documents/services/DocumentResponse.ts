@@ -31,6 +31,8 @@ export type GetDocumentLCAmountResponseModel = ApiResponseData<DocumentLCAmountM
 
 export type GetDocumentDataLCResponseModel = ApiResponseData<DocumentDataLCModel[]>
 
+export type PutPresentationCheckerResponseModel = ApiResponseData<number>
+
 export interface BatchDetailModel {
   id: number
   dossierName: string

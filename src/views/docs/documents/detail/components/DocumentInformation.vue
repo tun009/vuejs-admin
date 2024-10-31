@@ -34,7 +34,7 @@ interface Props {
 }
 
 interface Emits {
-  (event: 'update:document-status'): void
+  (event: 'refresh'): void
 }
 
 const props = defineProps<Props>()
@@ -160,7 +160,7 @@ onMounted(() => {
               <div v-if="data?.status === DocumentStatusEnum.CHECKED" class="flex flex-col gap-2">
                 <div class="flex gap-1">
                   <Status :options="documentStatusOptions" :status="data?.status" />
-                  <span class="c-text-value">{{ $t('docs.document.by') }}</span> Trần Thị B
+                  <span class="c-text-value">{{ $t('docs.document.by') }}</span> {{ data?.handleBy }}
                 </div>
                 <el-button
                   v-if="isMaker"
@@ -228,7 +228,7 @@ onMounted(() => {
             <span
               ><span class="text-2xl">{{ amount.amountUsed }}</span> / {{ amount.totalAmount }}</span
             >
-            <span>{{ $t('docs.detail.lcProgress') }}</span>
+            <span>{{ $t('docs.detail.lcProgress', { currency: getValueLC('currency') }) }}</span>
           </div>
         </div>
         <div class="flex-[3] grid grid-cols-2 font-bold">
@@ -363,11 +363,11 @@ onMounted(() => {
     </template>
   </el-card>
 
-  <EIBDrawer v-model="openApproveProcessDrawer" :title="$t('docs.detail.presentationChecker')">
+  <EIBDrawer v-model="openApproveProcessDrawer" title="docs.detail.presentationChecker">
     <template #default>
       <ApproveProcessDocument
         ref="updateUserFormRef"
-        @success="$emit('update:document-status')"
+        @refresh="$emit('refresh')"
         @close="openApproveProcessDrawer = false"
       />
     </template>
