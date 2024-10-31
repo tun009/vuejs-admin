@@ -52,6 +52,7 @@ export interface DocumentModel {
   totalAmount: string
   createdAt: string
   handleBy: string
+  approveBy: string
   result: DocumentResultEnum
   doneAt: string
 }
@@ -62,10 +63,6 @@ export interface CompareRejectFormModel {
 
 export interface CompareContentFormModel {
   field: number
-}
-
-export interface UpdateLCFormModel {
-  amount: number
 }
 
 export const docListColumnConfigs: ColumnConfigModel[] = [
@@ -494,4 +491,20 @@ export interface DocumentLCDetailModel {
   partialShipments: string
   periodPresentation: string
   datePresentation: string
+}
+
+export interface DocumentLCAmountModel {
+  batchId?: number
+  totalAmount: number
+  amountUsed: number
+}
+
+export interface UpdateLCAmountFormModel {
+  amountUsed: number
+}
+
+export interface DocumentDataLCModel {
+  coreKey: string
+  extractionValue?: string
+  validatedValue?: string
 }

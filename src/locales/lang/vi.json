@@ -130,7 +130,8 @@
     "limit": "Độ dài nằm giữa { min } và { max } ký tự",
     "password": "Vui lòng nhập đúng định dạng mật khẩu",
     "passwordNotMatch": "Mật khẩu không khớp",
-    "passwordOld": "Mật khẩu mới không được giống mật khẩu cũ"
+    "passwordOld": "Mật khẩu mới không được giống mật khẩu cũ",
+    "maxValue": "Không thể vượt qua giá trị tối đa"
   },
   "base": {
     "input": {

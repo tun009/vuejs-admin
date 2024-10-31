@@ -6,13 +6,15 @@ import ApproveProcessDocument from './ApproveProcessDocument.vue'
 
 import { DocumentStatusEnum } from '@/@types/common'
 import {
+  DocumentDataLCModel,
+  DocumentLCAmountModel,
   DocumentResultModel,
   businessTypeOptions,
   documentResultListColumnConfigs,
   documentStatusOptions
 } from '@/@types/pages/docs/documents'
 import { BatchDetailModel } from '@/@types/pages/docs/documents/services/DocumentResponse'
-import { getDocumentResults } from '@/api/docs/document'
+import { getDocumentDataLC, getDocumentResults, getLCAmount } from '@/api/docs/document'
 import EIBDialog from '@/components/common/EIBDialog.vue'
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import Loading from '@/components/common/EIBLoading.vue'
@@ -21,10 +23,11 @@ import { PROGRESS_COLORS } from '@/constants/color'
 import { COMPARE_DOCUMENT_DETAIL_PAGE } from '@/constants/router'
 import { DOCUMENT_RESULT_NAME_LIST } from '@/constants/select'
 import { useUserStore } from '@/store/modules/user'
-import { handleComingSoon, renderLabelByValue } from '@/utils/common'
+import { handleComingSoon, renderLabelByValue, resetNullUndefinedFields } from '@/utils/common'
 import Status from '@/views/docs/components/Status.vue'
 import { useRoute, useRouter } from 'vue-router'
 import UpdateLCForm from './UpdateLCForm.vue'
+import { processingDocumentStatus } from '@/constants/common'
 
 interface Props {
   data: BatchDetailModel
@@ -34,15 +37,13 @@ interface Emits {
   (event: 'update:document-status'): void
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 defineEmits<Emits>()
 
 const router = useRouter()
 const route = useRoute()
 const { isViewer, isMaker } = useUserStore()
 
-const status = ref(1)
-const percentage = ref<number>(0)
 const tableData = ref<DocumentResultModel[]>([])
 const documentResultListTableRef = ref<InstanceType<typeof EIBTable>>()
 const openApproveProcessDrawer = ref(false)
@@ -50,6 +51,11 @@ const dialogVisible = ref(false)
 const loadingConfirm = ref(false)
 const updateLCFormRef = ref<InstanceType<typeof UpdateLCForm>>()
 const documentId = computed(() => route.params?.id as string)
+const amount = ref<DocumentLCAmountModel>({
+  amountUsed: 0,
+  totalAmount: 0
+})
+const dataLC = ref<DocumentDataLCModel[]>([])
 
 const handleViewDocument = (_id: string | number) => {
   router.push(COMPARE_DOCUMENT_DETAIL_PAGE(_id))
@@ -69,22 +75,47 @@ const handleGetDocumentResults = async () => {
   }
 }
 
+const handleGetDocumentAmount = async () => {
+  try {
+    const { data } = await getLCAmount({ batchId: documentId.value })
+    amount.value = resetNullUndefinedFields(data, 0) as unknown as DocumentLCAmountModel
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const handleGetDocumentDataLC = async () => {
+  try {
+    const { data } = await getDocumentDataLC({ batchId: documentId.value })
+    if (!data) return
+    dataLC.value = data
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const percentage = computed(() => {
+  if (!amount.value.totalAmount) return 0
+  return Number(((amount.value.amountUsed / amount.value.totalAmount) * 100).toFixed(2))
+})
+
+const isOcred = computed(() => !processingDocumentStatus.includes(props.data.status))
+
+const getValueLC = (coreKey: string): string | undefined | null => {
+  const lcByKey = dataLC.value.find((lc) => lc.coreKey === coreKey)
+  return lcByKey?.validatedValue ?? lcByKey?.extractionValue
+}
+
 onMounted(() => {
-  setInterval(() => {
-    if (status.value === 2) {
-      percentage.value = 0
-      status.value = 0
-    } else {
-      percentage.value = percentage.value + 50
-      status.value = status.value + 1
-    }
-  }, 3000)
   handleGetDocumentResults()
+  handleGetDocumentAmount()
+  handleGetDocumentDataLC()
 })
 </script>
 
 <template>
   <EIBDialog
+    v-if="dialogVisible"
     :title="$t('docs.detail.updateLcUsed')"
     v-model="dialogVisible"
     :loading="loadingConfirm"
@@ -92,6 +123,8 @@ onMounted(() => {
   >
     <UpdateLCForm
       ref="updateLCFormRef"
+      :default-form="amount"
+      @update:amount="(amountUsed: number) => (amount.amountUsed = amountUsed)"
       @update:loading="(loading: boolean) => (loadingConfirm = loading)"
       @update:visible="(visible: boolean) => (dialogVisible = visible)"
     />
@@ -151,11 +184,11 @@ onMounted(() => {
               >
                 <div class="flex gap-1">
                   <Status :options="documentStatusOptions" :status="DocumentStatusEnum.CHECKED" />
-                  <span class="c-text-value">{{ $t('docs.document.by') }}</span> Trần Thị B
+                  <span class="c-text-value">{{ $t('docs.document.by') }}</span> {{ data?.handleBy }}
                 </div>
                 <div class="flex gap-1">
                   <Status :options="documentStatusOptions" :status="data?.status" />
-                  <span class="c-text-value">{{ $t('docs.document.by') }}</span> Nguyễn Tấn D
+                  <span class="c-text-value">{{ $t('docs.document.by') }}</span> {{ data?.approveBy }}
                 </div>
               </div>
               <div v-else class="c-text-value">
@@ -192,38 +225,43 @@ onMounted(() => {
             :color="PROGRESS_COLORS"
           />
           <div class="text-gray-700 dark:text-slate-300 flex flex-col gap-1">
-            <span><span class="text-2xl">0</span> / 0</span>
+            <span
+              ><span class="text-2xl">{{ amount.amountUsed }}</span> / {{ amount.totalAmount }}</span
+            >
             <span>{{ $t('docs.detail.lcProgress') }}</span>
           </div>
         </div>
         <div class="flex-[3] grid grid-cols-2 font-bold">
           <span
-            >{{ $t('docs.detail.lcNumber') }}: <span class="c-text-value">{{ data?.docCreditNo }}</span></span
+            >{{ $t('docs.detail.lcNumber') }}: <span class="c-text-value">{{ getValueLC('doc_credit_no') }}</span></span
           >
           <span
-            >{{ $t('docs.detail.createdAtLc') }}: <span class="c-text-value">{{ data?.dateIssue }}</span></span
+            >{{ $t('docs.detail.createdAtLc') }}:
+            <span class="c-text-value">{{ getValueLC('date_of_issue') }}</span></span
           >
           <span
-            >{{ $t('docs.detail.expirationDateLc') }}: <span class="c-text-value">{{ data?.expiryDate }}</span></span
+            >{{ $t('docs.detail.expirationDateLc') }}:
+            <span class="c-text-value">{{ getValueLC('expiry_date') }}</span></span
           >
           <span
             >{{ $t('docs.detail.expirationPositionLc') }}:
-            <span class="c-text-value">{{ data?.expiryPlace }}</span></span
+            <span class="c-text-value">{{ getValueLC('expiry_place') }}</span></span
           >
           <span
-            >{{ $t('docs.detail.tolerance') }}: <span class="c-text-value">{{ data?.tolerancePercent }}</span></span
+            >{{ $t('docs.detail.tolerance') }}:
+            <span class="c-text-value">{{ getValueLC('tolerance_percent') }}</span></span
           >
           <span
             >{{ $t('docs.detail.partialDelivery') }}:
-            <span class="c-text-value">{{ data?.partialShipments }}</span></span
+            <span class="c-text-value">{{ getValueLC('partial_shipments') }}</span></span
           >
           <span
             >{{ $t('docs.detail.presentationDateDoc') }}:
-            <span class="c-text-value">{{ data?.datePresentation }}</span></span
+            <span class="c-text-value">{{ getValueLC('upload_date') }}</span></span
           >
           <span
             >{{ $t('docs.detail.deadlinePresentingDoc') }}:
-            <span class="c-text-value">{{ data?.periodPresentation }}</span></span
+            <span class="c-text-value">{{ getValueLC('period_presentation') }}</span></span
           >
         </div>
       </div>
@@ -234,11 +272,11 @@ onMounted(() => {
         >{{ $t('docs.detail.ocrInformation') }}:</span
       >
       <div class="flex flex-row gap-4 items-center">
-        <div v-if="!status" class="flex flex-row gap-4 items-center">
+        <div v-if="!isOcred" class="flex flex-row gap-4 items-center">
           <Loading />
           <span>{{ $t('docs.status.processing') }}:</span>
         </div>
-        <el-button :type="!status ? 'info' : 'primary'" :disabled="!status" @click="handleComingSoon">
+        <el-button :type="!isOcred ? 'info' : 'primary'" :disabled="!isOcred" @click="handleComingSoon">
           {{ $t('docs.detail.seeResult') }}
         </el-button>
       </div>
@@ -248,9 +286,9 @@ onMounted(() => {
         <div class="flex flex-row justify-between items-center">
           <span class="text-[#005d98] dark:text-[#409eff] font-semibold text-base">Thông tin đối sánh</span>
           <el-button
-            v-if="!!status && !isViewer"
-            :disabled="status === 1"
-            :type="status === 1 ? 'info' : 'primary'"
+            v-if="isOcred && !isViewer"
+            :disabled="isOcred"
+            :type="isOcred ? 'info' : 'primary'"
             class="flex flex-row items-center"
             @click.stop="handleComingSoon"
           >
@@ -261,9 +299,9 @@ onMounted(() => {
         <div class="flex flex-row gap-5 pl-3 items-center">
           <div class="flex-1 flex flex-col gap-3">
             <strong>{{ $t('docs.detail.checkResult') }}</strong>
-            <p v-if="!status" class="c-text-value">{{ $t('docs.detail.noInformation') }}</p>
+            <p v-if="!isOcred" class="c-text-value">{{ $t('docs.detail.noInformation') }}</p>
             <div
-              v-else-if="status === 1"
+              v-else-if="isOcred"
               class="rounded-md px-3 py-2 bg-[#fff4e6] flex flex-row gap-2 items-center w-fit text-[#d9480f]"
             >
               <el-icon size="20"><WarnTriangleFilled /></el-icon>
@@ -274,7 +312,7 @@ onMounted(() => {
               <span class="text-base">{{ $t('docs.status.valid') }}</span>
             </div>
           </div>
-          <div v-if="!!status" class="flex flex-col gap-2 flex-[2]">
+          <div v-if="isOcred" class="flex flex-col gap-2 flex-[2]">
             <span
               ><span class="font-semibold mr-2">{{ $t('docs.detail.deliveryTimeRequest') }}: </span
               ><span>{{ $t('docs.status.valid') }}</span></span
@@ -290,7 +328,7 @@ onMounted(() => {
           </div>
         </div>
         <EIBTable
-          v-if="!!status"
+          v-if="isOcred"
           ref="documentResultListTableRef"
           locales
           hidden-pagination
@@ -308,16 +346,16 @@ onMounted(() => {
           </template>
           <template #testResults>
             <span>
-              {{ status === 1 ? DOCUMENT_RESULT_NAME_LIST[1] : DOCUMENT_RESULT_NAME_LIST[0] }}
+              {{ isOcred ? DOCUMENT_RESULT_NAME_LIST[1] : DOCUMENT_RESULT_NAME_LIST[0] }}
             </span>
           </template>
           <template #numberSatisfiesRequirement>
             <span
               :class="{
-                'text-red-500': status === 1
+                'text-red-500': isOcred
               }"
             >
-              {{ status === 1 ? '8/9' : '8/8' }}
+              {{ isOcred ? '8/9' : '8/8' }}
             </span>
           </template></EIBTable
         >

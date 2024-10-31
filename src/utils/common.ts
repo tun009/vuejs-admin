@@ -44,12 +44,15 @@ export const scrollIntoViewParent = (id: string) => {
   element?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 
-export function resetNullUndefinedFields(obj: Record<string, any>): void {
+export function resetNullUndefinedFields(obj: Record<string, any>, defaultValue: string | number | boolean = ''): void {
+  const result: any = { ...obj }
   Object.keys(obj).forEach((key) => {
     if (obj[key] === null || obj[key] === undefined) {
-      obj[key] = ''
+      result[key] = defaultValue
+      return
     }
   })
+  return result
 }
 
 export const sanitizeString = (symbolId: string) => {

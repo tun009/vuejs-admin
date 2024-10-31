@@ -6,8 +6,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "build:dev": "vue-tsc --noEmit && vite build --mode development",
     "build:stage": "vue-tsc --noEmit && vite build --mode staging",
     "build:prod": "vue-tsc --noEmit && vite build --mode production",
+    "preview:dev": "pnpm build:dev && vite preview --port 8080 --mode development",
     "preview:stage": "pnpm build:stage && vite preview --port 8080 --mode staging",
     "preview:prod": "pnpm build:prod && vite preview --port 8080 --mode production",
     "lint:eslint": "eslint --cache --max-warnings 0 \"{src,tests,types}/**/*.{vue,js,jsx,ts,tsx}\" --fix",
