@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { BranchModel } from '@/@types/pages/login'
-import { AddUserRequestModel, RoleEnum, roleSelectOptions } from '@/@types/pages/users'
+import { RoleEnum, roleSelectOptions } from '@/@types/pages/users'
+import { AddUserRequestModel } from '@/@types/pages/users/services/UserRequest'
 import { getBranches } from '@/api/docs/document'
+import { addUser } from '@/api/users'
 import EIBInput from '@/components/common/EIBInput.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
 import { PASSWORD_DEFAULT } from '@/constants/common'
 import { mappingBranches } from '@/utils/common'
 import { requireRule } from '@/utils/validate'
-import { ElMessage, FormRules } from 'element-plus'
+import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -25,41 +27,46 @@ const { t } = useI18n()
 
 const branches = ref<BranchModel[]>([])
 const loading = ref(false)
-const addUserFormRef = ref()
 const addUserFormData: AddUserRequestModel = reactive({
   name: '',
   username: '',
-  sol: '',
+  branchId: '',
   role: RoleEnum.ADMIN
 })
 
-const addUserFormRules: FormRules = {
+const addUserFormRules: FormRules<AddUserRequestModel> = {
   name: [requireRule()],
   username: [requireRule()],
-  sol: [requireRule('change')],
+  branchId: [requireRule('change')],
   role: [requireRule('change')]
 }
 
 const handleClose = () => {
   emits('close')
-  addUserFormRef.value.resetFields()
+  addUserFormRef.value?.resetFields()
 }
 
+const addUserFormRef = ref<FormInstance | null>(null)
+
 const handleAddUser = () => {
-  addUserFormRef.value?.validate((valid: boolean, fields: any) => {
-    if (valid) {
-      loading.value = true
-      setTimeout(() => {
-        loading.value = false
-        ElMessage({
-          showClose: true,
-          type: 'success',
-          message: t('notification.description.createSuccess')
-        })
-        handleClose()
-      }, 3000)
-    } else {
-      console.error('Form validation failed', fields)
+  addUserFormRef.value?.validate(async (valid: boolean, fields) => {
+    try {
+      if (valid) {
+        loading.value = true
+        await addUser(addUserFormData)
+      } else {
+        console.error('Form validation failed', fields)
+      }
+      ElMessage({
+        message: t('notification.description.createSuccess'),
+        showClose: true,
+        type: 'success'
+      })
+      emits('close')
+    } catch (error) {
+      console.error(error)
+    } finally {
+      loading.value = false
     }
   })
 }
@@ -96,7 +103,7 @@ onMounted(() => {
       name="name"
       v-model="addUserFormData.name"
       required
-      show-limit
+      show-limitaddUserFormData
     />
     <EIBInput
       label="user.addUser.username"
@@ -109,7 +116,7 @@ onMounted(() => {
     />
     <EIBInput label="user.addUser.password" name="password" :model-value="PASSWORD_DEFAULT" disabled />
     <EIBSelect
-      v-model="addUserFormData.sol"
+      v-model="addUserFormData.branchId"
       name="sol"
       :options="mappingBranches(branches)"
       label="user.addUser.sol"

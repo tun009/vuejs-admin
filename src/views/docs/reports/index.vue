@@ -1,1 +1,149 @@
-<template>reports</template>
+<script lang="ts" setup>
+import { ArrowDownBold, Filter, Search } from '@element-plus/icons-vue'
+import { reactive, ref, watch } from 'vue'
+
+import { PaginationModel } from '@/@types/common'
+import {
+  ReportModel,
+  FilterDocumentModel,
+  businessTypeOptions,
+  docListColumnConfigs,
+  documentResultOptions,
+  documentStatusOptions
+} from '@/@types/pages/reports'
+import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
+import EIBMultipleFilter from '@/components/Filter/EIBMultipleFilter.vue'
+import EIBDrawer from '@/components/common/EIBDrawer.vue'
+import EIBInput from '@/components/common/EIBInput.vue'
+import EIBTable from '@/components/common/EIBTable.vue'
+import { Title } from '@/layouts/components'
+import { defaultDateRange } from '@/utils/date'
+import { debounce } from 'lodash-es'
+import { getReports } from '@/api/reports/'
+import { formatYYYYMMDD, shortcutsDateRange } from '@/constants/date'
+import DetailReportForm from './components/DetailReportForm.vue'
+
+const openFilter = ref(false)
+const tableData = ref<ReportModel[]>([])
+const checkedItems = ref<ReportModel[]>([])
+const documentTableRef = ref<InstanceType<typeof EIBTable>>()
+const uploadTimes = ref(defaultDateRange())
+const filterValue = reactive<FilterDocumentModel>({} as FilterDocumentModel)
+const searchQuery = ref('')
+const openDetailReportDrawer = ref(false)
+
+const handleGetReports = async (pagination: PaginationModel) => {
+  try {
+    const response = await getReports({ ...pagination, searchQuery: searchQuery.value })
+    tableData.value = response.data.list
+    return response
+  } catch (error: any) {
+    throw new Error(error)
+  }
+}
+
+const detailReport = () => {
+  openDetailReportDrawer.value = true
+}
+
+const handleResetFilter = () => {
+  filterValue.bizType = -1
+  filterValue.branchId = -1
+  filterValue.result = -1
+  filterValue.status = []
+}
+
+const handleGetData = debounce(() => documentTableRef?.value?.handleGetData(), 300)
+
+watch(
+  [() => filterValue, () => uploadTimes],
+  async () => {
+    handleGetData()
+  },
+  {
+    deep: true
+  }
+)
+</script>
+
+<template>
+  <div class="flex flex-row justify-between items-center">
+    <Title title="Báo cáo" />
+    <div class="flex flex-row gap-5 items-center">
+      <span class="font-semibold italic text-base">Ngày upload:</span>
+      <el-date-picker
+        v-model="uploadTimes"
+        type="daterange"
+        class="w-fit"
+        unlink-panels
+        range-separator="đến"
+        start-placeholder="Bắt đầu"
+        end-placeholder="Kết thúc"
+        :shortcuts="shortcutsDateRange"
+        :format="formatYYYYMMDD"
+        :value-format="formatYYYYMMDD"
+      />
+    </div>
+  </div>
+  <div class="flex flex-col mt-2">
+    <div class="flex flex-row justify-between gap-10 items-center mb-5">
+      <div class="flex flex-row gap5 items-center gap-5">
+        <EIBInput
+          v-model="filterValue.name"
+          custom-class="w-[360px]"
+          placeholder="docs.document.searchByName"
+          :prefix-icon="Search"
+          hidden-error
+        />
+        <div class="flex flex-row gap-5 items-center">
+          <div class="flex flex-row gap-1 items-center p-1 cursor-pointer" @click="openFilter = !openFilter">
+            <el-icon><Filter /></el-icon>
+            <span class="whitespace-nowrap">Bộ lọc</span>
+            <el-icon
+              class="ml-2 transition-all duration-300"
+              :class="{ 'rotate-180': openFilter, 'rotate-0': !openFilter }"
+              ><ArrowDownBold
+            /></el-icon>
+          </div>
+          <el-divider direction="vertical" />
+          <span class="text-primary whitespace-nowrap cursor-pointer" @click="handleResetFilter"
+            >Khôi phục mặc định</span
+          >
+        </div>
+      </div>
+      <div class="flex flex-row gap-3">
+        <el-button type="primary" class="flex flex-row items-center">
+          <SvgIcon name="download-inline" class="w-4 h-4 mr-2" />
+          <span>Tải xuống</span></el-button
+        >
+      </div>
+    </div>
+    <div
+      class="transition-all duration-300 overflow-hidden flex flex-row items-center gap-5"
+      :class="{ 'h-10 mb-2': openFilter, 'h-0': !openFilter }"
+    >
+      <EIBSingleFilter v-model="filterValue.bizType" title="Loại nghiệp vụ" :options="businessTypeOptions" />
+      <EIBMultipleFilter v-model="filterValue.status" title="Trạng thái" :options="documentStatusOptions" />
+      <EIBSingleFilter v-model="filterValue.result" title="Kết quả" :options="documentResultOptions" />
+      <EIBSingleFilter v-model="filterValue.branchId" title="SOL" :options="[]" />
+    </div>
+    <el-card>
+      <EIBTable
+        ref="documentTableRef"
+        locales
+        hiddenChecked
+        :columnConfigs="docListColumnConfigs"
+        :data="tableData"
+        :callback="handleGetReports"
+        @update:selection="(val: ReportModel[]) => (checkedItems = val)"
+        :height="!!checkedItems.length && openFilter ? 520 : !checkedItems.length && !openFilter ? 600 : 560"
+        @row-click="detailReport"
+      />
+    </el-card>
+  </div>
+  <EIBDrawer title="Thông tin chi tiết" v-model="openDetailReportDrawer" v-if="openDetailReportDrawer">
+    <template #default>
+      <DetailReportForm @close="openDetailReportDrawer = false" />
+    </template>
+  </EIBDrawer>
+</template>

@@ -2,7 +2,7 @@
 import ConfigRoleUserForm from './components/ConfigRoleUserForm.vue'
 
 import { PaginationModel } from '@/@types/common'
-import { UserModel, userListColumnConfigs } from '@/@types/pages/users'
+import { FilterUserModel, UserModel, userListColumnConfigs } from '@/@types/pages/users'
 import { getUsers } from '@/api/users'
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import EIBInput from '@/components/common/EIBInput.vue'
@@ -13,7 +13,7 @@ import { ref, reactive } from 'vue'
 import AddUserForm from './components/AddUserForm.vue'
 import UpdateUserForm from './components/UpdateUserForm.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { FilterDocumentModel } from '@/@types/pages/docs/documents'
+import { omitPropertyFromObject } from '@/utils/common'
 // import EIBMultipleFilter from '@/components/Filter/EIBMultipleFilter.vue'
 // import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
 
@@ -30,20 +30,29 @@ const openConfigRoleUserDrawer = ref(false)
 
 const disabledIds = [1]
 const openFilter = ref(false)
-const filterValue = reactive<FilterDocumentModel>({} as FilterDocumentModel)
+const filterValue = reactive<FilterUserModel>({} as FilterUserModel)
 
 const tableData = ref<UserModel[]>([])
 
 const handleResetFilter = () => {
-  filterValue.bizType = -1
+  filterValue.name = ''
   filterValue.branchId = -1
-  filterValue.result = -1
-  filterValue.status = []
+  filterValue.role = -1
+  filterValue.status = -1
 }
 
 const handleGetUser = async (pagination: PaginationModel) => {
   try {
-    const response = await getUsers({ ...pagination, searchQuery: searchQuery.value })
+    const response = await getUsers({
+      ...pagination,
+      ...omitPropertyFromObject(filterValue, -1),
+      sortItemList: [
+        {
+          isAsc: false,
+          column: 'name'
+        }
+      ]
+    })
     tableData.value = response.data.list
     return response
   } catch (error: any) {

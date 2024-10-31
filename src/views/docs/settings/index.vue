@@ -45,6 +45,7 @@ const openUpdateInfoExtractDrawer = ref(false)
       <el-tab-pane label="Trường thông tin trích xuất" name="first">
         <EIBSelect
           v-model="docs"
+          class="pb-2"
           name="docs"
           :options="dataSelectDocs"
           label="Thông tin trường trích xuất cho loại chứng từ"
