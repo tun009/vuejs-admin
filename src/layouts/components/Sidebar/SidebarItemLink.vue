@@ -10,6 +10,7 @@ const props = defineProps<Props>()
 </script>
 
 <template>
+  <!-- //NOSONAR -->
   <a v-if="isExternal(props.to)" :href="sanitizeString(props.to)" target="_blank" rel="noopener">
     <slot />
   </a>

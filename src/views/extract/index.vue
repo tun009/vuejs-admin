@@ -53,7 +53,6 @@ const getDossiersDetail = async (id: number) => {
     ocrDataDetail.value = documentDetail.value.result[0]
     docTypeOcrData.value = documentDetail.value?.docType
     if (docTypeOcrData.value === 'DRAFT') isFirstViewExtract.value = true
-    ocrDataDetail
   } catch (error: any) {
     throw new Error(error)
   }

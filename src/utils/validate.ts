@@ -4,7 +4,6 @@ import {
   regexEmail,
   regexExternalLink,
   regexFormat24Hours,
-  regexIPv4,
   regexIdCard,
   regexMac,
   regexPassword,
@@ -82,12 +81,6 @@ export const isEmail = (email: string) => {
 export const isMAC = (mac: string) => {
   const reg = regexMac
   return reg.test(mac)
-}
-
-/** Determine if it is an IPv4 address */
-export const isIPv4 = (ip: string) => {
-  const reg = regexIPv4
-  return reg.test(ip)
 }
 
 export const requireRule = (trigger: 'change' | 'blur' = 'blur') => ({

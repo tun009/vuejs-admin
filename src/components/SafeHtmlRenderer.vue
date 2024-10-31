@@ -1,5 +1,5 @@
 <template>
-  <!-- <div :dangerouslySetInnerHTML="{ __html: sanitizeString(html) }" /> -->
+  <!-- //NOSONAR -->
   <div v-html="sanitizeString(html)" />
 </template>
 

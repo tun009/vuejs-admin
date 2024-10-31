@@ -56,8 +56,6 @@ const handleLogin = () => {
 
 <template>
   <div>
-    <!-- <ThemeSwitch class="fixed top-8 right-10 pointer" />
-    <LanguageSwitch class="fixed top-8 right-20 pointer" /> -->
     <Background>
       <template #form>
         <div class="flex flex-col gap-14 w-full h-full items-center justify-center relative">

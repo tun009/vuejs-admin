@@ -115,7 +115,6 @@ const handleDeleteUser = (name: string) => {
           >
           <el-button type="primary" plain>Tìm kiếm</el-button>
         </div>
-        <!-- <el-button :icon="Filter" @click="handleComingSoon">{{ $t('user.filter') }}</el-button> -->
       </div>
       <div class="flex flex-row gap-3">
         <el-button plain type="primary" :icon="Tools" @click="openConfigRoleUserDrawer = true">{{
