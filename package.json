@@ -1,8 +1,7 @@
 {
   "name": "eximbank-ui",
-  "version": "0.0.1",
+  "version": "0.0.7",
   "description": "Vue3、TypeScript、Element Plus、Pinia、Vite",
-  "proxy": "http://172.16.40.239:8080",
   "type": "module",
   "scripts": {
     "dev": "vite",

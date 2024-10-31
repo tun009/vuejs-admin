@@ -24,15 +24,15 @@ const updateUserFormRef = ref()
 const updateUserFormData: UpdateUserRequestModel = reactive({
   name: '',
   username: '',
-  sol: '',
+  branchId: '',
   role: RoleEnum.ADMIN,
   block: false
 })
 
-const updateUserFormRules: FormRules = {
+const updateUserFormRules: FormRules<UpdateUserRequestModel> = {
   name: [],
   username: [],
-  sol: [requireRule('change')],
+  branchId: [requireRule('change')],
   role: [requireRule('change')]
 }
 
@@ -108,7 +108,7 @@ const handleResetPasswordUser = () => {
       v-model="updateUserFormData.username"
       disabled
     />
-    <EIBSelect v-model="updateUserFormData.sol" name="sol" :options="roleSelectOptions" label="user.addUser.sol" />
+    <EIBSelect v-model="updateUserFormData.branchId" name="sol" :options="roleSelectOptions" label="user.addUser.sol" />
     <EIBSelect v-model="updateUserFormData.role" name="role" :options="roleSelectOptions" label="user.addUser.role" />
     <div class="flex flex-col gap-2 mb-[26px]">
       <span>{{ $t('user.updateUser.password') }}</span>
