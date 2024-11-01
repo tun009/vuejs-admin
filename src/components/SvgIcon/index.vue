@@ -21,8 +21,7 @@ const symbolId = computed(() => `#${props.prefix}-${props.name}`)
 <template>
   <svg class="svg-icon" :class="className" :style="{ width: size, height: size }" aria-hidden="true">
     <!--  eslint-disable-next-line -->
-    <!-- //NOSONAR -->
-    <use :href="sanitizeString(symbolId)" />
+    <!-- //NOSONAR --><use :href="sanitizeString(symbolId)" />
   </svg>
 </template>
 
