@@ -1,4 +1,5 @@
 <template>
+  <!--  eslint-disable-next-line -->
   <!-- //NOSONAR -->
   <div v-html="sanitizeString(html)" />
 </template>

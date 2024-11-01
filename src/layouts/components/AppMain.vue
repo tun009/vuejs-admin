@@ -18,6 +18,7 @@ const tagsViewStore = useTagsViewStore()
         </keep-alive>
       </router-view>
       <!-- Footer -->
+      <!-- <Footer v-if="settingsStore.showFooter" /> -->
     </div>
     <!-- Return to top -->
     <el-backtop />

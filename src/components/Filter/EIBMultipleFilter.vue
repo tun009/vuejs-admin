@@ -29,7 +29,6 @@
 
 <script setup lang="ts">
 import { computed, ref, unref } from 'vue'
-import { ClickOutside as vClickOutside } from 'element-plus'
 import { SelectOptionModel } from '@/@types/common'
 import { ArrowDownBold } from '@element-plus/icons-vue'
 
