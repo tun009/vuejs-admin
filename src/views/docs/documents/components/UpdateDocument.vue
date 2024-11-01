@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { DocumentModel } from '@/@types/pages/docs/documents'
@@ -11,7 +11,6 @@ import EIBInput from '@/components/common/EIBInput.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
 import { mappingBranches } from '@/utils/common'
 import { requireRule } from '@/utils/validate'
-import { onMounted } from 'vue'
 
 interface Porps {
   data: DocumentModel

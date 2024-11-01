@@ -125,25 +125,6 @@ const closeAllTags = (view: TagView) => {
   toLastView(tagsViewStore.visitedViews, view)
 }
 
-/** Open the right-click menu panel */
-// const openMenu = (tag: TagView, e: MouseEvent) => {
-//   const menuMinWidth = 105
-//   // The distance between the current component and the left end of the browser
-//   const offsetLeft = instance?.proxy?.$el.getBoundingClientRect().left
-//   // Current component width
-//   const offsetWidth = instance?.proxy?.$el.offsetWidth
-//   // Maximum left margin of the panel
-//   const maxLeft = offsetWidth - menuMinWidth
-//   // The distance between the panel and the mouse pointer
-//   const left15 = e.clientX - offsetLeft + 15
-//   left.value = left15 > maxLeft ? maxLeft : left15
-//   top.value = e.clientY
-//   // Display panel
-//   visible.value = true
-//   // Update the tab currently being right-clicked
-//   selectedTag.value = tag
-// }
-
 /** Close the right-click menu panel */
 const closeMenu = () => {
   visible.value = false
@@ -164,23 +145,6 @@ onMounted(() => {
 
 <template>
   <div class="tags-view-container">
-    <!-- <ScrollPane class="tags-view-wrapper" :tag-refs="tagRefs">
-      <router-link
-        ref="tagRefs"
-        v-for="tag in tagsViewStore.visitedViews"
-        :key="tag.path"
-        :class="{ active: isActive(tag) }"
-        class="tags-view-item"
-        :to="{ path: tag.path, query: tag.query }"
-        @click.middle="!isAffix(tag) && closeSelectedTag(tag)"
-        @contextmenu.prevent="openMenu(tag, $event)"
-      >
-        {{ $t('router.' + tag.meta?.title) }}
-        <el-icon v-if="!isAffix(tag)" :size="12" @click.prevent.stop="closeSelectedTag(tag)">
-          <Close />
-        </el-icon>
-      </router-link>
-    </ScrollPane> -->
     <ul v-show="visible" class="contextmenu" :style="{ left: left + 'px', top: top + 'px' }">
       <li @click="refreshSelectedTag(selectedTag)">Refresh</li>
       <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">Close</li>

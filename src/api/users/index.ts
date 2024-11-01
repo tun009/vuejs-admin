@@ -3,10 +3,13 @@ import {
   ChangePasswordResponseModel,
   ChangeProfileResponseModel
 } from '@/@types/pages/profile/services/ProfileResponse'
-import { GetCheckerResponseModel, GetUserResponseModel } from '@/@types/pages/users/services/UserResponse'
-import { request } from '../service'
 import { AddUserRequestModel, GetUserRequestModel } from '@/@types/pages/users/services/UserRequest'
-import { AddUserResponseModel } from '@/@types/pages/users/services/UserResponse'
+import {
+  AddUserResponseModel,
+  GetCheckerResponseModel,
+  GetUserResponseModel
+} from '@/@types/pages/users/services/UserResponse'
+import { request } from '../service'
 
 /** get user */
 export function getUsers(data: GetUserRequestModel) {

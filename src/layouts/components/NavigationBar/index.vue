@@ -25,11 +25,6 @@ const userStore = useUserStore()
 // const settingsStore = useSettingsStore()
 // const { showNotify, showThemeSwitch, showScreenfull, showSearchMenu } = storeToRefs(settingsStore)
 
-/** Toggle Sidebar */
-// const toggleSidebar = () => {
-//   appStore.toggleSidebar(false)
-// }
-
 /** Sign out */
 const logout = () => {
   userStore.logout()
@@ -43,20 +38,9 @@ const goToProfile = () => {
 
 <template>
   <div class="navigation-bar">
-    <!-- <Hamburger
-      v-if="!isTop || isMobile"
-      :is-active="appStore.sidebar.opened"
-      class="hamburger"
-      @toggle-click="toggleSidebar"
-    /> -->
     <Breadcrumb v-if="!isTop || isMobile" class="breadcrumb" />
     <Sidebar v-if="isTop && !isMobile" class="sidebar" />
     <div class="right-menu">
-      <!-- <SearchMenu v-if="showSearchMenu" class="right-menu-item" />
-      <Screenfull v-if="showScreenfull" class="right-menu-item" />
-      <ThemeSwitch v-if="showThemeSwitch" class="right-menu-item" />
-      <LanguageSwitch class="right-menu-item" />
-      <Notify v-if="showNotify" class="right-menu-item" /> -->
       <el-dropdown class="right-menu-item">
         <div class="right-menu-avatar">
           <span>{{ userStore.userInfo.name }}</span>

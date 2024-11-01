@@ -1,6 +1,6 @@
 <template>
-  <!-- <div :dangerouslySetInnerHTML="{ __html: sanitizeString(html) }" /> -->
-  <div v-html="sanitizeString(html)" />
+  <!--  eslint-disable-next-line -->
+  <!-- //NOSONAR --><div v-html="sanitizeString(html)" />
 </template>
 
 <script setup lang="ts">

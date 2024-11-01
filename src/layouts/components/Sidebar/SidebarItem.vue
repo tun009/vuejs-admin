@@ -89,7 +89,6 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <!-- <div class="shadow-sm shadow-[#3784a9]" :class="{ 'sidebar-item': activeThemeName !== 'dark' }"> -->
   <div
     class="sidebar-item py-1"
     ref="sidebarItemRef"

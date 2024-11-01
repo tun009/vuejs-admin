@@ -45,7 +45,6 @@
 
 <script setup lang="ts">
 import { ref, unref } from 'vue'
-import { ClickOutside as vClickOutside } from 'element-plus'
 import { SelectOptionModel } from '@/@types/common'
 import { ArrowDownBold, Check } from '@element-plus/icons-vue'
 import { renderLabelByValue } from '@/utils/common'

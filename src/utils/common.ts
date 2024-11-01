@@ -49,7 +49,6 @@ export function resetNullUndefinedFields(obj: Record<string, any>, defaultValue:
   Object.keys(obj).forEach((key) => {
     if (obj[key] === null || obj[key] === undefined) {
       result[key] = defaultValue
-      return
     }
   })
   return result

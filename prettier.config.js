@@ -12,7 +12,7 @@ export default {
   /** No matter how many parameters the arrow function has, they must be wrapped in brackets */
   arrowParens: 'always',
   /** Use of line breaks */
-  endOfLine: 'auto',
+  // endOfLine: 'auto',
   /** Whether to use single quotes */
   singleQuote: true,
   /** Do not add a comma after the last element of an object or array */
