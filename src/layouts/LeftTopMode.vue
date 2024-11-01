@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useAppStore } from '@/store/modules/app'
 import { useSettingsStore } from '@/store/modules/settings'
-import { AppMain, NavigationBar, Sidebar, TagsView, Logo } from './components'
+import { AppMain, NavigationBar, Sidebar, Logo } from './components'
 
 const appStore = useAppStore()
 const settingsStore = useSettingsStore()
@@ -24,7 +24,6 @@ const layoutClasses = computed(() => {
       <Logo v-if="showLogo" :collapse="false" class="logo" />
       <div class="content">
         <NavigationBar />
-        <TagsView v-show="showTagsView" />
       </div>
     </div>
     <!-- Main container -->
