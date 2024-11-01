@@ -1,21 +1,18 @@
 <script setup lang="ts">
 import { PaginationModel } from '@/@types/common'
-import { FilterRulesModel, ruleListColumnConfigs, RuleModel, RuleTypeEnum } from '@/@types/pages/rules'
+import { docTypeOptions, FilterRulesModel, ruleListColumnConfigs, RuleModel, RuleTypeEnum } from '@/@types/pages/rules'
 import { getRules } from '@/api/rules/'
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import EIBInput from '@/components/common/EIBInput.vue'
 import EIBTable from '@/components/common/EIBTable.vue'
+import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
 import { Title } from '@/layouts/components'
+import { omitPropertyFromObject } from '@/utils/common'
 import { Search } from '@element-plus/icons-vue'
+import debounce from 'lodash-es/debounce'
 import { reactive, ref, watch } from 'vue'
 import UpdateRuleForm from '../components/UpdateRuleForm.vue'
-import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
-import { docTypeOptions } from '@/@types/pages/rules'
-import debounce from 'lodash-es/debounce'
-import { omitPropertyFromObject } from '@/utils/common'
-// defineOptions({
-//   name: 'Rules'
-// })
+
 const rulesTableRef = ref<InstanceType<typeof EIBTable>>()
 const filterValue = reactive<FilterRulesModel>({ query: '' } as FilterRulesModel)
 filterValue.type = RuleTypeEnum.LAW

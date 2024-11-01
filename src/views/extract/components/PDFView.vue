@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { VuePDF, usePDF } from '@tato30/vue-pdf'
-import { onMounted, onBeforeUnmount } from 'vue'
 
 const props = defineProps<{
   url?: string

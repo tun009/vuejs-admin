@@ -126,11 +126,7 @@ const handleDeleteUser = (name: string) => {
     <div
       class="transition-all duration-300 overflow-hidden flex flex-row items-center gap-5"
       :class="{ 'h-10 mb-2': openFilter, 'h-0': !openFilter }"
-    >
-      <!-- <EIBMultipleFilter title="Vai trò" />
-      <EIBSingleFilter title="SOL" />
-      <EIBSingleFilter title="Trạng thái" /> -->
-    </div>
+    />
     <el-card>
       <EIBTable
         :columnConfigs="userListColumnConfigs"
@@ -185,5 +181,3 @@ const handleDeleteUser = (name: string) => {
     </template>
   </EIBDrawer>
 </template>
-
-<style lang="css" scoped></style>
