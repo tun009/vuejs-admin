@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
 import { useSettingsStore } from '@/store/modules/settings'
-import { AppMain, NavigationBar, TagsView, Logo } from './components'
+import { AppMain, NavigationBar, Logo } from './components'
 
 const settingsStore = useSettingsStore()
 const { showTagsView, showLogo } = storeToRefs(settingsStore)
@@ -15,7 +15,6 @@ const { showTagsView, showLogo } = storeToRefs(settingsStore)
         <Logo v-if="showLogo" :collapse="false" class="logo" />
         <NavigationBar class="navigation-bar" />
       </div>
-      <TagsView v-show="showTagsView" />
     </div>
     <!-- Main container -->
     <div :class="{ hasTagsView: showTagsView }" class="main-container">
