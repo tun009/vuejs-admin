@@ -30,7 +30,7 @@ const loading = ref(false)
 const addUserFormData: AddUserRequestModel = reactive({
   name: '',
   username: '',
-  branchId: '',
+  branchId: 0,
   role: RoleEnum.ADMIN
 })
 

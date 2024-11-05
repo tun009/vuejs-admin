@@ -3,9 +3,10 @@ import { ElMessage, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { RoleEnum, UpdateUserRequestModel } from '@/@types/pages/users'
+import { RoleEnum } from '@/@types/pages/users'
 import EIBInput from '@/components/common/EIBInput.vue'
 import { requireRule } from '@/utils/validate'
+import { UpdateUserFormModel } from '@/@types/pages/users/services/UserRequest'
 
 interface Emits {
   (event: 'close'): void
@@ -20,15 +21,16 @@ const emits = defineEmits<Emits>()
 const { t } = useI18n()
 const loading = ref(false)
 const updateUserFormRef = ref()
-const updateUserFormData: UpdateUserRequestModel = reactive({
-  block: false,
+const updateUserFormData: UpdateUserFormModel = reactive({
+  id: 0,
+  status: false,
   name: '',
   role: RoleEnum.ADMIN,
-  branchId: '',
+  branchId: 0,
   username: ''
 })
 
-const updateUserFormRules: FormRules<UpdateUserRequestModel> = {
+const updateUserFormRules: FormRules<UpdateUserFormModel> = {
   name: [],
   role: [requireRule('change')],
   branchId: [requireRule('change')],
