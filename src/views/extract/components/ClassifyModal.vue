@@ -121,4 +121,3 @@ const viewPage = (viewPage: string) => {
   }
 }
 </style>
-<style lang="css" scoped></style>
