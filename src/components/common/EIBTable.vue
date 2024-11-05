@@ -15,6 +15,7 @@ interface Props {
   height?: number | string | 'unset'
   locales?: boolean
   hiddenSelection?: boolean
+  withSuggest?: boolean
 }
 
 interface Emits {
@@ -159,10 +160,12 @@ defineExpose<Exposes>({
         </template>
       </el-table-column>
       <template #empty>
-        <div class="flex flex-col justify-center gap-2 items-center leading-8 text-[#495057]">
+        <div class="flex flex-col justify-center gap-2 items-center leading-8 text-[#495057] my-5">
           <SvgIcon name="empty-data" class="!h-12 !w-12" />
           <p>Không có dữ liệu</p>
-          <p>Hãy bắt đầu sử dụng, bằng việc click vào nút <strong>Thêm</strong> để có thể thêm bộ chứng từ bạn cần</p>
+          <p v-if="withSuggest">
+            Hãy bắt đầu sử dụng, bằng việc click vào nút <strong>Thêm</strong> để có thể thêm bộ chứng từ bạn cần
+          </p>
         </div>
       </template>
     </el-table>

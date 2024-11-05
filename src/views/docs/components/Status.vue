@@ -5,7 +5,7 @@ import { computed } from 'vue'
 
 interface Props {
   options: SelectOptionModel[]
-  status: string
+  status: string | number
 }
 
 const props = withDefaults(defineProps<Props>(), {

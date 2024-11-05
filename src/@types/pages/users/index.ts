@@ -1,18 +1,11 @@
 import { ColumnConfigModel, SelectOptionModel } from '@/@types/common'
 import { BranchModel } from '../login'
-import { AddUserRequestModel } from './services/UserRequest'
 
 export enum RoleEnum {
   ADMIN = 'ADMIN',
   MAKER = 'MAKER',
   CHECKER = 'CHECKER',
   VIEWER = 'VIEWER'
-}
-
-export enum UserStatusEnum {
-  ACTIVE = 'ACTIVE',
-  UNACTIVE = 'UNACTIVE',
-  BLOCK = 'BLOCK'
 }
 
 export interface UserModel {
@@ -22,10 +15,12 @@ export interface UserModel {
   role: RoleEnum
   phoneNumber: string
   branch: BranchModel
+  status: any
 }
 
-export interface UpdateUserRequestModel extends AddUserRequestModel {
-  block: boolean
+export enum UserStatusEnum {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE'
 }
 
 /**********************/
@@ -88,5 +83,5 @@ export interface FilterUserModel {
   name: string
   branchId: number
   role: string | number
-  status?: number
+  status?: string | number
 }
