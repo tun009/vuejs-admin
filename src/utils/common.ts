@@ -1,7 +1,6 @@
 import { SelectOptionModel, StatusColorModel } from '@/@types/common'
 import { ElMessageBox } from 'element-plus'
 import DOMPurify from 'dompurify'
-
 export const getDataWithPagination = <T>(array: T[], pageNum: number, pageSize: number): T[] => {
   const start = pageNum * pageSize
   return array.slice(start, start + pageSize)
@@ -70,4 +69,14 @@ export const omitPropertyFromObject = (
     }
   }
   return newObj
+}
+export const groupByField = <T>(data: T[], key: keyof T): Record<string, T[]> => {
+  return data.reduce((acc: Record<string, T[]>, item: T) => {
+    const groupKey = item[key] as unknown as string
+    if (!acc[groupKey]) {
+      acc[groupKey] = []
+    }
+    acc[groupKey].push(item)
+    return acc
+  }, {})
 }

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { onMounted, ref, nextTick } from 'vue'
-import { getDossierDetailApi, getDossierListApi } from '@/api/extract'
+import { getDossierDetailApi, getDossierListApi, saveDossierDocApi } from '@/api/extract'
 import { useConfirmModal } from '@/hooks/useConfirm'
 import { ExtractDocumentModel, ExtractDossierModel, ExtractResultOcrModel } from '@/@types/pages/extract'
 import PDFView from './components/PDFView.vue'
@@ -13,6 +13,9 @@ import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import { renderLabelByValue } from '@/utils/common'
 import { documentStatusOptions } from '@/@types/pages/docs/documents'
 import { ArrowLeft, More, CloseBold, Select } from '@element-plus/icons-vue'
+import { ExtractPostDossierRequestModel } from '@/@types/pages/extract/service/ExtractRequest'
+import { ElMessage } from 'element-plus'
+import { regexNullOrEmpty } from '@/constants/regex'
 const dossierListData = ref<ExtractDossierModel[]>([])
 const documentDetail = ref<ExtractDocumentModel>()
 const activeName = ref('ocr')
@@ -21,9 +24,11 @@ const pdfViewRef = ref()
 const classifyModalRef = ref()
 const openClassifyDrawer = ref(false)
 const idDossierActive = ref()
+const isLoadViewContentRight = ref<boolean>(false)
+const loading = ref<boolean>(false)
 const { showConfirmModal } = useConfirmModal()
 const route = useRoute()
-
+const baseURL = import.meta.env.VITE_BASE_API
 const getDossiersList = async (id: number) => {
   try {
     const response = await getDossierListApi(id)
@@ -47,13 +52,14 @@ const isFirstViewExtract = ref<boolean>(false)
 const docTypeOcrData = ref()
 const getDossiersDetail = async (id: number) => {
   try {
+    isLoadViewContentRight.value = false
     documentDetail.value = {} as ExtractDocumentModel
     const response = await getDossierDetailApi(id)
     documentDetail.value = response.data
     ocrDataDetail.value = documentDetail.value.result[0]
     docTypeOcrData.value = documentDetail.value?.docType
     if (docTypeOcrData.value === 'DRAFT') isFirstViewExtract.value = true
-    ocrDataDetail
+    isLoadViewContentRight.value = true
   } catch (error: any) {
     throw new Error(error)
   }
@@ -110,7 +116,7 @@ const handleDeniedDossier = () => {
     options: {
       customClass: 'box-denied-confirm',
       inputPlaceholder: 'Nhập lý do từ chối',
-      inputPattern: /.{1,}/,
+      inputPattern: regexNullOrEmpty,
       inputErrorMessage: 'Vui lòng nhập lý do từ chối!'
     },
     onConfirm: (instance, done) => {
@@ -138,8 +144,29 @@ const resetFieldActive = () => {
     element.remove()
   })
 }
+const saveDossier = async () => {
+  try {
+    loading.value = true
+    const dataUpdate = [] as ExtractPostDossierRequestModel[]
+    documentDetail.value!.result.forEach((doc) => {
+      doc.forEach((item) => {
+        dataUpdate.push({ docDataId: item.id, value: item?.extractionValue ?? '' })
+      })
+    })
+    const response = await saveDossierDocApi(Number(route?.params?.dossierDocId), dataUpdate)
+    if (response.data) {
+      ElMessage({
+        showClose: true,
+        type: 'success',
+        message: 'Cập nhật thành công'
+      })
+      loading.value = false
+    }
+  } catch (error: any) {
+    throw new Error(error)
+  }
+}
 onMounted(() => {
-  console.log(route.params)
   getDossiersList(Number(route?.params?.batchId))
   getDossierById(Number(route?.params?.dossierDocId))
 })
@@ -159,7 +186,7 @@ onMounted(() => {
                 v-for="(item, index_ds) in dossierListData"
                 :key="index_ds"
                 class="p-3 border-b-[1px] border-b-[#e9ecef] text-[13px] text-[#868e96] hover:bg-[#e7f5ff] cursor-pointer"
-                @click="getDossierById(index_ds)"
+                @click="getDossierById(item.id)"
                 :class="{ 'dossier-active bg-[#e7f5ff]': item.id === idDossierActive }"
               >
                 <div>{{ item?.docType?.name }}</div>
@@ -169,7 +196,7 @@ onMounted(() => {
                 </div>
               </div>
             </div>
-            <div class="tab-footer p-[16px] shadow-[inset_0_1px_0_0_#d0d0d0] text-center">
+            <div class="tab-footer p-[16px] shadow-[inset_0_1px_0_0_#d0d0d0] text-center" v-if="isLoadViewContentRight">
               <el-button class="text-[#1c7ed6] border-[#1c7ed6]" @click="openClassifyModal()">Sửa phân loại</el-button>
             </div>
           </div>
@@ -177,141 +204,145 @@ onMounted(() => {
             <PDFView
               v-if="documentDetail?.pathFile"
               ref="pdfViewRef"
-              :url="'https://idp-staging.viettelai.vn/bic-app/api/v1/files?src=2024-10-25/01/11202/18405.pdf'"
+              :url="`${baseURL}/files?src=${documentDetail?.pathFile}`"
               @loaded-data="onLoadedPDF()"
             />
           </div>
         </div>
       </div>
       <div class="w-[28%]">
-        <div class="flex justify-between p-4 font-semibold items-center">
-          <span>{{ documentDetail?.fileName }}</span>
-          <el-dropdown placement="bottom-end" trigger="click">
-            <el-button :icon="More" class="p-[8px]" />
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item>
-                  <div class="flex gap-[6px] items-center leading-9">
-                    <SvgIcon name="ic-reload-document" />
-                    Thay thế chứng từ
-                  </div>
-                </el-dropdown-item>
-                <el-dropdown-item>
-                  <div class="flex gap-[6px] items-center leading-8">
-                    <SvgIcon name="ic-ocr" />
-                    Trích xuất OCR
-                  </div></el-dropdown-item
-                >
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </div>
-        <el-tabs class="tabs-infor" v-model="activeName">
-          <el-tab-pane label="Kết quả OCR" name="ocr">
-            <div v-if="docTypeOcrData === 'DRAFT'" class="flex gap-[15px] justify-center">
-              <el-button
-                class="rounded-[20px]"
-                :class="{ ' bg-[#1c7ed6] text-[#fff] ': isFirstViewExtract }"
-                @click="viewFirstExtract()"
-                >First</el-button
-              >
-              <el-button
-                class="rounded-[20px]"
-                :class="{ ' bg-[#1c7ed6] text-[#fff] ': !isFirstViewExtract }"
-                @click="viewSecondExtract()"
-                >Second</el-button
-              >
-            </div>
-            <div
-              class="overflow-y-auto"
-              :class="docTypeOcrData === 'DRAFT' ? 'h-[calc(100vh-207px)]' : 'h-[calc(100vh-185px)] '"
-            >
-              <template v-if="isLoadedPdf">
-                <div
-                  v-for="(item, index) in ocrDataDetail"
-                  :key="index"
-                  class="mt-[12px] py-[5px] px-[6px] item-dossier cursor-pointer"
-                  :class="[renderClassOcr(item?.confidence), fieldSelect === item.coreKey ? 'bg-[#e1edfe]' : '']"
-                  @click="handleClickField(item)"
-                >
-                  <div class="mx-[16px] border-l-[2px] border-solid">
-                    <div class="ml-[16px]">
-                      <div class="flex">
-                        <span
-                          class="text-[#fff] rounded-[3px] px-[4px] text-[12px] py-[2px] font-medium"
-                          :style="{
-                            backgroundColor: renderColorOcr((item.confidence ?? 0) * 100)
-                          }"
-                        >
-                          {{ formatNumberConfidence(item?.confidence ?? 0) }}%
-                        </span>
-                        <span class="ml-2 text-[#adb5bd]">{{ item.coreKey }}</span>
-                      </div>
-                      <div class="mt-[8px] min-h-[12px]">
-                        <div v-if="item.coreKey === 'goods_table'">Click để xem</div>
-                        <el-input
-                          v-else-if="fieldSelect === item.coreKey && item.type !== 'image'"
-                          v-model="item.extractionValue"
-                        />
-                        <div v-else-if="item.type === 'image'">
-                          <img :src="'data:image/png;base64,' + item.extractionValue" alt="" class="h-[70px]" />
-                        </div>
-                        <div v-else>{{ item.extractionValue }}</div>
-                      </div>
+        <div v-if="isLoadViewContentRight">
+          <div class="flex justify-between p-4 font-semibold items-center">
+            <span>{{ documentDetail?.fileName }}</span>
+            <el-dropdown placement="bottom-end" trigger="click">
+              <el-button :icon="More" class="p-[8px]" />
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item>
+                    <div class="flex gap-[6px] items-center leading-9">
+                      <SvgIcon name="ic-reload-document" />
+                      Thay thế chứng từ
                     </div>
-                  </div>
-                </div>
+                  </el-dropdown-item>
+                  <el-dropdown-item>
+                    <div class="flex gap-[6px] items-center leading-8">
+                      <SvgIcon name="ic-ocr" />
+                      Trích xuất OCR
+                    </div></el-dropdown-item
+                  >
+                </el-dropdown-menu>
               </template>
-              <template v-else-if="ocrDataDetail.length > 0">
-                <div
-                  v-for="(item, index) in ocrDataDetail"
-                  :key="index"
-                  class="mt-[12px] py-[5px] px-[6px] item-dossier cursor-wait"
+            </el-dropdown>
+          </div>
+          <el-tabs class="tabs-infor" v-model="activeName">
+            <el-tab-pane label="Kết quả OCR" name="ocr">
+              <div v-if="docTypeOcrData === 'DRAFT'" class="flex gap-[15px] justify-center">
+                <el-button
+                  class="rounded-[20px]"
+                  :class="{ ' bg-[#1c7ed6] text-[#fff] ': isFirstViewExtract }"
+                  @click="viewFirstExtract()"
+                  >First</el-button
                 >
-                  <div class="mx-[16px] border-l-[2px] border-solid">
-                    <div class="ml-[16px]">
-                      <div class="flex">
-                        <span
-                          class="text-[#fff] rounded-[3px] px-[4px] text-[12px] py-[2px] font-medium"
-                          :style="{
-                            backgroundColor: renderColorOcr(0)
-                          }"
-                        >
-                          {{ formatNumberConfidence(0) }}%
-                        </span>
-                        <span class="ml-2 text-[#adb5bd]">{{ item.coreKey }}</span>
-                      </div>
-                      <div class="mt-[8px] min-h-[12px]">
-                        <el-skeleton class="w-full" animated>
-                          <template #template>
-                            <el-skeleton-item variant="text" class="w-full" />
-                          </template>
-                        </el-skeleton>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </template>
-            </div>
-            <div class="tab-footer p-[16px] flex justify-between shadow-[inset_0_1px_0_0_#d0d0d0]">
-              <el-button :icon="CloseBold" class="text-[#c92a2a] border-[#c92a2a]" @click="handleDeniedDossier()"
-                >Từ chối</el-button
-              >
-              <div class="flex gap-[16px]">
-                <el-button class="text-[#fff] bg-[#1c7ed6]"><SvgIcon name="ic-save" class="mr-1" />Lưu lại</el-button>
-                <el-button :icon="Select" class="text-[#fff] bg-[#099268]" @click="handleCompareDossier()"
-                  >Đối sánh</el-button
+                <el-button
+                  class="rounded-[20px]"
+                  :class="{ ' bg-[#1c7ed6] text-[#fff] ': !isFirstViewExtract }"
+                  @click="viewSecondExtract()"
+                  >Second</el-button
                 >
               </div>
-            </div>
-          </el-tab-pane>
-          <el-tab-pane label="Lịch sử chỉnh sửa" name="history">
-            <HistoryTab :isActive="activeName === 'history'" />
-          </el-tab-pane>
-          <el-tab-pane label="Ghi chú" name="note">
-            <NoteTab :isActive="activeName === 'note'" />
-          </el-tab-pane>
-        </el-tabs>
+              <div
+                class="overflow-y-auto"
+                :class="docTypeOcrData === 'DRAFT' ? 'h-[calc(100vh-207px)]' : 'h-[calc(100vh-185px)] '"
+              >
+                <template v-if="isLoadedPdf">
+                  <div
+                    v-for="(item, index) in ocrDataDetail"
+                    :key="index"
+                    class="mt-[12px] py-[5px] px-[6px] item-dossier cursor-pointer"
+                    :class="[renderClassOcr(item?.confidence), fieldSelect === item.coreKey ? 'bg-[#e1edfe]' : '']"
+                    @click="handleClickField(item)"
+                  >
+                    <div class="mx-[16px] border-l-[2px] border-solid">
+                      <div class="ml-[16px]">
+                        <div class="flex">
+                          <span
+                            class="text-[#fff] rounded-[3px] px-[4px] text-[12px] py-[2px] font-medium"
+                            :style="{
+                              backgroundColor: renderColorOcr((item.confidence ?? 0) * 100)
+                            }"
+                          >
+                            {{ formatNumberConfidence(item?.confidence ?? 0) }}%
+                          </span>
+                          <span class="ml-2 text-[#adb5bd]">{{ item.coreKey }}</span>
+                        </div>
+                        <div class="mt-[8px] min-h-[12px]">
+                          <div v-if="item.coreKey === 'goods_table'">Click để xem</div>
+                          <el-input
+                            v-else-if="fieldSelect === item.coreKey && item.type !== 'image'"
+                            v-model="item.extractionValue"
+                          />
+                          <div v-else-if="item.type === 'image'">
+                            <img :src="'data:image/png;base64,' + item.extractionValue" alt="" class="h-[70px]" />
+                          </div>
+                          <div v-else>{{ item.extractionValue }}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+                <template v-else-if="ocrDataDetail.length > 0">
+                  <div
+                    v-for="(item, index) in ocrDataDetail"
+                    :key="index"
+                    class="mt-[12px] py-[5px] px-[6px] item-dossier cursor-wait"
+                  >
+                    <div class="mx-[16px] border-l-[2px] border-solid">
+                      <div class="ml-[16px]">
+                        <div class="flex">
+                          <span
+                            class="text-[#fff] rounded-[3px] px-[4px] text-[12px] py-[2px] font-medium"
+                            :style="{
+                              backgroundColor: renderColorOcr(0)
+                            }"
+                          >
+                            {{ formatNumberConfidence(0) }}%
+                          </span>
+                          <span class="ml-2 text-[#adb5bd]">{{ item.coreKey }}</span>
+                        </div>
+                        <div class="mt-[8px] min-h-[12px]">
+                          <el-skeleton class="w-full" animated>
+                            <template #template>
+                              <el-skeleton-item variant="text" class="w-full" />
+                            </template>
+                          </el-skeleton>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </div>
+              <div class="tab-footer p-[16px] flex justify-between shadow-[inset_0_1px_0_0_#d0d0d0]">
+                <el-button :icon="CloseBold" class="text-[#c92a2a] border-[#c92a2a]" @click="handleDeniedDossier()"
+                  >Từ chối</el-button
+                >
+                <div class="flex gap-[16px]">
+                  <el-button class="text-[#fff] bg-[#1c7ed6]" @click="saveDossier()" :loading="loading"
+                    ><SvgIcon name="ic-save" class="mr-1" />Lưu lại</el-button
+                  >
+                  <el-button :icon="Select" class="text-[#fff] bg-[#099268]" @click="handleCompareDossier()"
+                    >Đối sánh</el-button
+                  >
+                </div>
+              </div>
+            </el-tab-pane>
+            <el-tab-pane label="Lịch sử chỉnh sửa" name="history">
+              <HistoryTab :isActive="activeName === 'history'" />
+            </el-tab-pane>
+            <el-tab-pane label="Ghi chú" name="note">
+              <NoteTab :isActive="activeName === 'note'" :batchId="Number(route?.params?.batchId)" />
+            </el-tab-pane>
+          </el-tabs>
+        </div>
       </div>
     </div>
   </div>

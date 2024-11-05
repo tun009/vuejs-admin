@@ -7,12 +7,14 @@ interface Props {
   name: string
   className?: string
   size?: number | string
+  title?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
   prefix: 'icon',
   className: '',
-  size: 16
+  size: 16,
+  title: ''
 })
 
 const symbolId = computed(() => `#${props.prefix}-${props.name}`)
@@ -20,6 +22,7 @@ const symbolId = computed(() => `#${props.prefix}-${props.name}`)
 
 <template>
   <svg class="svg-icon" :class="className" :style="{ width: size, height: size }" aria-hidden="true">
+    <title>{{ title }}</title>
     <use :href="sanitizeString(symbolId)" />
   </svg>
 </template>

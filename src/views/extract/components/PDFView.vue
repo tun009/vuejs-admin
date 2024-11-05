@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { VuePDF, usePDF } from '@tato30/vue-pdf'
 import { onMounted, onBeforeUnmount } from 'vue'
+import { RefreshRight } from '@element-plus/icons-vue'
 
 const props = defineProps<{
   url?: string
@@ -11,7 +12,7 @@ const emit = defineEmits<{
 }>()
 const scale = ref(1)
 const currentPage = ref(1)
-const rotation = ref(1)
+const rotation = ref(0)
 const { pdf, pages } = usePDF(props.url)
 const scrollToPage = () => {
   const currentView = document.getElementById('view-pdf')
@@ -28,6 +29,9 @@ const zoomOut = () => {
   if (scale.value > 0.1) {
     scale.value = Math.max(scale.value - 0.1, 0.1)
   }
+}
+const rotationPage = () => {
+  rotation.value += 90
 }
 const onLoadedPDF = () => {
   emit('loaded-data')
@@ -51,7 +55,7 @@ const tagLabelToPage = (boxInfos: number[][][], pageNum: number) => {
       pElement.style.position = 'absolute'
       if (elementPage) elementPage.appendChild(pElement)
       if (index === 0) {
-        const elementScrollTo = pElement ?? elementPage
+        const elementScrollTo = elementPage ?? pElement
         elementScrollTo.scrollIntoView({ behavior: 'smooth' })
       }
     })
@@ -123,9 +127,9 @@ const toggleFullScreen = () => {
 <template>
   <div class="flex justify-between my-2 pdf-view-component">
     <div
-      class="bg-[#4a5c6f] flex w-[320px] h-[40px] text-[#fff] rounded-[4px] justify-start items-start gap-2.5 p-2.5 px-5 pt-2.5 pl-4"
+      class="bg-[#4a5c6f] flex lg:w-[320px] md:w-[280px] sm:w-[250px] h-[40px] text-[#fff] rounded-[4px] justify-start items-start gap-2.5 p-2.5 px-5 pt-2.5 pl-4"
     >
-      <SvgIcon title="Thu nhỏ" name="zoom-out" class="cursor-pointer !h-[22px] !w-[22px]" @click="zoomOut()" />
+      <SvgIcon title="Thu nhỏ" name="zoom-out" class="cursor-pointer !h-[22px] !w-[30px]" @click="zoomOut()" />
       <input
         class="w-full cursor-pointer h-full accent-[#7f8b98]"
         type="range"
@@ -135,12 +139,13 @@ const toggleFullScreen = () => {
         v-model="scale"
         @input="scale = Number(($event?.target as HTMLInputElement)?.value)"
       />
-      <SvgIcon title="Phóng to" name="zoom-in" class="cursor-pointer !h-[22px] !w-[22px]" @click="zoomIn()" />
+      <SvgIcon title="Phóng to" name="zoom-in" class="cursor-pointer !h-[22px] !w-[30px]" @click="zoomIn()" />
       <span class="text-[14px]">{{ (scale * 100).toFixed(0) }}%</span>
+      <el-icon title="Xoay" size="16" class="mt-[3px] cursor-pointer" @click="rotationPage()"><RefreshRight /></el-icon>
       <SvgIcon
         title="Toàn màn hình"
         name="full-screen"
-        class="cursor-pointer !h-[22px] !w-[22px]"
+        class="cursor-pointer !h-[22px] !w-[30px]"
         @click="toggleFullScreen"
       />
     </div>

@@ -16,3 +16,4 @@ export const regexAccents2 = /đ/g
 export const regexAccents3 = /Đ/g
 
 export const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,100}$/
+export const regexNullOrEmpty = /(?!^$)([^\s])/
