@@ -74,7 +74,16 @@ export const omitPropertyFromObject = (
   }
   return newObj
 }
-
+export const groupByField = <T>(data: T[], key: keyof T): Record<string, T[]> => {
+  return data.reduce((acc: Record<string, T[]>, item: T) => {
+    const groupKey = item[key] as unknown as string
+    if (!acc[groupKey]) {
+      acc[groupKey] = []
+    }
+    acc[groupKey].push(item)
+    return acc
+  }, {})
+}
 export const mappingBranches = (branches: BranchModel[]): SelectOptionModel[] => {
   return branches.map((b: BranchModel) => ({
     label: b.name,
