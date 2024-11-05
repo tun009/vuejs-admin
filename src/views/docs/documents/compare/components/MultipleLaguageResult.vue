@@ -8,7 +8,6 @@ import EIBDialog from '@/components/common/EIBDialog.vue'
 import EIBInput from '@/components/common/EIBInput.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
 import { useUserStore } from '@/store/modules/user'
-import { handleComingSoon } from '@/utils/common'
 import { InfoFilled } from '@element-plus/icons-vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { ref } from 'vue'
@@ -61,7 +60,7 @@ const handleUpdateCompareResult = () => {
         ElMessage({
           showClose: true,
           type: 'success',
-          message: t('notification.description.createSuccess')
+          message: t('notification.description.updateSuccess')
         })
         isEdit.value = false
       }, 3000)
@@ -137,7 +136,7 @@ const handleUpdateCompareResult = () => {
         ref="documentResultFormRef"
         :model="documentResultFormData"
         :rules="documentResultFormRules"
-        @keyup.enter="handleComingSoon"
+        @keyup.enter="handleUpdateCompareResult"
         class="flex flex-col gap-1"
       >
         <div class="flex flex-col gap-1">

@@ -491,6 +491,14 @@ export const documentXtctCompareResults = [
   {
     label: 'Sự đồng nhất thông tin giữa giấy XTCT với các chứng từ khác (1:1)',
     status: 'valid'
+  },
+  {
+    label: 'Phương thức gửi chứng từ',
+    status: 'valid'
+  },
+  {
+    label: 'Chữ ký kế toán trưởng, đại diện khách hàng',
+    status: 'valid'
   }
 ]
 
@@ -529,7 +537,7 @@ export const documentDraftCompareResultConfigs: DocumentCompareResultModel[] = [
             value: '23/01/2024'
           },
           {
-            label: '[Giấy XTCT] Ngày xuất trình bộ chứng từ (Upload date)',
+            label: '[Hệ thống] Ngày xuất trình bộ chứng từ (Upload date)',
             value: '24/01/2024'
           }
         ],
@@ -550,7 +558,7 @@ export const documentDraftCompareResultConfigs: DocumentCompareResultModel[] = [
             src: 'https://images.pexels.com/photos/28748483/pexels-photo-28748483/free-photo-of-autumn-leaves-with-book-and-camera-in-hanoi.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load'
           },
           {
-            label: '[Draft] Tên bên thụ hưởng ký hối phiếu',
+            label: '[Draft] Tên/ đại diện người thụ hưởng ký hối phiếu',
             value: 'NGOC HONG SEAFOOD CO.,LTD'
           },
           {
@@ -569,12 +577,12 @@ export const documentDraftCompareResultConfigs: DocumentCompareResultModel[] = [
     ]
   },
   {
-    label: 'Bên trả tiền hối phiếu',
+    label: 'Bên trả tiền hối phiếu (Drawee)',
     childrens: [
       {
         blocks: [
           {
-            label: '[Draft] Amount',
+            label: '[Draft] Drawee',
             value:
               'INDUSTRIAL BANK OF KOREA, VIETNAM HANOI BRANCH HANOI KEANGNAM HANOI LANDMARK, UNIT 1209 PHAMHUNG ST TULIEM HANOI VIET NAM'
           },
@@ -616,7 +624,7 @@ export const documentDraftCompareResultConfigs: DocumentCompareResultModel[] = [
       {
         blocks: [
           {
-            label: '[Draft] Loại hối phiếu',
+            label: '[Draft] Tenor',
             value: 'At sight'
           },
           {
@@ -955,7 +963,7 @@ export const documentXtctCompareResultConfigs: DocumentCompareResultModel[] = [
     ]
   },
   {
-    label: 'Sự đồng nhất thông tin Draft với các chứng từ khác (1:1)',
+    label: 'Sự đồng nhất thông tin Giấy XTCT với các chứng từ khác (1:1)',
     childrens: [
       {
         blocks: [
@@ -967,6 +975,53 @@ export const documentXtctCompareResultConfigs: DocumentCompareResultModel[] = [
         ],
         result: {
           status: 'invalid'
+        }
+      }
+    ]
+  },
+  {
+    label: 'Phương thức gửi chứng từ',
+    childrens: [
+      {
+        blocks: [
+          {
+            label: '[Giấy XTCT] Phương thức gửi chứng từ',
+            value: 'DHL'
+          }
+        ],
+        result: {
+          status: 'valid'
+        }
+      }
+    ]
+  },
+  {
+    label: 'Chữ ký kế toán trưởng, đại diện khách hàng',
+    childrens: [
+      {
+        label: 'Chữ ký kế toán trưởng',
+        blocks: [
+          {
+            label: '[Giấy XTCT] Kế toán trưởng',
+            src: 'https://images.pexels.com/photos/28748483/pexels-photo-28748483/free-photo-of-autumn-leaves-with-book-and-camera-in-hanoi.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load',
+            type: 'img'
+          }
+        ],
+        result: {
+          status: 'valid'
+        }
+      },
+      {
+        label: '9.2 Đại diện khách hàng',
+        blocks: [
+          {
+            label: '[Giấy XTCT] Đại diện khách hàng',
+            src: 'https://images.pexels.com/photos/28748483/pexels-photo-28748483/free-photo-of-autumn-leaves-with-book-and-camera-in-hanoi.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load',
+            type: 'img'
+          }
+        ],
+        result: {
+          status: 'valid'
         }
       }
     ]
@@ -1001,8 +1056,8 @@ export const documentBolCompareResultConfigs: DocumentCompareResultModel[] = [
       {
         blocks: [
           {
-            label: '[B/L] Thông tin bản gốc được ghi trên Bill',
-            value: 'First Original'
+            label: '[B/L] Thông tin số bản gốc phát hành trên Bill',
+            value: 'Three'
           }
         ],
         result: {
