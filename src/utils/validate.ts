@@ -1,9 +1,9 @@
+import i18n from '@/locales'
 import {
   regexDomain,
   regexEmail,
   regexExternalLink,
   regexFormat24Hours,
-  regexIPv4,
   regexIdCard,
   regexMac,
   regexPassword,
@@ -12,8 +12,6 @@ import {
   regexUrlPort,
   regexVersion
 } from '../constants/regex'
-
-import { useI18n } from 'vue-i18n'
 
 /** Determine whether it is an array */
 export const isArray = (arg: unknown) => {
@@ -85,28 +83,38 @@ export const isMAC = (mac: string) => {
   return reg.test(mac)
 }
 
-/** Determine if it is an IPv4 address */
-export const isIPv4 = (ip: string) => {
-  const reg = regexIPv4
-  return reg.test(ip)
-}
+export const requireRule = (trigger: 'change' | 'blur' = 'blur') => ({
+  required: true,
+  message: i18n.global.t('validate.required'),
+  trigger
+})
 
-export const requireRule = (trigger: 'change' | 'blur' = 'blur') => {
-  const { t } = useI18n()
-  return { required: true, message: t('validate.required'), trigger }
-}
+export const phoneNumberRule = () => ({
+  pattern: regexPhoneNumber,
+  message: i18n.global.t('validate.phoneNumber'),
+  trigger: 'blur'
+})
 
-export const phoneNumberRule = () => {
-  const { t } = useI18n()
-  return { pattern: regexPhoneNumber, message: t('validate.phoneNumber'), trigger: 'blur' }
-}
+export const limitLengthRule = ({ min, max }: { min: number; max: number }) => ({
+  max,
+  min,
+  message: i18n.global.t('validate.limit', { min, max }),
+  trigger: 'blur'
+})
 
-export const limitLengthRule = ({ min, max }: { min: number; max: number }) => {
-  const { t } = useI18n()
-  return { max, min, message: t('validate.limit', { min, max }), trigger: 'blur' }
-}
+export const passwordRule = () => ({
+  pattern: regexPassword,
+  message: i18n.global.t('validate.password'),
+  trigger: 'blur'
+})
+export const maxValueRule = (value: number, trigger: 'change' | 'blur' = 'blur') => ({
+  max: value,
+  message: i18n.global.t('validate.maxValue'),
+  trigger
+})
 
-export const passwordRule = () => {
-  const { t } = useI18n()
-  return { pattern: regexPassword, message: t('validate.password'), trigger: 'blur' }
-}
+export const patternRule = (pattern: RegExp) => ({
+  pattern,
+  message: i18n.global.t('validate.phoneNumber'),
+  trigger: 'blur'
+})

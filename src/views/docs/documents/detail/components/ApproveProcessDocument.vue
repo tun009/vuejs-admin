@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { ElMessage } from 'element-plus'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
 import { ApproveProcessDocumentModel, approveProcessDocumentColumnConfigs } from '@/@types/pages/docs/documents'
-import { getCheckers } from '@/api/docs/document'
+import { putPresentationChecker } from '@/api/docs/document'
+import { getChecker } from '@/api/users'
 import EIBTable from '@/components/common/EIBTable.vue'
-import { warningNotification } from '@/utils/notification'
+import { successNotification, warningNotification } from '@/utils/notification'
+import { useRoute } from 'vue-router'
 
 interface Emits {
   (event: 'close'): void
-  (event: 'success'): void
+  (event: 'refresh'): void
 }
 
 interface Exposes {
@@ -18,17 +19,21 @@ interface Exposes {
 
 const emits = defineEmits<Emits>()
 
+const route = useRoute()
+
 const radio = ref()
 const loading = ref(false)
 const tableData = ref<ApproveProcessDocumentModel[]>([])
 const checkerTableRef = ref<InstanceType<typeof EIBTable>>()
 
+const batchId = computed(() => route.params?.id as string)
+
 const handleGetChecker = async () => {
   try {
     checkerTableRef.value?.setLoading(true)
-    const response = await getCheckers()
-    if (response?.data?.list) {
-      tableData.value = response?.data?.list
+    const response = await getChecker()
+    if (response?.data) {
+      tableData.value = response?.data
     }
   } catch (error) {
     console.error(error)
@@ -41,19 +46,23 @@ const handleClose = () => {
   emits('close')
 }
 
-const handleSelectChecker = () => {
+const handleSelectChecker = async () => {
   if (!radio.value) {
-    warningNotification('Vui lòng chọn checker')
+    warningNotification('notification.description.pleaseChooseChecker')
     return
   }
-  loading.value = true
-  setTimeout(() => {
-    ElMessage.success('Checker được chọn: ' + radio.value.toString())
-    loading.value = false
+  try {
+    loading.value = true
+    await putPresentationChecker(batchId.value, { checkerId: radio.value })
+    successNotification('notification.description.updateSuccess')
     radio.value = undefined
-    emits('success')
+    emits('refresh')
     handleClose()
-  }, 2000)
+  } catch (error) {
+    console.error(error)
+  } finally {
+    loading.value = false
+  }
 }
 
 onMounted(() => {
@@ -67,7 +76,7 @@ defineExpose<Exposes>({
 
 <template>
   <div class="flex flex-col gap-5">
-    <span>Danh sách checker</span>
+    <span>{{ $t('docs.detail.checkerList') }}</span>
     <el-radio-group v-model="radio" class="w-full">
       <EIBTable
         ref="checkerTableRef"
@@ -76,12 +85,10 @@ defineExpose<Exposes>({
         hiddenPagination
         :columnConfigs="approveProcessDocumentColumnConfigs"
         :data="tableData"
+        @row-click="(row) => (radio = row.id)"
       >
-        <template #stt="{ index }">
-          <span>{{ index + 1 }}</span>
-        </template>
         <template #select="{ row }">
-          <el-radio :value="row.id" />
+          <el-radio :value="row.id" :modelValue="radio" />
         </template>
         <template #checker="{ row }">
           <div>
@@ -94,11 +101,7 @@ defineExpose<Exposes>({
     </el-radio-group>
   </div>
   <div>
-    <span class="underline">Lưu ý:</span
-    ><span>
-      sau khi trình checker thì Hệ thống sẽ ghi nhận bạn đã hoàn tất việc kiểm tra bộ chứng từ, chuyển sang trạng thái
-      “Chờ phê duyệt” và bạn không thể chỉnh sửa được nữa</span
-    >
+    <span class="underline">{{ $t('docs.detail.note') }}:</span><span> {{ $t('docs.detail.noteDes') }}</span>
   </div>
   <div>
     <el-button :loading="loading" @click.prevent="handleSelectChecker" type="primary">{{

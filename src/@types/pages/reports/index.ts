@@ -1,8 +1,20 @@
 import { ColumnConfigModel, DocumentStatusEnum, SelectOptionModel } from '@/@types/common'
 import { RoleEnum } from '@/@types/pages/users'
 import { STATUS_COLORS } from '@/constants/color'
-import { BranchModel } from '../../login'
 
+export interface ReportModel {
+  id: number
+  stt: number
+  name: string
+  type: string
+  status: string
+  result: string
+  sol: string
+  totalTime: string
+  system: string
+  maker: string
+  checker: string
+}
 // document enum
 export enum BusinessTypeEnum {
   NA = 'NA',
@@ -40,23 +52,6 @@ export enum OcrSourceEnum {
   NLP = 'NLP'
 }
 
-export interface DocumentModel {
-  id: number
-  dossierName: string
-  bizType: BusinessTypeEnum
-  status: DocumentStatusEnum
-  step: ProcessingStepEnum
-  branch: BranchModel
-  cif: string
-  customerName: string
-  totalAmount: string
-  createdAt: string
-  handleBy: string
-  approveBy: string
-  result: DocumentResultEnum
-  doneAt: string
-}
-
 export interface CompareRejectFormModel {
   reason: string
 }
@@ -65,75 +60,52 @@ export interface CompareContentFormModel {
   field: number
 }
 
+export interface UpdateLCFormModel {
+  amount: number
+}
+
 export const docListColumnConfigs: ColumnConfigModel[] = [
   {
     field: 'stt',
-    label: 'docs.document.stt'
+    label: 'STT',
+    minWidth: 30
   },
   {
-    field: 'dossierName',
-    label: 'docs.document.documentName',
-    minWidth: 200
+    field: 'name',
+    label: 'Tên bộ chứng từ'
   },
   {
-    field: 'bizType',
-    label: 'docs.document.businessType',
-    minWidth: 150
+    field: 'type',
+    label: 'Loại nghiệp vụ'
   },
   {
     field: 'status',
-    label: 'docs.document.status',
-    minWidth: 150
-  },
-  {
-    field: 'handleBy',
-    label: 'docs.document.handler',
-    minWidth: 150
-  },
-  {
-    field: 'step',
-    label: 'docs.document.processingStep',
-    minWidth: 150
-  },
-  {
-    field: 'branchName',
-    label: 'docs.document.sol',
-    minWidth: 250
-  },
-  {
-    field: 'cif',
-    label: 'docs.document.cif',
-    width: 150
-  },
-  {
-    field: 'customerName',
-    label: 'docs.document.customerName',
-    minWidth: 150
-  },
-  {
-    field: 'totalAmount',
-    label: 'docs.document.amount',
-    minWidth: 120
-  },
-  {
-    field: 'createdAt',
-    label: 'docs.document.createdAt',
-    minWidth: 120
+    label: 'Trạng thái'
   },
   {
     field: 'result',
-    label: 'docs.document.result',
-    minWidth: 150
+    label: 'Kết quả xử lý'
   },
   {
-    field: 'doneAt',
-    label: 'docs.document.completionDate',
-    minWidth: 150
+    field: 'sol',
+    label: 'SOL'
   },
   {
-    field: 'actions',
-    label: 'docs.document.actions',
-    minWidth: 120
+    field: 'totalTime',
+    label: 'Tổng thời gian xử lý',
+    minWidth: 140
+  },
+  {
+    field: 'system',
+    label: 'Hệ thống xử lý'
+  },
+  {
+    field: 'maker',
+    label: 'Maker xử lý'
+  },
+  {
+    field: 'checker',
+    label: 'Checker xử lý'
   }
 ]
 
@@ -445,66 +417,4 @@ export interface FilterDocumentModel {
     isAsc: boolean
     column: string
   }[]
-}
-
-// compare history mock
-export interface CompareHistoryModel {
-  date: string
-  timeList: CompareHistoryTimeModel[]
-}
-
-export interface CompareHistoryTimeModel {
-  time: string
-  name: string
-  role: RoleEnum
-  actionList: CompareHistoryActionModel[]
-}
-
-export interface CompareHistoryActionModel {
-  actionName: string
-  beforeUpdate?: CompareHistoryActionUpdateModel
-  afterUpdate?: CompareHistoryActionUpdateModel
-  isConfirm?: boolean
-}
-
-export interface CompareHistoryActionUpdateModel {
-  contents?: string[]
-  isComplied?: boolean
-}
-
-export interface DocumentLCDetailModel {
-  batchId: number
-  customerName: string
-  branchCode: string
-  cif: string
-  status: DocumentStatusEnum
-  checkBy: string
-  approveBy: string
-  amountClaimed: number
-  totalAmount: number
-  currency: string
-  docCreditNo: string
-  dateIssue: string
-  expiryDate: string
-  expiryPlace: string
-  tolerancePercent: string
-  partialShipments: string
-  periodPresentation: string
-  datePresentation: string
-}
-
-export interface DocumentLCAmountModel {
-  batchId?: number
-  totalAmount: number
-  amountUsed: number
-}
-
-export interface UpdateLCAmountFormModel {
-  amountUsed: number
-}
-
-export interface DocumentDataLCModel {
-  coreKey: string
-  extractionValue?: string
-  validatedValue?: string
 }

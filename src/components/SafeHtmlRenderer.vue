@@ -1,14 +1,16 @@
 <template>
-  <!-- <div :dangerouslySetInnerHTML="{ __html: sanitizeString(html) }" /> -->
-  <div v-html="sanitizeString(html)" />
+  <!--  eslint-disable-next-line -->
+  <!-- //NOSONAR --><div v-html="sanitizeString(html)" />
 </template>
 
 <script setup lang="ts">
 import { sanitizeString } from '@/utils/common'
 
 interface Props {
-  html: string
+  html?: string
 }
 
-defineProps<Props>()
+withDefaults(defineProps<Props>(), {
+  html: ''
+})
 </script>

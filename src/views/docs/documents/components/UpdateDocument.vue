@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import { DocumentModel } from '@/@types/pages/docs/documents'
 import { UpdateDocumentRequestModel } from '@/@types/pages/docs/documents/services/DocumentRequest'
+import { BranchModel } from '@/@types/pages/login'
+import { getBranches, updateDocument } from '@/api/docs/document'
 import EIBInput from '@/components/common/EIBInput.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
-import { MOCK_SOLS } from '@/mocks/user'
+import { mappingBranches } from '@/utils/common'
 import { requireRule } from '@/utils/validate'
-import { DocumentModel } from '@/@types/pages/docs/documents'
-import { updateDocument } from '@/api/docs/document'
 
 interface Porps {
   data: DocumentModel
@@ -28,6 +29,8 @@ const emits = defineEmits<Emits>()
 const props = defineProps<Porps>()
 
 const { t } = useI18n()
+
+const branches = ref<BranchModel[]>([])
 const loading = ref(false)
 const upadateDocumentFormRef = ref<FormInstance | null>()
 const upadateDocumentFormData: UpdateDocumentRequestModel = reactive({
@@ -73,6 +76,19 @@ const handleUpdateDocument = () => {
   })
 }
 
+const handleGetBranches = async () => {
+  try {
+    const { data } = await getBranches()
+    branches.value = data
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+onMounted(() => {
+  handleGetBranches()
+})
+
 defineExpose<Exposes>({
   handleClose
 })
@@ -97,7 +113,7 @@ defineExpose<Exposes>({
     <EIBSelect
       v-model="upadateDocumentFormData.branchId"
       name="branchId"
-      :options="MOCK_SOLS"
+      :options="mappingBranches(branches)"
       label="docs.document.solDes"
     />
     <EIBInput

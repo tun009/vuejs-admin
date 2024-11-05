@@ -1,5 +1,5 @@
 import { PaginationModel } from '@/@types/common'
-import { BusinessTypeEnum, FilterDocumentModel } from '..'
+import { BusinessTypeEnum, FilterDocumentModel, UpdateLCAmountFormModel } from '..'
 
 export interface GetDocumentRequestModel extends PaginationModel, Partial<FilterDocumentModel> {}
 
@@ -18,4 +18,13 @@ export interface UpdateDocumentRequestModel {
   branchId?: number
   cif?: string
   customerName?: string
+}
+
+export interface UpdateBatchAmountRequestModel {
+  batchId: number
+  amountClaimed: number
+}
+
+export interface UpdateLCAmountRequestModel extends UpdateLCAmountFormModel {
+  batchId: number
 }

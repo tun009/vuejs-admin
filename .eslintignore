@@ -5,3 +5,5 @@ node_modules
 dist
 dist-ssr
 *.local
+src/components/SvgIcon/index.vue
+src/components/SafeHtmlRenderer.vue

@@ -2,7 +2,10 @@ import { BranchModel } from '@/@types/pages/login'
 import {
   ApproveProcessDocumentModel,
   BusinessTypeEnum,
+  DocumentDataLCModel,
   DocumentFileModel,
+  DocumentLCAmountModel,
+  DocumentLCDetailModel,
   DocumentModel,
   DocumentResultModel,
   ProcessingStepEnum
@@ -20,18 +23,28 @@ export type GetDocumentResultsResponseModel = BaseListResponseModel<DocumentResu
 
 export type GetCheckersResponseModel = BaseListResponseModel<ApproveProcessDocumentModel>
 
+export type GetBranchResponseModel = ApiResponseData<BranchModel[]>
+
+export type GetDocumentLCDetailResponseModel = ApiResponseData<DocumentLCDetailModel>
+
+export type GetDocumentLCAmountResponseModel = ApiResponseData<DocumentLCAmountModel>
+
+export type GetDocumentDataLCResponseModel = ApiResponseData<DocumentDataLCModel[]>
+
+export type PutPresentationCheckerResponseModel = ApiResponseData<number>
+
 export interface BatchDetailModel {
   id: number
   dossierName: string
   bizType: BusinessTypeEnum
   status: DocumentStatusEnum
   handleBy: string
+  approveBy: string
   step: ProcessingStepEnum
   branch: BranchModel
   cif: string
   customerName: string
   createdAt: string
-
   docCreditNo: string
   dateIssue: string
   expiryDate: string

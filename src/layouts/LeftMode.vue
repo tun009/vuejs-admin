@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useAppStore } from '@/store/modules/app'
 import { useSettingsStore } from '@/store/modules/settings'
-import { AppMain, NavigationBar, Sidebar, TagsView } from './components'
+import { AppMain, NavigationBar, Sidebar } from './components'
 import { useDevice } from '@/hooks/useDevice'
 
 const { isMobile } = useDevice()
@@ -38,7 +38,6 @@ const handleClickOutside = () => {
       <!-- head navigation bar and tab bar -->
       <div :class="{ 'fixed-header': fixedHeader }" class="layout-header">
         <NavigationBar />
-        <TagsView v-show="showTagsView" />
       </div>
       <!-- page body content -->
       <AppMain class="app-main" />

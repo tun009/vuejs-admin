@@ -15,7 +15,23 @@
       "limitSize": "Dung lượng file không vượt quá 16MB!",
       "limitQuantity": "Tổng số file không vượt quá 10!",
       "emptyFiles": "Vui lòng chọn ít nhất 1 file!",
-      "saveSuccess": "Lưu thành công"
+      "saveSuccess": "Lưu thành công",
+      "pleaseChooseChecker": "Vui lòng chọn checker",
+      "checkerSelected": "Checker được chọn: { name }",
+      "returnSuccess": "Chuyển trả Maker thành công",
+      "rejectSuccess": "Từ chối thành công"
+    }
+  },
+  "confirm": {
+    "title": {
+      "deleteFile": "Xác nhận xóa file?",
+      "confirmCompare": "Xác nhận kết quả kiểm tra bộ chứng từ",
+      "approveCompare": "Phê duyệt kết quả kiểm tra bộ chứng từ"
+    },
+    "description": {
+      "deleteFile": "Bạn có chắc chắn xóa file <strong>{ name }</strong> không?",
+      "confirmCompare": "Sau khi nhấn vào nút “Xác nhận”, hệ thống ghi nhận việc kiểm tra kết quả đã hoàn tất, chuyển sang trạng thái “Đã kiểm tra”</br ></br />Bạn xác nhận hoàn thành kiểm tra chứ?",
+      "approveCompare": "Sau khi nhấn vào nút “Phê duyệt”, hệ thống ghi nhận việc kiểm tra kết quả đã hoàn tất, chuyển sang trạng thái “Đã phê duyệt”, kết thúc luồng xử lý giao dịch, không thể thực hiện chỉnh sửa nữa.</br ></br />Bạn xác nhận phê duyệt chứ?"
     }
   },
   "layouts": {
@@ -60,7 +76,10 @@
     "confirm": "Xác nhận",
     "confirmDelete": "Xác nhận xóa",
     "cancel_1": "Hủy bỏ",
-    "delete": "Xóa"
+    "delete": "Xóa",
+    "back": "Trở lại",
+    "reject": "Từ chối",
+    "approve": "Phê duyệt"
   },
   "login": {
     "title": "Đăng nhập",
@@ -71,6 +90,7 @@
     "enterPassword": "Nhập mật khẩu của bạn"
   },
   "router": {
+    "login": "Đăng nhập",
     "dashboard": "Tổng quan",
     "document": "Quản lý chứng từ",
     "dataProcessing": "Kiểm tra chứng từ",
@@ -110,7 +130,8 @@
     "limit": "Độ dài nằm giữa { min } và { max } ký tự",
     "password": "Vui lòng nhập đúng định dạng mật khẩu",
     "passwordNotMatch": "Mật khẩu không khớp",
-    "passwordOld": "Mật khẩu mới không được giống mật khẩu cũ"
+    "passwordOld": "Mật khẩu mới không được giống mật khẩu cũ",
+    "maxValue": "Không thể vượt qua giá trị tối đa"
   },
   "base": {
     "input": {
@@ -191,7 +212,93 @@
       "numberSatisfiesRequirement": "Số kiểm tra thỏa mãn yêu cầu",
       "select": "Select",
       "checkerName": "Tên checker",
-      "totalAmount": "Số tiền"
+      "totalAmount": "Số tiền",
+      "uploadDate": "Ngày upload",
+      "to": "đến",
+      "start": "Bắt đầu",
+      "end": "Kết thúc",
+      "resetToDefault": "Khôi phục mặc định",
+      "presentationChecker": "Trình checker",
+      "by": "bởi"
+    },
+    "detail": {
+      "generalInfomation": "Thông tin chung",
+      "preDoc": "Bộ trước",
+      "nextDoc": "Bộ sau",
+      "documentInformation": "Thông tin bộ chứng từ",
+      "fileList": "Danh sách file giấy từ",
+      "lcInformation": "Thông tin LC",
+      "lcProgress": "Tổng trị giá LC đã sử dụng ({ currency }) / Tổng giá trị LC",
+      "lcNumber": "Số LC",
+      "createdAtLc": "Ngàp lập LC",
+      "expirationDateLc": "Ngày hết hạn LC",
+      "expirationPositionLc": "Nơi hết hạn LC",
+      "tolerance": "Dung sai",
+      "partialDelivery": "Giao hàng từng phần",
+      "presentationDateDoc": "Ngày xuất trình chứng từ",
+      "deadlinePresentingDoc": "Thời hạn xuất trình chứng từ",
+      "ocrInformation": "Thông tin OCR",
+      "seeResult": "Xem kết quả",
+      "downloadResult": "Tải kết quả",
+      "checkResult": "Kết quả kiểm tra",
+      "noInformation": "Chưa có thông tin",
+      "deliveryTimeRequest": "Thời gian giao hàng so với yêu cầu",
+      "inLcEffect": "Trong hiệu lực LC",
+      "periodPresentationDoc": "Trong thời hạn xuất trình chứng từ",
+      "detail": "Chi tiết",
+      "presentationChecker": "Trình checker phê duyệt bộ chứng từ",
+      "checkerList": "Danh sách checker",
+      "note": "Lưu ý",
+      "noteDes": "sau khi trình checker thì Hệ thống sẽ ghi nhận bạn đã hoàn tất việc kiểm tra bộ chứng từ, chuyển sang trạng thái “Chờ phê duyệt” và bạn không thể chỉnh sửa được nữa",
+      "updateLcUsed": "Cập nhập Tổng trị giá LC đã sử dụng",
+      "totalLc": "Tổng giá trị LC",
+      "totalLcUsed": "Tổng trị giá LC đã sử dụng hiện tại",
+      "enterReason": "Nhập lý do",
+      "amount": "Số tiền"
+    },
+    "status": {
+      "processing": "Đang xử lý",
+      "valid": "Hợp lệ",
+      "invalid": "Bất hợp lệ"
+    },
+    "compare": {
+      "chooseContent": "Chọn nội dung trường 47A cần bổ sung",
+      "reason": "Lý do",
+      "enterReason": "Nhập lý do",
+      "compareRejectDes": "Sau khi nhấn vào nút “Xác nhận”, hệ thống ghi nhận việc “Từ chối” bộ chứng từ, kết thúc giao dịch xử lý",
+      "addCompareContent": "Bổ sung nội dung đối sánh",
+      "result": "Kết quả",
+      "english": "Anh",
+      "complied": "Complied",
+      "discrepancy": "Discrepancy",
+      "na": "N/A",
+      "vietnamese": "Việt",
+      "editInformation": "Chỉnh sửa thông tin",
+      "checkResult": "Kết quả kiểm tra",
+      "english_1": "Tiếng Anh",
+      "saveDictionary": "Lưu từ điển",
+      "ruleEvidence": "Dẫn chứng Rule",
+      "vietnamese_1": "Tiếng Việt",
+      "compareReject": "Xác nhận “Từ chối” bộ chứng từ",
+      "checkDoc": "Kiểm tra chứng từ",
+      "docName": "Tên bộ chứng từ",
+      "createdAtDoc": "Ngày upload chứng từ",
+      "totalAmount": "Tổng trị giá",
+      "checkList": "Danh sách kiểm tra",
+      "editHistory": "Lịch sử chỉnh sửa",
+      "fieldName": "Tên trường trích xuất",
+      "enterFieldName": "Nhập tên trường trích xuất",
+      "coreKey": "Core key",
+      "describe": "Mô tả",
+      "enterDescribe": "Nhập mô tả",
+      "editInvalidCategory": "Cập nhập Danh mục bất hợp lệ",
+      "editInvalidCategoryDes": "Bạn xác nhận cập nhật lại nội dung luật bất hợp lệ này chứ?",
+      "currentContent": "Nội dung hiện tại:",
+      "newContent": "Nội dung mới",
+      "time": "Thời gian",
+      "beforeUpdate": "Trước chỉnh sửa",
+      "afterUpdate": "Sau chỉnh sửa",
+      "returnMaker": "Chuyển trả Maker"
     }
   }
 }

@@ -53,9 +53,6 @@ watchEffect(() => {
     <!-- Mixed Mode -->
     <LeftTopMode v-else-if="isLeftTop" />
     <!-- Right Settings Panel -->
-    <!-- <RightPanel v-if="showSettings">
-      <Settings />
-    </RightPanel> -->
   </div>
 </template>
 

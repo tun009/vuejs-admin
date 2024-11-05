@@ -5,7 +5,7 @@
       "<script lang=\"ts\" setup></script>\n",
       "<template>",
       "\t<div class=\"app-container\">Meo Meo Meo</div>",
-      "</template>\n",
+      "</template>",
       "$1"
     ],
     "description": "Vue3 SFC"

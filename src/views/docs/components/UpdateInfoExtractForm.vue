@@ -24,14 +24,14 @@ const updateUserFormData: UpdateUserRequestModel = reactive({
   block: false,
   name: '',
   role: RoleEnum.ADMIN,
-  sol: '',
+  branchId: '',
   username: ''
 })
 
-const updateUserFormRules: FormRules = {
+const updateUserFormRules: FormRules<UpdateUserRequestModel> = {
   name: [],
   role: [requireRule('change')],
-  sol: [requireRule('change')],
+  branchId: [requireRule('change')],
   username: []
 }
 

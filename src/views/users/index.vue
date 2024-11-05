@@ -2,7 +2,7 @@
 import ConfigRoleUserForm from './components/ConfigRoleUserForm.vue'
 
 import { PaginationModel } from '@/@types/common'
-import { UserModel, userListColumnConfigs } from '@/@types/pages/users'
+import { FilterUserModel, UserModel, userListColumnConfigs } from '@/@types/pages/users'
 import { getUsers } from '@/api/users'
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import EIBInput from '@/components/common/EIBInput.vue'
@@ -13,7 +13,7 @@ import { ref, reactive } from 'vue'
 import AddUserForm from './components/AddUserForm.vue'
 import UpdateUserForm from './components/UpdateUserForm.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { FilterDocumentModel } from '@/@types/pages/docs/documents'
+import { omitPropertyFromObject } from '@/utils/common'
 // import EIBMultipleFilter from '@/components/Filter/EIBMultipleFilter.vue'
 // import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
 
@@ -30,20 +30,29 @@ const openConfigRoleUserDrawer = ref(false)
 
 const disabledIds = [1]
 const openFilter = ref(false)
-const filterValue = reactive<FilterDocumentModel>({} as FilterDocumentModel)
+const filterValue = reactive<FilterUserModel>({} as FilterUserModel)
 
 const tableData = ref<UserModel[]>([])
 
 const handleResetFilter = () => {
-  filterValue.bizType = -1
+  filterValue.name = ''
   filterValue.branchId = -1
-  filterValue.result = -1
-  filterValue.status = []
+  filterValue.role = -1
+  filterValue.status = -1
 }
 
 const handleGetUser = async (pagination: PaginationModel) => {
   try {
-    const response = await getUsers({ ...pagination, searchQuery: searchQuery.value })
+    const response = await getUsers({
+      ...pagination,
+      ...omitPropertyFromObject(filterValue, -1),
+      sortItemList: [
+        {
+          isAsc: false,
+          column: 'name'
+        }
+      ]
+    })
     tableData.value = response.data.list
     return response
   } catch (error: any) {
@@ -106,7 +115,6 @@ const handleDeleteUser = (name: string) => {
           >
           <el-button type="primary" plain>Tìm kiếm</el-button>
         </div>
-        <!-- <el-button :icon="Filter" @click="handleComingSoon">{{ $t('user.filter') }}</el-button> -->
       </div>
       <div class="flex flex-row gap-3">
         <el-button plain type="primary" :icon="Tools" @click="openConfigRoleUserDrawer = true">{{
@@ -118,11 +126,7 @@ const handleDeleteUser = (name: string) => {
     <div
       class="transition-all duration-300 overflow-hidden flex flex-row items-center gap-5"
       :class="{ 'h-10 mb-2': openFilter, 'h-0': !openFilter }"
-    >
-      <!-- <EIBMultipleFilter title="Vai trò" />
-      <EIBSingleFilter title="SOL" />
-      <EIBSingleFilter title="Trạng thái" /> -->
-    </div>
+    />
     <el-card>
       <EIBTable
         :columnConfigs="userListColumnConfigs"
@@ -177,5 +181,3 @@ const handleDeleteUser = (name: string) => {
     </template>
   </EIBDrawer>
 </template>
-
-<style lang="css" scoped></style>

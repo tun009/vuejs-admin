@@ -91,8 +91,8 @@ onMounted(() => {
 
 const handleDeleteFile = async (row: DocumentFileModel) => {
   showConfirmModal({
-    message: `Bạn có chắc chắn xóa file <strong>${row.fileName}</strong> không?`,
-    title: 'Xác nhận xóa file?',
+    title: t('confirm.title.deleteFile'),
+    message: t('confirm.description.deleteFile', { name: row.fileName }),
     onConfirm: async (instance, done) => {
       try {
         await deleteDocumentFile(row.id)
@@ -115,7 +115,6 @@ const handleDeleteFile = async (row: DocumentFileModel) => {
       <div class="flex flex-row justify-end">
         <el-button type="primary" :icon="Plus" @click="dialogVisible = true">{{ $t('button.add') }}</el-button>
       </div>
-      <!-- add file dialog -->
       <el-dialog v-model="dialogVisible" :title="$t('docs.document.addFile')" width="75%" :before-close="handleClose">
         <EIBUpload :files="files" @add-files="addFiles" @set-files="setFiles" />
         <template #footer>
@@ -154,12 +153,8 @@ const handleDeleteFile = async (row: DocumentFileModel) => {
               @click="handleDeleteFile(row)"
               ><Delete
             /></el-icon>
-          </div>
-        </template>
-        <template #stt="{ index }">
-          <span>{{ index + 1 }}</span>
-        </template></EIBTable
-      >
+          </div> </template
+      ></EIBTable>
     </div>
   </el-card>
 </template>

@@ -1,10 +1,12 @@
 import { ColumnConfigModel, SelectOptionModel } from '@/@types/common'
+import { BranchModel } from '../login'
+import { AddUserRequestModel } from './services/UserRequest'
 
 export enum RoleEnum {
-  ADMIN = 'admin',
-  MAKER = 'maker',
-  CHECKER = 'checker',
-  VIEWER = 'viewer'
+  ADMIN = 'ADMIN',
+  MAKER = 'MAKER',
+  CHECKER = 'CHECKER',
+  VIEWER = 'VIEWER'
 }
 
 export enum UserStatusEnum {
@@ -15,21 +17,11 @@ export enum UserStatusEnum {
 
 export interface UserModel {
   id: number
-  stt: number
   name: string
   username: string
   role: RoleEnum
-  isMe?: boolean
-  sol: string
-  solId: number
-  status: UserStatusEnum
-}
-
-export interface AddUserRequestModel {
-  name: string
-  username: string
-  sol: string
-  role: RoleEnum
+  phoneNumber: string
+  branch: BranchModel
 }
 
 export interface UpdateUserRequestModel extends AddUserRequestModel {
@@ -86,3 +78,15 @@ export const userListColumnConfigs: ColumnConfigModel[] = [
     label: 'Actions'
   }
 ]
+
+export interface FilterUserModel {
+  searchCount: boolean
+  sortItemList: {
+    isAsc: boolean
+    column: string
+  }[]
+  name: string
+  branchId: number
+  role: string | number
+  status?: number
+}

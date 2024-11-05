@@ -49,47 +49,50 @@ function createService() {
     },
     (error) => {
       // status is the HTTP status code
-      // const status = get(error, 'response.status')
+      const status = get(error, 'response.status')
+      const errorCode = get(error, 'code')
       const msg = get(error, 'response.data.msg')
-      // switch (status) {
-      //   case 400:
-      //     error.message = 'Request error'
-      //     break
-      //   case 401:
-      //     // When the Token expires
-      //     logout()
-      //     break
-      //   case 403:
-      //     error.message = 'Access denied'
-      //     break
-      //   case 404:
-      //     error.message = 'Request address error'
-      //     break
-      //   case 408:
-      //     error.message = 'Request timeout'
-      //     break
-      //   case 500:
-      //     error.message = 'Server internal error'
-      //     break
-      //   case 501:
-      //     error.message = 'Service not implemented'
-      //     break
-      //   case 502:
-      //     error.message = 'Gateway error'
-      //     break
-      //   case 503:
-      //     error.message = 'Service unavailable'
-      //     break
-      //   case 504:
-      //     error.message = 'Gateway timeout'
-      //     break
-      //   case 505:
-      //     error.message = 'HTTP version not supported'
-      //     break
-      //   default:
-      //     break
-      // }
-      ElMessage.error(msg)
+      const msgLocal = errorCode === 'ERR_NETWORK' ? 'Problem connecting to server' : ''
+      switch (status) {
+        case 400:
+          error.message = 'Request error'
+          break
+        case 401:
+          error.message = 'Unauthorized'
+          // When the Token expires
+          logout()
+          break
+        case 403:
+          error.message = 'Access denied'
+          break
+        case 404:
+          error.message = 'Request address error'
+          break
+        case 408:
+          error.message = 'Request timeout'
+          break
+        case 500:
+          error.message = 'Server internal error'
+          break
+        case 501:
+          error.message = 'Service not implemented'
+          break
+        case 502:
+          error.message = 'Gateway error'
+          break
+        case 503:
+          error.message = 'Service unavailable'
+          break
+        case 504:
+          error.message = 'Gateway timeout'
+          break
+        case 505:
+          error.message = 'HTTP version not supported'
+          break
+        default:
+          break
+      }
+      ElMessage.error(msg ?? error.message ?? msgLocal)
       return Promise.reject(error)
     }
   )

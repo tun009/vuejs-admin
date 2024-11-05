@@ -15,7 +15,7 @@ import Sidebar from '../Sidebar/index.vue'
 // import LanguageSwitch from '@/components/LanguageSwitch/index.vue'
 import { useDevice } from '@/hooks/useDevice'
 import { useLayoutMode } from '@/hooks/useLayoutMode'
-import { LOGIN_PAGE, PROFILE_PAGE } from '@/constants/router'
+import { PROFILE_PAGE } from '@/constants/router'
 
 const { isMobile } = useDevice()
 const { isTop } = useLayoutMode()
@@ -25,15 +25,9 @@ const userStore = useUserStore()
 // const settingsStore = useSettingsStore()
 // const { showNotify, showThemeSwitch, showScreenfull, showSearchMenu } = storeToRefs(settingsStore)
 
-/** Toggle Sidebar */
-// const toggleSidebar = () => {
-//   appStore.toggleSidebar(false)
-// }
-
 /** Sign out */
 const logout = () => {
   userStore.logout()
-  router.push(LOGIN_PAGE)
 }
 
 /** Profile */
@@ -44,20 +38,9 @@ const goToProfile = () => {
 
 <template>
   <div class="navigation-bar">
-    <!-- <Hamburger
-      v-if="!isTop || isMobile"
-      :is-active="appStore.sidebar.opened"
-      class="hamburger"
-      @toggle-click="toggleSidebar"
-    /> -->
     <Breadcrumb v-if="!isTop || isMobile" class="breadcrumb" />
     <Sidebar v-if="isTop && !isMobile" class="sidebar" />
     <div class="right-menu">
-      <!-- <SearchMenu v-if="showSearchMenu" class="right-menu-item" />
-      <Screenfull v-if="showScreenfull" class="right-menu-item" />
-      <ThemeSwitch v-if="showThemeSwitch" class="right-menu-item" />
-      <LanguageSwitch class="right-menu-item" />
-      <Notify v-if="showNotify" class="right-menu-item" /> -->
       <el-dropdown class="right-menu-item">
         <div class="right-menu-avatar">
           <span>{{ userStore.userInfo.name }}</span>

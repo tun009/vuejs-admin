@@ -1,6 +1,8 @@
 import { SelectOptionModel, StatusColorModel } from '@/@types/common'
 import { ElMessageBox } from 'element-plus'
 import DOMPurify from 'dompurify'
+import { BranchModel } from '@/@types/pages/login'
+
 export const getDataWithPagination = <T>(array: T[], pageNum: number, pageSize: number): T[] => {
   const start = pageNum * pageSize
   return array.slice(start, start + pageSize)
@@ -42,12 +44,14 @@ export const scrollIntoViewParent = (id: string) => {
   element?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 
-export function resetNullUndefinedFields(obj: Record<string, any>): void {
+export function resetNullUndefinedFields(obj: Record<string, any>, defaultValue: string | number | boolean = ''): void {
+  const result: any = { ...obj }
   Object.keys(obj).forEach((key) => {
     if (obj[key] === null || obj[key] === undefined) {
-      obj[key] = ''
+      result[key] = defaultValue
     }
   })
+  return result
 }
 
 export const sanitizeString = (symbolId: string) => {
@@ -79,4 +83,11 @@ export const groupByField = <T>(data: T[], key: keyof T): Record<string, T[]> =>
     acc[groupKey].push(item)
     return acc
   }, {})
+}
+export const mappingBranches = (branches: BranchModel[]): SelectOptionModel[] => {
+  return branches.map((b: BranchModel) => ({
+    label: b.name,
+    value: b.id,
+    description: b.code
+  }))
 }

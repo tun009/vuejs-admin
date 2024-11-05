@@ -45,6 +45,7 @@ const openUpdateInfoExtractDrawer = ref(false)
       <el-tab-pane label="Trường thông tin trích xuất" name="first">
         <EIBSelect
           v-model="docs"
+          class="pb-2"
           name="docs"
           :options="dataSelectDocs"
           label="Thông tin trường trích xuất cho loại chứng từ"
@@ -98,7 +99,6 @@ const openUpdateInfoExtractDrawer = ref(false)
                   </div>
                 </div>
               </div>
-              <!-- <b-button class="btn-red mt-3 save-btn" variant="none">Lưu thay đổi</b-button> -->
               <el-button type="primary" style="width: 110px">Lưu thay đổi</el-button>
             </div>
           </el-form>
@@ -321,10 +321,6 @@ const openUpdateInfoExtractDrawer = ref(false)
 
 .el-input__prefix {
   left: 10px;
-}
-
-.el-color-picker__icon {
-  display: none !important;
 }
 
 .el-color-picker__icon {
