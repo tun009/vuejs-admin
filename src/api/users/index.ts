@@ -3,13 +3,19 @@ import {
   ChangePasswordResponseModel,
   ChangeProfileResponseModel
 } from '@/@types/pages/profile/services/ProfileResponse'
-import { AddUserRequestModel, GetUserRequestModel } from '@/@types/pages/users/services/UserRequest'
+import {
+  AddUserRequestModel,
+  GetUserRequestModel,
+  UpdateUserRequestModel
+} from '@/@types/pages/users/services/UserRequest'
 import {
   AddUserResponseModel,
   GetCheckerResponseModel,
-  GetUserResponseModel
+  GetUserResponseModel,
+  UpdateUserResponseModel
 } from '@/@types/pages/users/services/UserResponse'
 import { request } from '../service'
+import { GetBranchResponseModel } from '@/@types/pages/docs/documents/services/DocumentResponse'
 
 /** get user */
 export function getUsers(data: GetUserRequestModel) {
@@ -51,5 +57,28 @@ export function addUser(data: AddUserRequestModel) {
     url: 'users/register',
     method: 'post',
     data
+  })
+}
+
+export function getBranches() {
+  return request<GetBranchResponseModel>({
+    url: 'branches',
+    method: 'get'
+  })
+}
+
+/** Update user */
+export function updateUser(data: UpdateUserRequestModel) {
+  return request<UpdateUserResponseModel>({
+    url: 'users',
+    method: 'put',
+    data
+  })
+}
+/** Delete user */
+export function deleteUser(id: string | number) {
+  return request<ApiResponseData<number>>({
+    url: 'users/' + id,
+    method: 'delete'
   })
 }

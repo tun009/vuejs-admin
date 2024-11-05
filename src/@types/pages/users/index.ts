@@ -1,6 +1,5 @@
 import { ColumnConfigModel, SelectOptionModel } from '@/@types/common'
 import { BranchModel } from '../login'
-import { AddUserRequestModel } from './services/UserRequest'
 
 export enum RoleEnum {
   ADMIN = 'ADMIN',
@@ -22,10 +21,7 @@ export interface UserModel {
   role: RoleEnum
   phoneNumber: string
   branch: BranchModel
-}
-
-export interface UpdateUserRequestModel extends AddUserRequestModel {
-  block: boolean
+  status: any
 }
 
 /**********************/

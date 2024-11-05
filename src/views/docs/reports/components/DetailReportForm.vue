@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import Status from '@/views/docs/components/Status.vue'
 import EIBTable from '@/components/common/EIBTable.vue'
+import { STATUS_COLORS } from '@/constants/color'
+import Status from '@/views/docs/components/Status.vue'
+import { ref } from 'vue'
 
 interface Emits {
   (event: 'close'): void
@@ -17,20 +18,14 @@ const loading = ref(false)
 const addUserFormRef = ref()
 const optionStatus = ref([
   {
-    label: 'Tạo mới yêu cầu',
-    value: 0
+    label: 'Đã phê duyệt',
+    value: 2,
+    color: STATUS_COLORS.VALIDATED
   },
   {
-    label: 'Đang xử lý',
-    value: 1
-  },
-  {
-    label: 'Kiểm tra',
-    value: 2
-  },
-  {
-    label: 'Phê duyệt',
-    value: 3
+    label: 'Hợp lệ',
+    value: 3,
+    color: STATUS_COLORS.VALIDATED
   }
 ])
 const SOLListColumnConfigs = [
@@ -94,11 +89,11 @@ defineExpose<Exposes>({
     <div class="flex mt-[16px]">
       <div class="w-[50%]">
         <p class="text-[#495057] font-bold text-[14px]">Trạng thái:</p>
-        <p class="text-[14px]">Đã phê duyệt <Status :options="optionStatus" status="2" /></p>
+        <p class="text-[14px]"><Status :options="optionStatus" :status="2" /></p>
       </div>
       <div class="w-[50]">
         <p class="text-[#495057] font-bold text-[14px]">Kết quả xử lý:</p>
-        <p class="text-[14px]">Hợp lệ</p>
+        <p class="text-[14px]"><Status :options="optionStatus" :status="3" /></p>
       </div>
     </div>
     <div class="flex mt-[16px]">
@@ -133,7 +128,7 @@ defineExpose<Exposes>({
         </div>
       </div>
       <div class="mt-[28px]">
-        <p class="text-[#343a40] text-[14px] font-medium">Thống kê thông tin chỉnh sửa theo loại chứng từ</p>
+        <p class="text-[#343a40] text-[14px] font-medium mb-2">Thống kê thông tin chỉnh sửa theo loại chứng từ</p>
         <EIBTable
           :columnConfigs="SOLListColumnConfigs"
           :data="[]"

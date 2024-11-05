@@ -1,15 +1,24 @@
 <script setup lang="ts">
-import { UpdateUserRequestModel, RoleEnum, roleSelectOptions } from '@/@types/pages/users'
+import { roleSelectOptions, UserModel } from '@/@types/pages/users'
 import EIBInput from '@/components/common/EIBInput.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
 import { requireRule } from '@/utils/validate'
 import { Check, Close, Lock } from '@element-plus/icons-vue'
 import { ElMessage, FormRules, ElMessageBox } from 'element-plus'
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { getBranches, updateUser } from '@/api/users'
+import { mappingBranches } from '@/utils/common'
+import { BranchModel } from '@/@types/pages/login'
+import { UpdateUserRequestModel } from '@/@types/pages/users/services/UserRequest'
+
+interface Props {
+  data: UserModel
+}
 
 interface Emits {
   (event: 'close'): void
+  (event: 'refresh'): void
 }
 
 interface Exposes {
@@ -17,21 +26,30 @@ interface Exposes {
 }
 
 const emits = defineEmits<Emits>()
+const props = defineProps<Props>()
 
 const { t } = useI18n()
+const branches = ref<BranchModel[]>([])
 const loading = ref(false)
 const updateUserFormRef = ref()
+const statusUser = (status: string) => {
+  if (status == 'ACTIVE') {
+    return true
+  } else {
+    return false
+  }
+}
+
 const updateUserFormData: UpdateUserRequestModel = reactive({
-  name: '',
-  username: '',
-  branchId: '',
-  role: RoleEnum.ADMIN,
-  block: false
+  id: props.data?.id,
+  name: props.data?.name,
+  username: props.data?.username,
+  branchId: props.data?.branch?.id,
+  role: props.data?.role,
+  status: statusUser(props.data?.status)
 })
 
 const updateUserFormRules: FormRules<UpdateUserRequestModel> = {
-  name: [],
-  username: [],
   branchId: [requireRule('change')],
   role: [requireRule('change')]
 }
@@ -42,26 +60,49 @@ const handleClose = () => {
 }
 
 const handleUpdateUser = () => {
-  updateUserFormRef.value?.validate((valid: boolean, fields: any) => {
-    if (valid) {
-      loading.value = true
-      setTimeout(() => {
-        loading.value = false
+  updateUserFormRef.value?.validate(async (valid: boolean, fields: any) => {
+    try {
+      if (valid) {
+        if (updateUserFormData.status == true) {
+          updateUserFormData.status = 'ACTIVE'
+        } else {
+          updateUserFormData.status = 'INACTIVE'
+        }
+        loading.value = true
+        await updateUser({ ...updateUserFormData, id: props.data.id })
         ElMessage({
+          message: t('notification.description.updateSuccess'),
           showClose: true,
-          type: 'success',
-          message: t('notification.description.createSuccess')
+          type: 'success'
         })
+        emits('refresh')
         handleClose()
-      }, 2000)
-    } else {
-      console.error('Form validation failed', fields)
+      } else {
+        console.error('Form validation failed', fields)
+      }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      loading.value = false
     }
   })
 }
 
 defineExpose<Exposes>({
   handleClose
+})
+
+const handleGetBranches = async () => {
+  try {
+    const { data } = await getBranches()
+    branches.value = data
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+onMounted(() => {
+  handleGetBranches()
 })
 
 const handleResetPasswordUser = () => {
@@ -108,7 +149,12 @@ const handleResetPasswordUser = () => {
       v-model="updateUserFormData.username"
       disabled
     />
-    <EIBSelect v-model="updateUserFormData.branchId" name="sol" :options="roleSelectOptions" label="user.addUser.sol" />
+    <EIBSelect
+      v-model="updateUserFormData.branchId"
+      name="sol"
+      :options="mappingBranches(branches)"
+      label="user.addUser.sol"
+    />
     <EIBSelect v-model="updateUserFormData.role" name="role" :options="roleSelectOptions" label="user.addUser.role" />
     <div class="flex flex-col gap-2 mb-[26px]">
       <span>{{ $t('user.updateUser.password') }}</span>
@@ -118,9 +164,9 @@ const handleResetPasswordUser = () => {
     </div>
     <div class="flex flex-col gap-2">
       <span>{{ $t('user.updateUser.blockUser') }}</span>
-      <el-form-item prop="block">
+      <el-form-item prop="status">
         <el-switch
-          v-model="updateUserFormData.block"
+          v-model="updateUserFormData.status"
           class="!ml-0"
           style="margin-left: 24px"
           inline-prompt
