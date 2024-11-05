@@ -10,4 +10,4 @@ ENV http_proxy=
 ENV https_proxy=
 EXPOSE 8080
 
-CMD ["pnpm", "run", "preview:dev"]
+CMD ["pnpm", "run", "preview:prod"]
