@@ -62,14 +62,3 @@ export function getDossierClassifyApi(id: number) {
     params: { batchId: id }
   })
 }
-// export function getDossierClassifyApi(): Promise<ExtractClassifyResponseModel> {
-//   return new Promise((resolve) => {
-//     setTimeout(() => {
-//       return resolve({
-//         code: 1,
-//         data: DOSSIER_CLASSIFY as ExtractClassifyModel[],
-//         msg: ''
-//       })
-//     }, 500)
-//   })
-// }
