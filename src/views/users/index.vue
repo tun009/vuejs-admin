@@ -15,7 +15,7 @@ import UpdateUserForm from './components/UpdateUserForm.vue'
 import { omitPropertyFromObject } from '@/utils/common'
 import { useConfirmModal } from '@/hooks/useConfirm'
 import { debounce } from 'lodash-es'
-import { deleteUser } from '@/api/users'
+// import { deleteUser } from '@/api/users'
 
 const { showConfirmModal } = useConfirmModal()
 // import EIBMultipleFilter from '@/components/Filter/EIBMultipleFilter.vue'
@@ -39,7 +39,7 @@ const tableData = ref<UserModel[]>([])
 const rowSelect = ref<UserModel>({} as UserModel)
 
 const checkedItems = ref<UserModel[]>([])
-const documentTableRef = ref<InstanceType<typeof EIBTable>>()
+const userTableRef = ref<InstanceType<typeof EIBTable>>()
 
 const handleUpdateUser = (row: UserModel) => {
   openUpdateUserDrawer.value = true
@@ -48,10 +48,10 @@ const handleUpdateUser = (row: UserModel) => {
 
 const handleClearAllChecked = () => {
   checkedItems.value = []
-  documentTableRef.value?.clearSelection()
+  userTableRef.value?.clearSelection()
 }
 
-const handleGetData = debounce(() => documentTableRef?.value?.handleGetData(), 300)
+const handleGetData = debounce(() => userTableRef?.value?.handleGetData(), 300)
 
 watch(
   [() => filterValue],
@@ -72,7 +72,7 @@ const handleResetFilter = () => {
 
 const handleGetUser = async (pagination: PaginationModel) => {
   try {
-    const { status, ...otherFilter } = filterValue
+    const { status: _status, ...otherFilter } = filterValue
     const response = await getUsers({
       ...pagination,
       ...omitPropertyFromObject(otherFilter, -1),
@@ -81,8 +81,8 @@ const handleGetUser = async (pagination: PaginationModel) => {
           isAsc: false,
           column: 'name'
         }
-      ],
-      ...(status?.length ? { status } : {})
+      ]
+      // ...(status?.length ? { status } : {})
     })
     tableData.value = response.data.list
     return response
@@ -99,10 +99,10 @@ const handleDeleteUser = (data?: UserModel) => {
     onConfirm: async (instance, done) => {
       try {
         if (data) {
-          await deleteUser([data?.id ?? ''])
+          // await deleteUser([data?.id ?? ''])
         } else {
-          const ids = checkedItems.value.map((i) => i.id)
-          await deleteUser(ids)
+          const _ids = checkedItems.value.map((i) => i.id)
+          // await deleteUser(ids)
         }
         handleGetData()
         done()
@@ -158,7 +158,7 @@ const handleDeleteUser = (data?: UserModel) => {
     />
     <el-card>
       <EIBTable
-        ref="documentTableRef"
+        ref="userTableRef"
         :columnConfigs="userListColumnConfigs"
         @update:selection="(val: UserModel[]) => (checkedItems = val)"
         :data="tableData"
@@ -208,7 +208,7 @@ const handleDeleteUser = (data?: UserModel) => {
 
   <EIBDrawer v-if="openUpdateUserDrawer" v-model="openUpdateUserDrawer" title="user.updateUser.title">
     <template #default>
-      <UpdateUserForm @close="openUpdateUserDrawer = false" :data="rowSelect" />
+      <UpdateUserForm @close="openUpdateUserDrawer = false" :data="rowSelect" @refresh="handleGetData" />
     </template>
   </EIBDrawer>
 

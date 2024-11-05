@@ -8,12 +8,6 @@ export enum RoleEnum {
   VIEWER = 'VIEWER'
 }
 
-export enum UserStatusEnum {
-  ACTIVE = 'ACTIVE',
-  UNACTIVE = 'UNACTIVE',
-  BLOCK = 'BLOCK'
-}
-
 export interface UserModel {
   id: number
   name: string
@@ -22,6 +16,11 @@ export interface UserModel {
   phoneNumber: string
   branch: BranchModel
   status: any
+}
+
+export enum UserStatusEnum {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE'
 }
 
 /**********************/
@@ -84,5 +83,5 @@ export interface FilterUserModel {
   name: string
   branchId: number
   role: string | number
-  status?: number
+  status?: string | number
 }

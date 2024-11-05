@@ -1,5 +1,5 @@
 import { PaginationModel } from '@/@types/common'
-import { FilterUserModel, RoleEnum } from '..'
+import { FilterUserModel, RoleEnum, UserStatusEnum } from '..'
 
 export interface GetUserRequestModel extends PaginationModel, Partial<FilterUserModel> {}
 
@@ -16,5 +16,9 @@ export interface UpdateUserRequestModel {
   name: string
   branchId: number
   role: RoleEnum
-  status: any
+  status: UserStatusEnum
+}
+
+export interface UpdateUserFormModel extends Omit<UpdateUserRequestModel, 'status'> {
+  status: boolean
 }

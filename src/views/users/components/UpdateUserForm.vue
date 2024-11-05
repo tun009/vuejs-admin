@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { roleSelectOptions, UserModel } from '@/@types/pages/users'
+import { roleSelectOptions, UserModel, UserStatusEnum } from '@/@types/pages/users'
 import EIBInput from '@/components/common/EIBInput.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
 import { requireRule } from '@/utils/validate'
@@ -10,7 +10,7 @@ import { useI18n } from 'vue-i18n'
 import { getBranches, updateUser } from '@/api/users'
 import { mappingBranches } from '@/utils/common'
 import { BranchModel } from '@/@types/pages/login'
-import { UpdateUserRequestModel } from '@/@types/pages/users/services/UserRequest'
+import { UpdateUserFormModel } from '@/@types/pages/users/services/UserRequest'
 
 interface Props {
   data: UserModel
@@ -40,7 +40,7 @@ const statusUser = (status: string) => {
   }
 }
 
-const updateUserFormData: UpdateUserRequestModel = reactive({
+const updateUserFormData: UpdateUserFormModel = reactive({
   id: props.data?.id,
   name: props.data?.name,
   username: props.data?.username,
@@ -49,7 +49,7 @@ const updateUserFormData: UpdateUserRequestModel = reactive({
   status: statusUser(props.data?.status)
 })
 
-const updateUserFormRules: FormRules<UpdateUserRequestModel> = {
+const updateUserFormRules: FormRules<UpdateUserFormModel> = {
   branchId: [requireRule('change')],
   role: [requireRule('change')]
 }
@@ -63,13 +63,10 @@ const handleUpdateUser = () => {
   updateUserFormRef.value?.validate(async (valid: boolean, fields: any) => {
     try {
       if (valid) {
-        if (updateUserFormData.status == true) {
-          updateUserFormData.status = 'ACTIVE'
-        } else {
-          updateUserFormData.status = 'INACTIVE'
-        }
+        const payload = { ...updateUserFormData }
+        const status = updateUserFormData.status ? UserStatusEnum.ACTIVE : UserStatusEnum.INACTIVE
         loading.value = true
-        await updateUser({ ...updateUserFormData, id: props.data.id })
+        await updateUser({ ...payload, status, id: props.data.id })
         ElMessage({
           message: t('notification.description.updateSuccess'),
           showClose: true,
