@@ -7,15 +7,20 @@ import PDFView from './components/PDFView.vue'
 import HistoryTab from './components/HistoryTab.vue'
 import NoteTab from './components/NoteTab.vue'
 import ClassifyModal from './components/ClassifyModal.vue'
+import ReplaceDocumentModal from './components/ReplaceDocumentModal.vue'
+
 import { useRoute } from 'vue-router'
 
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
-import { renderLabelByValue } from '@/utils/common'
+import { renderLabelByValue, formatNumberConfidence } from '@/utils/common'
 import { documentStatusOptions } from '@/@types/pages/docs/documents'
 import { ArrowLeft, More, CloseBold, Select } from '@element-plus/icons-vue'
 import { ExtractPostDossierRequestModel } from '@/@types/pages/extract/service/ExtractRequest'
 import { ElMessage } from 'element-plus'
 import { regexNullOrEmpty } from '@/constants/regex'
+import router from '@/router'
+import { DOCUMENT_DETAIL_PAGE, EXTRACT_PAGE } from '@/constants/router'
+import { DocTypeEnum } from '@/@types/pages/rules'
 const dossierListData = ref<ExtractDossierModel[]>([])
 const documentDetail = ref<ExtractDocumentModel>()
 const activeName = ref('ocr')
@@ -26,6 +31,7 @@ const openClassifyDrawer = ref(false)
 const idDossierActive = ref()
 const isLoadViewContentRight = ref<boolean>(false)
 const loading = ref<boolean>(false)
+const isShowModalReplace = ref<boolean>(false)
 const { showConfirmModal } = useConfirmModal()
 const route = useRoute()
 const baseURL = import.meta.env.VITE_BASE_API
@@ -39,12 +45,20 @@ const getDossiersList = async (id: number) => {
       }
     })
     // hard code
+    if (dossierListData.value.length > 0 && !route?.query?.dossierDocId) getDossierById(dossierListData.value[0]?.id)
   } catch (error: any) {
     throw new Error(error)
   }
 }
 const getDossierById = (id: number) => {
   idDossierActive.value = id
+  router.replace({
+    path: EXTRACT_PAGE,
+    query: {
+      batchId: route.query.batchId,
+      dossierDocId: id
+    }
+  })
   getDossiersDetail(id)
 }
 const ocrDataDetail = ref<ExtractResultOcrModel[]>([])
@@ -58,7 +72,7 @@ const getDossiersDetail = async (id: number) => {
     documentDetail.value = response.data
     ocrDataDetail.value = documentDetail.value.result[0]
     docTypeOcrData.value = documentDetail.value?.docType
-    if (docTypeOcrData.value === 'DRAFT') isFirstViewExtract.value = true
+    if (docTypeOcrData.value === DocTypeEnum.DRAFT) isFirstViewExtract.value = true
     isLoadViewContentRight.value = true
   } catch (error: any) {
     throw new Error(error)
@@ -70,13 +84,6 @@ const handleClickField = (item: ExtractResultOcrModel) => {
 }
 const renderClassOcr = (conf: number = 0) => {
   return conf > 0.75 ? 'trust-hight' : 'trust-medium'
-}
-const formatNumberConfidence = (num: number) => {
-  if (Number.isInteger(num * 100)) {
-    return num.toString()
-  } else {
-    return Math.round(num * 10 * 100) / 10
-  }
 }
 const renderColorOcr = (cd: number = 0) => {
   if (cd === 0 || cd === undefined) return '#7a8da5'
@@ -92,7 +99,10 @@ const onLoadedPDF = () => {
 const openClassifyModal = async () => {
   openClassifyDrawer.value = true
   await nextTick()
-  classifyModalRef.value?.getDossierById()
+  classifyModalRef.value?.openModalClassify()
+}
+const closeDialogClassify = () => {
+  openClassifyDrawer.value = false
 }
 const handleCompareDossier = () => {
   showConfirmModal({
@@ -153,7 +163,7 @@ const saveDossier = async () => {
         dataUpdate.push({ docDataId: item.id, value: item?.extractionValue ?? '' })
       })
     })
-    const response = await saveDossierDocApi(Number(route?.params?.dossierDocId), dataUpdate)
+    const response = await saveDossierDocApi(Number(route?.query?.dossierDocId), dataUpdate)
     if (response.data) {
       ElMessage({
         showClose: true,
@@ -166,9 +176,15 @@ const saveDossier = async () => {
     throw new Error(error)
   }
 }
+const openModalReplaceDocument = () => {
+  isShowModalReplace.value = true
+}
+const goToBackDocumentPage = () => {
+  router.replace(DOCUMENT_DETAIL_PAGE(route?.query?.batchId as string))
+}
 onMounted(() => {
-  getDossiersList(Number(route?.params?.batchId))
-  getDossierById(Number(route?.params?.dossierDocId))
+  getDossiersList(Number(route?.query?.batchId))
+  if (route?.query?.dossierDocId) getDossierById(Number(route?.query?.dossierDocId))
 })
 </script>
 
@@ -179,7 +195,9 @@ onMounted(() => {
         <div class="flex flex-row h-full">
           <div class="w-[180px]">
             <div class="p-[16px] px-[20px] btn-go-back relative z-[1]">
-              <el-button :icon="ArrowLeft" class="text-[#005d98] border-[#005d98]">Trở lại</el-button>
+              <el-button :icon="ArrowLeft" class="text-[#005d98] border-[#005d98]" @click="goToBackDocumentPage()"
+                >Trở lại</el-button
+              >
             </div>
             <div class="h-[calc(100vh-126px)] overflow-y-auto">
               <div
@@ -219,7 +237,7 @@ onMounted(() => {
               <template #dropdown>
                 <el-dropdown-menu>
                   <el-dropdown-item>
-                    <div class="flex gap-[6px] items-center leading-9">
+                    <div class="flex gap-[6px] items-center leading-9" @click="openModalReplaceDocument()">
                       <SvgIcon name="ic-reload-document" />
                       Thay thế chứng từ
                     </div>
@@ -236,7 +254,7 @@ onMounted(() => {
           </div>
           <el-tabs class="tabs-infor" v-model="activeName">
             <el-tab-pane label="Kết quả OCR" name="ocr">
-              <div v-if="docTypeOcrData === 'DRAFT'" class="flex gap-[15px] justify-center">
+              <div v-if="docTypeOcrData === DocTypeEnum.DRAFT" class="flex gap-[15px] justify-center">
                 <el-button
                   class="rounded-[20px]"
                   :class="{ ' bg-[#1c7ed6] text-[#fff] ': isFirstViewExtract }"
@@ -252,7 +270,7 @@ onMounted(() => {
               </div>
               <div
                 class="overflow-y-auto"
-                :class="docTypeOcrData === 'DRAFT' ? 'h-[calc(100vh-207px)]' : 'h-[calc(100vh-185px)] '"
+                :class="docTypeOcrData === DocTypeEnum.DRAFT ? 'h-[calc(100vh-207px)]' : 'h-[calc(100vh-185px)] '"
               >
                 <template v-if="isLoadedPdf">
                   <div
@@ -325,7 +343,7 @@ onMounted(() => {
                 <el-button :icon="CloseBold" class="text-[#c92a2a] border-[#c92a2a]" @click="handleDeniedDossier()"
                   >Từ chối</el-button
                 >
-                <div class="flex gap-[16px]">
+                <div class="flex">
                   <el-button class="text-[#fff] bg-[#1c7ed6]" @click="saveDossier()" :loading="loading"
                     ><SvgIcon name="ic-save" class="mr-1" />Lưu lại</el-button
                   >
@@ -336,10 +354,10 @@ onMounted(() => {
               </div>
             </el-tab-pane>
             <el-tab-pane label="Lịch sử chỉnh sửa" name="history">
-              <HistoryTab :isActive="activeName === 'history'" />
+              <HistoryTab :isActive="activeName === 'history'" :batchId="Number(route?.query?.batchId)" />
             </el-tab-pane>
             <el-tab-pane label="Ghi chú" name="note">
-              <NoteTab :isActive="activeName === 'note'" :batchId="Number(route?.params?.batchId)" />
+              <NoteTab :isActive="activeName === 'note'" :batchId="Number(route?.query?.batchId)" />
             </el-tab-pane>
           </el-tabs>
         </div>
@@ -347,8 +365,9 @@ onMounted(() => {
     </div>
   </div>
   <EIBDrawer v-if="openClassifyDrawer" title="Danh sách chứng từ" v-model="openClassifyDrawer" size="93%">
-    <template #default> <ClassifyModal ref="classifyModalRef" /> </template>
+    <template #default> <ClassifyModal ref="classifyModalRef" @close-dialog="closeDialogClassify()" /> </template>
   </EIBDrawer>
+  <ReplaceDocumentModal v-if="isShowModalReplace" v-model="isShowModalReplace" />
 </template>
 <style lang="scss">
 .extract-page {

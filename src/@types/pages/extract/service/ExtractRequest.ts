@@ -6,3 +6,7 @@ export interface ExtractPostDossierRequestModel {
   docDataId: number
   value: string
 }
+export interface ExtractPostClassifyRequestModel {
+  documentType: string
+  pages: number[]
+}

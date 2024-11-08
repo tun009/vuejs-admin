@@ -4,7 +4,8 @@ import {
   ExtractDossierModel,
   ExtractHistoryModel,
   ExtractNoteModel,
-  ExtractNotePostModel
+  ExtractNotePostModel,
+  DocumentTypeModel
 } from '..'
 
 export type ExtractDossierResponseModel = ApiResponseData<ExtractDossierModel[]>
@@ -14,3 +15,4 @@ export type ExtractNoteResponseModel = ApiResponseData<ExtractNoteModel[]>
 export type ExtractClassifyResponseModel = ApiResponseData<ExtractClassifyModel[]>
 export type ExtractNotePostResponseModel = ApiResponseData<ExtractNotePostModel>
 export type ExtractDossierPostResponseModel = ApiResponseData<number>
+export type DocumentTypeResponseModel = ApiResponseData<DocumentTypeModel[]>

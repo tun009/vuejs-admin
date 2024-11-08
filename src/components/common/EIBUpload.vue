@@ -11,6 +11,7 @@ import EIBTable from './EIBTable.vue'
 
 interface Props {
   files: File[]
+  limitFileCount?: number
 }
 
 interface Emits {
@@ -19,7 +20,8 @@ interface Emits {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  files: () => []
+  files: () => [],
+  limitFileCount: MAX_FILE_LIMIT
 })
 
 const emits = defineEmits<Emits>()
@@ -48,8 +50,8 @@ const addFiles = (fileList: FileList) => {
     warningNotification(t('notification.description.limitSize'))
     return
   }
-  if (props.files.length + fileList.length > MAX_FILE_LIMIT) {
-    warningNotification(t('notification.description.limitQuantity'))
+  if (props.files.length + fileList.length > props.limitFileCount) {
+    warningNotification(t('notification.description.limitQuantity', { count: props.limitFileCount }))
     return
   }
   emits('add-files', fileList)
@@ -123,9 +125,11 @@ const handleDeleteFile = (index: number) => {
         locales
       >
         <template #actions="{ index }">
-          <el-icon :size="18" color="#e03131" class="cursor-pointer" @click="() => handleDeleteFile(index)"
-            ><Delete
-          /></el-icon>
+          <div>
+            <el-icon :size="18" color="#e03131" class="cursor-pointer mx-auto" @click="() => handleDeleteFile(index)"
+              ><Delete
+            /></el-icon>
+          </div>
         </template>
       </EIBTable>
     </div>

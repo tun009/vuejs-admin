@@ -5,12 +5,14 @@ import {
   ExtractDossierResponseModel,
   ExtractHistoryResponseModel,
   ExtractNotePostResponseModel,
-  ExtractNoteResponseModel
+  ExtractNoteResponseModel,
+  DocumentTypeResponseModel
 } from '@/@types/pages/extract/service/ExtractResponse'
 import { request } from '@/api/service'
 import {
   ExtractPostDossierRequestModel,
-  ExtractPostNoteRequestModel
+  ExtractPostNoteRequestModel,
+  ExtractPostClassifyRequestModel
 } from '@/@types/pages/extract/service/ExtractRequest'
 
 export function getDossierListApi(id: number) {
@@ -60,5 +62,18 @@ export function getDossierClassifyApi(id: number) {
     url: `dossier-files`,
     method: 'get',
     params: { batchId: id }
+  })
+}
+export function getDocummentTypeApi() {
+  return request<DocumentTypeResponseModel>({
+    url: `doc-types`,
+    method: 'get'
+  })
+}
+export function saveDossierClassifyApi(id: number, data: ExtractPostClassifyRequestModel[]) {
+  return request<ExtractDossierPostResponseModel>({
+    url: `dossier-files/${id}/validated`,
+    method: 'patch',
+    data
   })
 }
