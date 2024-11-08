@@ -19,8 +19,7 @@ import {
   _404_PAGE,
   DOCUMENT_DETAIL_PAGE,
   EXTRACT_PAGE,
-  COMPARE_DOCUMENT_DETAIL_PAGE,
-  EXTRACT_PAGE
+  COMPARE_DOCUMENT_DETAIL_PAGE
 } from '@/constants/router'
 import { RoleEnum } from '@/@types/pages/users'
 
