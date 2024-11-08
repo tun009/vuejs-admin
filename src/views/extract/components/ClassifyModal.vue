@@ -3,7 +3,7 @@ import { ExtractClassifyModel, ExtractClassifyResultModel } from '@/@types/pages
 import { getDossierClassifyApi, getDocummentTypeApi, saveDossierClassifyApi } from '@/api/extract'
 import { VuePDF, usePDF } from '@tato30/vue-pdf'
 import ControlSlider from './ControlSlider.vue'
-import { VueDraggableNext as draggable } from 'vue-draggable-next'
+import { VueDraggableNext } from 'vue-draggable-next'
 import { formatNumberConfidence } from '@/utils/common'
 import EIBSelect from '@/components/common/EIBSelect.vue'
 import { Delete } from '@element-plus/icons-vue'
@@ -174,7 +174,7 @@ const saveDossierClassify = async () => {
                           />
                           <el-button :icon="Delete" class="p-[8px] border-[#c92a2a] text-[#c92a2a]" />
                         </template>
-                        <draggable v-bind="dragOptions" v-model="doc_result.pages" group="people">
+                        <VueDraggableNext v-bind="dragOptions" v-model="doc_result.pages" group="people">
                           <div
                             class="ml-[10px]"
                             v-for="(doc_page, index_doc_page) in doc_result.pages"
@@ -192,7 +192,7 @@ const saveDossierClassify = async () => {
                             />
                             <div class="text-center mt-[5px]">Trang {{ doc_page + 1 }}</div>
                           </div>
-                        </draggable>
+                        </VueDraggableNext>
                       </el-collapse-item>
                     </el-collapse>
                   </div>
