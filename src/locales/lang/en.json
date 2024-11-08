@@ -13,7 +13,7 @@
       "createSuccess": "Creation successful",
       "confirmClose": "Are you sure you want to exit?",
       "limitSize": "File size must not exceed 16MB!",
-      "limitQuantity": "Total number of files must not exceed 10!",
+      "limitQuantity": "Total number of files must not exceed {count}!",
       "emptyFiles": "Please select at least 1 file!"
     }
   },

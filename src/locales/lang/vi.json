@@ -13,7 +13,7 @@
       "createSuccess": "Thêm mới thành công",
       "confirmClose": "Bạn chắc chắn thoát khỏi?",
       "limitSize": "Dung lượng file không vượt quá 16MB!",
-      "limitQuantity": "Tổng số file không vượt quá 10!",
+      "limitQuantity": "Tổng số file không vượt quá {count}!",
       "emptyFiles": "Vui lòng chọn ít nhất 1 file!",
       "saveSuccess": "Lưu thành công",
       "pleaseChooseChecker": "Vui lòng chọn checker",
@@ -219,7 +219,9 @@
       "end": "Kết thúc",
       "resetToDefault": "Khôi phục mặc định",
       "presentationChecker": "Trình checker",
-      "by": "bởi"
+      "by": "bởi",
+      "uploadNoteSingle": "Tối đa: 1 file, dung lưọng tối đa 16MB",
+      "replaceDocument": "Thêm chứng từ"
     },
     "detail": {
       "generalInfomation": "Thông tin chung",

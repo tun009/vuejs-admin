@@ -20,7 +20,7 @@ import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import Loading from '@/components/common/EIBLoading.vue'
 import EIBTable from '@/components/common/EIBTable.vue'
 import { PROGRESS_COLORS } from '@/constants/color'
-import { COMPARE_DOCUMENT_DETAIL_PAGE } from '@/constants/router'
+import { COMPARE_DOCUMENT_DETAIL_PAGE, EXTRACT_PAGE } from '@/constants/router'
 import { DOCUMENT_RESULT_NAME_LIST } from '@/constants/select'
 import { useUserStore } from '@/store/modules/user'
 import { handleComingSoon, renderLabelByValue, resetNullUndefinedFields } from '@/utils/common'
@@ -105,7 +105,14 @@ const getValueLC = (coreKey: string): string | undefined | null => {
   const lcByKey = dataLC.value.find((lc) => lc.coreKey === coreKey)
   return lcByKey?.validatedValue ?? lcByKey?.extractionValue
 }
-
+const redirectOcrResult = () => {
+  router.push({
+    path: EXTRACT_PAGE,
+    query: {
+      batchId: route.params?.id
+    }
+  })
+}
 onMounted(() => {
   handleGetDocumentResults()
   handleGetDocumentAmount()
@@ -276,7 +283,7 @@ onMounted(() => {
           <Loading />
           <span>{{ $t('docs.status.processing') }}:</span>
         </div>
-        <el-button :type="!isOcred ? 'info' : 'primary'" :disabled="!isOcred" @click="handleComingSoon">
+        <el-button :type="!isOcred ? 'info' : 'primary'" :disabled="!isOcred" @click="redirectOcrResult()">
           {{ $t('docs.detail.seeResult') }}
         </el-button>
       </div>

@@ -91,3 +91,10 @@ export const mappingBranches = (branches: BranchModel[]): SelectOptionModel[] =>
     description: b.code
   }))
 }
+export const formatNumberConfidence = (num: number) => {
+  if (Number.isInteger(num * 100)) {
+    return (num * 100).toString()
+  } else {
+    return Math.round(num * 10 * 100) / 10
+  }
+}

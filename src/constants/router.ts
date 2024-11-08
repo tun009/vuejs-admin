@@ -14,8 +14,7 @@ export const UCP_ISBP_PAGE = '/ucp-isbp'
 export const INVALID_CATEGORY_PAGE = '/invalid-category'
 export const PROFILE_PAGE = '/profile'
 // export const EXTRACT_PAGE = '/extract'
-export const EXTRACT_PAGE = (batchId: string | number = ':batchId', dossierDocId: string | number = ':dossierDocId') =>
-  `/extract/${batchId}/${dossierDocId}`
+export const EXTRACT_PAGE = '/extract'
 
 export const DOCUMENT_DETAIL_PAGE = (id: string | number = ':id') => `/docs/document/${id}`
 export const COMPARE_DOCUMENT_DETAIL_PAGE = (id: string | number = ':id') => `/document-compare/${id}`

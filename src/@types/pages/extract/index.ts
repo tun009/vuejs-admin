@@ -60,6 +60,7 @@ export interface ExtractClassifyResultModel {
   confidence: number
   documentType: string
   pages: number[]
+  isLoaded?: boolean
 }
 export interface ExtractClassifyModel {
   id: number
@@ -133,4 +134,10 @@ export interface ExtractNotePostModel {
   value: string
   createdBy: string
   createdAt: string
+}
+export interface DocumentTypeModel {
+  id: number
+  name: string
+  key: string
+  type: string
 }

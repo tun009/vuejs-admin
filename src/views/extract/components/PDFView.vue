@@ -1,13 +1,15 @@
 <script lang="ts" setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref } from 'vue'
 import { VuePDF, usePDF } from '@tato30/vue-pdf'
-
+import ControlSlider from './ControlSlider.vue'
+import { RefreshRight } from '@element-plus/icons-vue'
 const props = defineProps<{
   url?: string
 }>()
 const emit = defineEmits<{
   (e: 'loaded-data'): void
 }>()
+const idFullScreen = 'view-pdf'
 const scale = ref(1)
 const currentPage = ref(1)
 const rotation = ref(0)
@@ -16,16 +18,6 @@ const scrollToPage = () => {
   const currentView = document.getElementById('view-pdf')
   if (currentView) {
     currentPage.value = Math.round(currentView.scrollTop / (currentView.scrollHeight / pages.value) + 1)
-  }
-}
-const zoomIn = () => {
-  if (scale.value < 2) {
-    scale.value = Math.min(scale.value + 0.1, 2)
-  }
-}
-const zoomOut = () => {
-  if (scale.value > 0.1) {
-    scale.value = Math.max(scale.value - 0.1, 0.1)
   }
 }
 const rotationPage = () => {
@@ -41,7 +33,7 @@ const tagLabelToPage = (boxInfos: number[][][], pageNum: number) => {
   })
   const pElement = document.createElement('p')
   const elementPage = document.getElementById('page-' + (pageNum + 1))
-  if (boxInfos.length > 0) {
+  if (boxInfos?.length > 0) {
     boxInfos.forEach((boxInfo, index) => {
       pElement.className = 'box-label'
       pElement.style.width = caculatorDistance(getRectangle(boxInfo, 'width'))
@@ -94,65 +86,31 @@ interface ExtractPdfViewExpose {
 defineExpose<ExtractPdfViewExpose>({
   tagLabelToPage
 })
-const handleKeyDown = (event: KeyboardEvent) => {
-  if (event.key === 'F11') {
-    event.preventDefault()
-    toggleFullScreen()
-  }
-}
-
-onMounted(() => {
-  window.addEventListener('keydown', handleKeyDown)
-})
-
-onBeforeUnmount(() => {
-  window.removeEventListener('keydown', handleKeyDown)
-})
-const toggleFullScreen = () => {
-  const pdfContainer = document.getElementById('view-pdf')
-  if (pdfContainer) {
-    if (!document.fullscreenElement) {
-      pdfContainer.requestFullscreen().catch((err) => {
-        console.error(`Error attempting to enable full-screen mode: ${err.message}`)
-      })
-    } else {
-      document.exitFullscreen()
-    }
-  }
-}
 </script>
 
 <template>
   <div class="flex justify-between my-2 pdf-view-component">
-    <div
-      class="bg-[#4a5c6f] flex lg:w-[320px] md:w-[280px] sm:w-[250px] h-[40px] text-[#fff] rounded-[4px] justify-start items-start gap-2.5 p-2.5 px-5 pt-2.5 pl-4"
+    <ControlSlider
+      :scale="scale"
+      :id-full-screen="idFullScreen"
+      @update:scale="
+        (val: number) => {
+          scale = val
+        }
+      "
     >
-      <SvgIcon title="Thu nhỏ" name="zoom-out" class="cursor-pointer !h-[22px] !w-[30px]" @click="zoomOut()" />
-      <input
-        class="w-full cursor-pointer h-full accent-[#7f8b98]"
-        type="range"
-        min="0.1"
-        max="2.5"
-        step="0.1"
-        v-model="scale"
-        @input="scale = Number(($event?.target as HTMLInputElement)?.value)"
-      />
-      <SvgIcon title="Phóng to" name="zoom-in" class="cursor-pointer !h-[22px] !w-[30px]" @click="zoomIn()" />
-      <span class="text-[14px]">{{ (scale * 100).toFixed(0) }}%</span>
-      <el-icon title="Xoay" size="16" class="mt-[3px] cursor-pointer" @click="rotationPage()"><RefreshRight /></el-icon>
-      <SvgIcon
-        title="Toàn màn hình"
-        name="full-screen"
-        class="cursor-pointer !h-[22px] !w-[30px]"
-        @click="toggleFullScreen"
-      />
-    </div>
+      <template #button>
+        <el-icon title="Xoay" size="16" class="mt-[3px] cursor-pointer" @click="rotationPage()"
+          ><RefreshRight
+        /></el-icon>
+      </template>
+    </ControlSlider>
     <div>
       Trang {{ currentPage }} /
       {{ pages }}
     </div>
   </div>
-  <div class="overflow-auto h-[calc(100vh-58px)]" id="view-pdf" @scroll="scrollToPage()">
+  <div class="overflow-auto h-[calc(100vh-58px)]" :id="idFullScreen" @scroll="scrollToPage()">
     <div v-for="page in pages" :key="page" class="mx-auto relative w-fit">
       <VuePDF
         :id="'page-' + page"

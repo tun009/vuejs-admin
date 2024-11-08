@@ -19,7 +19,8 @@ import {
   _404_PAGE,
   DOCUMENT_DETAIL_PAGE,
   EXTRACT_PAGE,
-  COMPARE_DOCUMENT_DETAIL_PAGE
+  COMPARE_DOCUMENT_DETAIL_PAGE,
+  EXTRACT_PAGE
 } from '@/constants/router'
 import { RoleEnum } from '@/@types/pages/users'
 
@@ -206,7 +207,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     ]
   },
   {
-    path: EXTRACT_PAGE(),
+    path: EXTRACT_PAGE,
     component: () => import('@/views/extract/index.vue'),
     meta: {
       title: 'extract',
