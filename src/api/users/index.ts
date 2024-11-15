@@ -12,7 +12,9 @@ import {
   AddUserResponseModel,
   GetCheckerResponseModel,
   GetUserResponseModel,
-  UpdateUserResponseModel
+  UpdateUserResponseModel,
+  DeleteUserResponseModel,
+  LockUserResponseModel
 } from '@/@types/pages/users/services/UserResponse'
 import { request } from '../service'
 import { GetBranchResponseModel } from '@/@types/pages/docs/documents/services/DocumentResponse'
@@ -75,10 +77,27 @@ export function updateUser(data: UpdateUserRequestModel) {
     data
   })
 }
+
 /** Delete user */
-export function deleteUser(id: string | number) {
-  return request<ApiResponseData<number>>({
-    url: 'users/' + id,
+export function deleteUser(ids: (string | number)[]) {
+  return request<DeleteUserResponseModel>({
+    url: 'users/delete?' + ids.map((id) => `userIds=${id}`).join('&'),
     method: 'delete'
+  })
+}
+
+/**Lock user */
+export function lockUser(ids: (string | number)[]) {
+  return request<LockUserResponseModel>({
+    url: 'users/lock?' + ids.map((id) => `userIds=${id}`).join('&'),
+    method: 'put'
+  })
+}
+
+/**Reset password user */
+export function resetPasswordUser(id: string | number) {
+  return request<LockUserResponseModel>({
+    url: 'users/reset-password?' + `userId=${id}`,
+    method: 'put'
   })
 }

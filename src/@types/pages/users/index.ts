@@ -61,7 +61,7 @@ export const userListColumnConfigs: ColumnConfigModel[] = [
     label: 'Role'
   },
   {
-    field: 'sol',
+    field: 'branch',
     label: 'SOL'
   },
   {
@@ -83,5 +83,90 @@ export interface FilterUserModel {
   name: string
   branchId: number
   role: string | number
-  status?: string | number
+  status: string | number
 }
+
+export const roleTypeOptions: SelectOptionModel[] = [
+  {
+    label: 'Tất cả',
+    value: -1
+  },
+  {
+    label: 'Admin',
+    value: RoleEnum.ADMIN
+  },
+  {
+    label: 'Checker',
+    value: RoleEnum.CHECKER
+  },
+  {
+    label: 'Maker',
+    value: RoleEnum.MAKER
+  },
+  {
+    label: 'Viewer',
+    value: RoleEnum.VIEWER
+  }
+]
+
+export const statusTypeOptions: SelectOptionModel[] = [
+  {
+    label: 'Tất cả',
+    value: -1
+  },
+  {
+    label: 'Active',
+    value: UserStatusEnum.ACTIVE
+  },
+  {
+    label: 'Inactive',
+    value: UserStatusEnum.INACTIVE
+  }
+]
+
+export const configRoleUserTableData = [
+  {
+    name: 'Tổng quan',
+    title: 1
+  },
+  {
+    name: 'Quản lý chứng từ',
+    title: 1
+  },
+  {
+    name: 'Xem thông tin các bộ chứng từ',
+    title: 2
+  },
+  {
+    name: 'Thêm bộ chứng từ',
+    title: 2
+  },
+  {
+    name: 'Cập nhật thông tin bộ chứng từ',
+    title: 2
+  },
+  {
+    name: 'Xóa bộ chứng từ',
+    title: 2
+  },
+  {
+    name: 'Trích xuất thông tin',
+    title: 1
+  },
+  {
+    name: 'Xem kết quả sau khi OCR hoàn tất',
+    title: 2
+  },
+  {
+    name: 'Chỉnh sửa thông tin sau khi OCR hoàn tất',
+    title: 2
+  },
+  {
+    name: 'Phê duyệt kết quả sau khi kiểm tra',
+    title: 2
+  },
+  {
+    name: 'Xem lịch sử chỉnh sửa thông tin',
+    title: 2
+  }
+]

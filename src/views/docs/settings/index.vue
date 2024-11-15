@@ -1,23 +1,55 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-
+import { onMounted, ref, watch } from 'vue'
 import UpdateInfoExtractForm from '../components/UpdateInfoExtractForm.vue'
-
-import { PaginationModel } from '@/@types/common'
-import { SettingModel, dataSelectDocs, infoListColumnConfigs } from '@/@types/pages/docs/settings'
-import { getSettings } from '@/api/docs/settings'
+import {
+  SettingModel,
+  SettingMD,
+  infoListColumnConfigs,
+  UpdateConfidenceFormModel,
+  UpdateConfidenceColorFormModel
+} from '@/@types/pages/docs/settings'
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
 import EIBTable from '@/components/common/EIBTable.vue'
-import { CONFIDENCES } from '@/constants/setting'
+import EIBInput from '@/components/common/EIBInput.vue'
+import { CONFIDENCES, CONFIDENCE_COLOR_FORM_DEFAULT } from '@/constants/setting'
 import { Title } from '@/layouts/components'
+import { getDocummentTypeApi } from '@/api/extract'
+import { SelectOptionModel } from '@/@types/common'
+import { getDocDataField, getConfidence, updateConfidence } from '@/api/docs/settings'
+import { requireRule } from '@/utils/validate'
+import { ElMessage, FormInstance, FormRules } from 'element-plus'
+import { sortObjectsByMultipleFields } from '@/utils/common'
+import { useI18n } from 'vue-i18n'
+import { UpdateConfidenceRequestModel } from '@/@types/pages/docs/settings/services/SettingRequest'
 
-const docs = ref<string>('')
+const { t } = useI18n()
+
+const rowSelect = ref<SettingModel>({} as SettingModel)
+const doc_types = ref<SelectOptionModel[]>([])
+const docTypeID = ref('')
 const activeName = ref('first')
-const tableData = ref<SettingModel[]>([])
+const tableData = ref<SettingMD[]>([])
+const dataConfidence = ref<SettingModel[]>([])
 const disabledIds = [1]
-const ruleForm = ref(CONFIDENCES)
-const dataInput = ref(CONFIDENCES)
+const loading = ref(false)
+
+const ruleForm = ref<UpdateConfidenceFormModel>(CONFIDENCES)
+const colors = ref<UpdateConfidenceColorFormModel>(CONFIDENCE_COLOR_FORM_DEFAULT)
+const ruleFormConfidence = ref<FormInstance | null>(null)
+
+interface Emits {
+  (event: 'close'): void
+  (event: 'refresh'): void
+}
+
+const emits = defineEmits<Emits>()
+const rules: FormRules<UpdateConfidenceFormModel> = {
+  toConfidence1: [requireRule()],
+  toConfidence2: [requireRule()],
+  toConfidence3: [requireRule()],
+  toConfidence4: [requireRule()]
+}
 const ruleForm1 = ref({
   dataSource: 0
 })
@@ -26,16 +58,101 @@ const automation = ref({
   extractionThreshold: 80
 })
 
-const handleGetSettings = async (pagination: PaginationModel) => {
+const openUpdateInfoExtractDrawer = ref(false)
+const handleGetDocTypes = async () => {
   try {
-    const response = await getSettings(pagination)
-    tableData.value = response.data.list
-    return response
+    const response = await getDocummentTypeApi()
+    doc_types.value = response.data.map((item) => ({
+      label: item.name,
+      value: item.id
+    }))
   } catch (error: any) {
     throw new Error(error)
   }
 }
-const openUpdateInfoExtractDrawer = ref(false)
+
+const getDataField = async () => {
+  try {
+    const response = await getDocDataField(docTypeID.value)
+    tableData.value = response.data
+  } catch (error: any) {
+    throw new Error(error)
+  }
+}
+
+const getConfidenceDetail = async () => {
+  try {
+    const response = await getConfidence()
+    const data = sortObjectsByMultipleFields(response?.data, ['max'])
+    dataConfidence.value = data
+    const resultConfidence: UpdateConfidenceFormModel = { ...CONFIDENCES }
+    const resultColor: UpdateConfidenceColorFormModel = { ...CONFIDENCE_COLOR_FORM_DEFAULT }
+    data.forEach((item, index) => {
+      resultConfidence[`toConfidence${index + 1}` as keyof UpdateConfidenceFormModel] = item.max * 100
+      resultColor[`color${index + 1}` as keyof UpdateConfidenceColorFormModel] = item.color
+    })
+    ruleForm.value = { ...resultConfidence }
+    colors.value = { ...resultColor }
+  } catch (error: any) {
+    throw new Error(error)
+  }
+}
+
+const handleUpdateInfoExtract = (row: SettingModel) => {
+  openUpdateInfoExtractDrawer.value = true
+  rowSelect.value = row
+}
+
+const handleUpdateConfidence = async () => {
+  ruleFormConfidence.value?.validate(async (valid: boolean, fields) => {
+    try {
+      if (valid) {
+        const payload: UpdateConfidenceRequestModel[] = dataConfidence.value.map((item, index) => ({
+          id: item.id,
+          min:
+            index === 0
+              ? 0
+              : (Number(ruleForm.value[`toConfidence${index}` as keyof UpdateConfidenceFormModel]) + 0.1) / 100,
+          max:
+            index === dataConfidence.value.length - 1
+              ? 1
+              : Number(ruleForm.value[`toConfidence${index + 1}` as keyof UpdateConfidenceFormModel]) / 100,
+          color: colors.value[`color${index + 1}` as keyof UpdateConfidenceColorFormModel]
+        }))
+        loading.value = true
+        await updateConfidence(payload)
+        ElMessage({
+          message: t('notification.description.updateSuccess'),
+          showClose: true,
+          type: 'success'
+        })
+        emits('refresh')
+      } else {
+        console.error('Form validation failed', fields)
+      }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      loading.value = false
+    }
+  })
+}
+
+watch(
+  [() => docTypeID],
+  async () => {
+    getDataField()
+  },
+  {
+    deep: true
+  }
+)
+
+onMounted(() => {
+  getDataField()
+  handleGetDocTypes()
+  getConfidenceDetail()
+})
 </script>
 
 <template>
@@ -44,29 +161,24 @@ const openUpdateInfoExtractDrawer = ref(false)
     <el-tabs v-model="activeName" class="demo-tabs">
       <el-tab-pane label="Trường thông tin trích xuất" name="first">
         <EIBSelect
-          v-model="docs"
+          v-model="docTypeID"
           class="pb-2"
           name="docs"
-          :options="dataSelectDocs"
+          :options="doc_types"
           label="Thông tin trường trích xuất cho loại chứng từ"
         />
 
         <EIBTable
           :columnConfigs="infoListColumnConfigs"
           :data="tableData"
-          :hiddenChecked="true"
-          :hiddenPagination="true"
-          :callback="handleGetSettings"
+          hiddenChecked
+          hiddenPagination
+          :callback="getDataField"
           :disabledIds="disabledIds"
         >
-          <template #actions>
+          <template #actions="{ row }">
             <div class="flex flex-row gap-2 p-2">
-              <SvgIcon
-                :size="18"
-                name="edit-info"
-                @click.stop="openUpdateInfoExtractDrawer = true"
-                class="cursor-pointer"
-              />
+              <SvgIcon :size="18" name="edit-info" @click.stop="handleUpdateInfoExtract(row)" class="cursor-pointer" />
             </div>
           </template>
         </EIBTable>
@@ -74,39 +186,71 @@ const openUpdateInfoExtractDrawer = ref(false)
       <el-tab-pane label="Độ tin cậy" name="second">
         <div class="mb-2">Cấu hình màu sắc độ tin cậy của dữ liệu</div>
         <el-card style="height: 100%">
-          <el-form ref="ruleFormRef" autocomplete="on">
+          <el-form ref="ruleFormConfidence" autocomplete="on" :model="ruleForm" :rules="rules">
             <div class="reliability-wrapper">
               <div class="reliability">
-                <div class="confidence-threshold w-full">
-                  <div class="mb-2">Ngưỡng tin cậy <span class="pl-[170px]"> Màu </span></div>
+                <div class="confidence-threshold">
+                  <div class="mb-2">Ngưỡng tin cậy</div>
                   <div class="confidence-threshold">
                     <div
-                      class="confidence-threshold-item mb-[22px] bg-[#f8f8fa] p-[10px]"
-                      v-for="(item, index) in dataInput"
+                      class="confidence-threshold-item mb-[22px]"
+                      v-for="(item, index) in Object.keys(ruleForm)"
                       :key="index"
                     >
-                      <el-input v-model="item.confidence" class="w-[100px] h-[40px]" />
+                      <EIBInput
+                        disabled
+                        class="w-[100px] h-[40px]"
+                        :name-ref="item + 'first'"
+                        :showLabel="false"
+                        :modelValue="
+                          !index
+                            ? 0
+                            : Number(ruleForm[Object.keys(ruleForm)[index - 1] as keyof UpdateConfidenceFormModel]) +
+                              0.1
+                        "
+                      />
                       <span class="mt-[-6px]">-</span>
-                      <el-input v-model="item.confidence" class="w-[100px] h-[40px]" />
-                      <div class="color-wrapper ml-2">
-                        <div class="color-item">
-                          <el-color-picker v-model="item.color" color-format="hex" />
-                          <span>{{ item.color }}</span>
-                          <span />
-                        </div>
-                      </div>
+                      <EIBInput
+                        :ref="item"
+                        v-model="ruleForm[item as keyof UpdateConfidenceFormModel]"
+                        :rules="rules[item as keyof UpdateConfidenceFormModel]"
+                        :rule-form-ref="$refs.ruleFormConfidence"
+                        :name-ref="item"
+                        :name="item"
+                        required
+                        :disabled="index === 3"
+                        class="w-[100px] h-[40px]"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div class="confidence-threshold">
+                  <div class="mb-2">Màu</div>
+                  <div class="color-wrapper">
+                    <div
+                      v-for="(item, index) in Object.keys(colors)"
+                      :key="index"
+                      class="color-item w-[200px] h-[40px] mb-[8px]"
+                    >
+                      <el-color-picker
+                        v-model="colors[item as keyof UpdateConfidenceColorFormModel]"
+                        color-format="hex"
+                      />
+                      <span>{{ colors[item as keyof UpdateConfidenceColorFormModel] }}</span>
                     </div>
                   </div>
                 </div>
               </div>
-              <el-button type="primary" style="width: 110px">Lưu thay đổi</el-button>
+              <el-button type="primary" :loading="loading" @click.prevent="handleUpdateConfidence" style="width: 110px"
+                >Lưu thay đổi</el-button
+              >
             </div>
           </el-form>
         </el-card>
       </el-tab-pane>
       <el-tab-pane label="Luồng kiểm tra" name="third">
         <el-card>
-          <el-form ref="ruleForm" class="" :model="ruleForm1" autocomplete="on">
+          <el-form ref="ruleForm5" class="" :model="ruleForm1" autocomplete="on">
             <div class="mt-1 d-flex flex-column g-6 auto-validation">
               <div class="mt-1 d-flex flex-column g-4">
                 <el-radio-group v-model="automation.type">
@@ -170,9 +314,13 @@ const openUpdateInfoExtractDrawer = ref(false)
       </el-tab-pane>
     </el-tabs>
   </div>
-  <EIBDrawer v-model="openUpdateInfoExtractDrawer" title="Cập nhật trường trích xuất">
+  <EIBDrawer
+    v-if="openUpdateInfoExtractDrawer"
+    v-model="openUpdateInfoExtractDrawer"
+    title="Cập nhật trường trích xuất"
+  >
     <template #default>
-      <UpdateInfoExtractForm ref="updateInfoExtractFormRef" @close="openUpdateInfoExtractDrawer = false" />
+      <UpdateInfoExtractForm :data="rowSelect" @refresh="getDataField" @close="openUpdateInfoExtractDrawer = false" />
     </template>
   </EIBDrawer>
 </template>
@@ -191,6 +339,10 @@ const openUpdateInfoExtractDrawer = ref(false)
 
 .el-radio__label {
   padding-top: 26px;
+}
+
+.el-color-picker__icon.is-icon-arrow-down {
+  display: none !important;
 }
 </style>
 

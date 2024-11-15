@@ -10,6 +10,7 @@ interface Props {
   modelValue: boolean
   size?: string | number
   direction?: 'rtl' | 'ltr' | 'ttb' | 'btt'
+  isConfirmClose?: boolean
 }
 
 interface Emits {
@@ -18,7 +19,8 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {
   direction: 'rtl',
-  size: '40%'
+  size: '40%',
+  isConfirmClose: true
 })
 const emits = defineEmits<Emits>()
 
@@ -54,7 +56,7 @@ const beforeClose = (done: () => void) => {
   </span>
   <el-drawer
     v-model="localModelValue"
-    :before-close="beforeClose"
+    :before-close="isConfirmClose ? beforeClose : undefined"
     :direction="direction"
     class="demo-drawer"
     :with-header="false"
