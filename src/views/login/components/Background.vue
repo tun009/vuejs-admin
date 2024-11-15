@@ -4,8 +4,8 @@ import { EximbankLogo, LoginBackgound, LoginBackgoundIcon } from '@/assets'
 
 <template>
   <div class="flex flex-row overflow-y-hidden max-h-[100vh]">
-    <div class="relative max-w-[50%]">
-      <el-image :src="LoginBackgound" class="w-full h-[100vh] bg-[rgba(241,243,245,0.1)]" fit="cover" />
+    <div class="relative w-[50%]">
+      <el-image :src="LoginBackgound" class="w-full h-[100vh] bg-[rgba(241,243,245,0.3)]" fit="cover" />
       <el-image
         :src="LoginBackgoundIcon"
         class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"

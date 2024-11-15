@@ -1,7 +1,8 @@
-import { SelectOptionModel, StatusColorModel } from '@/@types/common'
+import { ColumnConfigModel, SelectOptionModel, StatusColorModel } from '@/@types/common'
 import { ElMessageBox } from 'element-plus'
 import DOMPurify from 'dompurify'
 import { BranchModel } from '@/@types/pages/login'
+import { TABLE_COLUMN_WIDTH_DEFAULT } from '@/constants/common'
 
 export const getDataWithPagination = <T>(array: T[], pageNum: number, pageSize: number): T[] => {
   const start = pageNum * pageSize
@@ -74,6 +75,7 @@ export const omitPropertyFromObject = (
   }
   return newObj
 }
+
 export const groupByField = <T>(data: T[], key: keyof T): Record<string, T[]> => {
   return data.reduce((acc: Record<string, T[]>, item: T) => {
     const groupKey = item[key] as unknown as string
@@ -84,6 +86,7 @@ export const groupByField = <T>(data: T[], key: keyof T): Record<string, T[]> =>
     return acc
   }, {})
 }
+
 export const mappingBranches = (branches: BranchModel[]): SelectOptionModel[] => {
   return branches.map((b: BranchModel) => ({
     label: b.name,
@@ -91,6 +94,7 @@ export const mappingBranches = (branches: BranchModel[]): SelectOptionModel[] =>
     description: b.code
   }))
 }
+
 export const formatNumberConfidence = (num: number) => {
   if (Number.isInteger(num * 100)) {
     return (num * 100).toString()
@@ -98,6 +102,7 @@ export const formatNumberConfidence = (num: number) => {
     return Math.round(num * 10 * 100) / 10
   }
 }
+
 export function sortObjectsByMultipleFields(array: any[], fields: string[], sortOrder = 'asc') {
   if (!Array.isArray(array)) {
     throw new TypeError('Input must be an array.')
@@ -145,4 +150,13 @@ export function sortObjectsByMultipleFields(array: any[], fields: string[], sort
 
     return 0
   })
+}
+
+export const createColumnConfigs = (object: { [key: string]: string }): ColumnConfigModel[] => {
+  const keys = Object.keys(object)
+  return keys.map((k) => ({
+    field: k,
+    label: k,
+    minWidth: TABLE_COLUMN_WIDTH_DEFAULT
+  }))
 }

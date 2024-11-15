@@ -214,7 +214,7 @@ defineExpose<Exposes>({
 }
 
 .el-scrollbar__bar.is-horizontal {
-  height: 10px !important;
+  height: 6px !important;
 }
 
 td.action-row {

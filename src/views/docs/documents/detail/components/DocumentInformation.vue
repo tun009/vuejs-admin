@@ -8,20 +8,22 @@ import { DocumentStatusEnum } from '@/@types/common'
 import {
   DocumentDataLCModel,
   DocumentLCAmountModel,
+  DocumentResultEnum,
   DocumentResultModel,
+  DocumentSumaryModel,
   businessTypeOptions,
   documentResultListColumnConfigs,
+  documentResultOptions,
   documentStatusOptions
 } from '@/@types/pages/docs/documents'
 import { BatchDetailModel } from '@/@types/pages/docs/documents/services/DocumentResponse'
-import { getDocumentDataLC, getDocumentResults, getLCAmount } from '@/api/docs/document'
+import { getDocumentDataLC, getDocumentSummary, getLCAmount } from '@/api/docs/document'
 import EIBDialog from '@/components/common/EIBDialog.vue'
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import Loading from '@/components/common/EIBLoading.vue'
 import EIBTable from '@/components/common/EIBTable.vue'
 import { PROGRESS_COLORS } from '@/constants/color'
 import { COMPARE_DOCUMENT_DETAIL_PAGE, EXTRACT_PAGE } from '@/constants/router'
-import { DOCUMENT_RESULT_NAME_LIST } from '@/constants/select'
 import { useUserStore } from '@/store/modules/user'
 import { handleComingSoon, renderLabelByValue, resetNullUndefinedFields } from '@/utils/common'
 import Status from '@/views/docs/components/Status.vue'
@@ -44,13 +46,15 @@ const router = useRouter()
 const route = useRoute()
 const { isViewer, isMaker } = useUserStore()
 
-const tableData = ref<DocumentResultModel[]>([])
+const tableData = ref<DocumentSumaryModel[]>([])
 const documentResultListTableRef = ref<InstanceType<typeof EIBTable>>()
 const openApproveProcessDrawer = ref(false)
 const dialogVisible = ref(false)
 const loadingConfirm = ref(false)
 const updateLCFormRef = ref<InstanceType<typeof UpdateLCForm>>()
 const documentId = computed(() => route.params?.id as string)
+const documentSummary = ref<DocumentResultModel>({} as DocumentResultModel)
+
 const amount = ref<DocumentLCAmountModel>({
   amountUsed: 0,
   totalAmount: 0
@@ -64,9 +68,10 @@ const handleViewDocument = (_id: string | number) => {
 const handleGetDocumentResults = async () => {
   try {
     documentResultListTableRef.value?.setLoading(true)
-    const response = await getDocumentResults()
-    if (response?.data?.list) {
-      tableData.value = response?.data?.list
+    const response = await getDocumentSummary({ batchId: documentId.value })
+    if (response?.data) {
+      documentSummary.value = response?.data
+      tableData.value = response?.data?.comparisonSummaries
     }
   } catch (error) {
     console.error(error)
@@ -308,7 +313,7 @@ onMounted(() => {
             <strong>{{ $t('docs.detail.checkResult') }}</strong>
             <p v-if="!isOcred" class="c-text-value">{{ $t('docs.detail.noInformation') }}</p>
             <div
-              v-else-if="isOcred"
+              v-else-if="isOcred && documentSummary?.status === DocumentResultEnum.DISCREPANCY"
               class="rounded-md px-3 py-2 bg-[#fff4e6] flex flex-row gap-2 items-center w-fit text-[#d9480f]"
             >
               <el-icon size="20"><WarnTriangleFilled /></el-icon>
@@ -322,15 +327,15 @@ onMounted(() => {
           <div v-if="isOcred" class="flex flex-col gap-2 flex-[2]">
             <span
               ><span class="font-semibold mr-2">{{ $t('docs.detail.deliveryTimeRequest') }}: </span
-              ><span>{{ $t('docs.status.valid') }}</span></span
+              ><span>{{ renderLabelByValue(documentResultOptions, documentSummary?.timeOfShipment) }}</span></span
             >
             <span
               ><span class="font-semibold mr-2">{{ $t('docs.detail.inLcEffect') }}: </span
-              ><span>{{ $t('docs.status.valid') }}</span></span
+              ><span>{{ renderLabelByValue(documentResultOptions, documentSummary?.lcExpiry) }}</span></span
             >
             <span
               ><span class="font-semibold mr-2">{{ $t('docs.detail.periodPresentationDoc') }}: </span
-              ><span>{{ $t('docs.status.valid') }}</span></span
+              ><span>{{ renderLabelByValue(documentResultOptions, documentSummary?.periodOfPresentation) }}</span></span
             >
           </div>
         </div>
@@ -351,18 +356,18 @@ onMounted(() => {
               </el-button>
             </div>
           </template>
-          <template #testResults>
+          <template #status="{ row }">
             <span>
-              {{ isOcred ? DOCUMENT_RESULT_NAME_LIST[1] : DOCUMENT_RESULT_NAME_LIST[0] }}
+              {{ renderLabelByValue(documentResultOptions, row.status) }}
             </span>
           </template>
-          <template #numberSatisfiesRequirement>
+          <template #numberSatisfiesRequirement="{ row }">
             <span
               :class="{
-                'text-red-500': isOcred
+                'text-red-500': row.totalSatisfiedRequest !== row.totalRequest
               }"
             >
-              {{ isOcred ? '8/9' : '8/8' }}
+              {{ row.totalSatisfiedRequest }}/{{ row.totalRequest }}
             </span>
           </template></EIBTable
         >
