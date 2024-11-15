@@ -1,5 +1,3 @@
 import { SettingModel } from '..'
 
-import { BaseListResponseModel } from '@/@types/common'
-
-export type GetSettingResponseModel = BaseListResponseModel<SettingModel>
+export type GetSettingResponseModel = ApiResponseData<SettingModel[]>

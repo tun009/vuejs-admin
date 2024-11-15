@@ -9,21 +9,20 @@ import EIBInput from '@/components/common/EIBInput.vue'
 import EIBTable from '@/components/common/EIBTable.vue'
 import { Title } from '@/layouts/components'
 import { Delete, Filter, Plus, Search, Tools } from '@element-plus/icons-vue'
-import { ref, reactive, watch } from 'vue'
+import { ref, reactive, watch, onMounted } from 'vue'
 import AddUserForm from './components/AddUserForm.vue'
 import UpdateUserForm from './components/UpdateUserForm.vue'
-import { omitPropertyFromObject } from '@/utils/common'
+import { omitPropertyFromObject, mappingBranches, withAllSelection } from '@/utils/common'
 import { useConfirmModal } from '@/hooks/useConfirm'
 import { debounce } from 'lodash-es'
-// import { deleteUser } from '@/api/users'
+import { deleteUser, lockUser } from '@/api/users'
+import { roleTypeOptions, statusTypeOptions } from '@/@types/pages/users'
+import { getBranches } from '@/api/docs/document'
 
 const { showConfirmModal } = useConfirmModal()
 // import EIBMultipleFilter from '@/components/Filter/EIBMultipleFilter.vue'
-// import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
-
-// defineOptions({
-//   name: 'Users'
-// })
+import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
+import { BranchModel } from '@/@types/pages/login'
 
 const configRoleUserFormRef = ref<InstanceType<typeof ConfigRoleUserForm>>()
 
@@ -40,6 +39,8 @@ const rowSelect = ref<UserModel>({} as UserModel)
 
 const checkedItems = ref<UserModel[]>([])
 const userTableRef = ref<InstanceType<typeof EIBTable>>()
+
+const branches = ref<BranchModel[]>([])
 
 const handleUpdateUser = (row: UserModel) => {
   openUpdateUserDrawer.value = true
@@ -72,17 +73,15 @@ const handleResetFilter = () => {
 
 const handleGetUser = async (pagination: PaginationModel) => {
   try {
-    const { status: _status, ...otherFilter } = filterValue
     const response = await getUsers({
       ...pagination,
-      ...omitPropertyFromObject(otherFilter, -1),
+      ...omitPropertyFromObject(filterValue, -1),
       sortItemList: [
         {
           isAsc: false,
           column: 'name'
         }
       ]
-      // ...(status?.length ? { status } : {})
     })
     tableData.value = response.data.list
     return response
@@ -99,10 +98,10 @@ const handleDeleteUser = (data?: UserModel) => {
     onConfirm: async (instance, done) => {
       try {
         if (data) {
-          // await deleteUser([data?.id ?? ''])
+          await deleteUser([data?.id ?? ''])
         } else {
-          const _ids = checkedItems.value.map((i) => i.id)
-          // await deleteUser(ids)
+          const ids = checkedItems.value.map((i) => i.id)
+          await deleteUser(ids)
         }
         handleGetData()
         done()
@@ -114,6 +113,43 @@ const handleDeleteUser = (data?: UserModel) => {
     }
   })
 }
+
+const handleLockUser = (data?: UserModel) => {
+  showConfirmModal({
+    message: `Bạn xác nhận khóa người dùng này chứ?`,
+    title: 'Khóa người dùng',
+    successCallback: handleClearAllChecked,
+    onConfirm: async (instance, done) => {
+      try {
+        if (data) {
+          await lockUser([data?.id ?? ''])
+        } else {
+          const ids = checkedItems.value.map((i) => i.id)
+          await lockUser(ids)
+        }
+        handleGetData()
+        done()
+      } catch (error) {
+        console.error(error)
+      } finally {
+        instance.confirmButtonLoading = false
+      }
+    }
+  })
+}
+
+const handleGetBranches = async () => {
+  try {
+    const { data } = await getBranches()
+    branches.value = data
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+onMounted(() => {
+  handleGetBranches()
+})
 </script>
 
 <template>
@@ -142,7 +178,6 @@ const handleDeleteUser = (data?: UserModel) => {
           <span class="text-primary whitespace-nowrap cursor-pointer" @click="handleResetFilter"
             >Khôi phục mặc định</span
           >
-          <el-button type="primary" plain>Tìm kiếm</el-button>
         </div>
       </div>
       <div class="flex flex-row gap-3">
@@ -155,7 +190,16 @@ const handleDeleteUser = (data?: UserModel) => {
     <div
       class="transition-all duration-300 overflow-hidden flex flex-row items-center gap-5"
       :class="{ 'h-10 mb-2': openFilter, 'h-0': !openFilter }"
-    />
+    >
+      <EIBSingleFilter v-model="filterValue.role" title="Vai trò" :options="roleTypeOptions" />
+      <EIBSingleFilter
+        v-model="filterValue.branchId"
+        title="SOL"
+        :options="withAllSelection(mappingBranches(branches))"
+      />
+      <EIBSingleFilter v-model="filterValue.status" title="Trạng thái" :options="statusTypeOptions" />
+    </div>
+
     <el-card>
       <EIBTable
         ref="userTableRef"
@@ -172,11 +216,9 @@ const handleDeleteUser = (data?: UserModel) => {
             <span class="!text-blue-500">{{ row.username }}</span>
           </div>
         </template>
-        <template #sol="{ row }">
+        <template #branch="{ row }">
           <div>
-            <span>{{ row.sol }}</span>
-            <br />
-            <span class="!text-blue-500">{{ row.solId }}</span>
+            <span>{{ row?.branch?.name }}</span>
           </div>
         </template>
         <template #actions="{ row }">
@@ -191,7 +233,7 @@ const handleDeleteUser = (data?: UserModel) => {
     </el-card>
   </div>
 
-  <EIBDrawer title="Cấu hình vai trò" size="50%" v-model="openConfigRoleUserDrawer">
+  <EIBDrawer title="Cấu hình vai trò" size="50%" v-model="openConfigRoleUserDrawer" :is-confirm-close="false">
     <template #button>
       <el-button plain type="primary" :icon="Tools">{{ $t('button.roleSetting') }}</el-button>
     </template>
@@ -222,6 +264,7 @@ const handleDeleteUser = (data?: UserModel) => {
             >( {{ $t('docs.document.cancelAll') }} )</span
           ></span
         >
+        <el-button type="primary" plain @click="() => handleLockUser()">Khóa tài khoản</el-button>
         <el-button type="danger" plain :icon="Delete" @click="() => handleDeleteUser()">{{
           $t('button.delete')
         }}</el-button>

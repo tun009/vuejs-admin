@@ -98,3 +98,51 @@ export const formatNumberConfidence = (num: number) => {
     return Math.round(num * 10 * 100) / 10
   }
 }
+export function sortObjectsByMultipleFields(array: any[], fields: string[], sortOrder = 'asc') {
+  if (!Array.isArray(array)) {
+    throw new TypeError('Input must be an array.')
+  }
+
+  if (!Array.isArray(fields)) {
+    throw new TypeError('Fields must be an array of strings.')
+  }
+
+  if (sortOrder !== 'asc' && sortOrder !== 'desc') {
+    throw new Error('Sort order must be either "asc" or "desc".')
+  }
+
+  return array.slice().sort((a, b) => {
+    for (let i = 0; i < fields.length; i++) {
+      const field = fields[i]
+      const aValue = a[field]
+      const bValue = b[field]
+
+      // Determine if the values are strings or numbers
+      const isString = typeof aValue === 'string' && typeof bValue === 'string'
+      const isNumber = typeof aValue === 'number' && typeof bValue === 'number'
+
+      if (isString) {
+        // Remove leading space characters
+        const trimmedAValue = aValue.trimLeft()
+        const trimmedBValue = bValue.trimLeft()
+
+        const comparison = trimmedAValue.localeCompare(trimmedBValue)
+
+        if (comparison !== 0) {
+          return sortOrder === 'asc' ? comparison : -comparison
+        }
+      } else if (isNumber) {
+        const comparison = aValue - bValue
+
+        if (comparison !== 0) {
+          return sortOrder === 'asc' ? comparison : -comparison
+        }
+      } else {
+        // Handle other data types as needed (e.g., dates, booleans)
+        throw new Error(`Unsupported data type for field "${field}": ${typeof aValue}`)
+      }
+    }
+
+    return 0
+  })
+}

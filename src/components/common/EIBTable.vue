@@ -51,6 +51,7 @@ const handleGetData = async () => {
     if (!props.callback) return
     loading.value = true
     const response = await props.callback(pagination.value)
+    if (!response?.data?.total) return
     totalItems.value = response.data.total
   } catch (error: any) {
     throw new Error(error)
