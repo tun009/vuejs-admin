@@ -1,21 +1,10 @@
-export interface UpdateInfoExtractFormModel {
-  id: number
-  name: string
-  key: string
-  description: string
-  docType: string
-}
+import { UpdateInfoExtractFormModel } from '..'
 
-export interface ConfidenceRequestModel {
+export interface UpdateConfidenceRequestModel {
   id: number
   color: string
   min: number
   max: number
 }
 
-export interface UpdateConfidenceFormModel {
-  id: number
-  color: string
-  min: number
-  max: number
-}
+export type UpdateInfoExtractRequestModel = UpdateInfoExtractFormModel

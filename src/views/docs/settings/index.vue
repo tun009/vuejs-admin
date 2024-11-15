@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
 import UpdateInfoExtractForm from '../components/UpdateInfoExtractForm.vue'
-import { SettingModel, SettingMD, infoListColumnConfigs } from '@/@types/pages/docs/settings'
+import {
+  SettingModel,
+  SettingMD,
+  infoListColumnConfigs,
+  UpdateConfidenceFormModel,
+  UpdateConfidenceColorFormModel
+} from '@/@types/pages/docs/settings'
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
 import EIBTable from '@/components/common/EIBTable.vue'
@@ -13,23 +19,24 @@ import { SelectOptionModel } from '@/@types/common'
 import { getDocDataField, getConfidence, updateConfidence } from '@/api/docs/settings'
 import { requireRule } from '@/utils/validate'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
-import { ConfidenceRequestModel } from '@/@types/pages/docs/settings/services/SettingRequest'
 import { sortObjectsByMultipleFields } from '@/utils/common'
 import { useI18n } from 'vue-i18n'
+import { UpdateConfidenceRequestModel } from '@/@types/pages/docs/settings/services/SettingRequest'
+
+const { t } = useI18n()
 
 const rowSelect = ref<SettingModel>({} as SettingModel)
 const doc_types = ref<SelectOptionModel[]>([])
 const docTypeID = ref('')
 const activeName = ref('first')
 const tableData = ref<SettingMD[]>([])
-const dataConfidence = ref([])
-const requestConfidence = ref([])
+const dataConfidence = ref<SettingModel[]>([])
 const disabledIds = [1]
-const ruleForm = ref(CONFIDENCES)
-const colors = ref(CONFIDENCE_COLOR_FORM_DEFAULT)
-const ruleFormConfidence = ref<FormInstance | null>(null)
 const loading = ref(false)
-const { t } = useI18n()
+
+const ruleForm = ref<UpdateConfidenceFormModel>(CONFIDENCES)
+const colors = ref<UpdateConfidenceColorFormModel>(CONFIDENCE_COLOR_FORM_DEFAULT)
+const ruleFormConfidence = ref<FormInstance | null>(null)
 
 interface Emits {
   (event: 'close'): void
@@ -37,8 +44,7 @@ interface Emits {
 }
 
 const emits = defineEmits<Emits>()
-// eslint-disable-next-line no-redeclare
-const rules: FormRules<ConfidenceRequestModel> = {
+const rules: FormRules<UpdateConfidenceFormModel> = {
   toConfidence1: [requireRule()],
   toConfidence2: [requireRule()],
   toConfidence3: [requireRule()],
@@ -79,11 +85,11 @@ const getConfidenceDetail = async () => {
     const response = await getConfidence()
     const data = sortObjectsByMultipleFields(response?.data, ['max'])
     dataConfidence.value = data
-    const resultConfidence = {}
-    const resultColor = {}
+    const resultConfidence: UpdateConfidenceFormModel = { ...CONFIDENCES }
+    const resultColor: UpdateConfidenceColorFormModel = { ...CONFIDENCE_COLOR_FORM_DEFAULT }
     data.forEach((item, index) => {
-      resultConfidence[`toConfidence${index + 1}`] = item.max * 100
-      resultColor[`color${index + 1}`] = '#' + item.color
+      resultConfidence[`toConfidence${index + 1}` as keyof UpdateConfidenceFormModel] = item.max * 100
+      resultColor[`color${index + 1}` as keyof UpdateConfidenceColorFormModel] = item.color
     })
     ruleForm.value = { ...resultConfidence }
     colors.value = { ...resultColor }
@@ -98,21 +104,23 @@ const handleUpdateInfoExtract = (row: SettingModel) => {
 }
 
 const handleUpdateConfidence = async () => {
-  ruleFormConfidence.value?.validate(async (valid: boolean, fields: any) => {
+  ruleFormConfidence.value?.validate(async (valid: boolean, fields) => {
     try {
       if (valid) {
-        const payload = dataConfidence.value.map((item, index) => ({
-          ...item,
-          min: index === 0 ? 0 : (Number(ruleForm.value[`toConfidence${index}`]) + 0.1) / 100,
-          max: index === dataConfidence.value.length - 1 ? 1 : Number(ruleForm.value[`toConfidence${index + 1}`]) / 100,
-          color: colors.value[`color${index + 1}`].split('#')[1]
+        const payload: UpdateConfidenceRequestModel[] = dataConfidence.value.map((item, index) => ({
+          id: item.id,
+          min:
+            index === 0
+              ? 0
+              : (Number(ruleForm.value[`toConfidence${index}` as keyof UpdateConfidenceFormModel]) + 0.1) / 100,
+          max:
+            index === dataConfidence.value.length - 1
+              ? 1
+              : Number(ruleForm.value[`toConfidence${index + 1}` as keyof UpdateConfidenceFormModel]) / 100,
+          color: colors.value[`color${index + 1}` as keyof UpdateConfidenceColorFormModel]
         }))
         loading.value = true
-        requestConfidence.value = []
-        for (const data of payload) {
-          requestConfidence.value.push(data)
-        }
-        await updateConfidence(requestConfidence.value)
+        await updateConfidence(payload)
         ElMessage({
           message: t('notification.description.updateSuccess'),
           showClose: true,
@@ -163,8 +171,8 @@ onMounted(() => {
         <EIBTable
           :columnConfigs="infoListColumnConfigs"
           :data="tableData"
-          :hiddenChecked="true"
-          :hiddenPagination="true"
+          hiddenChecked
+          hiddenPagination
           :callback="getDataField"
           :disabledIds="disabledIds"
         >
@@ -194,13 +202,18 @@ onMounted(() => {
                         class="w-[100px] h-[40px]"
                         :name-ref="item + 'first'"
                         :showLabel="false"
-                        :modelValue="!index ? 0 : Number(ruleForm[Object.keys(ruleForm)[index - 1]]) + 0.1"
+                        :modelValue="
+                          !index
+                            ? 0
+                            : Number(ruleForm[Object.keys(ruleForm)[index - 1] as keyof UpdateConfidenceFormModel]) +
+                              0.1
+                        "
                       />
                       <span class="mt-[-6px]">-</span>
                       <EIBInput
                         :ref="item"
-                        v-model="ruleForm[item]"
-                        :rules="rules[item]"
+                        v-model="ruleForm[item as keyof UpdateConfidenceFormModel]"
+                        :rules="rules[item as keyof UpdateConfidenceFormModel]"
                         :rule-form-ref="$refs.ruleFormConfidence"
                         :name-ref="item"
                         :name="item"
@@ -219,8 +232,11 @@ onMounted(() => {
                       :key="index"
                       class="color-item w-[200px] h-[40px] mb-[8px]"
                     >
-                      <el-color-picker v-model="colors[item]" color-format="hex" />
-                      <span>{{ colors[item] }}</span>
+                      <el-color-picker
+                        v-model="colors[item as keyof UpdateConfidenceColorFormModel]"
+                        color-format="hex"
+                      />
+                      <span>{{ colors[item as keyof UpdateConfidenceColorFormModel] }}</span>
                     </div>
                   </div>
                 </div>
@@ -323,6 +339,10 @@ onMounted(() => {
 
 .el-radio__label {
   padding-top: 26px;
+}
+
+.el-color-picker__icon.is-icon-arrow-down {
+  display: none !important;
 }
 </style>
 

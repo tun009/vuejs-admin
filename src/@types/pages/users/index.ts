@@ -93,19 +93,19 @@ export const roleTypeOptions: SelectOptionModel[] = [
   },
   {
     label: 'Admin',
-    value: 'ADMIN'
+    value: RoleEnum.ADMIN
   },
   {
     label: 'Checker',
-    value: 'CHECKER'
+    value: RoleEnum.CHECKER
   },
   {
     label: 'Maker',
-    value: 'MAKER'
+    value: RoleEnum.MAKER
   },
   {
     label: 'Viewer',
-    value: 'VIEWER'
+    value: RoleEnum.VIEWER
   }
 ]
 
@@ -116,10 +116,57 @@ export const statusTypeOptions: SelectOptionModel[] = [
   },
   {
     label: 'Active',
-    value: 'ACTIVE'
+    value: UserStatusEnum.ACTIVE
   },
   {
     label: 'Inactive',
-    value: 'INACTIVE'
+    value: UserStatusEnum.INACTIVE
+  }
+]
+
+export const configRoleUserTableData = [
+  {
+    name: 'Tổng quan',
+    title: 1
+  },
+  {
+    name: 'Quản lý chứng từ',
+    title: 1
+  },
+  {
+    name: 'Xem thông tin các bộ chứng từ',
+    title: 2
+  },
+  {
+    name: 'Thêm bộ chứng từ',
+    title: 2
+  },
+  {
+    name: 'Cập nhật thông tin bộ chứng từ',
+    title: 2
+  },
+  {
+    name: 'Xóa bộ chứng từ',
+    title: 2
+  },
+  {
+    name: 'Trích xuất thông tin',
+    title: 1
+  },
+  {
+    name: 'Xem kết quả sau khi OCR hoàn tất',
+    title: 2
+  },
+  {
+    name: 'Chỉnh sửa thông tin sau khi OCR hoàn tất',
+    title: 2
+  },
+  {
+    name: 'Phê duyệt kết quả sau khi kiểm tra',
+    title: 2
+  },
+  {
+    name: 'Xem lịch sử chỉnh sửa thông tin',
+    title: 2
   }
 ]

@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { ElMessage } from 'element-plus'
+import { ElMessage, FormInstance } from 'element-plus'
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { SettingModel } from '@/@types/pages/docs/settings'
+import { SettingModel, UpdateInfoExtractFormModel } from '@/@types/pages/docs/settings'
 import EIBInput from '@/components/common/EIBInput.vue'
-import { UpdateInfoExtractFormModel } from '@/@types/pages/docs/settings/services/SettingRequest'
 import { updateInfoExtract } from '@/api/docs/settings'
 
 interface Props {
@@ -25,7 +24,7 @@ const props = defineProps<Props>()
 
 const { t } = useI18n()
 const loading = ref(false)
-const updateInfoExtractFormRef = ref()
+const updateInfoExtractFormRef = ref<FormInstance | null>()
 const updateInfoExtractFormData: UpdateInfoExtractFormModel = reactive({
   id: props.data?.id,
   name: props.data?.name,
@@ -34,15 +33,8 @@ const updateInfoExtractFormData: UpdateInfoExtractFormModel = reactive({
   docType: props.data?.docType
 })
 
-// const updateUserFormRules: FormRules<UpdateUserFormModel> = {
-//   name: [],
-//   role: [requireRule('change')],
-//   branchId: [requireRule('change')],
-//   username: []
-// }
-
 const handleInfoExtract = () => {
-  updateInfoExtractFormRef.value?.validate(async (valid: boolean, fields: any) => {
+  updateInfoExtractFormRef.value?.validate(async (valid: boolean, fields) => {
     try {
       if (valid) {
         const payload = { ...updateInfoExtractFormData }

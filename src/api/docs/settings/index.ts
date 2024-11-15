@@ -1,8 +1,8 @@
 import { GetSettingResponseModel } from '@/@types/pages/docs/settings/services/SettingResponse'
 import { request } from '@/api/service'
 import {
-  UpdateInfoExtractFormModel,
-  UpdateConfidenceFormModel
+  UpdateConfidenceRequestModel,
+  UpdateInfoExtractRequestModel
 } from '@/@types/pages/docs/settings/services/SettingRequest'
 
 export function getDocDataField(id: number | string) {
@@ -12,7 +12,7 @@ export function getDocDataField(id: number | string) {
   })
 }
 
-export function updateInfoExtract(data: UpdateInfoExtractFormModel) {
+export function updateInfoExtract(data: UpdateInfoExtractRequestModel) {
   return request({
     url: 'doc-data-fields',
     method: 'put',
@@ -27,7 +27,7 @@ export function getConfidence() {
   })
 }
 
-export function updateConfidence(data: UpdateConfidenceFormModel) {
+export function updateConfidence(data: UpdateConfidenceRequestModel[]) {
   return request({
     url: 'confidence-config',
     method: 'put',

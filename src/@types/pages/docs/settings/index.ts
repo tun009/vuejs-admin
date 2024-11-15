@@ -44,3 +44,25 @@ export const infoListColumnConfigs: ColumnConfigModel[] = [
     label: 'Hành động'
   }
 ]
+
+export interface UpdateConfidenceFormModel {
+  toConfidence1: number
+  toConfidence2: number
+  toConfidence3: number
+  toConfidence4: number
+}
+
+export interface UpdateConfidenceColorFormModel {
+  color1: string
+  color2: string
+  color3: string
+  color4: string
+}
+
+export interface UpdateInfoExtractFormModel {
+  id: number
+  name: string
+  key: string
+  description: string
+  docType: string
+}

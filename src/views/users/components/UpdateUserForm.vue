@@ -4,7 +4,7 @@ import EIBInput from '@/components/common/EIBInput.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
 import { requireRule } from '@/utils/validate'
 import { Check, Close, Lock } from '@element-plus/icons-vue'
-import { ElMessage, FormRules } from 'element-plus'
+import { ElMessage, FormRules, FormInstance } from 'element-plus'
 import { reactive, ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getBranches, updateUser, resetPasswordUser } from '@/api/users'
@@ -32,7 +32,7 @@ const props = defineProps<Props>()
 const { t } = useI18n()
 const branches = ref<BranchModel[]>([])
 const loading = ref(false)
-const updateUserFormRef = ref()
+const updateUserFormRef = ref<FormInstance | null>()
 const statusUser = (status: string) => {
   if (status == 'ACTIVE') {
     return true
@@ -58,11 +58,11 @@ const updateUserFormRules: FormRules<UpdateUserFormModel> = {
 
 const handleClose = () => {
   emits('close')
-  updateUserFormRef.value.resetFields()
+  updateUserFormRef.value?.resetFields()
 }
 
 const handleUpdateUser = () => {
-  updateUserFormRef.value?.validate(async (valid: boolean, fields: any) => {
+  updateUserFormRef.value?.validate(async (valid: boolean, fields) => {
     try {
       if (valid) {
         const payload = { ...updateUserFormData }
@@ -120,27 +120,6 @@ const handleResetPasswordUser = (id: number) => {
     }
   })
 }
-
-// const handleResetPasswordUser1 = (id: number) => {
-//   ElMessageBox.confirm(`Bạn xác nhận khôi phục mật khẩu tài khoản này chứ? ${id}`, 'Reset mật khẩu', {
-//     confirmButtonText: 'Xác nhận',
-//     cancelButtonText: 'Hủy bỏ',
-//     dangerouslyUseHTMLString: true,
-//     draggable: true
-//   })
-//     .then(() => {
-//       ElMessage({
-//         type: 'success',
-//         message: 'Reset Password user completed'
-//       })
-//     })
-//     .catch(() => {
-//       ElMessage({
-//         type: 'info',
-//         message: 'Reset Password user canceled'
-//       })
-//     })
-// }
 </script>
 
 <template>

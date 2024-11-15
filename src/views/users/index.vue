@@ -24,10 +24,6 @@ const { showConfirmModal } = useConfirmModal()
 import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
 import { BranchModel } from '@/@types/pages/login'
 
-// defineOptions({
-//   name: 'Users'
-// })
-
 const configRoleUserFormRef = ref<InstanceType<typeof ConfigRoleUserForm>>()
 
 const openAddUserDrawer = ref(false)
@@ -237,7 +233,7 @@ onMounted(() => {
     </el-card>
   </div>
 
-  <EIBDrawer title="Cấu hình vai trò" size="50%" v-model="openConfigRoleUserDrawer">
+  <EIBDrawer title="Cấu hình vai trò" size="50%" v-model="openConfigRoleUserDrawer" :is-confirm-close="false">
     <template #button>
       <el-button plain type="primary" :icon="Tools">{{ $t('button.roleSetting') }}</el-button>
     </template>

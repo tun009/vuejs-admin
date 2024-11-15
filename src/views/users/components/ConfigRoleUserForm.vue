@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { configRoleUserTableData } from '@/@types/pages/users'
 import { ref } from 'vue'
 
 interface Emits {
@@ -10,53 +11,6 @@ interface Exposes {
 }
 
 const emits = defineEmits<Emits>()
-
-const tableData = [
-  {
-    name: 'Tổng quan',
-    title: 1
-  },
-  {
-    name: 'Quản lý chứng từ',
-    title: 1
-  },
-  {
-    name: 'Xem thông tin các bộ chứng từ',
-    title: 2
-  },
-  {
-    name: 'Thêm bộ chứng từ',
-    title: 2
-  },
-  {
-    name: 'Cập nhật thông tin bộ chứng từ',
-    title: 2
-  },
-  {
-    name: 'Xóa bộ chứng từ',
-    title: 2
-  },
-  {
-    name: 'Trích xuất thông tin',
-    title: 1
-  },
-  {
-    name: 'Xem kết quả sau khi OCR hoàn tất',
-    title: 2
-  },
-  {
-    name: 'Chỉnh sửa thông tin sau khi OCR hoàn tất',
-    title: 2
-  },
-  {
-    name: 'Phê duyệt kết quả sau khi kiểm tra',
-    title: 2
-  },
-  {
-    name: 'Xem lịch sử chỉnh sửa thông tin',
-    title: 2
-  }
-]
 
 const loading = ref(false)
 const addUserFormRef = ref()
@@ -78,7 +32,7 @@ defineExpose<Exposes>({
 <template>
   <div>
     <h2 class="mb-2">Danh sách chức năng được truy cập theo role</h2>
-    <el-table :data="tableData" border class="fixed-table w-full overflow-y-auto">
+    <el-table :data="configRoleUserTableData" border class="fixed-table w-full overflow-y-auto">
       <el-table-column prop="name" label="Tên chức năng">
         <template #default="scope">
           <div v-if="scope.row.title == 1" class="text-[#495057] font-bold">
