@@ -1,15 +1,22 @@
-import { ColumnConfigModel, SelectOptionModel } from '@/@types/common'
+import { ColumnConfigModel } from '@/@types/common'
 
 export interface SettingModel {
   id: number
-  stt: number
-  fieldName: string
-  coreKey: string
-  typeData: string
+  name: string
+  key: string
   description: string
+  docType: string
 }
 
-export const dataSelectDocs: SelectOptionModel[] = [{ label: 'INVOICE', value: 1519 }]
+export interface SettingMD {
+  id: number
+  name: string
+  key: string
+  description: string
+  docType: string
+}
+
+// export const dataSelectDocs: SelectOptionModel[] = [{ label: 'INVOICE', value: 1519 }]
 
 export const infoListColumnConfigs: ColumnConfigModel[] = [
   {
@@ -17,15 +24,15 @@ export const infoListColumnConfigs: ColumnConfigModel[] = [
     label: 'STT'
   },
   {
-    field: 'fieldName',
+    field: 'name',
     label: 'Tên trường trích xuất'
   },
   {
-    field: 'coreKey',
+    field: 'key',
     label: 'Core_key'
   },
   {
-    field: 'typeData',
+    field: 'docType',
     label: 'Loại dữ liệu'
   },
   {

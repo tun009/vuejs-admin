@@ -61,7 +61,7 @@ export const userListColumnConfigs: ColumnConfigModel[] = [
     label: 'Role'
   },
   {
-    field: 'sol',
+    field: 'branch',
     label: 'SOL'
   },
   {
@@ -83,5 +83,43 @@ export interface FilterUserModel {
   name: string
   branchId: number
   role: string | number
-  status?: string | number
+  status: string | number
 }
+
+export const roleTypeOptions: SelectOptionModel[] = [
+  {
+    label: 'Tất cả',
+    value: -1
+  },
+  {
+    label: 'Admin',
+    value: 'ADMIN'
+  },
+  {
+    label: 'Checker',
+    value: 'CHECKER'
+  },
+  {
+    label: 'Maker',
+    value: 'MAKER'
+  },
+  {
+    label: 'Viewer',
+    value: 'VIEWER'
+  }
+]
+
+export const statusTypeOptions: SelectOptionModel[] = [
+  {
+    label: 'Tất cả',
+    value: -1
+  },
+  {
+    label: 'Active',
+    value: 'ACTIVE'
+  },
+  {
+    label: 'Inactive',
+    value: 'INACTIVE'
+  }
+]

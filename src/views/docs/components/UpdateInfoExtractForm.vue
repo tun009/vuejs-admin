@@ -1,15 +1,19 @@
 <script setup lang="ts">
-import { ElMessage, FormRules } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-
-import { RoleEnum } from '@/@types/pages/users'
+import { SettingModel } from '@/@types/pages/docs/settings'
 import EIBInput from '@/components/common/EIBInput.vue'
-import { requireRule } from '@/utils/validate'
-import { UpdateUserFormModel } from '@/@types/pages/users/services/UserRequest'
+import { UpdateInfoExtractFormModel } from '@/@types/pages/docs/settings/services/SettingRequest'
+import { updateInfoExtract } from '@/api/docs/settings'
+
+interface Props {
+  data: SettingModel
+}
 
 interface Emits {
   (event: 'close'): void
+  (event: 'refresh'): void
 }
 
 interface Exposes {
@@ -17,48 +21,54 @@ interface Exposes {
 }
 
 const emits = defineEmits<Emits>()
+const props = defineProps<Props>()
 
 const { t } = useI18n()
 const loading = ref(false)
-const updateUserFormRef = ref()
-const updateUserFormData: UpdateUserFormModel = reactive({
-  id: 0,
-  status: false,
-  name: '',
-  role: RoleEnum.ADMIN,
-  branchId: 0,
-  username: ''
+const updateInfoExtractFormRef = ref()
+const updateInfoExtractFormData: UpdateInfoExtractFormModel = reactive({
+  id: props.data?.id,
+  name: props.data?.name,
+  key: props.data?.key,
+  description: props.data?.description,
+  docType: props.data?.docType
 })
 
-const updateUserFormRules: FormRules<UpdateUserFormModel> = {
-  name: [],
-  role: [requireRule('change')],
-  branchId: [requireRule('change')],
-  username: []
-}
+// const updateUserFormRules: FormRules<UpdateUserFormModel> = {
+//   name: [],
+//   role: [requireRule('change')],
+//   branchId: [requireRule('change')],
+//   username: []
+// }
 
-const handleUpdateUser = () => {
-  updateUserFormRef.value?.validate((valid: boolean, fields: any) => {
-    if (valid) {
-      loading.value = true
-      setTimeout(() => {
-        loading.value = false
+const handleInfoExtract = () => {
+  updateInfoExtractFormRef.value?.validate(async (valid: boolean, fields: any) => {
+    try {
+      if (valid) {
+        const payload = { ...updateInfoExtractFormData }
+        loading.value = true
+        await updateInfoExtract({ ...payload, id: props.data.id })
         ElMessage({
-          message: t('notification.description.createSuccess'),
+          message: t('notification.description.updateSuccess'),
           showClose: true,
           type: 'success'
         })
+        emits('refresh')
         handleClose()
-      }, 3000)
-    } else {
-      console.error('Form validation failed', fields)
+      } else {
+        console.error('Form validation failed', fields)
+      }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      loading.value = false
     }
   })
 }
 
 const handleClose = () => {
   emits('close')
-  updateUserFormRef.value.resetFields()
+  updateInfoExtractFormRef.value?.resetFields()
 }
 
 defineExpose<Exposes>({
@@ -68,23 +78,33 @@ defineExpose<Exposes>({
 
 <template>
   <el-form
-    ref="updateUserFormRef"
-    :model="updateUserFormData"
-    :rules="updateUserFormRules"
-    @keyup.enter="handleUpdateUser"
+    ref="updateInfoExtractFormRef"
+    :model="updateInfoExtractFormData"
+    @keyup.enter="handleInfoExtract"
     class="flex flex-col gap-1"
   >
     <EIBInput
       label="Tên trường trích xuất"
       placeholder="Nhập tên trường trích xuất"
       name="name"
-      v-model="updateUserFormData.name"
+      v-model="updateInfoExtractFormData.name"
+      show-limit
     />
-    <EIBInput label="Core key" name="username" placeholder="" v-model="updateUserFormData.username" disabled />
-    <EIBInput label="Mô tả" placeholder="Nhập mô tả" name="name" v-model="updateUserFormData.name" />
+    <EIBInput label="Core key" name="username" placeholder="" v-model="updateInfoExtractFormData.key" disabled />
+    <EIBInput
+      label="Mô tả"
+      type="textarea"
+      placeholder="Nhập mô tả"
+      name="description"
+      v-model="updateInfoExtractFormData.description"
+      show-limit
+      :max-length="1000"
+    />
   </el-form>
   <div>
-    <el-button :loading="loading" @click.prevent="handleUpdateUser" type="primary">{{ $t('button.update') }}</el-button>
+    <el-button :loading="loading" @click.prevent="handleInfoExtract" type="primary">{{
+      $t('button.update')
+    }}</el-button>
     <el-button :disabled="loading" @click="handleClose" type="default">{{ $t('button.cancel') }}</el-button>
   </div>
 </template>

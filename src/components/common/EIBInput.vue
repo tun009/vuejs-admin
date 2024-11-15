@@ -60,7 +60,7 @@ const updateValue = (value: string) => {
         ><span v-if="required && !readonly" class="text-red-600 mr-1">*</span>{{ $t(label) }}</label
       >
       <span v-if="showLimit && !readonly && !disabled">{{
-        $t('base.input.limit', { length: modelValue.toString().length, maxLength: maxLength })
+        $t('base.input.limit', { length: (modelValue ?? '')?.toString()?.length, maxLength: maxLength })
       }}</span>
     </div>
     <span v-if="readonly" class="text-sm leading-[24px] font-normal">{{ modelValue }}</span>
@@ -76,6 +76,7 @@ const updateValue = (value: string) => {
         :rows="rows"
         :class="[customClass]"
         :placeholder="$t(placeholder ?? '')"
+        :autosize="{ minRows: 2, maxRows: 6 }"
       />
     </el-form-item>
   </div>

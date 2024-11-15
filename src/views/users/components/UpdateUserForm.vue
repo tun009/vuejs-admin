@@ -4,13 +4,14 @@ import EIBInput from '@/components/common/EIBInput.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
 import { requireRule } from '@/utils/validate'
 import { Check, Close, Lock } from '@element-plus/icons-vue'
-import { ElMessage, FormRules, ElMessageBox } from 'element-plus'
+import { ElMessage, FormRules } from 'element-plus'
 import { reactive, ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { getBranches, updateUser } from '@/api/users'
+import { getBranches, updateUser, resetPasswordUser } from '@/api/users'
 import { mappingBranches } from '@/utils/common'
 import { BranchModel } from '@/@types/pages/login'
 import { UpdateUserFormModel } from '@/@types/pages/users/services/UserRequest'
+import { useConfirmModal } from '@/hooks/useConfirm'
 
 interface Props {
   data: UserModel
@@ -39,6 +40,7 @@ const statusUser = (status: string) => {
     return false
   }
 }
+const { showConfirmModal } = useConfirmModal()
 
 const updateUserFormData: UpdateUserFormModel = reactive({
   id: props.data?.id,
@@ -102,26 +104,43 @@ onMounted(() => {
   handleGetBranches()
 })
 
-const handleResetPasswordUser = () => {
-  ElMessageBox.confirm(`Bạn xác nhận khôi phục mật khẩu tài khoản này chứ?`, 'Reset mật khẩu', {
-    confirmButtonText: 'Xác nhận',
-    cancelButtonText: 'Hủy bỏ',
-    dangerouslyUseHTMLString: true,
-    draggable: true
+const handleResetPasswordUser = (id: number) => {
+  showConfirmModal({
+    message: `Bạn xác nhận khôi phục mật khẩu tài khoản này chứ?`,
+    title: 'Reset mật khẩu',
+    onConfirm: async (instance, done) => {
+      try {
+        await resetPasswordUser(id)
+        done()
+      } catch (error) {
+        console.error(error)
+      } finally {
+        instance.confirmButtonLoading = false
+      }
+    }
   })
-    .then(() => {
-      ElMessage({
-        type: 'success',
-        message: 'Reset Password user completed'
-      })
-    })
-    .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: 'Reset Password user canceled'
-      })
-    })
 }
+
+// const handleResetPasswordUser1 = (id: number) => {
+//   ElMessageBox.confirm(`Bạn xác nhận khôi phục mật khẩu tài khoản này chứ? ${id}`, 'Reset mật khẩu', {
+//     confirmButtonText: 'Xác nhận',
+//     cancelButtonText: 'Hủy bỏ',
+//     dangerouslyUseHTMLString: true,
+//     draggable: true
+//   })
+//     .then(() => {
+//       ElMessage({
+//         type: 'success',
+//         message: 'Reset Password user completed'
+//       })
+//     })
+//     .catch(() => {
+//       ElMessage({
+//         type: 'info',
+//         message: 'Reset Password user canceled'
+//       })
+//     })
+// }
 </script>
 
 <template>
@@ -155,9 +174,14 @@ const handleResetPasswordUser = () => {
     <EIBSelect v-model="updateUserFormData.role" name="role" :options="roleSelectOptions" label="user.addUser.role" />
     <div class="flex flex-col gap-2 mb-[26px]">
       <span>{{ $t('user.updateUser.password') }}</span>
-      <el-button class="w-fit" :icon="Lock" color="#005d98" plain @click="handleResetPasswordUser()">{{
-        $t('user.updateUser.resetPassword')
-      }}</el-button>
+      <el-button
+        class="w-fit"
+        :icon="Lock"
+        color="#005d98"
+        plain
+        @click="handleResetPasswordUser(updateUserFormData.id)"
+        >{{ $t('user.updateUser.resetPassword') }}</el-button
+      >
     </div>
     <div class="flex flex-col gap-2">
       <span>{{ $t('user.updateUser.blockUser') }}</span>
