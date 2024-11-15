@@ -9,6 +9,10 @@ function logout() {
   useUserStoreHook().logout()
 }
 
+function refreshToken() {
+  useUserStoreHook().refreshToken()
+}
+
 /** Create a request instance */
 function createService() {
   // Create an axios instance named service
@@ -60,7 +64,8 @@ function createService() {
         case 401:
           error.message = 'Unauthorized'
           // When the Token expires
-          logout()
+          if (!getToken()) break
+          refreshToken()
           break
         case 403:
           error.message = 'Access denied'
@@ -101,12 +106,12 @@ function createService() {
 
 /** Create request method */
 function createRequest(service: AxiosInstance) {
-  return function <T>(config: AxiosRequestConfig): Promise<T> {
+  return function <T>(config: AxiosRequestConfig, notAuth: boolean = false): Promise<T> {
     const token = getToken()
     const defaultConfig = {
       headers: {
         // Carry Token
-        Authorization: token ? `Bearer ${token}` : undefined,
+        Authorization: notAuth ? undefined : token ? `Bearer ${token}` : undefined,
         'Content-Type': config.data instanceof FormData ? 'multipart/form-data' : 'application/json'
       },
       timeout: 10000,

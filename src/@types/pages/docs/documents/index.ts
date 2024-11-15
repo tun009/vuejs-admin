@@ -11,8 +11,9 @@ export enum BusinessTypeEnum {
 }
 
 export enum DocumentResultEnum {
-  COMPLIED = 'COMPLIED',
-  DISCREPANCY = 'DISCREPANCY'
+  COMPLY = 'COMPLY',
+  DISCREPANCY = 'DISCREPANCY',
+  NA = 'NA'
 }
 
 export enum ProcessingStepEnum {
@@ -38,6 +39,13 @@ export enum FileStatusEnum {
 export enum OcrSourceEnum {
   OCR = 'OCR',
   NLP = 'NLP'
+}
+
+export enum DocumentKeyModel {
+  INVOICE = 'Invoice',
+  BOL = 'Bill of lading',
+  DRAFT = 'Draft',
+  PRESENT_DOC = 'Present Document'
 }
 
 export interface DocumentModel {
@@ -156,7 +164,7 @@ export const DOCUMENT_STATUS_LIST = [
 ]
 
 export const BUSINESS_TYPE_LIST = [BusinessTypeEnum.NA, BusinessTypeEnum.LC_OUT, BusinessTypeEnum.LC_IN]
-export const DOCUMENT_RESULT_LIST = [DocumentResultEnum.COMPLIED, DocumentResultEnum.DISCREPANCY]
+export const DOCUMENT_RESULT_LIST = [DocumentResultEnum.COMPLY, DocumentResultEnum.DISCREPANCY]
 export const PROCESSING_STEP_LIST = [
   ProcessingStepEnum.NEW,
   ProcessingStepEnum.OCR,
@@ -172,11 +180,11 @@ export interface DocumentFileModel {
   createdBy: string
 }
 
-export interface DocumentResultModel {
-  id: string | number
-  fileName: string
-  testResults: DocumentResultEnum
-  numberSatisfiesRequirement: string
+export interface DocumentSumaryModel {
+  key: DocumentKeyModel
+  status: DocumentResultEnum
+  totalRequest: number
+  totalSatisfiedRequest: number
 }
 
 export interface ApproveProcessDocumentModel {
@@ -301,7 +309,7 @@ export const documentResultOptions: SelectOptionModel[] = [
   },
   {
     label: 'Hợp lệ',
-    value: DocumentResultEnum.COMPLIED
+    value: DocumentResultEnum.COMPLY
   },
   {
     label: 'Bất hợp lệ',
@@ -375,12 +383,12 @@ export const documentResultListColumnConfigs: ColumnConfigModel[] = [
     minWidth: 80
   },
   {
-    field: 'fileName',
+    field: 'key',
     label: 'docs.document.documentName_1',
     minWidth: 200
   },
   {
-    field: 'testResults',
+    field: 'status',
     label: 'docs.document.testResults',
     minWidth: 150
   },
@@ -417,19 +425,19 @@ export const approveProcessDocumentColumnConfigs: ColumnConfigModel[] = [
 export const documentTypeOptions: SelectOptionModel[] = [
   {
     label: 'Invoice',
-    value: 0
+    value: DocumentKeyModel.INVOICE
   },
   {
     label: 'Bill of lading',
-    value: 1
+    value: DocumentKeyModel.BOL
   },
   {
     label: 'Drafts',
-    value: 2
+    value: DocumentKeyModel.DRAFT
   },
   {
     label: 'Giấy Xuất trình chứng từ',
-    value: 3
+    value: DocumentKeyModel.PRESENT_DOC
   }
 ]
 
@@ -507,4 +515,43 @@ export interface DocumentDataLCModel {
   coreKey: string
   extractionValue?: string
   validatedValue?: string
+}
+
+export interface CompareReasonResultModel {
+  id: number
+  compareOn: string[]
+  lawIds: string[]
+  reasonId: string[]
+}
+
+export interface ComparisonResultModel {
+  title: string
+  status: DocumentResultEnum
+  comparisonReasonResults: CompareReasonResultModel[]
+  comparisonInputResults: {
+    title: string
+    comparisonResultInputValues: {
+      value: string | { [key: string]: string }[] | { bbox: number[][] }
+      type: string
+      key: string
+      prefixValue: string
+    }[]
+  }[]
+}
+
+export interface DocumentCompareModel {
+  id: number
+  title: string
+  key: DocumentKeyModel
+  comparisonResults: {
+    [key: string]: ComparisonResultModel
+  }
+}
+
+export interface DocumentResultModel {
+  status: DocumentResultEnum
+  timeOfShipment: DocumentResultEnum
+  periodOfPresentation: DocumentResultEnum
+  comparisonSummaries: DocumentSumaryModel[]
+  lcExpiry: DocumentResultEnum
 }

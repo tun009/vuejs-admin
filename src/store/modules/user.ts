@@ -1,13 +1,24 @@
 import { LoginFormModel, UserInfoModel } from '@/@types/pages/login'
 import { RoleEnum } from '@/@types/pages/users'
-import { getUserInfoApi, loginApi } from '@/api/login'
+import { getUserInfoApi, loginApi, logoutApi, refreshTokenApi } from '@/api/login'
+import { LOGIN_PAGE } from '@/constants/router'
 import { resetRouter } from '@/router'
 import store from '@/store'
-import { getToken, removeToken, setToken } from '@/utils/cache/cookies'
+import {
+  getRefreshToken,
+  getToken,
+  removeRefreshToken,
+  removeToken,
+  setRefreshToken,
+  setToken
+} from '@/utils/cache/cookies'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
 export const useUserStore = defineStore('user', () => {
+  const route = useRoute()
+
   const token = ref<string>(getToken() || '')
   const roles = ref<string[]>([])
   const userInfo = ref<UserInfoModel>({} as UserInfoModel)
@@ -16,6 +27,7 @@ export const useUserStore = defineStore('user', () => {
   const login = async ({ username, password }: LoginFormModel) => {
     const { data } = await loginApi({ username, password })
     setToken(data.token)
+    setRefreshToken(data.refreshToken)
     token.value = data.token
   }
   /** Get user details */
@@ -36,12 +48,16 @@ export const useUserStore = defineStore('user', () => {
 
   /** Sign out */
   const logout = () => {
+    logoutApi({ id: userInfo.value.id, refreshToken: getRefreshToken() ?? '' })
     removeToken()
+    removeRefreshToken()
     token.value = ''
     roles.value = []
     resetRouter()
+    if (route.path === LOGIN_PAGE) return
     location.reload()
   }
+
   /** Reset Token */
   const resetToken = () => {
     removeToken()
@@ -49,6 +65,18 @@ export const useUserStore = defineStore('user', () => {
     roles.value = []
   }
 
+  /** Refresh token */
+  const refreshToken = async () => {
+    try {
+      const { data } = await refreshTokenApi({ id: userInfo.value.id, refreshToken: getRefreshToken() ?? '' })
+      setToken(data.token)
+      setRefreshToken(data.refreshToken)
+      token.value = data.token
+    } catch (error) {
+      console.error(error)
+      logout()
+    }
+  }
   /** Set user info */
   const setUserInfo = (data: UserInfoModel) => {
     userInfo.value = data
@@ -69,6 +97,7 @@ export const useUserStore = defineStore('user', () => {
     logout,
     resetToken,
     setUserInfo,
+    refreshToken,
     isAdmin,
     isChecker,
     isMaker,

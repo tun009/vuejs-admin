@@ -12,10 +12,6 @@ import { updateUserInfo } from '@/api/users'
 import { ChangeProfileFormModel } from '@/@types/pages/profile'
 import { storeToRefs } from 'pinia'
 
-// defineOptions({
-//   name: 'Profile'
-// })
-
 const { t } = useI18n()
 const userStore = useUserStore()
 const { userInfo } = storeToRefs(userStore)

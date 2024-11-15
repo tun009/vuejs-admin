@@ -1,4 +1,3 @@
-import { DocumentResultEnum } from '@/@types/pages/docs/documents'
 import {
   GetDocumentRequestModel,
   UpdateBatchAmountRequestModel,
@@ -14,7 +13,7 @@ import {
   GetDocumentLCAmountResponseModel,
   GetDocumentLCDetailResponseModel,
   GetDocumentResponseModel,
-  GetDocumentResultsResponseModel,
+  GetDocumentSummaryResponseModel,
   PutPresentationCheckerResponseModel
 } from '@/@types/pages/docs/documents/services/DocumentResponse'
 import { request } from '@/api/service'
@@ -128,24 +127,10 @@ export function putPresentationChecker(batchId: string | number, params: { check
   })
 }
 
-export function getDocumentResults(): Promise<GetDocumentResultsResponseModel> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      return resolve({
-        code: 1,
-        data: {
-          list: Array.from({ length: 4 }, (_, index) => ({
-            fileName: 'Invoice',
-            id: index + 1,
-            numberSatisfiesRequirement: '8/8',
-            testResults: DocumentResultEnum.COMPLIED
-          })),
-          pageNum: 0,
-          pageSize: 4,
-          total: 4
-        },
-        msg: 'Meo'
-      })
-    }, 2000)
+export function getDocumentSummary(params: { batchId: string | number }) {
+  return request<GetDocumentSummaryResponseModel>({
+    url: 'comparison/summary',
+    method: 'get',
+    params
   })
 }

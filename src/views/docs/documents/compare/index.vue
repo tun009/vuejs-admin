@@ -1,36 +1,54 @@
 <script lang="ts" setup>
-import { documentTypeOptions } from '@/@types/pages/docs/documents'
+import {
+  DocumentCompareModel,
+  DocumentDataLCModel,
+  DocumentKeyModel,
+  DocumentLCAmountModel,
+  DocumentResultEnum,
+  documentTypeOptions
+} from '@/@types/pages/docs/documents'
 import EIBDialog from '@/components/common/EIBDialog.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
 import { DOCUMENT_DETAIL_PAGE } from '@/constants/router'
 import { useConfirmModal } from '@/hooks/useConfirm'
-import { useLoading } from '@/hooks/useLoading'
-import { documentCompareResultConfigs, documentCompareResults } from '@/mocks/document'
 import { useUserStore } from '@/store/modules/user'
-import { scrollIntoViewParent } from '@/utils/common'
+import { resetNullUndefinedFields, scrollIntoViewParent } from '@/utils/common'
 import { ArrowLeft, Check, CircleCheckFilled, Close, WarnTriangleFilled } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import CompareRejectForm from './components/CompareRejectForm.vue'
 import DocumentCompareResult from './components/DocumentCompareResult.vue'
 import ResizableSplitter from './components/ResizableSplitter.vue'
 import UpdateCompareHistory from './components/UpdateCompareHistory.vue'
+import { getDocumentCompare } from '@/api/docs/document/compare'
+import { getBatchDetail, getDocumentDataLC, getLCAmount } from '@/api/docs/document'
+import { BatchDetailModel } from '@/@types/pages/docs/documents/services/DocumentResponse'
+import { formatDate } from '@/utils/date'
+import { formatYYYYMMDD_HHMM } from '@/constants/date'
+import CompareSummarySkeleton from './components/CompareSummarySkeleton.vue'
 
 const router = useRouter()
 const route = useRoute()
-const { startLoading, stopLoading } = useLoading()
 const { showConfirmModal } = useConfirmModal()
 const { isViewer, isMaker } = useUserStore()
+const documentCompareConfigs = ref<DocumentCompareModel[]>([])
 
 const { t } = useI18n()
-const documentType = ref<number>(0)
+const loading = ref(false)
+const documentType = ref<DocumentKeyModel>(DocumentKeyModel.INVOICE)
 const conditionSelect = ref<number>(0)
 const activeName = ref<'result' | 'history'>('result')
 const dialogVisible = ref(false)
 const loadingConfirm = ref(false)
 const compareRejectFormRef = ref<InstanceType<typeof CompareRejectForm>>()
+const documentDetail = ref<BatchDetailModel>({} as BatchDetailModel)
+const dataLC = ref<DocumentDataLCModel[]>([])
+const amount = ref<DocumentLCAmountModel>({
+  amountUsed: 0,
+  totalAmount: 0
+})
 
 const handleCheckCompareResult = (index: number) => {
   try {
@@ -89,16 +107,60 @@ const handleReturnForMaker = () => {
   setTimeout(() => {
     ElMessage.success(t('confirm.description.returnSuccess'))
     loadingConfirm.value = true
-    loadingConfirm.value = true
   }, 3000)
 }
 
-const compareResults = computed(() => {
-  return documentCompareResults[documentType.value]
-})
+const handleGetDocumentCompare = async (key: DocumentKeyModel = DocumentKeyModel.INVOICE) => {
+  loading.value = true
+  try {
+    const { data } = await getDocumentCompare({ batchId: route.params?.id as string, key })
+    if (!data) return
+    documentCompareConfigs.value = data
+  } catch (error) {
+    console.error(error)
+  } finally {
+    loading.value = false
+  }
+}
 
-const compareResultsConfigs = computed(() => {
-  return documentCompareResultConfigs[documentType.value]
+const handleGetDocumentDetail = async () => {
+  try {
+    const { data } = await getBatchDetail(route.params?.id as string)
+    documentDetail.value = data
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const handleGetDocumentAmount = async () => {
+  try {
+    const { data } = await getLCAmount({ batchId: route.params?.id as string })
+    amount.value = resetNullUndefinedFields(data, 0) as unknown as DocumentLCAmountModel
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const handleGetDocumentDataLC = async () => {
+  try {
+    const { data } = await getDocumentDataLC({ batchId: route.params?.id as string })
+    if (!data) return
+    dataLC.value = data
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const compareResults = computed(() => {
+  return documentCompareConfigs.value.map((d) => {
+    const keys = Object.keys(d.comparisonResults)
+    const invalidResult = keys.some((k) => d.comparisonResults[k].status === DocumentResultEnum.DISCREPANCY)
+    const status = invalidResult ? DocumentResultEnum.DISCREPANCY : DocumentResultEnum.COMPLY
+    return {
+      label: d.title,
+      status
+    }
+  })
 })
 
 const documentTypeLabel = computed(() => {
@@ -106,19 +168,28 @@ const documentTypeLabel = computed(() => {
 })
 
 const isValid = computed(() => {
-  return compareResults.value.every((i) => i.status === 'valid')
+  return compareResults.value.every((i) => i.status === DocumentResultEnum.COMPLY)
+})
+
+const currency = computed(() => {
+  const obCurrency = dataLC.value.find((l) => l.coreKey === 'currency')
+  return obCurrency?.validatedValue ?? obCurrency?.extractionValue ?? ''
 })
 
 watch(
   () => documentType.value,
-  () => {
-    startLoading()
+  (value) => {
     handleCheckCompareResult(0)
-    setTimeout(() => {
-      stopLoading()
-    }, 500)
+    handleGetDocumentCompare(value)
   }
 )
+
+onMounted(() => {
+  handleGetDocumentAmount()
+  handleGetDocumentDetail()
+  handleGetDocumentDataLC()
+  handleGetDocumentCompare()
+})
 </script>
 
 <template>
@@ -168,19 +239,20 @@ watch(
     <div class="border border-t-[#e9ecef] bg-[#fff]">
       <ResizableSplitter custom-class="h-[calc(100vh_-_90px)]" :default-left-width="400">
         <template #left>
-          <div class="flex flex-col">
+          <CompareSummarySkeleton v-if="loading" />
+          <div v-else class="flex flex-col">
             <div class="flex flex-col gap-4">
               <div class="flex flex-col gap-1">
                 <span class="c-text-value">{{ $t('docs.compare.docName') }}</span>
-                <span class="text-base">KIEMGOC.2024.00133</span>
+                <span class="text-base">{{ documentDetail?.dossierName }}</span>
               </div>
               <div class="flex flex-col gap-1">
                 <span class="c-text-value">{{ $t('docs.compare.createdAtDoc') }}</span>
-                <span class="text-base">12-09-2024 15:22</span>
+                <span class="text-base">{{ formatDate(documentDetail?.createdAt, formatYYYYMMDD_HHMM) }}</span>
               </div>
               <div class="flex flex-col gap-1">
                 <span class="c-text-value">{{ $t('docs.compare.totalAmount') }}</span>
-                <span class="text-base">110,000 USD</span>
+                <span class="text-base">{{ amount?.totalAmount ?? 0 }} {{ currency }}</span>
               </div>
             </div>
             <el-divider />
@@ -211,22 +283,23 @@ watch(
                   class="flex flex-row gap-2 items-start cursor-pointer"
                   @click="() => handleCheckCompareResult(index)"
                 >
-                  <el-icon class="mt-1" size="18">
-                    <CircleCheckFilled class="text-[#099268]" v-if="step.status === 'valid'" />
-                    <WarnTriangleFilled class="text-[#e03131]" v-if="step.status === 'invalid'" />
-                    <CircleCheckFilled class="text-[#d8d8d8]" v-if="step.status === 'inprogress'" />
+                  <el-icon class="mb-[2px]" size="18">
+                    <CircleCheckFilled class="text-[#099268]" v-if="step.status === DocumentResultEnum.COMPLY" />
+                    <WarnTriangleFilled class="text-[#e03131]" v-if="step.status === DocumentResultEnum.DISCREPANCY" />
+                    <CircleCheckFilled class="text-[#d8d8d8]" v-if="step.status === DocumentResultEnum.NA" />
                   </el-icon>
-                  <span class="c-text-primary">{{ index + 1 }}. {{ step.label }}</span>
+                  <span class="c-text-primary">{{ step.label }}</span>
                 </div>
               </div>
             </div>
           </div>
         </template>
         <template #right>
-          <el-tabs v-model="activeName" class="demo-tabs">
+          <el-skeleton animated v-if="loading" class="h-full overflow-y-hidden" :rows="30" />
+          <el-tabs v-else v-model="activeName" class="demo-tabs">
             <el-tab-pane label="Kết quả" name="result">
               <DocumentCompareResult
-                :configs="compareResultsConfigs"
+                :configs="documentCompareConfigs"
                 :condition-select="conditionSelect"
                 @update:condition="(condition: number) => (conditionSelect = condition)"
                 @scroll-by-index="handleCheckCompareResult"
