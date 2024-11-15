@@ -356,7 +356,7 @@ onMounted(() => {
               </el-button>
             </div>
           </template>
-          <template #testResults="{ row }">
+          <template #status="{ row }">
             <span>
               {{ renderLabelByValue(documentResultOptions, row.status) }}
             </span>
