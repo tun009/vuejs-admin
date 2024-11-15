@@ -123,7 +123,7 @@ defineExpose<Exposes>({
         :key="column.field"
         :prop="column.field"
         :label="locales ? $t(column.label) : column.label"
-        :class-name="column.field === 'actions' ? 'action-row' : ''"
+        :class-name="column.field === 'actions' ? 'action-row ' : ' ' + column.class"
       >
         <template v-if="!column?.columns" v-slot:default="scope">
           <slot :name="column.field" :column="column" :row="scope.row" :index="scope.$index" class="cursor-pointer">

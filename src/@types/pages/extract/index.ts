@@ -9,11 +9,30 @@ export interface ExtractResultOcrModel {
   id: number
   confidence?: number
   coreKey: string
+  name: string
   extractionValue: string
   validatedValue: string
   type: string
   bboxes: number[][][]
   pageId: number
+  headers: ExtractResultOcrTableHeaderModel[]
+  children: ExtractResultOcrTableChildrenModel[][]
+  childrenMapping: ExtractResultOcrTableChildrenModel[][]
+}
+export interface ExtractResultOcrTableHeaderModel {
+  key: string
+  name: string
+}
+export interface ExtractResultOcrTableChildrenModel {
+  bboxes: number[]
+  confidence: number
+  coreKey: string
+  extractionValue: string
+  id: number
+  name: string
+  pageId: number
+  type: string
+  validatedValue: string
 }
 export interface ExtractDossierTypeModel {
   id: number

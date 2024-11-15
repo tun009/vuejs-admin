@@ -1,6 +1,8 @@
-import { SOLModel, FieldChangedModel } from '..'
+import { FieldChangedModel, DasboardOverviewModel, DasboardRatioModel, DasboardBranchModel } from '..'
 
 import { BaseResponseModel } from '@/@types/common'
 
 export type GetFieldChangedResponseModel = BaseResponseModel<FieldChangedModel[]>
-export type GetSOLsResponseModel = BaseResponseModel<SOLModel[]>
+export type DasboardOverviewResponseModel = ApiResponseData<DasboardOverviewModel>
+export type DasboardRatioResponseModel = ApiResponseData<DasboardRatioModel[]>
+export type DasboardBranchResponseModel = ApiResponseData<DasboardBranchModel[]>

@@ -2,13 +2,22 @@
 import { onMounted, ref, nextTick } from 'vue'
 import { getDossierDetailApi, getDossierListApi, saveDossierDocApi } from '@/api/extract'
 import { useConfirmModal } from '@/hooks/useConfirm'
-import { ExtractDocumentModel, ExtractDossierModel, ExtractResultOcrModel } from '@/@types/pages/extract'
+import {
+  ExtractDocumentModel,
+  ExtractDossierModel,
+  ExtractResultOcrModel,
+  ExtractResultOcrTableChildrenModel,
+  ExtractResultOcrTableHeaderModel
+} from '@/@types/pages/extract'
 import PDFView from './components/PDFView.vue'
 import HistoryTab from './components/HistoryTab.vue'
 import NoteTab from './components/NoteTab.vue'
 import ClassifyModal from './components/ClassifyModal.vue'
-import ReplaceDocumentModal from './components/ReplaceDocumentModal.vue'
+import TableStructuredOcr from './components/TableStructuredOcr.vue'
 
+import ReplaceDocumentModal from './components/ReplaceDocumentModal.vue'
+import { Splitpanes, Pane } from 'splitpanes'
+import 'splitpanes/dist/splitpanes.css'
 import { useRoute } from 'vue-router'
 
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
@@ -32,6 +41,7 @@ const idDossierActive = ref()
 const isLoadViewContentRight = ref<boolean>(false)
 const loading = ref<boolean>(false)
 const isShowModalReplace = ref<boolean>(false)
+const resizeTable = ref<number>(100)
 const { showConfirmModal } = useConfirmModal()
 const route = useRoute()
 const baseURL = import.meta.env.VITE_BASE_API
@@ -78,9 +88,37 @@ const getDossiersDetail = async (id: number) => {
     throw new Error(error)
   }
 }
+const headerTable = ref<ExtractResultOcrTableHeaderModel[]>([])
+const bodyTable = ref<ExtractResultOcrTableChildrenModel[][]>([])
 const handleClickField = (item: ExtractResultOcrModel) => {
   fieldSelect.value = item.coreKey
-  pdfViewRef.value?.tagLabelToPage(item.bboxes, item.pageId)
+  if (item.type === 'structured_table' && item?.headers.length > 0) clickTable(item)
+  else {
+    resizeTable.value = 100
+    pdfViewRef.value?.tagLabelToPage(item.bboxes, item.pageId)
+  }
+}
+const clickTable = (data: ExtractResultOcrModel) => {
+  pdfViewRef.value?.goToPageView(data.pageId)
+  resizeTable.value = 70
+  if (!data?.childrenMapping) bodyTable.value = mappingBodyTable(data.headers, data.children)
+  headerTable.value = data.headers
+  // bodyTable.value = data.childrenMapping
+}
+const mappingBodyTable = (header: ExtractResultOcrTableHeaderModel[], body: ExtractResultOcrTableChildrenModel[][]) => {
+  const bodyConvert: ExtractResultOcrTableChildrenModel[][] = []
+  body.forEach((rowBody) => {
+    const result: ExtractResultOcrTableChildrenModel[] = []
+    header.forEach((headerItem) => {
+      const matchedItem = rowBody.find((bodyItem) => bodyItem.coreKey === headerItem.key)
+
+      if (matchedItem) {
+        result.push(matchedItem)
+      }
+    })
+    bodyConvert.push(result)
+  })
+  return bodyConvert
 }
 const renderClassOcr = (conf: number = 0) => {
   return conf > 0.75 ? 'trust-hight' : 'trust-medium'
@@ -160,7 +198,13 @@ const saveDossier = async () => {
     const dataUpdate = [] as ExtractPostDossierRequestModel[]
     documentDetail.value!.result.forEach((doc) => {
       doc.forEach((item) => {
-        dataUpdate.push({ docDataId: item.id, value: item?.extractionValue ?? '' })
+        if (item.type === 'structured_table' && item?.children?.length > 0) {
+          item?.children?.forEach((row) => {
+            row.forEach((child) => {
+              dataUpdate.push({ docDataId: child.id, value: child?.extractionValue ?? '' })
+            })
+          })
+        } else dataUpdate.push({ docDataId: item.id, value: item?.extractionValue ?? '' })
       })
     })
     const response = await saveDossierDocApi(Number(route?.query?.dossierDocId), dataUpdate)
@@ -170,11 +214,18 @@ const saveDossier = async () => {
         type: 'success',
         message: 'Cập nhật thành công'
       })
+      closeTable()
+      // getDossiersDetail(idDossierActive.value)
       loading.value = false
     }
   } catch (error: any) {
     throw new Error(error)
+  } finally {
+    loading.value = false
   }
+}
+const closeTable = () => {
+  resizeTable.value = 100
 }
 const openModalReplaceDocument = () => {
   isShowModalReplace.value = true
@@ -219,12 +270,24 @@ onMounted(() => {
             </div>
           </div>
           <div class="overflow-auto w-[100%] bg-[#f1f3f5] px-2">
-            <PDFView
-              v-if="documentDetail?.pathFile"
-              ref="pdfViewRef"
-              :url="`${baseURL}/files?src=${documentDetail?.pathFile}`"
-              @loaded-data="onLoadedPDF()"
-            />
+            <splitpanes class="default-theme h-full" horizontal>
+              <pane :size="resizeTable">
+                <PDFView
+                  v-if="documentDetail?.pathFile"
+                  ref="pdfViewRef"
+                  :url="`${baseURL}/files?src=${documentDetail?.pathFile}`"
+                  @loaded-data="onLoadedPDF()"
+                />
+              </pane>
+              <pane :size="100 - resizeTable" class="!bg-[#fff]">
+                <div class="text-right">
+                  <el-icon class="cursor-pointer mr-[5px]" @click="closeTable"><CloseBold /></el-icon>
+                </div>
+                <div class="h-[93%] overflow-auto">
+                  <TableStructuredOcr :header="headerTable" :body="bodyTable" :pdfViewRef="pdfViewRef" />
+                </div>
+              </pane>
+            </splitpanes>
           </div>
         </div>
       </div>
@@ -291,10 +354,10 @@ onMounted(() => {
                           >
                             {{ formatNumberConfidence(item?.confidence ?? 0) }}%
                           </span>
-                          <span class="ml-2 text-[#adb5bd]">{{ item.coreKey }}</span>
+                          <span class="ml-2 text-[#adb5bd]">{{ item.name }}</span>
                         </div>
                         <div class="mt-[8px] min-h-[12px]">
-                          <div v-if="item.coreKey === 'goods_table'">Click để xem</div>
+                          <div v-if="item.type === 'structured_table'">Click để xem</div>
                           <el-input
                             v-else-if="fieldSelect === item.coreKey && item.type !== 'image'"
                             v-model="item.extractionValue"
@@ -354,7 +417,7 @@ onMounted(() => {
               </div>
             </el-tab-pane>
             <el-tab-pane label="Lịch sử chỉnh sửa" name="history">
-              <HistoryTab :isActive="activeName === 'history'" :batchId="Number(route?.query?.batchId)" />
+              <HistoryTab :isActive="activeName === 'history'" :dossierDocId="Number(route?.query?.dossierDocId)" />
             </el-tab-pane>
             <el-tab-pane label="Ghi chú" name="note">
               <NoteTab :isActive="activeName === 'note'" :batchId="Number(route?.query?.batchId)" />
@@ -367,7 +430,11 @@ onMounted(() => {
   <EIBDrawer v-if="openClassifyDrawer" title="Danh sách chứng từ" v-model="openClassifyDrawer" size="93%">
     <template #default> <ClassifyModal ref="classifyModalRef" @close-dialog="closeDialogClassify()" /> </template>
   </EIBDrawer>
-  <ReplaceDocumentModal v-if="isShowModalReplace" v-model="isShowModalReplace" />
+  <ReplaceDocumentModal
+    v-if="isShowModalReplace"
+    v-model="isShowModalReplace"
+    :dossierDocId="Number(route?.query?.dossierDocId)"
+  />
 </template>
 <style lang="scss">
 .extract-page {

@@ -85,7 +85,7 @@ export const docTypeOptions: SelectOptionModel[] = [
 export interface FilterRulesModel {
   type: RuleTypeEnum
   query: string
-  documentType: DocTypeEnum
+  docTypeId: number
 }
 export interface RuleUpdateModel {
   id: number

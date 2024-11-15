@@ -1,26 +1,32 @@
-import { GetFieldChangedResponseModel, GetSOLsResponseModel } from '@/@types/pages/dashboard/service/DashboardResponse'
-import { FieldChangedModel, SOLModel } from '@/@types/pages/dashboard'
-import { FIELD_CHANGED, SOLS } from '@/mocks/dashboard'
+import {
+  DasboardBranchResponseModel,
+  DasboardOverviewResponseModel,
+  DasboardRatioResponseModel
+} from '@/@types/pages/dashboard/service/DashboardResponse'
+import { request } from '../service'
+import {
+  GetDashboardRatioResponseModel,
+  GetDashboardSumaryResponseModel
+} from '@/@types/pages/dashboard/service/DasboardRequest'
 
-export function getFieldsChanged(type: string): Promise<GetFieldChangedResponseModel> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      return resolve({
-        code: 1,
-        data: (type === '-1' ? FIELD_CHANGED : FIELD_CHANGED.filter((x) => x.name === type)) as FieldChangedModel[],
-        msg: ''
-      })
-    }, 500)
+export function getDashboardSumaryApi(data: GetDashboardSumaryResponseModel) {
+  return request<DasboardOverviewResponseModel>({
+    url: 'report/overview',
+    method: 'get',
+    params: data
   })
 }
-export function getSOLs(): Promise<GetSOLsResponseModel> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      return resolve({
-        code: 1,
-        data: SOLS as SOLModel[],
-        msg: ''
-      })
-    }, 500)
+export function getDashboardRatioApi(data: GetDashboardRatioResponseModel) {
+  return request<DasboardRatioResponseModel>({
+    url: 'report/edit-ratio',
+    method: 'get',
+    params: data
+  })
+}
+export function getDashboardBranchApi(data: GetDashboardSumaryResponseModel) {
+  return request<DasboardBranchResponseModel>({
+    url: 'report/stats-branch',
+    method: 'get',
+    params: data
   })
 }
