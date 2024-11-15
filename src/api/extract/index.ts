@@ -77,3 +77,10 @@ export function saveDossierClassifyApi(id: number, data: ExtractPostClassifyRequ
     data
   })
 }
+export function replaceDocument(data: FormData, id: number) {
+  return request<ExtractDossierPostResponseModel>({
+    url: `dossier-files/${id}/replace`,
+    method: 'patch',
+    data
+  })
+}

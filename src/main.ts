@@ -15,6 +15,7 @@ import 'element-plus/theme-chalk/dark/css-vars.css'
 import '@/styles/index.scss'
 import '@/styles/tailwind.css'
 import '@/styles/custom-tailwind.css'
+import CanvasJSChart from '@canvasjs/vue-charts'
 
 const app = createApp(App)
 
@@ -24,7 +25,7 @@ loadPlugins(app)
 loadSvg(app)
 /** Load custom directives */
 loadDirectives(app)
-
+app.use(CanvasJSChart)
 app.use(store).use(router)
 router.isReady().then(() => {
   app.mount('#app')

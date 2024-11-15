@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { PaginationModel } from '@/@types/common'
-import { docTypeOptions, FilterRulesModel, ruleListColumnConfigs, RuleModel, RuleTypeEnum } from '@/@types/pages/rules'
+import { PaginationModel, SelectOptionModel } from '@/@types/common'
+import { FilterRulesModel, ruleListColumnConfigs, RuleModel, RuleTypeEnum } from '@/@types/pages/rules'
 import { getRules } from '@/api/rules/'
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import EIBInput from '@/components/common/EIBInput.vue'
@@ -10,8 +10,10 @@ import { Title } from '@/layouts/components'
 import { omitPropertyFromObject } from '@/utils/common'
 import { Search } from '@element-plus/icons-vue'
 import debounce from 'lodash-es/debounce'
-import { reactive, ref, watch } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 import UpdateRuleForm from '../components/UpdateRuleForm.vue'
+import { getDocummentTypeApi } from '@/api/extract'
+const documentTypes = ref<SelectOptionModel[]>([])
 
 const rulesTableRef = ref<InstanceType<typeof EIBTable>>()
 const filterValue = reactive<FilterRulesModel>({ query: '' } as FilterRulesModel)
@@ -35,7 +37,20 @@ const openModalUpdateRule = (data: RuleModel) => {
   dataUpdateRule.value = data
 }
 const handleGetData = debounce(() => rulesTableRef?.value?.handleGetData(), 300)
-
+const getDocTypes = async () => {
+  try {
+    const response = await getDocummentTypeApi()
+    documentTypes.value = [
+      { label: 'Tất cả', value: -1 },
+      ...response.data.map((item) => ({
+        label: item.name,
+        value: item.id
+      }))
+    ]
+  } catch (error: any) {
+    throw new Error(error)
+  }
+}
 watch(
   [() => filterValue],
   async () => {
@@ -45,6 +60,9 @@ watch(
     deep: true
   }
 )
+onMounted(() => {
+  getDocTypes()
+})
 </script>
 
 <template>
@@ -59,9 +77,9 @@ watch(
           :prefix-icon="Search"
         />
         <EIBSingleFilter
-          v-model="filterValue.documentType"
+          v-model="filterValue.docTypeId"
           title="Loại chứng từ"
-          :options="docTypeOptions"
+          :options="documentTypes"
           custom-class="w-full"
         />
       </div>

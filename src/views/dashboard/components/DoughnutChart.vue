@@ -38,7 +38,8 @@ ChartJS.register({
 const props = defineProps<{
   labels?: string[]
   bgcolor: string[]
-  share_percentage: number[]
+  percentage: number[]
+  textLabel: string
 }>()
 
 const chartData = computed(() => ({
@@ -47,7 +48,7 @@ const chartData = computed(() => ({
       backgroundColor: props.bgcolor,
       borderColor: '#777',
       borderWidth: 0,
-      data: props.share_percentage
+      data: props.percentage
     }
   ],
   labels1: props.labels
@@ -66,18 +67,18 @@ const chartOptions = computed(() => ({
       fontSize: '15',
 
       fontWeight: '600',
-      //   text: `Tổng ${((props.share_percentage[0] / props.share_percentage.reduce((a, b) => a + b, 0)) * 100).toFixed(0)}%`,
-      text: `90.0%`
+      //   text: `Tổng ${((props.percentage[0] / props.percentage.reduce((a, b) => a + b, 0)) * 100).toFixed(0)}%`,
+      text: props.textLabel
     },
     legend: {
-      display: false
+      display: true
     },
     tooltip: {
       callbacks: {
         label: (tooltipItem: any) => {
           const label = tooltipItem.label || ''
           const value = tooltipItem.raw || 0
-          const percentage = ((value / props.share_percentage.reduce((a, b) => a + b, 0)) * 100).toFixed(2)
+          const percentage = ((value / props.percentage.reduce((a, b) => a + b, 0)) * 100).toFixed(2)
           return `${label}: ${value} (${percentage}%)`
         }
       },

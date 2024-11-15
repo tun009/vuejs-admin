@@ -12,6 +12,7 @@ import EIBTable from './EIBTable.vue'
 interface Props {
   files: File[]
   limitFileCount?: number
+  allowedExtensions?: string
 }
 
 interface Emits {
@@ -21,7 +22,8 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {
   files: () => [],
-  limitFileCount: MAX_FILE_LIMIT
+  limitFileCount: MAX_FILE_LIMIT,
+  allowedExtensions: 'application/pdf,image/jpeg,image/png'
 })
 
 const emits = defineEmits<Emits>()
@@ -108,7 +110,7 @@ const handleDeleteFile = (index: number) => {
     >
       <p>{{ $t('docs.document.dragDrop') }}</p>
       <p>{{ $t('docs.document.or') }}</p>
-      <input type="file" @change="onFileChange" multiple hidden ref="fileInput" />
+      <input type="file" @change="onFileChange" multiple hidden ref="fileInput" :accept="props.allowedExtensions" />
       <el-button @click="selectFiles" class="w-fit min-w-96" type="primary" plain :icon="Plus">{{
         $t('docs.document.selectFromDevice')
       }}</el-button>

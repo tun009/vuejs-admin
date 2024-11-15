@@ -1,11 +1,32 @@
 <template>
   <div class="dashboard-container">
     <div class="chart-title">Tổng quan về dữ liệu</div>
+    <div class="flex gap-[20px] my-[10px]">
+      <div class="ml-1">
+        <span class="font-bold mr-[6px]">Ngày:</span>
+        <el-date-picker
+          v-model="dateTimeFilter"
+          type="daterange"
+          class="w-[200px]"
+          unlink-panels
+          range-separator="đến"
+          start-placeholder="Bắt đầu"
+          end-placeholder="Kết thúc"
+          :shortcuts="shortcutsDateRange"
+          :format="formatYYYYMMDD"
+          :value-format="formatYYYYMMDD"
+        />
+      </div>
+      <div class="flex">
+        <span class="font-bold m-auto mr-[6px]">Loại nghiệp vụ:</span>
+        <EIBSelect class="!w-[200px]" v-model="filterValue.bizType" :options="businessTypeOptions" hiddenError />
+      </div>
+    </div>
     <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
       <div class="p-4 box-container-top bg-white dark:bg-[#181818]">
         <div class="chart-box-title">THÔNG TIN CHUNG</div>
         <div class="flex justify-center">
-          <apexchart class="w-3/4" type="donut" :options="chartOptions" :series="series" />
+          <SumaryChart :data="chartData" />
         </div>
       </div>
       <div class="p-4 box-container-top bg-white dark:bg-[#181818]">
@@ -16,10 +37,18 @@
               <DoughnutChart
                 :labels="LABEL_VALID_CHARTS"
                 :bgcolor="BG_COLOR_VALID_CHARTS"
-                :share_percentage="share_percentage_valid"
+                :percentage="percentage_valid"
+                :text-label="textLabelValid"
               />
               <div class="box-subinfo">
-                <div class="big-title">900<span class="text-base"> /1000</span></div>
+                <div class="big-title">
+                  {{ chartData.totalDossierValid + chartData.totalDossierInvalid
+                  }}<span class="text-base">
+                    /{{
+                      chartData.totalDossierValid + chartData.totalDossierInvalid === 0 ? 0 : chartData.totalDossier
+                    }}
+                  </span>
+                </div>
                 <div class="big-title-text">Bộ đã phê duyệt</div>
               </div>
             </div>
@@ -42,9 +71,18 @@
             <span>THÔNG TIN CHỨNG TỪ ĐẠT YÊU CẦU</span>
           </div>
           <div class="flex pt-2 px-2">
-            <DoughnutChart :bgcolor="BG_COLOR_INVALID_CHARTS" :share_percentage="share_percentage_invalid" />
+            <DoughnutChart
+              :bgcolor="BG_COLOR_INVALID_CHARTS"
+              :percentage="percentage_passed"
+              :text-label="textLabelPassed"
+            />
             <div class="box-subinfo">
-              <div class="big-title">764<span class="text-base"> /900</span></div>
+              <div class="big-title">
+                {{ chartData.totalDossierPassed
+                }}<span class="text-base">
+                  /{{ chartData.totalDossierPassed === 0 ? 0 : chartData.totalDossierValidated }}</span
+                >
+              </div>
               <div class="big-title-text flex">
                 Bộ đạt yêu cầu
                 <el-dropdown placement="top">
@@ -66,9 +104,7 @@
       <div class="p-4 box-container-bottom bg-white dark:bg-[#181818]">
         <div class="chart-box-title flex justify-between items-center">
           <span>TOP 20 TỈ LỆ SỬA TRƯỜNG DỮ LIỆU</span>
-          <el-select v-model="valueFilterField" class="w-32" @change="getFieldChanged">
-            <el-option v-for="item in optionsField" :key="item.value" :label="item.label" :value="item.value" />
-          </el-select>
+          <EIBSelect class="!w-[200px]" v-model="filterValue.docTypeId" :options="documentTypes" hiddenError />
         </div>
         <EIBTable
           class="table-container pt-2"
@@ -106,47 +142,113 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 import { InfoFilled } from '@element-plus/icons-vue'
-// @ts-ignore
-import VueApexCharts from 'vue3-apexcharts'
-
+import EIBSelect from '@/components/common/EIBSelect.vue'
+import { businessTypeOptions } from '@/@types/pages/docs/documents'
 import DoughnutChart from './components/DoughnutChart.vue'
+import SumaryChart from './components/SumaryChart.vue'
+import { TIME_FIRST_DAY, TIME_LAST_DAY, formatYYYYMMDD, shortcutsDateRange } from '@/constants/date'
+const dateTimeFilter = ref(defaultDateRange())
 
 import EIBTable from '@/components/common/EIBTable.vue'
 import {
-  FieldChangedModel,
   fieldChangedListColumnConfigs,
-  SOLModel,
   SOLListColumnConfigs,
-  chartOptionsSumary,
-  optionsFieldChanged
+  FilterReportRatioModel,
+  DasboardRatioModel,
+  DasboardOverviewModel,
+  DasboardBranchModel
 } from '@/@types/pages/dashboard'
-import { getFieldsChanged, getSOLs } from '@/api/dashboard'
+import { getDashboardBranchApi, getDashboardRatioApi, getDashboardSumaryApi } from '@/api/dashboard'
 import { BG_COLOR_INVALID_CHARTS, BG_COLOR_VALID_CHARTS, LABEL_VALID_CHARTS } from '@/constants/chart'
+import { defaultDateRange } from '@/utils/date'
+import { formatNumberConfidence, omitPropertyFromObject } from '@/utils/common'
+import { getDocummentTypeApi } from '@/api/extract'
+import { SelectOptionModel } from '@/@types/common'
+const filterValue = reactive<FilterReportRatioModel>({ bizType: -1, docTypeId: -1 } as FilterReportRatioModel)
 
-const share_percentage_valid = [800, 100, 100]
-const share_percentage_invalid = [746, 154]
-const series = ref<number[]>([100, 36, 60, 900, 4, 0])
-const fieldsChangedData = ref<FieldChangedModel[]>([])
-const valueFilterField = ref('-1')
-const SOLData = ref<SOLModel[]>([])
-const apexchart = VueApexCharts
-const chartOptions = ref<any>(chartOptionsSumary)
-const optionsField = ref<any>(optionsFieldChanged)
-const getFieldChanged = async () => {
+const percentage_valid = ref<number[]>([])
+const textLabelValid = ref<string>('0%')
+const textLabelPassed = ref<string>('0%')
+const percentage_passed = ref<number[]>([])
+const fieldsChangedData = ref<DasboardRatioModel[]>([] as DasboardRatioModel[])
+const SOLData = ref<DasboardBranchModel[]>([] as DasboardBranchModel[])
+const chartData = ref<DasboardOverviewModel>({})
+const documentTypes = ref<SelectOptionModel[]>([])
+const initDossierTypes = async () => {
   try {
-    const response = await getFieldsChanged(valueFilterField.value)
-    fieldsChangedData.value = response.data
+    const response = await getDocummentTypeApi()
+    documentTypes.value = [
+      { label: 'Tất cả', value: -1 },
+      ...response.data.map((item) => ({
+        label: item.name,
+        value: item.id
+      }))
+    ]
   } catch (error: any) {
     throw new Error(error)
   }
 }
-const getSOL = async () => {
+const getOverview = async () => {
   try {
-    const response = await getSOLs()
+    const response = await getDashboardSumaryApi({
+      beginDate: dateTimeFilter.value[0] + TIME_FIRST_DAY,
+      endDate: dateTimeFilter.value[1] + TIME_LAST_DAY,
+      ...(filterValue.bizType === -1 ? {} : { bizType: filterValue.bizType })
+    })
+    // hard code
+    response.data.totalDossierValidated = 150
+    chartData.value = response.data
+    const totalDossier = response?.data?.totalDossier ?? 0
+    const totalDossierValid = response?.data?.totalDossierValid ?? 0
+    const totalDossierInvalid = response?.data?.totalDossierInvalid ?? 0
+    const totalDossierValidated = response?.data?.totalDossierValidated ?? 0
+    const totalDossierPassed = response?.data?.totalDossierPassed ?? 0
 
-    SOLData.value = response.data
+    percentage_valid.value = [
+      totalDossierValid,
+      totalDossierInvalid,
+      totalDossier - (totalDossierValid + totalDossierInvalid)
+    ]
+    textLabelValid.value =
+      (totalDossier > 0 ? formatNumberConfidence((totalDossierValid + totalDossierInvalid) / totalDossier) : 0) + '%'
+    percentage_passed.value = [totalDossierPassed, totalDossierValidated - totalDossierPassed]
+    textLabelPassed.value =
+      (totalDossierValidated > 0 ? formatNumberConfidence(totalDossierPassed / totalDossierValidated) : 0) + '%'
+  } catch (error: any) {
+    throw new Error(error)
+  }
+}
+const getRatio = async () => {
+  try {
+    const response = await getDashboardRatioApi({
+      beginDate: dateTimeFilter.value[0] + TIME_FIRST_DAY,
+      endDate: dateTimeFilter.value[1] + TIME_LAST_DAY,
+      ...omitPropertyFromObject(filterValue, -1)
+    })
+
+    fieldsChangedData.value = response.data.map((item) => ({
+      ...item,
+      editRatio: formatNumberConfidence(Number(item.editRatio) ?? 0) + '%'
+    }))
+  } catch (error: any) {
+    throw new Error(error)
+  }
+}
+const getStatsBranch = async () => {
+  try {
+    const response = await getDashboardBranchApi({
+      beginDate: dateTimeFilter.value[0] + TIME_FIRST_DAY,
+      endDate: dateTimeFilter.value[1] + TIME_LAST_DAY,
+      ...omitPropertyFromObject(filterValue, -1)
+    })
+    SOLData.value = response.data.map((item, index) => ({
+      ...item,
+      stt: index + 1,
+      code: item.branch.code,
+      name: item.branch.name
+    }))
   } catch (error: any) {
     throw new Error(error)
   }
@@ -155,9 +257,30 @@ const renderRate = (rate: number) => {
   return rate * 100 + '%'
 }
 onMounted(() => {
-  getFieldChanged()
-  getSOL()
+  initDossierTypes()
+  // getOverview()
 })
+watch(
+  [() => filterValue.bizType, () => dateTimeFilter],
+  async () => {
+    getOverview()
+    getRatio()
+    getStatsBranch()
+  },
+  {
+    immediate: true,
+    deep: true
+  }
+)
+watch(
+  [() => filterValue.docTypeId],
+  async () => {
+    getRatio()
+  },
+  {
+    deep: true
+  }
+)
 </script>
 
 <style scoped>
@@ -169,7 +292,6 @@ onMounted(() => {
   font-size: 20px;
   font-weight: 500;
   color: #495057;
-  margin-bottom: 10px;
 }
 .chart-box-title {
   font-size: 13px;
@@ -204,12 +326,19 @@ onMounted(() => {
   height: 300px !important;
 }
 .box-container-top {
-  height: 32vh;
+  height: 30vh;
 }
 .box-container-bottom {
-  height: 50vh;
+  height: 48vh;
 }
 .table-container {
   height: 90%;
+}
+</style>
+<style lang="css">
+.dashboard-container {
+  .el-select--large .el-select__wrapper {
+    min-height: 32px;
+  }
 }
 </style>

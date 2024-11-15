@@ -12,7 +12,7 @@ import { ref, watch } from 'vue'
 
 const props = defineProps<{
   isActive?: boolean
-  batchId: number
+  dossierDocId: number
 }>()
 watch(
   () => props.isActive,
@@ -25,7 +25,7 @@ const dataHistoriesGroupDay = ref<ExtractHistoryGroupedDayModel[]>([])
 const dataHistoriesConvert: ExtractHistoryGroupedResultModel[] = []
 const fetchHistories = async () => {
   try {
-    const response = await getDossierHistoriesApi(props.batchId)
+    const response = await getDossierHistoriesApi(props.dossierDocId)
     historiesData.value = response.data
     historiesData.value.forEach((item) => {
       if (item.some((x) => x.type === ExtractHistoryTypeEnum.EDIT))

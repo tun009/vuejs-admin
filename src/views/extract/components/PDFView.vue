@@ -51,6 +51,10 @@ const tagLabelToPage = (boxInfos: number[][][], pageNum: number) => {
     })
   } else elementPage?.scrollIntoView({ behavior: 'smooth' })
 }
+const goToPageView = (page: number) => {
+  const elementPage = document.getElementById('page-' + (page + 1))
+  if (elementPage) elementPage?.scrollIntoView({ behavior: 'smooth' })
+}
 const caculatorDistance = (unit: number) => {
   return `${unit.toString()}%`
 }
@@ -82,9 +86,11 @@ const getRectangle = (bbox: number[][], style: string) => {
 }
 interface ExtractPdfViewExpose {
   tagLabelToPage: (boxInfo: number[][][], pageNum: number) => void
+  goToPageView: (pageNum: number) => void
 }
 defineExpose<ExtractPdfViewExpose>({
-  tagLabelToPage
+  tagLabelToPage,
+  goToPageView
 })
 </script>
 

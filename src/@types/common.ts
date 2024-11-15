@@ -1,6 +1,7 @@
 export interface ColumnConfigModel {
   field: string
   label: string
+  class?: string
   minWidth?: number
   width?: number
   html?: boolean
