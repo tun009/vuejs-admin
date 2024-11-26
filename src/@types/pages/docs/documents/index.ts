@@ -2,6 +2,7 @@ import { ColumnConfigModel, DocumentStatusEnum, SelectOptionModel } from '@/@typ
 import { RoleEnum } from '@/@types/pages/users'
 import { STATUS_COLORS } from '@/constants/color'
 import { BranchModel } from '../../login'
+import { RuleModel, RuleTypeEnum } from '../../rules'
 
 // document enum
 export enum BusinessTypeEnum {
@@ -70,7 +71,7 @@ export interface CompareRejectFormModel {
 }
 
 export interface CompareContentFormModel {
-  field: number
+  content: string
 }
 
 export const docListColumnConfigs: ColumnConfigModel[] = [
@@ -193,13 +194,6 @@ export interface ApproveProcessDocumentModel {
   username: string
 }
 
-export interface DocumentResultDataModel {
-  status: 'valid' | 'invalid' | 'na'
-  reasonEn?: string
-  reasonVi?: string
-  rule?: string
-}
-
 export const documentStatusOptions: SelectOptionModel[] = [
   {
     label: 'Mới',
@@ -320,15 +314,15 @@ export const documentResultOptions: SelectOptionModel[] = [
 export const documentResultValidOptions: SelectOptionModel[] = [
   {
     label: 'Hợp lệ',
-    value: 'valid'
+    value: DocumentResultEnum.COMPLY
   },
   {
     label: 'Bất hợp lệ',
-    value: 'invalid'
+    value: DocumentResultEnum.DISCREPANCY
   },
   {
     label: 'N/A',
-    value: 'na'
+    value: DocumentResultEnum.NA
   }
 ]
 
@@ -519,10 +513,14 @@ export interface DocumentDataLCModel {
 
 export interface CompareReasonResultModel {
   id: number
-  compareOn: string[]
+  laws: RuleModel[]
+  reasons: RuleModel[]
   lawIds: string[]
   reasonId: string[]
+  compareOn: string[]
 }
+
+export type CompareReasonOnlyResultModel = Omit<CompareReasonResultModel, 'id' | 'compareOn'>
 
 export interface ComparisonResultModel {
   title: string
@@ -531,12 +529,18 @@ export interface ComparisonResultModel {
   comparisonInputResults: {
     title: string
     comparisonResultInputValues: {
-      value: string | { [key: string]: string }[] | { bbox: number[][] }
+      value: string | { [key: string]: string }[] | { bboxes: number[][][]; raw_file: string; page_id: number }
       type: string
       key: string
       prefixValue: string
     }[]
   }[]
+}
+
+export interface ComparisonCellResultModel {
+  doc: string
+  value: string | string[]
+  comparisonResult: ComparisonResultModel
 }
 
 export interface DocumentCompareModel {
@@ -546,6 +550,11 @@ export interface DocumentCompareModel {
   comparisonResults: {
     [key: string]: ComparisonResultModel
   }
+  comparisonRowResults: {
+    stt: number
+    fieldName: string
+    comparisonCellResults: ComparisonCellResultModel[]
+  }[]
 }
 
 export interface DocumentResultModel {
@@ -555,3 +564,6 @@ export interface DocumentResultModel {
   comparisonSummaries: DocumentSumaryModel[]
   lcExpiry: DocumentResultEnum
 }
+
+export const getAllCategoryRequestModel = { pageNum: 0, pageSize: 9999, type: RuleTypeEnum.CATEGORY, query: '' }
+export const getAllRuleRequestModel = { ...getAllCategoryRequestModel, type: RuleTypeEnum.LAW }

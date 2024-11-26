@@ -38,6 +38,8 @@ export type GetDocumentCompareResponseModel = ApiResponseData<DocumentCompareMod
 
 export type GetDocumentSummaryResponseModel = ApiResponseData<DocumentResultModel>
 
+export type TranslateEnglishToVietnameseResponseModel = ApiResponseData<string>
+
 export interface BatchDetailModel {
   id: number
   dossierName: string

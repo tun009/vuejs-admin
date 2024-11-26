@@ -21,6 +21,7 @@ interface Props {
   isRow?: boolean
   hiddenError?: boolean
   rows?: number
+  autosize?: { minRows: number; maxRows: number }
 }
 
 interface Emits {
@@ -32,7 +33,8 @@ const props = withDefaults(defineProps<Props>(), {
   label: '',
   type: 'text',
   size: 'large',
-  maxLength: 100
+  maxLength: 200,
+  autosize: () => ({ minRows: 2, maxRows: 6 })
 })
 
 const emit = defineEmits<Emits>()
@@ -76,7 +78,7 @@ const updateValue = (value: string) => {
         :rows="rows"
         :class="[customClass]"
         :placeholder="$t(placeholder ?? '')"
-        :autosize="{ minRows: 2, maxRows: 6 }"
+        :autosize="autosize"
       />
     </el-form-item>
   </div>

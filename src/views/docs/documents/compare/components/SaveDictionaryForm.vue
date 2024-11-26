@@ -1,6 +1,9 @@
 <script lang="ts" setup>
+import { RuleModel, RuleTypeEnum } from '@/@types/pages/rules'
+import { updateDictionary } from '@/api/docs/document/compare'
 import EIBInput from '@/components/common/EIBInput.vue'
 import { ElMessage } from 'element-plus'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 interface Emits {
@@ -10,23 +13,44 @@ interface Emits {
 
 interface Exposes {
   onConfirm: () => void
+  initComponent: (value: Partial<RuleModel>) => void
 }
+
+const displayValue = ref<Partial<RuleModel>>({
+  id: -1,
+  en: '',
+  vi: '',
+  defaultValue: ''
+})
 
 const emits = defineEmits<Emits>()
 
 const { t } = useI18n()
 
-const onConfirm = () => {
-  emits('update:loading', true)
-  setTimeout(() => {
+const onConfirm = async () => {
+  try {
+    emits('update:loading', true)
+    await updateDictionary(displayValue.value.id ?? -1, {
+      en: displayValue.value.en ?? '',
+      vi: displayValue.value.vi ?? '',
+      type: RuleTypeEnum.CATEGORY
+    })
     ElMessage.success(t('notification.description.createSuccess'))
-    emits('update:loading', false)
     emits('update:visible', false)
-  }, 2000)
+  } catch (error) {
+    console.error(error)
+  } finally {
+    emits('update:loading', false)
+  }
+}
+
+const initComponent = (value: Partial<RuleModel>) => {
+  displayValue.value = value
 }
 
 defineExpose<Exposes>({
-  onConfirm
+  onConfirm,
+  initComponent
 })
 </script>
 
@@ -34,18 +58,8 @@ defineExpose<Exposes>({
   <div class="flex flex-col gap-4">
     <p>{{ $t('docs.compare.editInvalidCategoryDes') }}</p>
     <div class="flex flex-col gap-2">
-      <EIBInput
-        model-value="Discrepancy: Invoice: issued after date of presentation"
-        name="reason"
-        label="docs.compare.currentContent"
-        readonly
-      />
-      <EIBInput
-        model-value="Discrepancy: Invoice - issued after date of presentation"
-        name="reason"
-        label="docs.compare.newContent"
-        readonly
-      />
+      <EIBInput :model-value="displayValue.defaultValue" name="reason" label="docs.compare.currentContent" readonly />
+      <EIBInput :model-value="displayValue.en" name="reason" label="docs.compare.newContent" readonly />
     </div>
   </div>
 </template>

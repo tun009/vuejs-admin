@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { BusinessTypeEnum, businessTypeOptions } from '@/@types/pages/docs/documents'
-import { AddDocumentRequestData } from '@/@types/pages/docs/documents/services/DocumentRequest'
+import { AddDocumentRequestModel } from '@/@types/pages/docs/documents/services/DocumentRequest'
 import { BranchModel } from '@/@types/pages/login'
 import { addDocument, getBranches } from '@/api/docs/document'
 import EIBInput from '@/components/common/EIBInput.vue'
@@ -59,21 +59,21 @@ const localModelValue = computed({
   }
 })
 
-const addDocumentFormData: AddDocumentRequestData = reactive({
+const addDocumentFormData: AddDocumentRequestModel = reactive({
   bizType: BusinessTypeEnum.LC_OUT,
   cif: '',
   customerName: '',
-  name: '',
-  amountClaimed: 0
+  name: ''
+  // amountClaimed: 0
 })
 
-const addDocumentFormRules: FormRules<AddDocumentRequestData> = {
+const addDocumentFormRules: FormRules<AddDocumentRequestModel> = {
   bizType: [],
   cif: [],
   customerName: [requireRule()],
   name: [requireRule()],
-  branchId: [],
-  amountClaimed: [requireRule()]
+  branchId: []
+  // amountClaimed: [requireRule()]
 }
 
 const handleAddDocument = () => {
@@ -176,14 +176,14 @@ onMounted(() => {
             is-row
           />
 
-          <EIBInput
+          <!-- <EIBInput
             label="docs.document.totalAmount"
             placeholder="docs.document.totalAmount"
             name="amountClaimed"
             v-model="addDocumentFormData.amountClaimed"
             required
             is-row
-          />
+          /> -->
 
           <EIBInput
             label="docs.document.cifCode"

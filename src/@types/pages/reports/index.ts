@@ -227,13 +227,6 @@ export interface ApproveProcessDocumentModel {
   username: string
 }
 
-export interface DocumentResultDataModel {
-  status: 'valid' | 'invalid' | 'na'
-  reasonEn?: string
-  reasonVi?: string
-  rule?: string
-}
-
 export const documentStatusOptions: SelectOptionModel[] = [
   {
     label: 'Mới',

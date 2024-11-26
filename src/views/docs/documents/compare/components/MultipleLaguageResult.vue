@@ -1,21 +1,28 @@
 <script lang="ts" setup>
 import {
-  DocumentResultDataModel,
-  documentResultRuleOptions,
+  CompareReasonOnlyResultModel,
+  CompareReasonResultModel,
+  DocumentResultEnum,
   documentResultValidOptions
 } from '@/@types/pages/docs/documents'
+import { RuleModel, reasonDefault } from '@/@types/pages/rules'
 import EIBDialog from '@/components/common/EIBDialog.vue'
-import EIBInput from '@/components/common/EIBInput.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
+import EIBTextareaAutocomplete from '@/components/common/EIBTextareaAutocomplete.vue'
 import { useUserStore } from '@/store/modules/user'
 import { InfoFilled } from '@element-plus/icons-vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import SaveDictionaryForm from './SaveDictionaryForm.vue'
+import { SelectOptionModel } from '@/@types/common'
+import { translateEnglishToVietnamese } from '@/api/docs/document/compare'
 
 interface Props {
-  result: DocumentResultDataModel
+  categories: RuleModel[]
+  rules: RuleModel[]
+  status: DocumentResultEnum
+  result: CompareReasonResultModel[]
 }
 
 const props = defineProps<Props>()
@@ -23,32 +30,85 @@ const props = defineProps<Props>()
 const { t } = useI18n()
 const { isViewer } = useUserStore()
 
+const lawReasonMapping = computed(() => {
+  const result: CompareReasonOnlyResultModel = {
+    laws: [],
+    reasons: [],
+    lawIds: [],
+    reasonId: []
+  }
+  props.result.forEach((r) => {
+    result.laws = [...result.laws, ...r.laws]
+    result.reasons = [...result.reasons, ...r.reasons]
+    result.lawIds = [...result.lawIds, ...r.lawIds]
+    result.reasonId = [...result.reasonId, ...r.reasonId]
+  })
+  return result
+})
+
 const defaultValue = {
-  reasonEn: '',
-  reasonVi: '',
-  rule: '',
-  ...props.result
+  status: props.status,
+  ...lawReasonMapping.value
 }
+
+const reasonListMappingDefault = computed(() => {
+  const temp = lawReasonMapping.value.reasons.map((r) => ({
+    ...r,
+    defaultValue: r.en
+  }))
+  return temp
+})
+
+const reasonList = ref<RuleModel[]>(reasonListMappingDefault.value)
 
 const isEdit = ref(false)
 const loading = ref(false)
-const loadingRule = ref(false)
+const loadingTranslate = ref(false)
 const dialogVisible = ref(false)
 const loadingConfirm = ref(false)
 const documentResultFormRef = ref<FormInstance | null>()
-const documentResultFormData = ref<DocumentResultDataModel>({ ...defaultValue })
+const documentResultFormData = ref({ ...defaultValue })
 const saveDictionaryFormRef = ref<InstanceType<typeof SaveDictionaryForm>>()
 
-const documentResultFormRules: FormRules = {
-  status: [],
-  rule: [],
-  reasonEn: [],
-  reasonVi: []
-}
+const documentResultFormRules: FormRules = {}
 
 const handleClose = () => {
-  documentResultFormData.value = { ...defaultValue }
   isEdit.value = false
+}
+
+const handleAddRule = () => {
+  reasonList.value = [...reasonList.value, { ...reasonDefault }]
+}
+
+const handleRemoveRule = (i: number) => {
+  reasonList.value = [...reasonList.value].filter((_, index) => i !== index)
+}
+
+const updateRuleValue = ({ index, value }: { index: number; value: Partial<RuleModel> }) => {
+  const newReasons = [...reasonList.value].map((r, i) => {
+    if (i !== index) return r
+    return { ...r, ...value }
+  })
+  reasonList.value = [...newReasons]
+}
+
+const handleTranslate = async (i: number) => {
+  try {
+    loadingTranslate.value = true
+    const response = await translateEnglishToVietnamese({ content: reasonList.value[i].en })
+    updateRuleValue({ index: i, value: { vi: response?.data } })
+  } catch (error) {
+    console.error(error)
+  } finally {
+    loadingTranslate.value = false
+  }
+}
+
+const handleSaveDictionary = (i: number) => {
+  dialogVisible.value = true
+  setTimeout(() => {
+    saveDictionaryFormRef.value?.initComponent(reasonList.value[i])
+  }, 100)
 }
 
 const handleUpdateCompareResult = () => {
@@ -69,6 +129,29 @@ const handleUpdateCompareResult = () => {
     }
   })
 }
+
+const concatLawContents = (laws: RuleModel[]) => {
+  let result: string = ''
+  laws.forEach((l) => {
+    result += l.en
+  })
+  return result
+}
+
+const suggestionMapping = (arrs: RuleModel[]) => {
+  return arrs.map((r) => ({
+    id: r.id,
+    value: r.en,
+    code: r.code
+  }))
+}
+
+const ruleMapping = computed((): SelectOptionModel[] => {
+  return props.rules.map((r) => ({
+    label: r.en,
+    value: r.code
+  }))
+})
 </script>
 
 <template>
@@ -94,49 +177,49 @@ const handleUpdateCompareResult = () => {
       <div class="flex flex-row gap-10">
         <div class="flex flex-col gap-1 flex-1">
           <span class="c-text-des">{{ $t('docs.compare.english') }}</span>
-          <span v-if="documentResultFormData.status === 'valid'" class="c-text-success">{{
+          <span v-if="props.status === DocumentResultEnum.COMPLY" class="c-text-success">{{
             $t('docs.compare.complied')
           }}</span>
-          <div v-else-if="documentResultFormData.status === 'invalid'" class="flex flex-row items-center gap-2">
-            <div class="h-1 w-1 bg-[#e8590c] rounded-sm" />
-            <span class="text-[#e8590c]"
-              >{{ $t('docs.compare.discrepancy')
-              }}{{ documentResultFormData?.reasonEn ? ': ' + documentResultFormData?.reasonEn : '' }}</span
-            >
-            <el-tooltip placement="top" v-if="documentResultFormData?.rule">
-              <el-icon :size="18" class="cursor-pointer ml-1"><InfoFilled /></el-icon>
-              <template #content>
-                <div class="max-w-96">{{ documentResultFormData?.rule }}</div>
-              </template>
-            </el-tooltip>
+          <div v-else-if="props.status === DocumentResultEnum.DISCREPANCY">
+            <div class="flex flex-row items-center gap-2" v-for="(res, index) in lawReasonMapping.reasons" :key="index">
+              <div class="h-1 w-1 bg-[#e8590c] rounded-sm" />
+              <span class="text-[#e8590c]">{{ $t('docs.compare.discrepancy') }}{{ res.en ? ': ' + res.en : '' }}</span>
+              <el-tooltip
+                placement="top"
+                v-if="lawReasonMapping?.laws?.length && !index"
+                raw-content
+                :content="concatLawContents(lawReasonMapping?.laws)"
+                popper-class="max-w-[580px]"
+              >
+                <el-icon :size="18" class="cursor-pointer ml-1"><InfoFilled /></el-icon>
+              </el-tooltip>
+            </div>
           </div>
           <span v-else>{{ $t('docs.compare.na') }}</span>
         </div>
         <div class="flex flex-col gap-1 flex-1">
           <span class="c-text-des">{{ $t('docs.compare.vietnamese') }}</span>
-          <span v-if="documentResultFormData.status === 'valid'" class="c-text-success">{{
+          <span v-if="props.status === DocumentResultEnum.COMPLY" class="c-text-success">{{
             $t('docs.status.valid')
           }}</span>
-          <div v-else-if="documentResultFormData.status === 'invalid'" class="flex flex-row items-center gap-2">
-            <div class="h-1 w-1 bg-[#e8590c] rounded-sm" />
-            <span class="text-[#e8590c]"
-              >{{ $t('docs.status.invalid')
-              }}{{ documentResultFormData?.reasonVi ? ': ' + documentResultFormData?.reasonVi : '' }}</span
-            >
+          <div v-else-if="props.status === DocumentResultEnum.DISCREPANCY">
+            <div class="flex flex-row items-center gap-2" v-for="(res, index) in lawReasonMapping.reasons" :key="index">
+              <div class="h-1 w-1 bg-[#e8590c] rounded-sm" />
+              <span class="text-[#e8590c]">{{ $t('docs.status.invalid') }}{{ res.vi ? ': ' + res.vi : '' }}</span>
+            </div>
           </div>
           <span v-else>{{ $t('docs.compare.na') }}</span>
         </div>
       </div>
     </div>
     <div
-      class="animated-box bg-gray-100 dark:bg-zinc-900 rounded-md shadow-md max-w-[800px] flex flex-col gap-3"
+      class="animated-box bg-gray-100 dark:bg-zinc-900 rounded-md shadow-md max-w-[1000px] flex flex-col gap-3"
       :class="{ collapsed: !isEdit }"
     >
       <el-form
         ref="documentResultFormRef"
         :model="documentResultFormData"
         :rules="documentResultFormRules"
-        @keyup.enter="handleUpdateCompareResult"
         class="flex flex-col gap-1"
       >
         <div class="flex flex-col gap-1">
@@ -146,32 +229,69 @@ const handleUpdateCompareResult = () => {
             <EIBSelect :options="documentResultValidOptions" v-model="documentResultFormData.status" hidden-error />
           </div>
         </div>
-        <div class="flex flex-col gap-1">
+        <div class="flex flex-col gap-1" v-if="documentResultFormData.status === DocumentResultEnum.DISCREPANCY">
           <span class="c-text-des">{{ $t('docs.compare.english_1') }}</span>
-          <div class="flex flex-row items-center">
-            <span class="min-w-48 text-sm">{{ $t('docs.compare.reason') }}</span>
-            <EIBInput name="reasonEn" v-model="documentResultFormData.reasonEn" hidden-error />
-            <el-button
-              color="#005d98"
-              plain
-              class="h-[38px] ml-2"
-              :loading="loadingRule"
-              :disabled="documentResultFormData.reasonEn === (result.reasonEn ?? '')"
-              :type="documentResultFormData.reasonEn === (result.reasonEn ?? '') ? 'info' : 'default'"
-              @click="dialogVisible = true"
-              >{{ $t('docs.compare.saveDictionary') }}</el-button
-            >
+          <div class="flex flex-row items-start">
+            <span class="min-w-48 text-sm mt-2">{{ $t('docs.compare.reason') }}</span>
+            <div class="flex flex-col gap-2 w-full -ml-7">
+              <div class="flex flex-row items-center gap-2 w-full" v-for="(r, i) in reasonList" :key="r.id">
+                <div class="h-5 w-5 min-w-5">
+                  <SvgIcon
+                    v-if="i"
+                    name="ic-minus-outline"
+                    class="!h-5 !w-5 cursor-pointer"
+                    @click="() => handleRemoveRule(i)"
+                  />
+                </div>
+                <EIBTextareaAutocomplete
+                  v-model="r.en"
+                  is-single-line
+                  :suggestions="suggestionMapping(categories)"
+                  :index="i"
+                  @update-value="updateRuleValue"
+                />
+                <el-button
+                  color="#005d98"
+                  plain
+                  class="h-[38px]"
+                  @click="handleSaveDictionary(i)"
+                  :disabled="!r?.code || r.defaultValue === r.en"
+                  >{{ $t('docs.compare.saveDictionary') }}</el-button
+                >
+              </div>
+              <el-button color="#005d98" plain class="h-[38px] ml-7 w-60" @click="handleAddRule">{{
+                $t('docs.compare.addRule')
+              }}</el-button>
+            </div>
           </div>
           <div class="flex flex-row items-center">
             <span class="min-w-48 text-sm">{{ $t('docs.compare.ruleEvidence') }}</span>
-            <EIBSelect :options="documentResultRuleOptions" v-model="documentResultFormData.rule" hidden-error />
+            <EIBSelect
+              :options="ruleMapping"
+              v-model="documentResultFormData.lawIds"
+              multiple
+              hidden-error
+              :max-collapse-tags="2"
+            />
           </div>
         </div>
-        <div class="flex flex-col gap-1">
+        <div class="flex flex-col gap-1" v-if="documentResultFormData.status === DocumentResultEnum.DISCREPANCY">
           <span class="c-text-des">{{ $t('docs.compare.vietnamese_1') }}</span>
-          <div class="flex flex-row items-center">
-            <span class="min-w-48 text-sm">{{ $t('docs.compare.reason') }}</span>
-            <EIBInput name="reasonVi" v-model="documentResultFormData.reasonVi" hidden-error />
+          <div class="flex flex-row items-start">
+            <span class="min-w-48 text-sm mt-2">{{ $t('docs.compare.reason') }}</span>
+            <div class="flex flex-col gap-2 w-full">
+              <div class="flex flex-row items-center gap-2 w-full" v-for="(r, i) in reasonList" :key="r.id">
+                <EIBTextareaAutocomplete v-model="r.vi" is-single-line :index="i" @update-value="updateRuleValue" />
+                <el-button
+                  color="#005d98"
+                  plain
+                  class="h-[38px]"
+                  :loading="loadingTranslate"
+                  @click="handleTranslate(i)"
+                  >{{ $t('docs.compare.translate') }}</el-button
+                >
+              </div>
+            </div>
           </div>
         </div>
       </el-form>
@@ -185,10 +305,14 @@ const handleUpdateCompareResult = () => {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
+@import '@/styles/mixins.scss';
 .animated-box {
-  overflow: hidden;
-  height: 320px;
+  @extend %scrollbar;
+}
+.animated-box {
+  overflow-x: hidden;
+  max-height: 500px;
   transition:
     height 0.5s ease,
     opacity 0.5s ease;

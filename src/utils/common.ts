@@ -152,11 +152,16 @@ export function sortObjectsByMultipleFields(array: any[], fields: string[], sort
   })
 }
 
-export const createColumnConfigs = (object: { [key: string]: string }): ColumnConfigModel[] => {
+export const createColumnConfigs = (object: { [key: string]: string | number }): ColumnConfigModel[] => {
+  if (!object) return []
   const keys = Object.keys(object)
   return keys.map((k) => ({
     field: k,
     label: k,
-    minWidth: TABLE_COLUMN_WIDTH_DEFAULT
+    minWidth: k === 'stt' ? 50 : TABLE_COLUMN_WIDTH_DEFAULT
   }))
+}
+
+export const convertFileUrl = (path: string) => {
+  return import.meta.env.VITE_BASE_API + '/files?src=' + path
 }
