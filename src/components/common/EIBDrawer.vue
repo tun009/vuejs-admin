@@ -64,7 +64,7 @@ const beforeClose = (done: () => void) => {
     modal-fade
   >
     <div class="flex flex-row h-full">
-      <div class="w-12 bg-[#005d98] flex justify-center py-3 px-2">
+      <div class="w-12 bg-[#005d98] flex justify-center py-5 px-2">
         <div @click="localModelValue = false">
           <el-icon class="w-5 cursor-pointer"><CloseBold style="color: white; height: 20px; width: 20px" /></el-icon>
         </div>
@@ -76,3 +76,11 @@ const beforeClose = (done: () => void) => {
     </div>
   </el-drawer>
 </template>
+
+<style>
+.demo-drawer__content {
+  max-width: 100%;
+  overflow-x: hidden;
+  padding: 20px;
+}
+</style>

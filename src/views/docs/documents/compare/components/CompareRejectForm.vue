@@ -1,11 +1,12 @@
 <script lang="ts" setup>
+import { DocumentStatusEnum } from '@/@types/common'
 import { CompareRejectFormModel } from '@/@types/pages/docs/documents'
+import { updateDocumentStatus } from '@/api/docs/document/compare'
 import EIBInput from '@/components/common/EIBInput.vue'
-import { DOCUMENT_DETAIL_PAGE } from '@/constants/router'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
-import { reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 
 interface Emits {
   (event: 'update:loading', value: boolean): void
@@ -18,7 +19,6 @@ interface Exposes {
 
 const emits = defineEmits<Emits>()
 
-const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
 
@@ -31,16 +31,26 @@ const compareRejectFormRules: FormRules = {
   reason: []
 }
 
+const batchId = computed(() => {
+  return route.params?.id as string
+})
+
 const onConfirm = () => {
-  compareRejectRef.value?.validate((valid: boolean, fields) => {
+  compareRejectRef.value?.validate(async (valid: boolean, fields) => {
     if (valid) {
-      emits('update:loading', true)
-      setTimeout(() => {
+      try {
+        emits('update:loading', true)
+        await updateDocumentStatus(batchId.value, {
+          approveDossier: DocumentStatusEnum.VALIDATED,
+          message: compareRejectFormData.reason
+        })
         ElMessage.success(t('notification.description.rejectSuccess'))
+      } catch (error) {
+        console.error(error)
+      } finally {
         emits('update:loading', false)
         emits('update:visible', false)
-        router.push(DOCUMENT_DETAIL_PAGE(route.params?.id as string))
-      }, 2000)
+      }
     } else {
       console.error('Form validation failed', fields)
     }

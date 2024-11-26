@@ -58,10 +58,10 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="flex">
+  <div class="flex w-full">
     <div
       :style="{ width: leftWidth }"
-      class="p-5 overflow-x-hidden hidden-scrollbar"
+      class="p-5 overflow-x-hidden hidden-scrollbar resizable-block resizable-block-left"
       :class="customClass && customClass"
     >
       <slot name="left" />
@@ -69,7 +69,7 @@ onBeforeUnmount(() => {
     <div class="w-0.5 hover:w-1 transition-all bg-[#e9ecef] cursor-col-resize" @mousedown="startDrag" />
     <div
       :style="{ width: rightWidth }"
-      class="p-5 overflow-x-hidden resizable-block"
+      class="p-5 overflow-x-hidden resizable-block resizable-block-right"
       :class="customClass && customClass"
     >
       <slot name="right" />

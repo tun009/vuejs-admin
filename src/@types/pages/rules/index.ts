@@ -1,18 +1,33 @@
 import { ColumnConfigModel, SelectOptionModel } from '@/@types/common'
 
+export enum RuleTypeEnum {
+  LAW = 'LAW',
+  CATEGORY = 'CATEGORY'
+}
+
 export interface RuleModel {
   id: number
-  stt: number
   docType: string
   code: string
   en: string
+  vi: string
   type: RuleTypeEnum
+  defaultValue?: string
+}
+
+export const reasonDefault: RuleModel = {
+  code: '',
+  docType: '',
+  en: '',
+  id: 0,
+  type: RuleTypeEnum.CATEGORY,
+  vi: ''
 }
 
 export interface UpdateRuleRequestModel {
   name: string
   code: string
-  content: string
+  en: string
 }
 
 export const ruleListColumnConfigs: ColumnConfigModel[] = [
@@ -42,11 +57,6 @@ export const ruleListColumnConfigs: ColumnConfigModel[] = [
     width: 120
   }
 ]
-// document enum
-export enum RuleTypeEnum {
-  LAW = 'LAW',
-  CATEGORY = 'CATEGORY'
-}
 
 export enum DocTypeEnum {
   INVOICE = 'INVOICE',
@@ -90,5 +100,5 @@ export interface FilterRulesModel {
 export interface RuleUpdateModel {
   id: number
   type: RuleTypeEnum
-  content: string
+  en: string
 }

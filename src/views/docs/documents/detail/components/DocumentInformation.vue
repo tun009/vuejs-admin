@@ -61,8 +61,13 @@ const amount = ref<DocumentLCAmountModel>({
 })
 const dataLC = ref<DocumentDataLCModel[]>([])
 
-const handleViewDocument = (_id: string | number) => {
-  router.push(COMPARE_DOCUMENT_DETAIL_PAGE(_id))
+const handleViewDocument = (_id: string | number, type: string) => {
+  router.push({
+    path: COMPARE_DOCUMENT_DETAIL_PAGE(_id),
+    query: {
+      type
+    }
+  })
 }
 
 const handleGetDocumentResults = async () => {
@@ -349,9 +354,9 @@ onMounted(() => {
           :data="tableData"
           height="unset"
         >
-          <template #actions>
+          <template #actions="{ row }">
             <div class="flex flex-row gap-2">
-              <el-button type="primary" :icon="View" @click="() => handleViewDocument(documentId)">
+              <el-button type="primary" :icon="View" @click="() => handleViewDocument(documentId, row.key)">
                 {{ $t('docs.detail.detail') }}
               </el-button>
             </div>

@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { useTheme } from '@/hooks/useTheme'
-import { ElNotification } from 'element-plus'
 // Set Element Plus language to Vietnamese
 import vi from 'element-plus/es/locale/lang/vi'
 import { useI18n } from 'vue-i18n'
+import { successNotification } from './utils/notification'
 
 const { initTheme } = useTheme()
 const { t } = useI18n({ useScope: 'global' })
@@ -11,13 +11,7 @@ const { t } = useI18n({ useScope: 'global' })
 initTheme()
 
 /** The author's thoughts */
-ElNotification({
-  title: t('notification.title.joinWeb'),
-  type: 'success',
-  dangerouslyUseHTMLString: true,
-  message: t('notification.description.joinWeb'),
-  duration: 0
-})
+successNotification(t('notification.description.joinWeb'))
 </script>
 
 <template>

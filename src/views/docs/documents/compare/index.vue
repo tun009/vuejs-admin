@@ -1,33 +1,38 @@
 <script lang="ts" setup>
+import { DocumentStatusEnum } from '@/@types/common'
 import {
   DocumentCompareModel,
   DocumentDataLCModel,
   DocumentKeyModel,
   DocumentLCAmountModel,
   DocumentResultEnum,
-  documentTypeOptions
+  documentTypeOptions,
+  getAllCategoryRequestModel,
+  getAllRuleRequestModel
 } from '@/@types/pages/docs/documents'
+import { BatchDetailModel } from '@/@types/pages/docs/documents/services/DocumentResponse'
+import { RuleModel } from '@/@types/pages/rules'
+import { getBatchDetail, getDocumentDataLC, getLCAmount } from '@/api/docs/document'
+import { getDocumentCompare, updateDocumentStatus } from '@/api/docs/document/compare'
+import { getRules } from '@/api/rules'
 import EIBDialog from '@/components/common/EIBDialog.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
+import { formatYYYYMMDD_HHMM } from '@/constants/date'
 import { DOCUMENT_DETAIL_PAGE } from '@/constants/router'
 import { useConfirmModal } from '@/hooks/useConfirm'
 import { useUserStore } from '@/store/modules/user'
 import { resetNullUndefinedFields, scrollIntoViewParent } from '@/utils/common'
+import { formatDate } from '@/utils/date'
 import { ArrowLeft, Check, CircleCheckFilled, Close, WarnTriangleFilled } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import CompareRejectForm from './components/CompareRejectForm.vue'
+import CompareSummarySkeleton from './components/CompareSummarySkeleton.vue'
 import DocumentCompareResult from './components/DocumentCompareResult.vue'
 import ResizableSplitter from './components/ResizableSplitter.vue'
 import UpdateCompareHistory from './components/UpdateCompareHistory.vue'
-import { getDocumentCompare } from '@/api/docs/document/compare'
-import { getBatchDetail, getDocumentDataLC, getLCAmount } from '@/api/docs/document'
-import { BatchDetailModel } from '@/@types/pages/docs/documents/services/DocumentResponse'
-import { formatDate } from '@/utils/date'
-import { formatYYYYMMDD_HHMM } from '@/constants/date'
-import CompareSummarySkeleton from './components/CompareSummarySkeleton.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -37,130 +42,19 @@ const documentCompareConfigs = ref<DocumentCompareModel[]>([])
 
 const { t } = useI18n()
 const loading = ref(false)
-const documentType = ref<DocumentKeyModel>(DocumentKeyModel.INVOICE)
+const documentType = ref<DocumentKeyModel>((route.query?.type as DocumentKeyModel) ?? DocumentKeyModel.INVOICE)
 const conditionSelect = ref<number>(0)
 const activeName = ref<'result' | 'history'>('result')
 const dialogVisible = ref(false)
 const loadingConfirm = ref(false)
+const categories = ref<RuleModel[]>([])
+const rules = ref<RuleModel[]>([])
 const compareRejectFormRef = ref<InstanceType<typeof CompareRejectForm>>()
 const documentDetail = ref<BatchDetailModel>({} as BatchDetailModel)
 const dataLC = ref<DocumentDataLCModel[]>([])
 const amount = ref<DocumentLCAmountModel>({
   amountUsed: 0,
   totalAmount: 0
-})
-
-const handleCheckCompareResult = (index: number) => {
-  try {
-    conditionSelect.value = index
-    const id = `document-compare-${index}`
-    scrollIntoViewParent(id)
-  } catch (error) {
-    console.error(error)
-  }
-}
-
-const handleBack = () => {
-  ElMessageBox.confirm(t('notification.description.confirmClose'))
-    .then(() => {
-      router.push(DOCUMENT_DETAIL_PAGE(route.params?.id as string))
-    })
-    .catch(() => {
-      // catch error
-    })
-}
-
-const handleConfirmCompare = () => {
-  showConfirmModal({
-    title: t('confirm.title.confirmCompare'),
-    message: t('confirm.description.confirmCompare'),
-    successCallback: () => {
-      router.push(DOCUMENT_DETAIL_PAGE(route.params?.id as string))
-    },
-    onConfirm: (instance, done) => {
-      setTimeout(() => {
-        done()
-        instance.confirmButtonLoading = false
-      }, 3000)
-    }
-  })
-}
-
-const handleApproveCompare = () => {
-  showConfirmModal({
-    title: t('confirm.title.approveCompare'),
-    message: t('confirm.description.approveCompare'),
-    successCallback: () => {
-      router.push(DOCUMENT_DETAIL_PAGE(route.params?.id as string))
-    },
-    onConfirm: (instance, done) => {
-      setTimeout(() => {
-        done()
-        instance.confirmButtonLoading = false
-      }, 3000)
-    }
-  })
-}
-
-const handleReturnForMaker = () => {
-  loadingConfirm.value = true
-  setTimeout(() => {
-    ElMessage.success(t('confirm.description.returnSuccess'))
-    loadingConfirm.value = true
-  }, 3000)
-}
-
-const handleGetDocumentCompare = async (key: DocumentKeyModel = DocumentKeyModel.INVOICE) => {
-  loading.value = true
-  try {
-    const { data } = await getDocumentCompare({ batchId: route.params?.id as string, key })
-    if (!data) return
-    documentCompareConfigs.value = data
-  } catch (error) {
-    console.error(error)
-  } finally {
-    loading.value = false
-  }
-}
-
-const handleGetDocumentDetail = async () => {
-  try {
-    const { data } = await getBatchDetail(route.params?.id as string)
-    documentDetail.value = data
-  } catch (error) {
-    console.error(error)
-  }
-}
-
-const handleGetDocumentAmount = async () => {
-  try {
-    const { data } = await getLCAmount({ batchId: route.params?.id as string })
-    amount.value = resetNullUndefinedFields(data, 0) as unknown as DocumentLCAmountModel
-  } catch (error) {
-    console.error(error)
-  }
-}
-
-const handleGetDocumentDataLC = async () => {
-  try {
-    const { data } = await getDocumentDataLC({ batchId: route.params?.id as string })
-    if (!data) return
-    dataLC.value = data
-  } catch (error) {
-    console.error(error)
-  }
-}
-
-const compareResults = computed(() => {
-  return documentCompareConfigs.value.map((d) => {
-    const keys = Object.keys(d.comparisonResults)
-    const invalidResult = keys.some((k) => d.comparisonResults[k].status === DocumentResultEnum.DISCREPANCY)
-    const status = invalidResult ? DocumentResultEnum.DISCREPANCY : DocumentResultEnum.COMPLY
-    return {
-      label: d.title,
-      status
-    }
-  })
 })
 
 const documentTypeLabel = computed(() => {
@@ -176,11 +70,176 @@ const currency = computed(() => {
   return obCurrency?.validatedValue ?? obCurrency?.extractionValue ?? ''
 })
 
+const batchId = computed(() => {
+  return route.params?.id as string
+})
+
+const handleCheckCompareResult = (index: number) => {
+  try {
+    conditionSelect.value = index
+    const id = `document-compare-${index}`
+    scrollIntoViewParent(id)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const handleBack = () => {
+  ElMessageBox.confirm(t('notification.description.confirmClose'))
+    .then(() => {
+      router.push(DOCUMENT_DETAIL_PAGE(batchId.value))
+    })
+    .catch(() => {
+      // catch error
+    })
+}
+
+const handleConfirmCompare = () => {
+  showConfirmModal({
+    title: t('confirm.title.confirmCompare'),
+    message: t('confirm.description.confirmCompare'),
+    successCallback: () => {
+      router.push(DOCUMENT_DETAIL_PAGE(batchId.value))
+    },
+    onConfirm: async (instance, done) => {
+      try {
+        await updateDocumentStatus(batchId.value, {
+          approveDossier: DocumentStatusEnum.CHECKED
+        })
+        ElMessage.success(t('notification.description.updateSuccess'))
+      } catch (error) {
+        console.error(error)
+      } finally {
+        done()
+        instance.confirmButtonLoading = false
+      }
+    }
+  })
+}
+
+const handleApproveCompare = () => {
+  showConfirmModal({
+    title: t('confirm.title.approveCompare'),
+    message: t('confirm.description.approveCompare'),
+    successCallback: () => {
+      router.push(DOCUMENT_DETAIL_PAGE(batchId.value))
+    },
+    onConfirm: async (instance, done) => {
+      try {
+        await updateDocumentStatus(batchId.value, {
+          approveDossier: DocumentStatusEnum.VALIDATED
+        })
+        ElMessage.success(t('notification.description.updateSuccess'))
+        dialogVisible.value = false
+      } catch (error) {
+        console.error(error)
+      } finally {
+        done()
+        instance.confirmButtonLoading = false
+      }
+    }
+  })
+}
+
+const handleReturnForMaker = async () => {
+  loadingConfirm.value = true
+  try {
+    await updateDocumentStatus(batchId.value, {
+      approveDossier: DocumentStatusEnum.VALIDATED
+    })
+    ElMessage.success(t('notification.description.returnSuccess'))
+    dialogVisible.value = false
+  } catch (error) {
+    console.error(error)
+  } finally {
+    loadingConfirm.value = false
+  }
+}
+
+const handleGetDocumentCompare = async (key: DocumentKeyModel = DocumentKeyModel.INVOICE) => {
+  loading.value = true
+  try {
+    const { data } = await getDocumentCompare({ batchId: batchId.value, key })
+    if (!data) return
+    documentCompareConfigs.value = data
+  } catch (error) {
+    console.error(error)
+  } finally {
+    loading.value = false
+  }
+}
+
+const handleGetDocumentDetail = async () => {
+  try {
+    const { data } = await getBatchDetail(batchId.value)
+    documentDetail.value = data
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const handleGetDocumentAmount = async () => {
+  try {
+    const { data } = await getLCAmount({ batchId: batchId.value })
+    amount.value = resetNullUndefinedFields(data, 0) as unknown as DocumentLCAmountModel
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const handleGetDocumentDataLC = async () => {
+  try {
+    const { data } = await getDocumentDataLC({ batchId: batchId.value })
+    if (!data) return
+    dataLC.value = data
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const handleGetCategories = async () => {
+  try {
+    const response = await getRules(getAllCategoryRequestModel)
+    if (!response?.data?.list) return
+    categories.value = response.data.list
+  } catch (error: any) {
+    throw new Error(error)
+  }
+}
+
+const handleGetRules = async () => {
+  try {
+    const response = await getRules(getAllRuleRequestModel)
+    if (!response?.data?.list) return
+    rules.value = response.data.list
+  } catch (error: any) {
+    throw new Error(error)
+  }
+}
+
+const compareResults = computed(() => {
+  return documentCompareConfigs.value.map((d) => {
+    const keys = Object.keys(d.comparisonResults)
+    const invalidResult = keys.some((k) => d.comparisonResults[k].status === DocumentResultEnum.DISCREPANCY)
+    const status = invalidResult ? DocumentResultEnum.DISCREPANCY : DocumentResultEnum.COMPLY
+    return {
+      label: d.title,
+      status
+    }
+  })
+})
+
 watch(
   () => documentType.value,
   (value) => {
     handleCheckCompareResult(0)
     handleGetDocumentCompare(value)
+    router.replace({
+      path: route.path,
+      query: {
+        type: documentType.value
+      }
+    })
   }
 )
 
@@ -188,7 +247,9 @@ onMounted(() => {
   handleGetDocumentAmount()
   handleGetDocumentDetail()
   handleGetDocumentDataLC()
-  handleGetDocumentCompare()
+  handleGetCategories()
+  handleGetRules()
+  handleGetDocumentCompare(documentType.value)
 })
 </script>
 
@@ -301,6 +362,8 @@ onMounted(() => {
               <DocumentCompareResult
                 :configs="documentCompareConfigs"
                 :condition-select="conditionSelect"
+                :categories="categories"
+                :rules="rules"
                 @update:condition="(condition: number) => (conditionSelect = condition)"
                 @scroll-by-index="handleCheckCompareResult"
               />

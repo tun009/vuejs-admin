@@ -26,7 +26,7 @@ const updateRuleFormRef = ref()
 const updateRuleFormData: UpdateRuleRequestModel = reactive({
   name: props?.data?.docType,
   code: props?.data?.code,
-  content: props?.data?.content
+  en: props?.data?.en
 })
 
 const updateRuleFormRules: FormRules = {
@@ -43,7 +43,7 @@ const handleUpdateRule = () => {
     try {
       if (valid) {
         loading.value = true
-        await updateRule({ id: props.data.id, type: props.data.type, content: updateRuleFormData.content })
+        await updateRule({ id: props.data.id, type: props.data.type, en: updateRuleFormData.en })
         ElMessage({
           message: 'Cập nhật thông tin thành công!',
           showClose: true,
@@ -84,9 +84,9 @@ defineExpose<Exposes>({
     <Input label="Mã" name="code" placeholder="" v-model="updateRuleFormData.code" disabled />
     <Input
       label="Nội dung"
-      name="content"
+      name="en"
       placeholder=""
-      v-model="updateRuleFormData.content"
+      v-model="updateRuleFormData.en"
       type="textarea"
       :rows="5"
       show-limit

@@ -264,7 +264,7 @@
       "invalid": "Bất hợp lệ"
     },
     "compare": {
-      "chooseContent": "Chọn nội dung trường 47A cần bổ sung",
+      "chooseContent": "Nhập nội dung trường 47A cần bổ sung",
       "reason": "Lý do",
       "enterReason": "Nhập lý do",
       "compareRejectDes": "Sau khi nhấn vào nút “Xác nhận”, hệ thống ghi nhận việc “Từ chối” bộ chứng từ, kết thúc giao dịch xử lý",
@@ -279,6 +279,8 @@
       "checkResult": "Kết quả kiểm tra",
       "english_1": "Tiếng Anh",
       "saveDictionary": "Lưu từ điển",
+      "translate": "Dịch",
+      "addRule": "Thêm lý do",
       "ruleEvidence": "Dẫn chứng Rule",
       "vietnamese_1": "Tiếng Việt",
       "compareReject": "Xác nhận “Từ chối” bộ chứng từ",

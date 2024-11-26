@@ -13,6 +13,8 @@ interface Props {
   name?: string
   isRow?: boolean
   hiddenError?: boolean
+  multiple?: boolean
+  maxCollapseTags?: number
 }
 
 interface Emits {
@@ -54,10 +56,21 @@ const updateValue = (value: string) => {
         @update:model-value="updateValue"
         :disabled="readonly"
         class="w-full"
+        collapse-tags
+        collapse-tags-tooltip
+        :multiple="multiple"
+        :max-collapse-tags="maxCollapseTags"
       >
         <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
           <div class="flex flex-row gap-2">
-            <el-icon class="mt-[10px]" :class="{ 'opacity-0': item.value !== modelValue }"><Check /></el-icon>
+            <el-icon
+              class="mt-[10px] opacity-0"
+              :class="{
+                'opacity-100':
+                  item.value === modelValue || (typeof modelValue === 'object' && modelValue?.includes(item.value))
+              }"
+              ><Check
+            /></el-icon>
             <div class="flex flex-col">
               <span>{{ item.label }}</span>
               <span class="select-description">{{ item?.description }}</span>
@@ -77,5 +90,19 @@ const updateValue = (value: string) => {
   .select-description {
     color: #868e96;
   }
+}
+</style>
+
+<style>
+.el-select-dropdown__item {
+  white-space: unset;
+}
+
+.el-popper.el-select__popper {
+  max-width: 50vw;
+}
+
+.el-select__selection .el-tag {
+  max-width: 700px !important;
 }
 </style>
