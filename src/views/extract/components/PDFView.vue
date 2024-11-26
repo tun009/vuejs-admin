@@ -2,8 +2,11 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { VuePDF, usePDF } from '@tato30/vue-pdf'
 import ControlSlider from './ControlSlider.vue'
-import { RefreshRight, ArrowUp, ArrowDown } from '@element-plus/icons-vue'
+import { ArrowUp, ArrowDown } from '@element-plus/icons-vue'
 import { debounce } from 'lodash-es'
+import { useUserStore } from '@/store/modules/user'
+const { isAdmin, isChecker, isMaker, isViewer } = useUserStore()
+console.log(isAdmin, isChecker, isMaker, isViewer)
 
 const props = defineProps<{
   url?: string
@@ -15,7 +18,7 @@ const idFullScreen = 'view-pdf'
 const scale = ref(1)
 const currentPage = ref(1)
 const rotation = ref(0)
-const { pdf, pages } = usePDF('http://vmc-web-stg.idp.vn/uat/vmc-app/api/file?src=1559/1559.pdf' || props.url)
+const { pdf, pages } = usePDF(props.url)
 const isScrolling = ref(false)
 const scrollToPage = () => {
   if (isScrolling.value) return
@@ -40,77 +43,11 @@ const getClosestFloor = (num1: number, num2: number) => {
     return Math.floor(num1)
   }
 }
-const rotationPage = () => {
-  rotation.value += 90
-  // const listActives = document.querySelectorAll('.box-label')
-  // listActives.forEach((elm: any) => {
-  // const angle = rotation.value % 360
-  // const width = elm.style.width
-  // const height = elm.style.height
-  // const top = elm.style.top
-  // const left = elm.style.left
-  // elm.style.top = ''
-  // elm.style.left = ''
-  // elm.style.width = ''
-  // elm.style.height = ''
-  // elm.style.bottom = ''
-  // elm.style.right = ''
-  // const positions = {
-  //   0: () => {
-  //     elm.style.width = width
-  //     elm.style.height = height
-  //     elm.style.top = top
-  //     elm.style.left = left
-  //   },
-  //   90: () => {
-  //     elm.style.width = height
-  //     elm.style.height = width
-  //     elm.style.top = left
-  //     elm.style.right = top
-  //   },
-  //   180: () => {
-  //     elm.style.width = width
-  //     elm.style.height = height
-  //     elm.style.bottom = top
-  //     elm.style.right = left
-  //   },
-  //   270: () => {
-  //     elm.style.width = height
-  //     elm.style.height = width
-  //     elm.style.left = top
-  //     elm.style.bottom = left
-  //   }
-  // }
-  // if (positions[angle]) {
-  //   positions[angle]()
-  // }
-  // })
-}
+// const rotationPage = () => {
+//   rotation.value += 90
+// }
 const onLoadedPDF = () => {
   emit('loaded-data')
-}
-const renderElementByRotation = (elm: HTMLElement, box: number[][]) => {
-  if (rotation.value % 360 === 0) {
-    elm.style.width = caculatorDistance(getRectangle(box, 'width'))
-    elm.style.height = caculatorDistance(getRectangle(box, 'height'))
-    elm.style.top = caculatorDistance(getRectangle(box, 'top'))
-    elm.style.left = caculatorDistance(getRectangle(box, 'left'))
-  } else if (rotation.value % 360 === 90) {
-    elm.style.height = caculatorDistance(getRectangle(box, 'width'))
-    elm.style.width = caculatorDistance(getRectangle(box, 'height'))
-    elm.style.right = caculatorDistance(getRectangle(box, 'top'))
-    elm.style.top = caculatorDistance(getRectangle(box, 'left'))
-  } else if (rotation.value % 360 === 180) {
-    elm.style.width = caculatorDistance(getRectangle(box, 'width'))
-    elm.style.height = caculatorDistance(getRectangle(box, 'height'))
-    elm.style.bottom = caculatorDistance(getRectangle(box, 'top'))
-    elm.style.right = caculatorDistance(getRectangle(box, 'left'))
-  } else if (rotation.value % 360 === 270) {
-    elm.style.height = caculatorDistance(getRectangle(box, 'width'))
-    elm.style.width = caculatorDistance(getRectangle(box, 'height'))
-    elm.style.left = caculatorDistance(getRectangle(box, 'top'))
-    elm.style.bottom = caculatorDistance(getRectangle(box, 'left'))
-  }
 }
 const tagLabelToPage = (boxInfos: number[][][], pageNum: number) => {
   const listActivesRemove = document.querySelectorAll('.box-label')
@@ -122,17 +59,17 @@ const tagLabelToPage = (boxInfos: number[][][], pageNum: number) => {
   if (boxInfos?.length > 0) {
     boxInfos.forEach((boxInfo, index) => {
       pElement.className = 'box-label'
-      renderElementByRotation(pElement, boxInfo)
-      // pElement.style.width = caculatorDistance(getRectangle(boxInfo, 'width'))
-      // pElement.style.height = caculatorDistance(getRectangle(boxInfo, 'height'))
-      // pElement.style.top = caculatorDistance(getRectangle(boxInfo, 'top'))
-      // pElement.style.left = caculatorDistance(getRectangle(boxInfo, 'left'))
+      // renderElementByRotation(pElement, boxInfo)
+      pElement.style.width = caculatorDistance(getRectangle(boxInfo, 'width'))
+      pElement.style.height = caculatorDistance(getRectangle(boxInfo, 'height'))
+      pElement.style.top = caculatorDistance(getRectangle(boxInfo, 'top'))
+      pElement.style.left = caculatorDistance(getRectangle(boxInfo, 'left'))
       pElement.style.backgroundColor = 'rgba(240, 91, 91, 0.3) '
       pElement.style.border = '1px solid #e03'
       pElement.style.position = 'absolute'
       if (elementPage) elementPage.appendChild(pElement)
       if (index === 0) {
-        const elementScrollTo = elementPage ?? pElement
+        const elementScrollTo = pElement ?? elementPage
         scrollToElement(elementScrollTo)
       }
     })
@@ -141,7 +78,7 @@ const tagLabelToPage = (boxInfos: number[][][], pageNum: number) => {
 const scrollToElement = (elm: HTMLElement | null, mode: ScrollBehavior = 'smooth') => {
   if (elm) {
     isScrolling.value = true
-    elm.scrollIntoView({ behavior: mode })
+    elm.scrollIntoView({ behavior: mode, block: 'end', inline: 'nearest' })
     updateObserver()
   }
 }
@@ -199,7 +136,7 @@ const goNextPage = debounce(() => {
     const elementPage = document.getElementById('page-' + currentPage.value)
     scrollToElement(elementPage)
   }
-}, 100)
+}, 200)
 const observer = ref<IntersectionObserver | null>(null)
 // Observe the element to scroll into view
 const initializeObserver = () => {
@@ -237,7 +174,6 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="flex justify-between my-2 pdf-view-component">
-    {{ rotation }}
     <ControlSlider
       :scale="scale"
       :id-full-screen="idFullScreen"
@@ -248,9 +184,9 @@ onBeforeUnmount(() => {
       "
     >
       <template #button>
-        <el-icon title="Xoay" size="16" class="mt-[3px] cursor-pointer" @click="rotationPage()"
+        <!-- <el-icon title="Xoay" size="16" class="mt-[3px] cursor-pointer" @click="rotationPage()"
           ><RefreshRight
-        /></el-icon>
+        /></el-icon> -->
       </template>
     </ControlSlider>
     <div class="flex items-center justify-center gap-[5px] mr-[10px]">

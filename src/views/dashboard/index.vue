@@ -15,6 +15,7 @@
           :shortcuts="shortcutsDateRange"
           :format="formatYYYYMMDD"
           :value-format="formatYYYYMMDD"
+          :clearable="false"
         />
       </div>
       <div class="flex">
@@ -35,19 +36,14 @@
           <div class="flex pt-2 px-2">
             <div class="w-1/2 flex">
               <DoughnutChart
-                :labels="LABEL_VALID_CHARTS"
                 :bgcolor="BG_COLOR_VALID_CHARTS"
                 :percentage="percentage_valid"
                 :text-label="textLabelValid"
               />
               <div class="box-subinfo">
                 <div class="big-title">
-                  {{ chartData.totalDossierValid + chartData.totalDossierInvalid
-                  }}<span class="text-base">
-                    /{{
-                      chartData.totalDossierValid + chartData.totalDossierInvalid === 0 ? 0 : chartData.totalDossier
-                    }}
-                  </span>
+                  {{ chartData?.totalDossierValid ?? 0 + (chartData?.totalDossierInvalid ?? 0)
+                  }}<span class="text-base"> /{{ chartData?.totalDossier }} </span>
                 </div>
                 <div class="big-title-text">Bộ đã phê duyệt</div>
               </div>
@@ -56,11 +52,11 @@
               <div class="box-paper-right">
                 <div class="charts-legend-series">
                   <span class="marker" style="background-color: #7048e8" />
-                  <span class="text">BCT hợp lệ</span>
+                  <span class="text">BCT hợp lệ: {{ chartData?.totalDossierValid }}</span>
                 </div>
                 <div class="charts-legend-series">
                   <span class="marker" style="background-color: #d6336c" />
-                  <span class="text">BCT bất hợp lệ</span>
+                  <span class="text">BCT bất hợp lệ: {{ chartData?.totalDossierInvalid }}</span>
                 </div>
               </div>
             </div>
@@ -75,13 +71,11 @@
               :bgcolor="BG_COLOR_INVALID_CHARTS"
               :percentage="percentage_passed"
               :text-label="textLabelPassed"
+              text-color="#087f5b"
             />
             <div class="box-subinfo">
               <div class="big-title">
-                {{ chartData.totalDossierPassed
-                }}<span class="text-base">
-                  /{{ chartData.totalDossierPassed === 0 ? 0 : chartData.totalDossierValidated }}</span
-                >
+                {{ chartData.totalDossierPassed }}<span class="text-base"> /{{ chartData.totalDossierValidated }}</span>
               </div>
               <div class="big-title-text flex">
                 Bộ đạt yêu cầu
@@ -111,6 +105,7 @@
           :columnConfigs="fieldChangedListColumnConfigs"
           :data="fieldsChangedData"
           height="100%"
+          :callback="getRatio"
           hiddenChecked
           hiddenPagination
         >
@@ -131,6 +126,7 @@
         <EIBTable
           :columnConfigs="SOLListColumnConfigs"
           :data="SOLData"
+          :callback="getStatsBranch"
           height="100%"
           hiddenChecked
           hiddenPagination
@@ -161,7 +157,7 @@ import {
   DasboardBranchModel
 } from '@/@types/pages/dashboard'
 import { getDashboardBranchApi, getDashboardRatioApi, getDashboardSumaryApi } from '@/api/dashboard'
-import { BG_COLOR_INVALID_CHARTS, BG_COLOR_VALID_CHARTS, LABEL_VALID_CHARTS } from '@/constants/chart'
+import { BG_COLOR_INVALID_CHARTS, BG_COLOR_VALID_CHARTS } from '@/constants/chart'
 import { defaultDateRange } from '@/utils/date'
 import { formatNumberConfidence, omitPropertyFromObject } from '@/utils/common'
 import { getDocummentTypeApi } from '@/api/extract'
@@ -198,7 +194,7 @@ const getOverview = async () => {
       ...(filterValue.bizType === -1 ? {} : { bizType: filterValue.bizType })
     })
     // hard code
-    response.data.totalDossierValidated = 150
+    // response.data.totalDossierValidated = 150
     chartData.value = response.data
     const totalDossier = response?.data?.totalDossier ?? 0
     const totalDossierValid = response?.data?.totalDossierValid ?? 0

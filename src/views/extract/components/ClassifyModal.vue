@@ -6,13 +6,16 @@ import ControlSlider from './ControlSlider.vue'
 import { VueDraggableNext } from 'vue-draggable-next'
 import { formatNumberConfidence } from '@/utils/common'
 import EIBSelect from '@/components/common/EIBSelect.vue'
-import { Delete } from '@element-plus/icons-vue'
+import { Delete, Plus } from '@element-plus/icons-vue'
 
 import { ref } from 'vue'
 import { SelectOptionModel } from '@/@types/common'
 import { ElMessage } from 'element-plus'
 import { ExtractPostClassifyRequestModel } from '@/@types/pages/extract/service/ExtractRequest'
 import { useRoute } from 'vue-router'
+import { useConfirmModal } from '@/hooks/useConfirm'
+const { showConfirmModal } = useConfirmModal()
+
 const dataDetail = ref<ExtractClassifyModel[]>([])
 const documentTypes = ref<SelectOptionModel[]>([])
 const pageActive = ref<string>()
@@ -51,6 +54,29 @@ const getDocumentType = async () => {
 const getDossierById = async () => {
   try {
     const response = await getDossierClassifyApi(Number(route?.query?.batchId))
+    // response.data = [
+    //   {
+    //     id: 5215,
+    //     fileName: 'Inv 1012ADVEIB220015.pdf',
+    //     filePath: '2024-11-08/3361/5211.pdf',
+    //     status: 'CLASSIFIED',
+    //     createdAt: '2024-11-08T13:05:54.840641Z',
+    //     createdBy: 'phuctv14',
+    //     pdfEtract: '',
+    //     ocrResults: [
+    //       {
+    //         documentType: 'INVOICE',
+    //         confidence: 1,
+    //         pages: [0, 1]
+    //       },
+    //       {
+    //         documentType: 'INVOICE',
+    //         confidence: 1,
+    //         pages: [2, 3]
+    //       }
+    //     ]
+    //   }
+    // ]
     dataDetail.value = response.data
     // const { pdf } = usePDF(`${baseURL}/files?src=${response.data[0].filePath}`)
     // pdfExtract = pdf
@@ -70,11 +96,11 @@ defineExpose<ExtractPdfViewExpose>({
   openModalClassify
 })
 const activeNames = ref(0)
-const activeNamesChild = ref(0)
+const activeNamesChild = ref([0])
 const handleCollapseChange = (value: ExtractClassifyModel) => {
   const { pdf } = usePDF(`${baseURL}/files?src=${value?.filePath}`)
   if (!value?.pdfEtract) value.pdfEtract = pdf
-  activeNamesChild.value = 0
+  activeNamesChild.value = [0]
   if (value?.ocrResults?.length > 0 && value?.ocrResults[0]?.pages?.length > 0) {
     const intervalId = setInterval(() => {
       if (value?.ocrResults[0].isLoaded === true) {
@@ -132,6 +158,29 @@ const saveDossierClassify = async () => {
     loading.value = false
   }
 }
+const handleDeleteDoc = (data: ExtractClassifyResultModel[], index: number) => {
+  showConfirmModal({
+    message: `Bạn chắc chắn muốn xóa?`,
+    title: 'Xác nhận',
+    showMesageSucess: false,
+    onConfirm: (_, done) => {
+      data.splice(index, 1)
+      done()
+    }
+  })
+}
+const increaseDocument = (data: ExtractClassifyResultModel[]) => {
+  activeNamesChild.value.push(data.length)
+  data.push({ confidence: 1, documentType: '', pages: [] })
+}
+const handleDragEnd = (event: any, doc: ExtractClassifyModel) => {
+  const fromElement = event?.from as HTMLElement
+  const toElement = event?.to as HTMLElement
+  if (fromElement?.id !== toElement?.id) {
+    const { pdf } = usePDF(`${baseURL}/files?src=${doc.filePath}`)
+    doc.pdfEtract = pdf
+  }
+}
 </script>
 <template>
   <div class="h-[91vh] mx-[-2rem] mb-[-4rem] classify-modal">
@@ -172,9 +221,23 @@ const saveDossierClassify = async () => {
                             :options="documentTypes"
                             hiddenError
                           />
-                          <el-button :icon="Delete" class="p-[8px] border-[#c92a2a] text-[#c92a2a]" />
+                          <el-button
+                            :icon="Delete"
+                            class="p-[8px] border-[#c92a2a] text-[#c92a2a]"
+                            @click.stop="handleDeleteDoc(doc.ocrResults, index_result)"
+                          />
                         </template>
-                        <VueDraggableNext v-bind="dragOptions" v-model="doc_result.pages" group="people">
+                        <VueDraggableNext
+                          :id="`group${index_result}`"
+                          v-bind="dragOptions"
+                          v-model="doc_result.pages"
+                          group="people"
+                          @end="
+                            (event) => {
+                              handleDragEnd(event, doc)
+                            }
+                          "
+                        >
                           <div
                             class="ml-[10px]"
                             v-for="(doc_page, index_doc_page) in doc_result.pages"
@@ -195,6 +258,14 @@ const saveDossierClassify = async () => {
                         </VueDraggableNext>
                       </el-collapse-item>
                     </el-collapse>
+                  </div>
+                  <div class="text-center">
+                    <el-button
+                      v-if="doc?.ocrResults?.length > 0"
+                      :icon="Plus"
+                      class="py-[16px] px-[24px] border-dashed border-[#495057] text-[#495057] mx-auto mt-[10px] rounded-[4px]"
+                      @click="increaseDocument(doc?.ocrResults)"
+                    />
                   </div>
                 </el-collapse-item>
               </el-collapse>
