@@ -26,7 +26,7 @@ const toggleEdit = (rowIndex: number, colIndex: number, dataCol: ExtractResultOc
 <template>
   <table class="table table-structured-cp">
     <thead>
-      <td>STT</td>
+      <th>STT</th>
       <th v-for="(header, index_header) in props.header" :key="index_header">
         {{ header.name }}
       </th>

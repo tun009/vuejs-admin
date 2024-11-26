@@ -21,7 +21,7 @@ import 'splitpanes/dist/splitpanes.css'
 import { useRoute } from 'vue-router'
 
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
-import { renderLabelByValue, formatNumberConfidence } from '@/utils/common'
+import { renderLabelByValue, formatNumberConfidence, renderColorByValue } from '@/utils/common'
 import { documentStatusOptions } from '@/@types/pages/docs/documents'
 import { ArrowLeft, More, CloseBold, Select } from '@element-plus/icons-vue'
 import { ExtractPostDossierRequestModel } from '@/@types/pages/extract/service/ExtractRequest'
@@ -42,6 +42,7 @@ const isLoadViewContentRight = ref<boolean>(false)
 const loading = ref<boolean>(false)
 const isShowModalReplace = ref<boolean>(false)
 const resizeTable = ref<number>(100)
+const isShowTable = ref<boolean>(false)
 const { showConfirmModal } = useConfirmModal()
 const route = useRoute()
 const baseURL = import.meta.env.VITE_BASE_API
@@ -51,7 +52,8 @@ const getDossiersList = async (id: number) => {
     dossierListData.value = response?.data?.map((item) => {
       return {
         ...item,
-        status: renderLabelByValue(documentStatusOptions, item.status) || 'Đang phân loại'
+        status: renderLabelByValue(documentStatusOptions, item.status) || 'Đang phân loại',
+        color: renderColorByValue(documentStatusOptions, item.status) || '#1098ad'
       }
     })
     // hard code
@@ -76,8 +78,7 @@ const isFirstViewExtract = ref<boolean>(false)
 const docTypeOcrData = ref()
 const getDossiersDetail = async (id: number) => {
   try {
-    isLoadViewContentRight.value = false
-    documentDetail.value = {} as ExtractDocumentModel
+    resetOptions()
     const response = await getDossierDetailApi(id)
     documentDetail.value = response.data
     ocrDataDetail.value = documentDetail.value.result[0]
@@ -88,6 +89,13 @@ const getDossiersDetail = async (id: number) => {
     throw new Error(error)
   }
 }
+const resetOptions = () => {
+  isLoadViewContentRight.value = false
+  isShowTable.value = false
+  isLoadedPdf.value = false
+  activeName.value = 'ocr'
+  documentDetail.value = {} as ExtractDocumentModel
+}
 const headerTable = ref<ExtractResultOcrTableHeaderModel[]>([])
 const bodyTable = ref<ExtractResultOcrTableChildrenModel[][]>([])
 const handleClickField = (item: ExtractResultOcrModel) => {
@@ -96,9 +104,14 @@ const handleClickField = (item: ExtractResultOcrModel) => {
   else {
     resizeTable.value = 100
     pdfViewRef.value?.tagLabelToPage(item.bboxes, item.pageId)
+    // waiting for close table animation...
+    setTimeout(() => {
+      isShowTable.value = false
+    }, 500)
   }
 }
 const clickTable = (data: ExtractResultOcrModel) => {
+  isShowTable.value = true
   pdfViewRef.value?.goToPageView(data.pageId)
   resizeTable.value = 70
   if (!data?.childrenMapping) bodyTable.value = mappingBodyTable(data.headers, data.children)
@@ -260,7 +273,7 @@ onMounted(() => {
               >
                 <div>{{ item?.docType?.name }}</div>
                 <div class="mt-2 flex items-center">
-                  <span class="w-[8px] h-[8px] bg-[#1098ad] rounded-full mr-[4px]" />
+                  <span class="w-[8px] h-[8px] rounded-full mr-[4px]" :style="{ backgroundColor: item?.color?.text }" />
                   <span>{{ item.status }}</span>
                 </div>
               </div>
@@ -279,7 +292,7 @@ onMounted(() => {
                   @loaded-data="onLoadedPDF()"
                 />
               </pane>
-              <pane :size="100 - resizeTable" class="!bg-[#fff]">
+              <pane v-if="isShowTable" :size="100 - resizeTable" class="!bg-[#fff]">
                 <div class="text-right">
                   <el-icon class="cursor-pointer mr-[5px]" @click="closeTable"><CloseBold /></el-icon>
                 </div>
@@ -363,7 +376,12 @@ onMounted(() => {
                             v-model="item.extractionValue"
                           />
                           <div v-else-if="item.type === 'image'">
-                            <img :src="'data:image/png;base64,' + item.extractionValue" alt="" class="h-[70px]" />
+                            <img
+                              v-if="item?.extractionValue"
+                              :src="'data:image/png;base64,' + item.extractionValue"
+                              alt=""
+                              class="h-[70px]"
+                            />
                           </div>
                           <div v-else>{{ item.extractionValue }}</div>
                         </div>

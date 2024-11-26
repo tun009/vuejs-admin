@@ -1,6 +1,11 @@
 <template>
   <div class="chart-container">
-    <Doughnut :data="chartData" :options="chartOptions" />
+    <el-progress v-if="isEmptyChart" :width="74" type="circle" :percentage="100" :stroke-width="10" color="#ced4da">
+      <template #default>
+        <div class="text-[14px]">0%</div>
+      </template>
+    </el-progress>
+    <Doughnut v-else :data="chartData" :options="chartOptions" />
   </div>
 </template>
 
@@ -17,10 +22,11 @@ ChartJS.register({
     const text = chart.options.plugins.customCenterText.text
     const fontSize = chart.options.plugins.customCenterText.fontSize
     const fontFamily = chart.options.plugins.customCenterText.fontFamily
+    const fontWeight = chart.options.plugins.customCenterText.fontWeight
 
     if (text) {
       ctx.save()
-      ctx.font = `${fontSize}px ${fontFamily}`
+      ctx.font = `${fontSize}px ${fontFamily} ${fontWeight}`
       ctx.fillStyle = chart.options.plugins.customCenterText.color
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
@@ -40,8 +46,12 @@ const props = defineProps<{
   bgcolor: string[]
   percentage: number[]
   textLabel: string
+  textColor?: string
 }>()
-
+const isEmptyChart = computed(() => {
+  return props.percentage.every((val) => val === 0)
+})
+console.log(props)
 const chartData = computed(() => ({
   datasets: [
     {
@@ -50,8 +60,8 @@ const chartData = computed(() => ({
       borderWidth: 0,
       data: props.percentage
     }
-  ],
-  labels1: props.labels
+  ]
+  // labels: props.labels
 }))
 
 const chartOptions = computed(() => ({
@@ -60,11 +70,11 @@ const chartOptions = computed(() => ({
   maintainAspectRatio: false,
   plugins: {
     customCenterText: {
-      color: '#495057',
+      color: props.textColor || '#495057',
 
       fontFamily: 'Montserrat',
 
-      fontSize: '15',
+      fontSize: '14',
 
       fontWeight: '600',
       //   text: `Tổng ${((props.percentage[0] / props.percentage.reduce((a, b) => a + b, 0)) * 100).toFixed(0)}%`,

@@ -1,4 +1,4 @@
-import { SelectOptionModel } from '@/@types/common'
+import { SelectOptionModel, StatusColorModel } from '@/@types/common'
 
 export enum DossierStatusEnum {
   ACTIVE,
@@ -44,6 +44,7 @@ export interface ExtractDossierModel {
   id: number
   docType: ExtractDossierTypeModel
   status: string | number
+  color: StatusColorModel
 }
 export interface ExtractDocumentModel {
   id: number

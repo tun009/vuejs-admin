@@ -15,7 +15,8 @@ export function useConfirmModal() {
     successCallback,
     onConfirm,
     options = {},
-    type = 'confirm'
+    type = 'confirm',
+    showMesageSucess = true
   }: {
     message?: string
     title?: string
@@ -23,6 +24,7 @@ export function useConfirmModal() {
     onConfirm?: (instance: MessageBoxState, done: () => void) => void
     options?: Partial<ElMessageBoxOptions>
     type?: MessageBoxType
+    showMesageSucess?: boolean
   }) => {
     const messageBoxMethod = messageBoxMethods[type]
     messageBoxMethod(message, title, {
@@ -42,10 +44,11 @@ export function useConfirmModal() {
       ...options
     }).then(() => {
       successCallback?.()
-      ElMessage({
-        message: 'Thao tác thành công! ⚡',
-        type: 'success'
-      })
+      if (showMesageSucess)
+        ElMessage({
+          message: 'Thao tác thành công! ⚡',
+          type: 'success'
+        })
     })
   }
 
