@@ -35,8 +35,9 @@ function createService() {
       const code = apiData.code
       // If there is no code, it means that this is not an api developed by the project backend
       if (code === undefined) {
-        ElMessage.error('Not the interface of this system')
-        return Promise.reject(new Error('Not the interface of this system'))
+        // ElMessage.error('Not the interface of this system')
+        // return Promise.reject(new Error('Not the interface of this system'))
+        return apiData
       }
       switch (code) {
         case 200:

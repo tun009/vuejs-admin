@@ -244,7 +244,7 @@ onMounted(() => {
 
   <EIBDrawer v-if="openAddUserDrawer" title="user.addUser.title" v-model="openAddUserDrawer">
     <template #default>
-      <AddUserForm @close="openAddUserDrawer = false" />
+      <AddUserForm @close="openAddUserDrawer = false" @refresh="handleGetData" />
     </template>
   </EIBDrawer>
 

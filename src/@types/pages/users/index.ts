@@ -27,22 +27,22 @@ export enum UserStatusEnum {
 export const roleSelectOptions: SelectOptionModel[] = [
   {
     label: 'Admin',
-    value: 'admin',
+    value: RoleEnum.ADMIN,
     description: 'Quyền hạn cao nhất và cũng có thể thực hiện các chức năng tương tự như Checker'
   },
   {
     label: 'Checker',
-    value: 'checker',
+    value: RoleEnum.CHECKER,
     description: 'Xác nhận và phê duyệt Bộ chứng từ'
   },
   {
     label: 'Maker',
-    value: 'maker',
+    value: RoleEnum.MAKER,
     description: 'Upload chứng từ, kiểm tra Bộ chứng từ sau khi hệ thống xử lý thành công'
   },
   {
     label: 'Viewer',
-    value: 'viewer',
+    value: RoleEnum.VIEWER,
     description: 'Chỉ có quyền xem'
   }
 ]

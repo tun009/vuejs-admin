@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ArrowDownBold, Filter, Search } from '@element-plus/icons-vue'
-import { reactive, ref, watch } from 'vue'
+import { reactive, ref, watch, onMounted } from 'vue'
 
 import { PaginationModel } from '@/@types/common'
 import {
@@ -9,7 +9,8 @@ import {
   businessTypeOptions,
   docListColumnConfigs,
   documentResultOptions,
-  documentStatusOptions
+  documentStatusOptions,
+  ReportDetailModel
 } from '@/@types/pages/reports'
 import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
 import EIBMultipleFilter from '@/components/Filter/EIBMultipleFilter.vue'
@@ -19,9 +20,14 @@ import EIBTable from '@/components/common/EIBTable.vue'
 import { Title } from '@/layouts/components'
 import { defaultDateRange } from '@/utils/date'
 import { debounce } from 'lodash-es'
-import { getReports } from '@/api/reports/'
-import { formatYYYYMMDD, shortcutsDateRange } from '@/constants/date'
+import { getReports, getDetailReport, downloadFileExcel } from '@/api/reports/'
+import { TIME_FIRST_DAY, TIME_LAST_DAY, formatYYYYMMDD, shortcutsDateRange } from '@/constants/date'
 import DetailReportForm from './components/DetailReportForm.vue'
+import { omitPropertyFromObject, withAllSelection, mappingBranches } from '@/utils/common'
+import { getBranches } from '@/api/users'
+import { BranchModel } from '@/@types/pages/login'
+import { ElMessage } from 'element-plus'
+import Status from '../components/Status.vue'
 
 const openFilter = ref(false)
 const tableData = ref<ReportModel[]>([])
@@ -29,12 +35,26 @@ const checkedItems = ref<ReportModel[]>([])
 const documentTableRef = ref<InstanceType<typeof EIBTable>>()
 const uploadTimes = ref(defaultDateRange())
 const filterValue = reactive<FilterDocumentModel>({} as FilterDocumentModel)
-const searchQuery = ref('')
 const openDetailReportDrawer = ref(false)
+const branches = ref<BranchModel[]>([])
+const reportDetail = ref<ReportDetailModel>({} as ReportDetailModel)
 
 const handleGetReports = async (pagination: PaginationModel) => {
   try {
-    const response = await getReports({ ...pagination, searchQuery: searchQuery.value })
+    const { status, ...otherFilter } = filterValue
+    const response = await getReports({
+      ...pagination,
+      ...omitPropertyFromObject(otherFilter, -1),
+      beginDate: uploadTimes.value[0] + TIME_FIRST_DAY,
+      endDate: uploadTimes.value[1] + TIME_LAST_DAY,
+      sortItemList: [
+        {
+          isAsc: false,
+          column: 'createdAt'
+        }
+      ],
+      ...(status?.length ? { status } : {})
+    })
     tableData.value = response.data.list
     return response
   } catch (error: any) {
@@ -42,7 +62,13 @@ const handleGetReports = async (pagination: PaginationModel) => {
   }
 }
 
-const detailReport = () => {
+const detailReport = async (raw: ReportModel) => {
+  try {
+    const { data } = await getDetailReport(raw.batchId)
+    reportDetail.value = data
+  } catch (error) {
+    console.error(error)
+  }
   openDetailReportDrawer.value = true
 }
 
@@ -51,6 +77,54 @@ const handleResetFilter = () => {
   filterValue.branchId = -1
   filterValue.result = -1
   filterValue.status = []
+}
+
+const downloadFile = async () => {
+  try {
+    const pagination = documentTableRef?.value?.getPagination()
+    const { status, ...otherFilter } = filterValue
+    const response: any = await downloadFileExcel({
+      ...omitPropertyFromObject(otherFilter, -1),
+      beginDate: uploadTimes.value[0] + TIME_FIRST_DAY,
+      endDate: uploadTimes.value[1] + TIME_LAST_DAY,
+      sortItemList: [
+        {
+          isAsc: false,
+          column: 'createdAt'
+        }
+      ],
+      ...pagination,
+      ...(status?.length ? { status } : {})
+    })
+    const blob = new Blob([response as BlobPart], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    const fileName = 'Bao_cao_danh_sach_xu_ly_bo_chung_tu'
+    link.setAttribute('download', fileName)
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+
+    ElMessage({
+      message: 'Download file thành công',
+      showClose: true,
+      type: 'success'
+    })
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const handleGetBranches = async () => {
+  try {
+    const { data } = await getBranches()
+    branches.value = data
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 const handleGetData = debounce(() => documentTableRef?.value?.handleGetData(), 300)
@@ -64,6 +138,10 @@ watch(
     deep: true
   }
 )
+
+onMounted(() => {
+  handleGetBranches()
+})
 </script>
 
 <template>
@@ -112,7 +190,7 @@ watch(
         </div>
       </div>
       <div class="flex flex-row gap-3">
-        <el-button type="primary" class="flex flex-row items-center">
+        <el-button type="primary" class="flex flex-row items-center" @click="downloadFile">
           <SvgIcon name="download-inline" class="w-4 h-4 mr-2" />
           <span>Tải xuống</span></el-button
         >
@@ -125,7 +203,11 @@ watch(
       <EIBSingleFilter v-model="filterValue.bizType" title="Loại nghiệp vụ" :options="businessTypeOptions" />
       <EIBMultipleFilter v-model="filterValue.status" title="Trạng thái" :options="documentStatusOptions" />
       <EIBSingleFilter v-model="filterValue.result" title="Kết quả" :options="documentResultOptions" />
-      <EIBSingleFilter v-model="filterValue.branchId" title="SOL" :options="[]" />
+      <EIBSingleFilter
+        v-model="filterValue.branchId"
+        title="SOL"
+        :options="withAllSelection(mappingBranches(branches))"
+      />
     </div>
     <el-card>
       <EIBTable
@@ -138,12 +220,29 @@ watch(
         @update:selection="(val: ReportModel[]) => (checkedItems = val)"
         :height="!!checkedItems.length && openFilter ? 520 : !checkedItems.length && !openFilter ? 600 : 560"
         @row-click="detailReport"
-      />
+      >
+        <template #branch="{ row }">
+          <div>
+            <span>{{ row.branch.name }}</span>
+          </div>
+        </template>
+        <template #status="{ row }">
+          <Status :options="documentStatusOptions" :status="row?.status" />
+        </template>
+        <template #result="{ row }">
+          <Status :options="documentResultOptions" :status="row?.result" />
+        </template>
+      </EIBTable>
     </el-card>
   </div>
-  <EIBDrawer title="Thông tin chi tiết" v-model="openDetailReportDrawer" v-if="openDetailReportDrawer">
+  <EIBDrawer
+    title="Thông tin chi tiết"
+    v-model="openDetailReportDrawer"
+    v-if="openDetailReportDrawer"
+    :is-confirm-close="false"
+  >
     <template #default>
-      <DetailReportForm @close="openDetailReportDrawer = false" />
+      <DetailReportForm @close="openDetailReportDrawer = false" :data="reportDetail" />
     </template>
   </EIBDrawer>
 </template>

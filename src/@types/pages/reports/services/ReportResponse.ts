@@ -1,4 +1,5 @@
 import { BaseListResponseModel } from '@/@types/common'
-import { ReportModel } from '..'
+import { ReportModel, ReportDetailModel } from '..'
 
 export type GetReportResponseModel = BaseListResponseModel<ReportModel>
+export type GetReportDetailResponseModel = ApiResponseData<ReportDetailModel>

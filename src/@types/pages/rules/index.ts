@@ -5,7 +5,7 @@ export interface RuleModel {
   stt: number
   docType: string
   code: string
-  content: string
+  en: string
   type: RuleTypeEnum
 }
 
@@ -32,7 +32,7 @@ export const ruleListColumnConfigs: ColumnConfigModel[] = [
     width: 200
   },
   {
-    field: 'content',
+    field: 'en',
     label: 'Nội dung',
     minWidth: 200
   },

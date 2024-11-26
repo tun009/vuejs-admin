@@ -27,6 +27,7 @@ interface Exposes {
   clearSelection: () => void
   setLoading: (status: boolean) => void
   handleGetData: () => void
+  getPagination: () => PaginationModel
 }
 
 const props = defineProps<Props>()
@@ -79,6 +80,10 @@ const setLoading = (status: boolean) => {
   loading.value = status
 }
 
+const getPagination = () => {
+  return pagination.value
+}
+
 onMounted(async () => {
   handleGetData()
 })
@@ -86,7 +91,8 @@ onMounted(async () => {
 defineExpose<Exposes>({
   clearSelection: handleClearSelection,
   setLoading,
-  handleGetData
+  handleGetData,
+  getPagination
 })
 </script>
 
