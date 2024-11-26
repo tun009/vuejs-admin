@@ -6,7 +6,7 @@ export interface GetUserRequestModel extends PaginationModel, Partial<FilterUser
 export interface AddUserRequestModel {
   name: string
   username: string
-  branchId: number
+  branchId?: number
   role: RoleEnum
 }
 

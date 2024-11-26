@@ -3,7 +3,7 @@ import { RoleEnum } from '@/@types/pages/users'
 import { STATUS_COLORS } from '@/constants/color'
 
 export interface ReportModel {
-  id: number
+  batchId: number
   stt: number
   name: string
   type: string
@@ -15,6 +15,76 @@ export interface ReportModel {
   maker: string
   checker: string
 }
+
+export interface ReportDetailModel {
+  batchId: number
+  batchName: string
+  lcNo: string
+  bizType: string
+  branch: {
+    id: number
+    name: string
+    code: string
+  }
+  customerName: string
+  status: string
+  result: string
+  maker: {
+    id: number
+    name: string
+    username: string
+    phoneNumber: string
+    role: string
+    branch: {
+      id: number
+      name: string
+      code: string
+    }
+    status: string
+  }
+  checker: {
+    id: number
+    name: string
+    username: string
+    phoneNumber: string
+    role: string
+    branch: {
+      id: number
+      name: string
+      code: string
+    }
+    status: string
+  }
+  totalOcr: number
+  totalTimeProcessHandle: number
+  timeSystemHandle: number
+  timeMakerHandle: number
+  timeCheckerHandle: number
+  statDossier: [
+    {
+      docType: string
+      totalFieldEdit: number
+      totalFieldOcr: number
+      totalRequestOcrEdit: number
+      totalRequestOcr: number
+    }
+  ]
+}
+
+export interface FilterReportModel {
+  name: string
+  status: number[]
+  result: number
+  bizType: number
+  branchId: number
+  beginDate: string
+  endDate: string
+  sortItemList: {
+    isAsc: boolean
+    column: string
+  }[]
+}
+
 // document enum
 export enum BusinessTypeEnum {
   NA = 'NA',
@@ -71,11 +141,11 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
     minWidth: 30
   },
   {
-    field: 'name',
+    field: 'batchName',
     label: 'Tên bộ chứng từ'
   },
   {
-    field: 'type',
+    field: 'bizType',
     label: 'Loại nghiệp vụ'
   },
   {
@@ -87,24 +157,24 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
     label: 'Kết quả xử lý'
   },
   {
-    field: 'sol',
+    field: 'branch',
     label: 'SOL'
   },
   {
-    field: 'totalTime',
+    field: 'totalTimeProcessHandle',
     label: 'Tổng thời gian xử lý',
     minWidth: 140
   },
   {
-    field: 'system',
+    field: 'timeSystemHandle',
     label: 'Hệ thống xử lý'
   },
   {
-    field: 'maker',
+    field: 'timeMakerHandle',
     label: 'Maker xử lý'
   },
   {
-    field: 'checker',
+    field: 'timeCheckerHandle',
     label: 'Checker xử lý'
   }
 ]

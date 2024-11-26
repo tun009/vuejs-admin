@@ -15,6 +15,7 @@ import { useI18n } from 'vue-i18n'
 
 interface Emits {
   (event: 'close'): void
+  (event: 'refresh'): void
 }
 
 interface Exposes {
@@ -30,15 +31,14 @@ const loading = ref(false)
 const addUserFormData: AddUserRequestModel = reactive({
   name: '',
   username: '',
-  branchId: 1,
   role: RoleEnum.ADMIN
 })
 
 const addUserFormRules: FormRules<AddUserRequestModel> = {
   name: [requireRule()],
   username: [requireRule()],
-  branchId: [requireRule('change')],
-  role: [requireRule('change')]
+  branchId: [requireRule()],
+  role: [requireRule()]
 }
 
 const handleClose = () => {
@@ -50,23 +50,24 @@ const addUserFormRef = ref<FormInstance | null>(null)
 
 const handleAddUser = () => {
   addUserFormRef.value?.validate(async (valid: boolean, fields) => {
-    try {
-      if (valid) {
+    if (valid) {
+      try {
         loading.value = true
         await addUser(addUserFormData)
-      } else {
-        console.error('Form validation failed', fields)
+        ElMessage({
+          message: t('notification.description.createSuccess'),
+          showClose: true,
+          type: 'success'
+        })
+        emits('refresh')
+        emits('close')
+      } catch (error) {
+        console.error(error)
+      } finally {
+        loading.value = false
       }
-      ElMessage({
-        message: t('notification.description.createSuccess'),
-        showClose: true,
-        type: 'success'
-      })
-      emits('close')
-    } catch (error) {
-      console.error(error)
-    } finally {
-      loading.value = false
+    } else {
+      console.error('Form validation failed', fields)
     }
   })
 }
@@ -104,6 +105,8 @@ onMounted(() => {
       v-model="addUserFormData.name"
       required
       show-limitaddUserFormData
+      show-limit
+      :max-length="100"
     />
     <EIBInput
       label="user.addUser.username"
@@ -117,7 +120,7 @@ onMounted(() => {
     <EIBInput label="user.addUser.password" name="password" :model-value="PASSWORD_DEFAULT" disabled />
     <EIBSelect
       v-model="addUserFormData.branchId"
-      name="sol"
+      name="branchId"
       :options="mappingBranches(branches)"
       label="user.addUser.sol"
       required
