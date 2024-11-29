@@ -366,7 +366,7 @@ onMounted(() => {
                 :rules="rules"
                 @update:condition="(condition: number) => (conditionSelect = condition)"
                 @scroll-by-index="handleCheckCompareResult"
-                @refresh="handleGetDocumentCompare"
+                @refresh="handleGetDocumentCompare(documentType)"
               />
             </el-tab-pane>
             <el-tab-pane :label="$t('docs.compare.editHistory')" name="history">

@@ -1,34 +1,32 @@
 <script lang="ts" setup>
+import { SelectOptionModel } from '@/@types/common'
 import {
   CompareReasonOnlyResultModel,
   CompareReasonResultModel,
-  DocumentKeyEnum,
   DocumentResultEnum,
   documentResultValidOptions
 } from '@/@types/pages/docs/documents'
-import { RuleModel, reasonDefault } from '@/@types/pages/rules'
-import EIBDialog from '@/components/common/EIBDialog.vue'
-import EIBSelect from '@/components/common/EIBSelect.vue'
-import EIBTextareaAutoComplete from '@/components/common/EIBTextareaAutoComplete.vue'
-import { useUserStore } from '@/store/modules/user'
-import { InfoFilled } from '@element-plus/icons-vue'
-import { ElMessage, FormInstance, FormRules } from 'element-plus'
-import { computed, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-import SaveDictionaryForm from './SaveDictionaryForm.vue'
-import { SelectOptionModel } from '@/@types/common'
-import {
-  translateEnglishToVietnamese,
-  updateCompareResult,
-  updateCompareResultTable
-} from '@/api/docs/document/compare'
 import {
   DocumentComparisonResultReasonModel,
   UpdateDocumentCompareResultRequestModel,
   UpdateDocumentCompareResultTableRequestModel
 } from '@/@types/pages/docs/documents/services/DocumentRequest'
-import { useRoute } from 'vue-router'
+import { RuleModel, reasonDefault } from '@/@types/pages/rules'
+import {
+  translateEnglishToVietnamese,
+  updateCompareResult,
+  updateCompareResultTable
+} from '@/api/docs/document/compare'
+import EIBDialog from '@/components/common/EIBDialog.vue'
+import EIBSelect from '@/components/common/EIBSelect.vue'
+import EIBTextareaAutoComplete from '@/components/common/EIBTextareaAutoComplete.vue'
+import { useUserStore } from '@/store/modules/user'
 import { getTextFromHtml } from '@/utils/common'
+import { InfoFilled } from '@element-plus/icons-vue'
+import { ElMessage, FormInstance, FormRules } from 'element-plus'
+import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import SaveDictionaryForm from './SaveDictionaryForm.vue'
 
 interface Props {
   categories: RuleModel[]
@@ -40,7 +38,7 @@ interface Props {
 }
 
 interface Emits {
-  (event: 'refresh', key?: DocumentKeyEnum): void
+  (event: 'refresh'): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -50,7 +48,6 @@ const emits = defineEmits<Emits>()
 
 const { t } = useI18n()
 const { isViewer } = useUserStore()
-const route = useRoute()
 
 const lawReasonMapping = computed(() => {
   const result: CompareReasonOnlyResultModel = {
@@ -189,7 +186,7 @@ const handleUpdateCompareResult = () => {
           message: t('notification.description.updateSuccess')
         })
         isEdit.value = false
-        emits('refresh', (route.query?.type as DocumentKeyEnum) ?? DocumentKeyEnum.INVOICE)
+        emits('refresh')
       } catch (error) {
         console.error(error)
       } finally {

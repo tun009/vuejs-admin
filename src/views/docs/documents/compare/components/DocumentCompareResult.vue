@@ -6,12 +6,7 @@ import { Plus } from '@element-plus/icons-vue'
 import { debounce } from 'lodash-es'
 import { ref } from 'vue'
 import AddCompareContentForm from './AddCompareContentForm.vue'
-import {
-  CompareReasonResultModel,
-  DocumentCompareModel,
-  DocumentKeyEnum,
-  DocumentResultEnum
-} from '@/@types/pages/docs/documents'
+import { CompareReasonResultModel, DocumentCompareModel, DocumentResultEnum } from '@/@types/pages/docs/documents'
 import { convertFileUrl, createColumnConfigs } from '@/utils/common'
 import MultipleLanguageResult from './MultipleLanguageResult.vue'
 import PreviewExtractImage from './PreviewExtractImage.vue'
@@ -30,7 +25,7 @@ interface Props {
 interface Emits {
   (event: 'update:condition', condition: number): void
   (event: 'scroll-by-index', index: number): void
-  (event: 'refresh', key?: DocumentKeyEnum): void
+  (event: 'refresh'): void
 }
 
 const props = defineProps<Props>()
