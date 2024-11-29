@@ -2,6 +2,7 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { VuePDF, usePDF } from '@tato30/vue-pdf'
 import ControlSlider from './ControlSlider.vue'
+import ExtractOcrLoading from './ExtractOcrLoading.vue'
 import { ArrowUp, ArrowDown } from '@element-plus/icons-vue'
 import { debounce } from 'lodash-es'
 import { useUserStore } from '@/store/modules/user'
@@ -10,6 +11,7 @@ console.log(isAdmin, isChecker, isMaker, isViewer)
 
 const props = defineProps<{
   url?: string
+  isLoadingOcr: boolean
 }>()
 const emit = defineEmits<{
   (e: 'loaded-data'): void
@@ -215,7 +217,7 @@ onBeforeUnmount(() => {
       /></el-icon>
     </div>
   </div>
-  <div class="overflow-auto h-[calc(100%-58px)]" :id="idFullScreen" @scroll="scrollToPage()">
+  <div class="overflow-auto h-[calc(100%-58px)] relative" :id="idFullScreen" @scroll="scrollToPage()">
     <div v-for="page in pages" :key="page" class="mx-auto relative w-fit">
       <VuePDF
         :id="'page-' + page"
@@ -227,6 +229,7 @@ onBeforeUnmount(() => {
       />
       <div class="text-center my-2">Trang {{ page }}</div>
     </div>
+    <ExtractOcrLoading v-if="isLoadingOcr" />
   </div>
 </template>
 
