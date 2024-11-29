@@ -67,6 +67,7 @@ const tagLabelToPage = (boxInfos: number[][][], pageNum: number) => {
       pElement.style.backgroundColor = 'rgba(240, 91, 91, 0.3) '
       pElement.style.border = '1px solid #e03'
       pElement.style.position = 'absolute'
+      pElement.style.scrollMarginTop = '15vh'
       if (elementPage) elementPage.appendChild(pElement)
       if (index === 0) {
         const elementScrollTo = pElement ?? elementPage
@@ -78,7 +79,7 @@ const tagLabelToPage = (boxInfos: number[][][], pageNum: number) => {
 const scrollToElement = (elm: HTMLElement | null, mode: ScrollBehavior = 'smooth') => {
   if (elm) {
     isScrolling.value = true
-    elm.scrollIntoView({ behavior: mode, block: 'end', inline: 'nearest' })
+    elm.scrollIntoView({ behavior: mode })
     updateObserver()
   }
 }

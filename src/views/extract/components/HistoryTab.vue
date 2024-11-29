@@ -8,7 +8,7 @@ import {
 } from '@/@types/pages/extract'
 import { getDossierHistoriesApi } from '@/api/extract'
 import { groupByField, renderLabelByValue } from '@/utils/common'
-import { ref, watch } from 'vue'
+import { nextTick, ref, watch } from 'vue'
 
 const props = defineProps<{
   isActive?: boolean
@@ -17,7 +17,7 @@ const props = defineProps<{
 watch(
   () => props.isActive,
   (newVal) => {
-    if (newVal && historiesData.value.length === 0) fetchHistories()
+    if (newVal) fetchHistories()
   }
 )
 const historiesData = ref<ExtractHistoryModel[][]>([])
@@ -37,9 +37,18 @@ const fetchHistories = async () => {
       day: groupKey,
       actions: groupedHistories[groupKey]
     }))
+    onScrollTopElement()
   } catch (error: any) {
     throw new Error(error)
   }
+}
+const onScrollTopElement = () => {
+  nextTick(() => {
+    const tabNote = document.getElementById('history-tab')
+    if (tabNote) {
+      tabNote.scrollTop = 0
+    }
+  })
 }
 const groupDataToExtractHistory = (data: Record<string, any>[]): ExtractHistoryGroupedResultModel[] => {
   const result = data.reduce<Record<string, ExtractHistoryGroupedResultModel>>((acc, item) => {
@@ -73,7 +82,7 @@ const groupDataToExtractHistory = (data: Record<string, any>[]): ExtractHistoryG
     <div class="w-2/5 ml-2">Trước chỉnh sửa</div>
     <div class="w-2/5 ml-4">Sau chỉnh sửa</div>
   </div>
-  <div class="box-history-content overflow-y-auto h-[calc(100vh-148px)]">
+  <div class="box-history-content overflow-y-auto h-[calc(100vh-148px)]" id="history-tab">
     <div v-for="(item, index) in dataHistoriesGroupDay" :key="index">
       <div class="bg-[#e9ecef] px-[10px] py-[4px]">{{ item?.day }}</div>
       <div v-if="item?.actions.length > 0" class="mb-[10px]">

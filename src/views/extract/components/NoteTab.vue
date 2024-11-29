@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ExtractNoteModel } from '@/@types/pages/extract'
 import { getDossierNotesApi, postDossierNoteApi } from '@/api/extract'
-import { ref, watch } from 'vue'
+import { nextTick, ref, watch } from 'vue'
 import EIBDialog from '@/components/common/EIBDialog.vue'
 import EIBInput from '@/components/common/EIBInput.vue'
 import { ElMessage } from 'element-plus'
@@ -14,14 +14,25 @@ const props = defineProps<{
 watch(
   () => props.isActive,
   (newVal) => {
-    if (newVal && notesData.value.length === 0) getNotes()
+    if (newVal) {
+      getNotes()
+    }
   }
 )
+const onScrollTopElement = () => {
+  nextTick(() => {
+    const tabNote = document.getElementById('tab-note')
+    if (tabNote) {
+      tabNote.scrollTop = 0
+    }
+  })
+}
 const notesData = ref<ExtractNoteModel[]>([])
 const getNotes = async () => {
   try {
     const response = await getDossierNotesApi(props.batchId)
     notesData.value = response.data
+    onScrollTopElement()
   } catch (error: any) {
     throw new Error(error)
   }
@@ -54,9 +65,9 @@ const onConfirm = async () => {
 }
 </script>
 <template>
-  <div class="h-[calc(100vh-185px)] overflow-y-auto">
+  <div class="h-[calc(100vh-185px)] overflow-y-auto" id="tab-note">
     <div v-for="(item, index) in notesData" :key="index" class="p-[16px] pt-0">
-      <div>{{ item?.content }}</div>
+      <div class="break-words">{{ item?.content }}</div>
       <div class="text-[#868e96]">
         <span>{{ formatDate(item.createdAt, formatDDMMYYYY_HHMM) }}</span> - <span>{{ item?.createdBy }}</span>
       </div>
