@@ -230,6 +230,7 @@ const convertTableDataCompareErrorResults = (compareResult: DocumentCompareModel
           </template>
         </EIBTable>
         <MultipleLanguageResult
+          type="table"
           :categories="categories"
           :rules="rules"
           :comparisonResultId="compareResult.id"

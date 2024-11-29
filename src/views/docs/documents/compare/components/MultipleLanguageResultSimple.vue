@@ -13,6 +13,7 @@ import { useI18n } from 'vue-i18n'
 import SaveDictionaryForm from './SaveDictionaryForm.vue'
 import EIBInput from '@/components/common/EIBInput.vue'
 import { updateDocumentCompareUndefined } from '@/api/docs/document/compare'
+import { getTextFromHtml } from '@/utils/common'
 
 interface Props {
   comparisonUndefinedId: number
@@ -105,11 +106,11 @@ const handleUpdateCompareResult = () => {
             $t('docs.compare.complied')
           }}</span>
           <div v-else-if="documentResultFormData.status === DocumentResultEnum.DISCREPANCY">
-            <div class="flex flex-row items-center gap-2">
-              <div class="h-1 w-1 bg-[#e8590c] rounded-sm" />
+            <div class="flex flex-row items-start gap-2">
+              <div class="min-w-1 h-1 w-1 bg-[#e8590c] rounded-sm mt-2" />
               <span class="text-[#e8590c]"
                 >{{ $t('docs.compare.discrepancy')
-                }}{{ documentResultFormData.reason ? ': ' + documentResultFormData.reason : '' }}</span
+                }}{{ documentResultFormData.reason ? ': ' + getTextFromHtml(documentResultFormData.reason) : '' }}</span
               >
             </div>
           </div>

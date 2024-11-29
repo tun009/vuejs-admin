@@ -207,3 +207,16 @@ export const downloadFileCommon = (response: any, type: DocumentExportFileEnum =
     type: 'success'
   })
 }
+
+// Hàm lấy văn bản từ HTML string và xóa phần tử tạm thời sau khi sử dụng
+export function getTextFromHtml(html: string): string {
+  const tempElement = document.createElement('div') // Tạo phần tử div tạm thời
+  tempElement.innerHTML = html // Chèn HTML vào phần tử này
+
+  const textContent = tempElement.innerText || tempElement.textContent || '' // Lấy văn bản
+
+  // Xóa phần tử div tạm thời
+  tempElement.remove()
+
+  return textContent
+}

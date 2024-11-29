@@ -51,7 +51,6 @@ const props = defineProps<{
 const isEmptyChart = computed(() => {
   return props.percentage.every((val) => val === 0)
 })
-console.log(props)
 const chartData = computed(() => ({
   datasets: [
     {

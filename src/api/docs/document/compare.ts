@@ -2,6 +2,7 @@ import { UpdateDocumentCompareUndefinedModel } from '@/@types/pages/docs/documen
 import {
   PatchDocumentCompareUndefinedRequestModel,
   UpdateDictionaryRequestModel,
+  UpdateDocumentCompareResultTableRequestModel,
   UpdateDocumentCompareResultRequestModel,
   UpdateDocumentStatusModel
 } from '@/@types/pages/docs/documents/services/DocumentRequest'
@@ -49,6 +50,14 @@ export function updateDictionary(id: number | string, data: UpdateDictionaryRequ
 export function updateCompareResult(data: UpdateDocumentCompareResultRequestModel) {
   return request<UpdateDocumentCompareResultResponseModel>({
     url: 'comparison/update-result',
+    method: 'patch',
+    data
+  })
+}
+
+export function updateCompareResultTable(data: UpdateDocumentCompareResultTableRequestModel) {
+  return request<UpdateDocumentCompareResultResponseModel>({
+    url: 'comparison/update-result-table',
     method: 'patch',
     data
   })

@@ -37,6 +37,12 @@ export interface UpdateDocumentCompareResultRequestModel {
   comparisonResultReasons: DocumentComparisonResultReasonModel[]
 }
 
+export interface UpdateDocumentCompareResultTableRequestModel {
+  comparisonId: number
+  status: DocumentResultEnum
+  reasons: DocumentComparisonResultReasonModel[]
+}
+
 export interface UpdateDocumentStatusModel {
   approveDossier: DocumentStatusEnum
   message?: string
