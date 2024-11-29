@@ -11,7 +11,7 @@ console.log(isAdmin, isChecker, isMaker, isViewer)
 
 const props = defineProps<{
   url?: string
-  isLoadingOcr: boolean
+  isLoadingOcr?: boolean
 }>()
 const emit = defineEmits<{
   (e: 'loaded-data'): void

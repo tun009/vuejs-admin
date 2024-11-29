@@ -1,14 +1,13 @@
 <script lang="ts" setup>
-import { CompareContentFormModel, DocumentKeyEnum } from '@/@types/pages/docs/documents'
+import { CompareContentFormModel } from '@/@types/pages/docs/documents'
+import { getDocumentCompareUndefined, patchDocumentCompareUndefined } from '@/api/docs/document/compare'
+import EIBInput from '@/components/common/EIBInput.vue'
+import { convertFileUrl } from '@/utils/common'
+import PDFView from '@/views/extract/components/PDFView.vue'
 import { ElMessage } from 'element-plus'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ResizableSplitter from './ResizableSplitter.vue'
-import PDFView from '@/views/extract/components/PDFView.vue'
-import { convertFileUrl } from '@/utils/common'
-import EIBInput from '@/components/common/EIBInput.vue'
-import { getDocumentCompareUndefined, patchDocumentCompareUndefined } from '@/api/docs/document/compare'
-import { useRoute } from 'vue-router'
 
 interface Props {
   comparisonUndefinedId: number
@@ -17,7 +16,7 @@ interface Props {
 
 interface Emits {
   (event: 'update:visible', value: boolean): void
-  (event: 'refresh', key?: DocumentKeyEnum): void
+  (event: 'refresh'): void
 }
 
 interface Exposes {
@@ -28,7 +27,6 @@ const emits = defineEmits<Emits>()
 const props = defineProps<Props>()
 
 const { t } = useI18n()
-const route = useRoute()
 
 const pdfViewRef = ref()
 const isLoadedPdf = ref<boolean>(false)
@@ -51,7 +49,7 @@ const onConfirm = async () => {
     await patchDocumentCompareUndefined(props.comparisonUndefinedId, dataForm.value)
     ElMessage.success(t('notification.description.updateSuccess'))
     emits('update:visible', false)
-    emits('refresh', (route.query?.type as DocumentKeyEnum) ?? DocumentKeyEnum.INVOICE)
+    emits('refresh')
   } catch (error) {
     console.error(error)
   } finally {
