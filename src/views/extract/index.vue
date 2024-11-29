@@ -51,6 +51,7 @@ const loading = ref<boolean>(false)
 const isShowModalReplace = ref<boolean>(false)
 const resizeTable = ref<number>(100)
 const isShowTable = ref<boolean>(false)
+const isLoadingOcr = ref<boolean>(false)
 const { showConfirmModal } = useConfirmModal()
 const route = useRoute()
 const baseURL = import.meta.env.VITE_BASE_API
@@ -273,6 +274,7 @@ const goToBackDocumentPage = () => {
 const handleOcrDoc = async () => {
   try {
     isLoadedPdf.value = false
+    isLoadingOcr.value = true
     const response = await ocrDocumentApi(Number(route?.query?.dossierDocId))
     if (response.data)
       ElMessage({
@@ -281,6 +283,7 @@ const handleOcrDoc = async () => {
         message: 'Trích xuất OCR thành công'
       })
     isLoadedPdf.value = true
+    isLoadingOcr.value = false
   } catch (error: any) {
     throw new Error(error)
   }
@@ -328,6 +331,7 @@ onMounted(() => {
                   v-if="documentDetail?.pathFile"
                   ref="pdfViewRef"
                   :url="`${baseURL}/files?src=${documentDetail?.pathFile}`"
+                  :isLoadingOcr="isLoadingOcr"
                   @loaded-data="onLoadedPDF()"
                 />
               </pane>
