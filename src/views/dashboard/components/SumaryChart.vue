@@ -28,7 +28,8 @@ watch(
       if (Object.keys(oldValue).length > 0) reRenderText(200)
       isRendenderChart.value = true
     } else isRendenderChart.value = false
-  }
+  },
+  { deep: true }
 )
 const renderIndexLabel = () => {
   const dataPoints = options.value.data[0].dataPoints
@@ -135,7 +136,10 @@ onUpdated(() => {
   <div class="flex items-center">
     <div>
       <div v-for="(item, index) in options.data[0]?.dataPoints" :key="index" class="flex gap-1 mt-1">
-        <span class="w-[16px] h-[16px] rounded-[8px] mt-[1px]" :style="`background-color:${item.color}`" />
+        <span
+          class="min-w-[16px] min-h-[16px] max-w-[16px] max-h-[16px] rounded-[8px] mt-[1px]"
+          :style="`background-color:${item.color}`"
+        />
         <span>{{ item.name }}: </span>{{ item.y }}
       </div>
     </div>

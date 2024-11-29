@@ -183,7 +183,7 @@ const handleDragEnd = (event: any, doc: ExtractClassifyModel) => {
 }
 </script>
 <template>
-  <div class="h-[91vh] mx-[-2rem] mb-[-4rem] classify-modal">
+  <div class="h-[92vh] mx-[-20px] mb-[-4rem] classify-modal">
     <div class="w-full flex h-[94%]">
       <div class="flex w-full">
         <div class="w-[35%] border border-gray-300 border-solid">

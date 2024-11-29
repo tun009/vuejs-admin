@@ -1,6 +1,12 @@
 <script lang="ts" setup>
 import { onMounted, ref, nextTick } from 'vue'
-import { getDossierDetailApi, getDossierListApi, saveDossierDocApi } from '@/api/extract'
+import {
+  comparisonDocumentApi,
+  getDossierDetailApi,
+  getDossierListApi,
+  ocrDocumentApi,
+  saveDossierDocApi
+} from '@/api/extract'
 import { useConfirmModal } from '@/hooks/useConfirm'
 import {
   ExtractDocumentModel,
@@ -25,11 +31,13 @@ import { renderLabelByValue, formatNumberConfidence, renderColorByValue } from '
 import { documentStatusOptions } from '@/@types/pages/docs/documents'
 import { ArrowLeft, More, CloseBold, Select } from '@element-plus/icons-vue'
 import { ExtractPostDossierRequestModel } from '@/@types/pages/extract/service/ExtractRequest'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { regexNullOrEmpty } from '@/constants/regex'
 import router from '@/router'
 import { DOCUMENT_DETAIL_PAGE, EXTRACT_PAGE } from '@/constants/router'
 import { DocTypeEnum } from '@/@types/pages/rules'
+import { updateDocumentStatus } from '@/api/docs/document/compare'
+import { DocumentStatusEnum } from '@/@types/common'
 const dossierListData = ref<ExtractDossierModel[]>([])
 const documentDetail = ref<ExtractDocumentModel>()
 const activeName = ref('ocr')
@@ -112,7 +120,7 @@ const handleClickField = (item: ExtractResultOcrModel) => {
 }
 const clickTable = (data: ExtractResultOcrModel) => {
   isShowTable.value = true
-  pdfViewRef.value?.goToPageView(data.pageId)
+  // pdfViewRef.value?.goToPageView(data.pageId)
   resizeTable.value = 70
   if (!data?.childrenMapping) bodyTable.value = mappingBodyTable(data.headers, data.children)
   headerTable.value = data.headers
@@ -160,32 +168,48 @@ const handleCompareDossier = () => {
     message:
       'Sau khi nhấn vào nút “Xác nhận”, hệ thống ghi nhận tất cả các loại chứng từ tại thời điểm này đã chỉnh sửa xong và thực hiện Đối sánh</br >Bạn xác nhận đã hoàn thành kiểm tra chứ?',
     title: 'Xác nhận Đã kiểm tra két quả trích xuất',
-    onConfirm: (instance, done) => {
-      setTimeout(() => {
+    showMesageSucess: false,
+    onConfirm: async (instance, done) => {
+      try {
+        await comparisonDocumentApi(Number(route?.query?.batchId))
+        ElMessage({
+          showClose: true,
+          type: 'success',
+          message: 'Xác nhận đối sánh bộ chứng từ thành công'
+        })
         done()
+      } catch (error) {
+        console.error(error)
+      } finally {
         instance.confirmButtonLoading = false
-      }, 3000)
+      }
     }
   })
 }
 const handleDeniedDossier = () => {
-  showConfirmModal({
-    message:
-      'Sau khi nhấn vào nút “Xác nhận”, hệ thống ghi nhận việc “Từ chối” bộ chứng từ, kết thúc giao dịch xử lý </br ><div class="mt-4"></div>Lý do từ chối',
-    title: 'Xác nhận “Từ chối” bộ chứng từ',
-    type: 'prompt',
-    options: {
+  ElMessageBox.prompt(
+    'Sau khi nhấn vào nút “Xác nhận”, hệ thống ghi nhận việc “Từ chối” bộ chứng từ, kết thúc giao dịch xử lý </br ><div class="mt-4"></div>Lý do từ chối',
+    'Xác nhận “Từ chối” bộ chứng từ',
+    {
+      confirmButtonText: 'Xác nhận',
       customClass: 'box-denied-confirm',
       inputPlaceholder: 'Nhập lý do từ chối',
+      cancelButtonText: 'Đóng',
       inputPattern: regexNullOrEmpty,
+      dangerouslyUseHTMLString: true,
+      draggable: true,
       inputErrorMessage: 'Vui lòng nhập lý do từ chối!'
-    },
-    onConfirm: (instance, done) => {
-      setTimeout(() => {
-        done()
-        instance.confirmButtonLoading = false
-      }, 3000)
     }
+  ).then(async ({ value }) => {
+    await updateDocumentStatus(route?.query?.batchId as string, {
+      approveDossier: DocumentStatusEnum.DENIED,
+      message: value
+    })
+    ElMessage({
+      type: 'success',
+      message: `Đã từ chối bộ chứng từ thành công!`
+    })
+    goToBackDocumentPage()
   })
 }
 const viewFirstExtract = () => {
@@ -214,10 +238,10 @@ const saveDossier = async () => {
         if (item.type === 'structured_table' && item?.children?.length > 0) {
           item?.children?.forEach((row) => {
             row.forEach((child) => {
-              dataUpdate.push({ docDataId: child.id, value: child?.extractionValue ?? '' })
+              dataUpdate.push({ docDataId: child.id, value: child?.validatedValue ?? '' })
             })
           })
-        } else dataUpdate.push({ docDataId: item.id, value: item?.extractionValue ?? '' })
+        } else dataUpdate.push({ docDataId: item.id, value: item?.validatedValue ?? '' })
       })
     })
     const response = await saveDossierDocApi(Number(route?.query?.dossierDocId), dataUpdate)
@@ -244,7 +268,22 @@ const openModalReplaceDocument = () => {
   isShowModalReplace.value = true
 }
 const goToBackDocumentPage = () => {
-  router.replace(DOCUMENT_DETAIL_PAGE(route?.query?.batchId as string))
+  router.push(DOCUMENT_DETAIL_PAGE(route?.query?.batchId as string))
+}
+const handleOcrDoc = async () => {
+  try {
+    isLoadedPdf.value = false
+    const response = await ocrDocumentApi(Number(route?.query?.dossierDocId))
+    if (response.data)
+      ElMessage({
+        showClose: true,
+        type: 'success',
+        message: 'Trích xuất OCR thành công'
+      })
+    isLoadedPdf.value = true
+  } catch (error: any) {
+    throw new Error(error)
+  }
 }
 onMounted(() => {
   getDossiersList(Number(route?.query?.batchId))
@@ -319,7 +358,7 @@ onMounted(() => {
                     </div>
                   </el-dropdown-item>
                   <el-dropdown-item>
-                    <div class="flex gap-[6px] items-center leading-8">
+                    <div class="flex gap-[6px] items-center leading-8" @click="handleOcrDoc()">
                       <SvgIcon name="ic-ocr" />
                       Trích xuất OCR
                     </div></el-dropdown-item
@@ -373,17 +412,17 @@ onMounted(() => {
                           <div v-if="item.type === 'structured_table'">Click để xem</div>
                           <el-input
                             v-else-if="fieldSelect === item.coreKey && item.type !== 'image'"
-                            v-model="item.extractionValue"
+                            v-model="item.validatedValue"
                           />
                           <div v-else-if="item.type === 'image'">
                             <img
-                              v-if="item?.extractionValue"
-                              :src="'data:image/png;base64,' + item.extractionValue"
+                              v-if="item?.validatedValue"
+                              :src="'data:image/png;base64,' + item.validatedValue"
                               alt=""
                               class="h-[70px]"
                             />
                           </div>
-                          <div v-else>{{ item.extractionValue }}</div>
+                          <div v-else>{{ item.validatedValue }}</div>
                         </div>
                       </div>
                     </div>

@@ -79,8 +79,20 @@ export function saveDossierClassifyApi(id: number, data: ExtractPostClassifyRequ
 }
 export function replaceDocument(data: FormData, id: number) {
   return request<ExtractDossierPostResponseModel>({
-    url: `dossier-files/${id}/replace`,
+    url: `dossier-docs/${id}/replace`,
     method: 'patch',
     data
+  })
+}
+export function comparisonDocumentApi(id: number) {
+  return request<ExtractDossierPostResponseModel>({
+    url: `batches/${id}/comparison`,
+    method: 'patch'
+  })
+}
+export function ocrDocumentApi(id: number) {
+  return request<ExtractDossierPostResponseModel>({
+    url: `dossier-docs/${id}/ocr`,
+    method: 'patch'
   })
 }
