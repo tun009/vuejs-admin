@@ -3,7 +3,7 @@ import { DocumentStatusEnum } from '@/@types/common'
 import {
   DocumentCompareModel,
   DocumentDataLCModel,
-  DocumentKeyModel,
+  DocumentKeyEnum,
   DocumentLCAmountModel,
   DocumentResultEnum,
   documentTypeOptions,
@@ -42,7 +42,7 @@ const documentCompareConfigs = ref<DocumentCompareModel[]>([])
 
 const { t } = useI18n()
 const loading = ref(false)
-const documentType = ref<DocumentKeyModel>((route.query?.type as DocumentKeyModel) ?? DocumentKeyModel.INVOICE)
+const documentType = ref<DocumentKeyEnum>((route.query?.type as DocumentKeyEnum) ?? DocumentKeyEnum.INVOICE)
 const conditionSelect = ref<number>(0)
 const activeName = ref<'result' | 'history'>('result')
 const dialogVisible = ref(false)
@@ -156,7 +156,7 @@ const handleReturnForMaker = async () => {
   }
 }
 
-const handleGetDocumentCompare = async (key: DocumentKeyModel = DocumentKeyModel.INVOICE) => {
+const handleGetDocumentCompare = async (key: DocumentKeyEnum = DocumentKeyEnum.INVOICE) => {
   loading.value = true
   try {
     const { data } = await getDocumentCompare({ batchId: batchId.value, key })
@@ -219,7 +219,7 @@ const handleGetRules = async () => {
 
 const compareResults = computed(() => {
   return documentCompareConfigs.value.map((d) => {
-    const keys = Object.keys(d.comparisonResults)
+    const keys = Object.keys(d?.comparisonResults ?? {}) ?? []
     const invalidResult = keys.some((k) => d.comparisonResults[k].status === DocumentResultEnum.DISCREPANCY)
     const status = invalidResult ? DocumentResultEnum.DISCREPANCY : DocumentResultEnum.COMPLY
     return {
@@ -366,6 +366,7 @@ onMounted(() => {
                 :rules="rules"
                 @update:condition="(condition: number) => (conditionSelect = condition)"
                 @scroll-by-index="handleCheckCompareResult"
+                @refresh="handleGetDocumentCompare"
               />
             </el-tab-pane>
             <el-tab-pane :label="$t('docs.compare.editHistory')" name="history">

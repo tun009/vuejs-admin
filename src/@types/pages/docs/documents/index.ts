@@ -42,11 +42,17 @@ export enum OcrSourceEnum {
   NLP = 'NLP'
 }
 
-export enum DocumentKeyModel {
+export enum DocumentKeyEnum {
   INVOICE = 'Invoice',
   BOL = 'Bill of lading',
   DRAFT = 'Draft',
   PRESENT_DOC = 'Present Document'
+}
+
+export enum DocumentExportFileEnum {
+  DOCX = 'docx',
+  PDF = 'pdf',
+  EXCEL = 'excel'
 }
 
 export interface DocumentModel {
@@ -71,7 +77,8 @@ export interface CompareRejectFormModel {
 }
 
 export interface CompareContentFormModel {
-  content: string
+  id?: number
+  requirement: string
 }
 
 export const docListColumnConfigs: ColumnConfigModel[] = [
@@ -182,7 +189,7 @@ export interface DocumentFileModel {
 }
 
 export interface DocumentSumaryModel {
-  key: DocumentKeyModel
+  key: DocumentKeyEnum
   status: DocumentResultEnum
   totalRequest: number
   totalSatisfiedRequest: number
@@ -419,19 +426,19 @@ export const approveProcessDocumentColumnConfigs: ColumnConfigModel[] = [
 export const documentTypeOptions: SelectOptionModel[] = [
   {
     label: 'Invoice',
-    value: DocumentKeyModel.INVOICE
+    value: DocumentKeyEnum.INVOICE
   },
   {
     label: 'Bill of lading',
-    value: DocumentKeyModel.BOL
+    value: DocumentKeyEnum.BOL
   },
   {
     label: 'Drafts',
-    value: DocumentKeyModel.DRAFT
+    value: DocumentKeyEnum.DRAFT
   },
   {
     label: 'Giấy Xuất trình chứng từ',
-    value: DocumentKeyModel.PRESENT_DOC
+    value: DocumentKeyEnum.PRESENT_DOC
   }
 ]
 
@@ -449,29 +456,47 @@ export interface FilterDocumentModel {
   }[]
 }
 
-// compare history mock
-export interface CompareHistoryModel {
-  date: string
-  timeList: CompareHistoryTimeModel[]
+export enum CompareHistoryTypeEnum {
+  EDIT = 'EDIT',
+  CHECKED = 'CHECKED',
+  VALIDATED = 'VALIDATED',
+  DENIED = 'DENIED',
+  ADJUST_REQUESTED = 'ADJUST_REQUESTED',
+  ADDITIONAL = 'ADDITIONAL',
+  LC = 'LC'
 }
 
-export interface CompareHistoryTimeModel {
-  time: string
-  name: string
+// compare history mock
+export type CompareHistoryModel = CompareHistoryItemModel[][]
+
+export interface CompareHistoryItemModel {
+  title: string
+  type: CompareHistoryTypeEnum
+  valueBefore?: string[]
+  valueAfter?: string[]
+  createdBy: string
   role: RoleEnum
-  actionList: CompareHistoryActionModel[]
+  day: string
+  hour: string
 }
 
 export interface CompareHistoryActionModel {
-  actionName: string
-  beforeUpdate?: CompareHistoryActionUpdateModel
-  afterUpdate?: CompareHistoryActionUpdateModel
-  isConfirm?: boolean
+  title: string
+  valueBefore: string[] | null
+  valueAfter: string[] | null
 }
 
-export interface CompareHistoryActionUpdateModel {
-  contents?: string[]
-  isComplied?: boolean
+export interface CompareHistoryTimeModel {
+  hour: string
+  createdBy: string
+  role: RoleEnum
+  type: CompareHistoryTypeEnum
+  actions: CompareHistoryActionModel[]
+}
+
+export interface CompareHistoryCustomModel {
+  day: string
+  hours: CompareHistoryTimeModel[]
 }
 
 export interface DocumentLCDetailModel {
@@ -523,13 +548,18 @@ export interface CompareReasonResultModel {
 export type CompareReasonOnlyResultModel = Omit<CompareReasonResultModel, 'id' | 'compareOn'>
 
 export interface ComparisonResultModel {
+  id: number
   title: string
   status: DocumentResultEnum
   comparisonReasonResults: CompareReasonResultModel[]
   comparisonInputResults: {
     title: string
     comparisonResultInputValues: {
-      value: string | { [key: string]: string }[] | { bboxes: number[][][]; raw_file: string; page_id: number }
+      value:
+        | string
+        | { [key: string]: string }[]
+        | { bboxes: number[][][]; raw_file: string; page_id: number }
+        | string[]
       type: string
       key: string
       prefixValue: string
@@ -546,7 +576,8 @@ export interface ComparisonCellResultModel {
 export interface DocumentCompareModel {
   id: number
   title: string
-  key: DocumentKeyModel
+  key: DocumentKeyEnum
+  status: DocumentResultEnum
   comparisonResults: {
     [key: string]: ComparisonResultModel
   }
@@ -554,6 +585,17 @@ export interface DocumentCompareModel {
     stt: number
     fieldName: string
     comparisonCellResults: ComparisonCellResultModel[]
+  }[]
+  undefinedResults: {
+    id: number
+    inputField: string
+    inputValue: string
+    requirements: {
+      id: number
+      requirement: string
+      status: DocumentResultEnum
+      reason: string
+    }[]
   }[]
 }
 
@@ -563,6 +605,30 @@ export interface DocumentResultModel {
   periodOfPresentation: DocumentResultEnum
   comparisonSummaries: DocumentSumaryModel[]
   lcExpiry: DocumentResultEnum
+}
+
+export interface DocumentCompareUndefinedModel {
+  pathFile: string
+  comparisonUndefinedId: number
+  requirements: DocumentCompareUndefinedRequirementModel[]
+}
+
+export interface DocumentCompareUndefinedRequirementModel {
+  id: number
+  requirement: string
+  status: DocumentResultEnum
+  reason: string
+}
+
+export interface UpdateDocumentCompareUndefinedModel {
+  id?: number
+  reason: string
+  status: DocumentResultEnum
+}
+
+export interface PatchDocumentCompareUndefinedModel {
+  id?: number
+  requirement: string
 }
 
 export const getAllCategoryRequestModel = { pageNum: 0, pageSize: 9999, type: RuleTypeEnum.CATEGORY, query: '' }

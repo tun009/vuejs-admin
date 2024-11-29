@@ -84,6 +84,7 @@ const handleCancelUpdateProfile = () => {
           v-model="changeProfileFormData.name"
           required
           show-limit
+          :max-length="50"
           :readonly="!isEdit"
         />
         <EIBInput

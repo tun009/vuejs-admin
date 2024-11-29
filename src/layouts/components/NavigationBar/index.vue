@@ -16,6 +16,7 @@ import Sidebar from '../Sidebar/index.vue'
 import { useDevice } from '@/hooks/useDevice'
 import { useLayoutMode } from '@/hooks/useLayoutMode'
 import { PROFILE_PAGE } from '@/constants/router'
+import { truncateString } from '@/utils/common'
 
 const { isMobile } = useDevice()
 const { isTop } = useLayoutMode()
@@ -43,7 +44,7 @@ const goToProfile = () => {
     <div class="right-menu">
       <el-dropdown class="right-menu-item">
         <div class="right-menu-avatar">
-          <span>{{ userStore.userInfo.name }}</span>
+          <span>{{ truncateString(userStore.userInfo.name) }}</span>
           <el-avatar :icon="UserFilled" :size="30" />
         </div>
         <template #dropdown>

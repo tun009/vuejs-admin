@@ -6,14 +6,19 @@ import { Plus } from '@element-plus/icons-vue'
 import { debounce } from 'lodash-es'
 import { ref } from 'vue'
 import AddCompareContentForm from './AddCompareContentForm.vue'
-// import MultipleLaguageResult from './MultipleLaguageResult.vue'
-import { CompareReasonResultModel, DocumentCompareModel, DocumentResultEnum } from '@/@types/pages/docs/documents'
+import {
+  CompareReasonResultModel,
+  DocumentCompareModel,
+  DocumentKeyEnum,
+  DocumentResultEnum
+} from '@/@types/pages/docs/documents'
 import { convertFileUrl, createColumnConfigs } from '@/utils/common'
-import MultipleLaguageResult from './MultipleLaguageResult.vue'
+import MultipleLanguageResult from './MultipleLanguageResult.vue'
 import PreviewExtractImage from './PreviewExtractImage.vue'
 import { RuleModel } from '@/@types/pages/rules'
 import SafeHtmlRenderer from '@/components/SafeHtmlRenderer.vue'
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
+import MultipleLanguageResultSimple from './MultipleLanguageResultSimple.vue'
 
 interface Props {
   conditionSelect: number
@@ -25,6 +30,7 @@ interface Props {
 interface Emits {
   (event: 'update:condition', condition: number): void
   (event: 'scroll-by-index', index: number): void
+  (event: 'refresh', key?: DocumentKeyEnum): void
 }
 
 const props = defineProps<Props>()
@@ -33,8 +39,9 @@ const emits = defineEmits<Emits>()
 const { isViewer } = useUserStore()
 
 const dialogVisible = ref(false)
-const loadingConfirm = ref(false)
 const scrollBlock = ref<HTMLElement | null>(null)
+const comparisonUndefinedId = ref(0)
+const is47A = ref(false)
 
 const onScroll = debounce(() => {
   checkElementsInView()
@@ -71,7 +78,7 @@ const convertTableDataCompare = (compareResult: DocumentCompareModel) => {
       stt: c.stt,
       fieldName: c.fieldName
     }
-    c.comparisonCellResults.map((d) => {
+    c.comparisonCellResults.forEach((d) => {
       if (typeof d.value === 'string') {
         result[d.doc] = d.value
       } else {
@@ -81,6 +88,13 @@ const convertTableDataCompare = (compareResult: DocumentCompareModel) => {
     return result
   })
   return response
+}
+
+const handleAddRule4647A = (id: number, _is47A: boolean) => {
+  if (!id) return
+  is47A.value = _is47A
+  comparisonUndefinedId.value = id
+  dialogVisible.value = true
 }
 
 const convertTableDataCompareError = (compareResult: DocumentCompareModel) => {
@@ -97,6 +111,18 @@ const convertTableDataCompareError = (compareResult: DocumentCompareModel) => {
   })
   return response
 }
+
+const convertTableDataCompareErrorResults = (compareResult: DocumentCompareModel) => {
+  let response: CompareReasonResultModel[] = []
+  compareResult.comparisonRowResults.forEach((c) => {
+    c.comparisonCellResults.forEach((d) => {
+      if (d.comparisonResult.status === DocumentResultEnum.DISCREPANCY) {
+        response = response.concat(d.comparisonResult.comparisonReasonResults)
+      }
+    })
+  })
+  return response
+}
 </script>
 
 <template>
@@ -104,8 +130,10 @@ const convertTableDataCompareError = (compareResult: DocumentCompareModel) => {
     <template #default>
       <AddCompareContentForm
         ref="addCompareContentFormRef"
-        @update:loading="(loading: boolean) => (loadingConfirm = loading)"
         @update:visible="(visible: boolean) => (dialogVisible = visible)"
+        :comparison-undefined-id="comparisonUndefinedId"
+        :is47-a="is47A"
+        @refresh="emits('refresh')"
       />
     </template>
   </EIBDrawer>
@@ -125,12 +153,12 @@ const convertTableDataCompareError = (compareResult: DocumentCompareModel) => {
           :icon="Plus"
           color="#005d98"
           plain
-          @click="dialogVisible = true"
+          @click="handleAddRule4647A(compareResult.undefinedResults?.[0]?.id, compareResult?.title?.includes('47A'))"
         />
       </div>
       <div class="w-full h-[1px] bg-[#ebebeb] mt-2 mb-4" />
-      <div v-for="(child, idx) in Object.keys(compareResult.comparisonResults)" :key="idx">
-        <p v-if="Object.keys(compareResult.comparisonResults).length > 1" class="my-3 font-semibold text-base">
+      <div v-for="(child, idx) in Object.keys(compareResult?.comparisonResults ?? {})" :key="idx">
+        <p v-if="Object.keys(compareResult?.comparisonResults)?.length > 1" class="my-3 font-semibold text-base">
           {{ compareResult.comparisonResults?.[child]?.title }}
         </p>
         <div class="flex flex-col gap-3">
@@ -141,7 +169,7 @@ const convertTableDataCompareError = (compareResult: DocumentCompareModel) => {
           >
             <span class="c-text-des">{{ block?.title }}</span>
             <div v-for="(v, v_i) in block.comparisonResultInputValues" :key="v_i">
-              <template v-if="v?.type === 'table' && Array.isArray(v?.value)">
+              <template v-if="v?.type === 'table' && Array.isArray(v?.value) && typeof v?.value?.[0] !== 'string'">
                 <EIBTable
                   :column-configs="createColumnConfigs(v?.value?.[0]) ?? {}"
                   :data="v?.value"
@@ -170,35 +198,61 @@ const convertTableDataCompareError = (compareResult: DocumentCompareModel) => {
                         compareResult.comparisonResults?.[child]?.comparisonReasonResults
                       )?.includes(v?.key)
                     }"
-                    >{{ v?.value }}</span
+                    >{{ Array.isArray(v?.value) ? v?.value?.join(', ') : v?.value }}</span
                   >
                 </p>
               </template>
             </div>
           </div>
         </div>
-        <MultipleLaguageResult
+        <MultipleLanguageResult
           :categories="categories"
           :rules="rules"
+          :comparisonResultId="compareResult.comparisonResults?.[child]?.id"
           :status="compareResult.comparisonResults?.[child]?.status"
           :result="compareResult.comparisonResults?.[child]?.comparisonReasonResults"
+          @refresh="emits('refresh')"
         />
       </div>
-      <EIBTable
-        v-if="compareResult.comparisonRowResults.length"
-        :column-configs="createColumnConfigs(convertTableDataCompare(compareResult)?.[0]) ?? {}"
-        :data="convertTableDataCompare(compareResult)"
-        hidden-checked
-        hidden-pagination
-        height="unset"
-      >
-        <template #fieldName="{ row }">
-          <SafeHtmlRenderer :html="row?.fieldName?.replace(/\n/g, '<br>')" />
-        </template>
-        <template v-for="(c, i) in convertTableDataCompareError(compareResult)" #[c?.key]="{ row, index }" :key="i">
-          <span :class="{ 'text-red-500': c.stt === index + 1 }">{{ row?.[c.key] }}</span>
-        </template>
-      </EIBTable>
+      <div class="flex flex-col gap-3" v-if="compareResult.comparisonRowResults.length">
+        <EIBTable
+          :column-configs="createColumnConfigs(convertTableDataCompare(compareResult)?.[0]) ?? {}"
+          :data="convertTableDataCompare(compareResult)"
+          hidden-checked
+          hidden-pagination
+          height="unset"
+        >
+          <template #fieldName="{ row }">
+            <SafeHtmlRenderer :html="row?.fieldName?.replace(/\n/g, '<br>')" />
+          </template>
+          <template v-for="(c, i) in convertTableDataCompareError(compareResult)" #[c?.key]="{ row, index }" :key="i">
+            <span :class="{ 'text-red-500': c.stt === index + 1 }">{{ row?.[c.key] }}</span>
+          </template>
+        </EIBTable>
+        <MultipleLanguageResult
+          :categories="categories"
+          :rules="rules"
+          :comparisonResultId="compareResult.id"
+          :status="compareResult.status"
+          @refresh="emits('refresh')"
+          :result="convertTableDataCompareErrorResults(compareResult)"
+        />
+      </div>
+      <div>
+        <div v-for="(block, i) in compareResult.undefinedResults" :key="i" class="flex flex-col gap-3">
+          <div class="flex flex-col gap-2">
+            <span class="c-text-des">{{ block?.inputField }}</span>
+            <p class="text-base">{{ block?.inputValue }}</p>
+          </div>
+          <div class="flex flex-col gap-3" v-for="(d, di) in block.requirements" :key="di">
+            <div class="flex flex-col gap-2">
+              <span class="c-text-des">Requirement</span>
+              <p class="text-base">{{ d?.requirement }}</p>
+            </div>
+            <MultipleLanguageResultSimple :comparisonUndefinedId="block?.id" :requirement="d" />
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>

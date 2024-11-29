@@ -6,20 +6,21 @@ export enum RuleTypeEnum {
 }
 
 export interface RuleModel {
-  id: number
+  id?: number
   docType: string
   code: string
   en: string
   vi: string
   type: RuleTypeEnum
   defaultValue?: string
+  isNew?: boolean
 }
 
 export const reasonDefault: RuleModel = {
   code: '',
   docType: '',
   en: '',
-  id: 0,
+  id: undefined,
   type: RuleTypeEnum.CATEGORY,
   vi: ''
 }

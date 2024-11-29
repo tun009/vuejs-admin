@@ -7,6 +7,7 @@ import ApproveProcessDocument from './ApproveProcessDocument.vue'
 import { DocumentStatusEnum } from '@/@types/common'
 import {
   DocumentDataLCModel,
+  DocumentExportFileEnum,
   DocumentLCAmountModel,
   DocumentResultEnum,
   DocumentResultModel,
@@ -17,7 +18,7 @@ import {
   documentStatusOptions
 } from '@/@types/pages/docs/documents'
 import { BatchDetailModel } from '@/@types/pages/docs/documents/services/DocumentResponse'
-import { getDocumentDataLC, getDocumentSummary, getLCAmount } from '@/api/docs/document'
+import { downloadDocumentFile, getDocumentDataLC, getDocumentSummary, getLCAmount } from '@/api/docs/document'
 import EIBDialog from '@/components/common/EIBDialog.vue'
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import Loading from '@/components/common/EIBLoading.vue'
@@ -25,7 +26,7 @@ import EIBTable from '@/components/common/EIBTable.vue'
 import { PROGRESS_COLORS } from '@/constants/color'
 import { COMPARE_DOCUMENT_DETAIL_PAGE, EXTRACT_PAGE } from '@/constants/router'
 import { useUserStore } from '@/store/modules/user'
-import { handleComingSoon, renderLabelByValue, resetNullUndefinedFields } from '@/utils/common'
+import { downloadFileCommon, renderLabelByValue, resetNullUndefinedFields } from '@/utils/common'
 import Status from '@/views/docs/components/Status.vue'
 import { useRoute, useRouter } from 'vue-router'
 import UpdateLCForm from './UpdateLCForm.vue'
@@ -104,12 +105,22 @@ const handleGetDocumentDataLC = async () => {
   }
 }
 
+const handleDownloadCompareResult = async (type: DocumentExportFileEnum = DocumentExportFileEnum.DOCX) => {
+  try {
+    const response = await downloadDocumentFile(documentId.value, { type })
+    downloadFileCommon(response, type)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 const percentage = computed(() => {
   if (!amount.value.totalAmount) return 0
   return Number(((amount.value.amountUsed / amount.value.totalAmount) * 100).toFixed(2))
 })
 
 const isOcred = computed(() => !processingDocumentStatus.includes(props.data.status))
+const isValidated = computed(() => props.data.status === DocumentStatusEnum.VALIDATED)
 
 const getValueLC = (coreKey: string): string | undefined | null => {
   const lcByKey = dataLC.value.find((lc) => lc.coreKey === coreKey)
@@ -302,16 +313,39 @@ onMounted(() => {
       <div class="flex flex-col gap-5">
         <div class="flex flex-row justify-between items-center">
           <span class="text-[#005d98] dark:text-[#409eff] font-semibold text-base">Thông tin đối sánh</span>
-          <el-button
-            v-if="isOcred && !isViewer"
-            :disabled="isOcred"
-            :type="isOcred ? 'info' : 'primary'"
-            class="flex flex-row items-center"
-            @click.stop="handleComingSoon"
-          >
-            <SvgIcon name="download-inline" class="w-4 h-4 mr-2" />
-            <span>{{ $t('docs.detail.downloadResult') }}</span></el-button
-          >
+          <el-dropdown placement="top-start" :disabled="!isValidated">
+            <el-button
+              v-if="!isViewer"
+              :disabled="!isValidated"
+              :type="!isValidated ? 'info' : 'primary'"
+              class="flex flex-row items-center"
+            >
+              <SvgIcon name="download-inline" class="w-4 h-4 mr-2" />
+              <span>{{ $t('docs.detail.downloadResult') }}</span></el-button
+            >
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item class="px-2">
+                  <div
+                    class="flex py-3 flex-row gap-2 items-center"
+                    @click="handleDownloadCompareResult(DocumentExportFileEnum.DOCX)"
+                  >
+                    <SvgIcon name="ic-ms-word" className="!w-5 !h-5" />
+                    <span>Microsoft word (.docx)</span>
+                  </div>
+                </el-dropdown-item>
+                <el-dropdown-item class="px-2">
+                  <div
+                    class="flex py-3 flex-row gap-2 items-center"
+                    @click="handleDownloadCompareResult(DocumentExportFileEnum.PDF)"
+                  >
+                    <SvgIcon name="ic-pdf" className="!w-5 !h-5" />
+                    <span>PDF file (.pdf)</span>
+                  </div>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </div>
         <div class="flex flex-row gap-5 pl-3 items-center">
           <div class="flex-1 flex flex-col gap-3">

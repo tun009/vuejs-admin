@@ -17,3 +17,5 @@ export const regexAccents3 = /Đ/g
 export const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,100}$/
 export const regexNullOrEmpty = /(?!^$)([^\s])/
 export const regexNonNegativeRealNumber = /^\d+(\.\d+)?$/
+
+export const regexContentDispositionFileName = /filename="?(.*)"?/

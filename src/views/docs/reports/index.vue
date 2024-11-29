@@ -23,11 +23,11 @@ import { debounce } from 'lodash-es'
 import { getReports, getDetailReport, downloadFileExcel } from '@/api/reports/'
 import { TIME_FIRST_DAY, TIME_LAST_DAY, formatYYYYMMDD, shortcutsDateRange } from '@/constants/date'
 import DetailReportForm from './components/DetailReportForm.vue'
-import { omitPropertyFromObject, withAllSelection, mappingBranches } from '@/utils/common'
+import { omitPropertyFromObject, withAllSelection, mappingBranches, downloadFileCommon } from '@/utils/common'
 import { getBranches } from '@/api/users'
 import { BranchModel } from '@/@types/pages/login'
-import { ElMessage } from 'element-plus'
 import Status from '../components/Status.vue'
+import { DocumentExportFileEnum } from '@/@types/pages/docs/documents'
 
 const openFilter = ref(false)
 const tableData = ref<ReportModel[]>([])
@@ -83,7 +83,7 @@ const downloadFile = async () => {
   try {
     const pagination = documentTableRef?.value?.getPagination()
     const { status, ...otherFilter } = filterValue
-    const response: any = await downloadFileExcel({
+    const response = await downloadFileExcel({
       ...omitPropertyFromObject(otherFilter, -1),
       beginDate: uploadTimes.value[0] + TIME_FIRST_DAY,
       endDate: uploadTimes.value[1] + TIME_LAST_DAY,
@@ -96,23 +96,7 @@ const downloadFile = async () => {
       ...pagination,
       ...(status?.length ? { status } : {})
     })
-    const blob = new Blob([response as BlobPart], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    const fileName = 'Bao_cao_danh_sach_xu_ly_bo_chung_tu'
-    link.setAttribute('download', fileName)
-    document.body.appendChild(link)
-    link.click()
-    link.remove()
-
-    ElMessage({
-      message: 'Download file thành công',
-      showClose: true,
-      type: 'success'
-    })
+    downloadFileCommon(response, DocumentExportFileEnum.EXCEL)
   } catch (error) {
     console.error(error)
   }

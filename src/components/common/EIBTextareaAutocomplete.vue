@@ -6,7 +6,7 @@ import { defineProps, onMounted, ref } from 'vue'
 
 // Define props for suggestions (array of { key: string, value: string }) and prefix (string)
 interface Props {
-  suggestions?: { id: number; code: string; value: string }[]
+  suggestions?: { id?: number; code: string; value: string }[]
   prefix?: string
   isSingleLine?: boolean
   defaultValue?: string
@@ -34,7 +34,7 @@ const inputElement = ref<InstanceType<typeof ElInput> | null>(null)
 const textareaWrapperRef = ref(null)
 // Reactive state for text area content and suggestions
 // const inputValue = ref<string>(props.defaultValue ?? props.prefix)
-const filteredSuggestions = ref<{ id: number; code: string; value: string }[]>([])
+const filteredSuggestions = ref<{ id?: number; code: string; value: string }[]>([])
 const showSuggestions = ref<boolean>(true)
 // const rows = ref<number>(props.isSingleLine ? 1 : 4) // Set initial number of rows in textarea
 const activeSuggestionIndex = ref<number>(-1) // Index of the selected suggestion
@@ -114,7 +114,7 @@ const onKeyDown = (event: any) => {
 }
 
 // Handle selection of a suggestion
-const onSelectSuggestion = (suggestion: { id: number; value: string; code: string }) => {
+const onSelectSuggestion = (suggestion: { id?: number; value: string; code: string }) => {
   const lines = getLines()
   const line = lines[currentLineIndex.value]
   const discrepancyPart = extractDiscrepancyPart(line)
