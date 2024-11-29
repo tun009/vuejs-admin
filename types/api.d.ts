@@ -4,3 +4,7 @@ interface ApiResponseData<T> {
   data: T
   msg: string
 }
+
+interface ApiCustomRequestConfigModel {
+  notAuth?: boolean
+}

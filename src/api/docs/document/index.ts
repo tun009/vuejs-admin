@@ -1,3 +1,4 @@
+import { DocumentExportFileEnum } from '@/@types/pages/docs/documents'
 import {
   GetDocumentRequestModel,
   UpdateBatchAmountRequestModel,
@@ -10,6 +11,7 @@ import {
   GetDocumentDataLCResponseModel,
   GetDocumentDetailResponseModel,
   GetDocumentFileResponseModel,
+  GetDocumentHistoryResponseModel,
   GetDocumentLCAmountResponseModel,
   GetDocumentLCDetailResponseModel,
   GetDocumentResponseModel,
@@ -132,5 +134,21 @@ export function getDocumentSummary(params: { batchId: string | number }) {
     url: 'comparison/summary',
     method: 'get',
     params
+  })
+}
+
+export function downloadDocumentFile(batchId: string | number, params: { type: DocumentExportFileEnum }) {
+  return request({
+    url: 'batches/' + batchId + '/>download',
+    method: 'get',
+    responseType: 'blob',
+    params
+  })
+}
+
+export function getDocumentHistories(batchId: string | number) {
+  return request<GetDocumentHistoryResponseModel>({
+    url: 'comparison-log/' + batchId,
+    method: 'get'
   })
 }

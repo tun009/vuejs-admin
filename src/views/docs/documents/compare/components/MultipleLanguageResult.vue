@@ -2,13 +2,14 @@
 import {
   CompareReasonOnlyResultModel,
   CompareReasonResultModel,
+  DocumentKeyEnum,
   DocumentResultEnum,
   documentResultValidOptions
 } from '@/@types/pages/docs/documents'
 import { RuleModel, reasonDefault } from '@/@types/pages/rules'
 import EIBDialog from '@/components/common/EIBDialog.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
-import EIBTextareaAutocomplete from '@/components/common/EIBTextareaAutocomplete.vue'
+import EIBTextareaAutoComplete from '@/components/common/EIBTextareaAutoComplete.vue'
 import { useUserStore } from '@/store/modules/user'
 import { InfoFilled } from '@element-plus/icons-vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
@@ -16,19 +17,40 @@ import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import SaveDictionaryForm from './SaveDictionaryForm.vue'
 import { SelectOptionModel } from '@/@types/common'
-import { translateEnglishToVietnamese } from '@/api/docs/document/compare'
+import {
+  translateEnglishToVietnamese,
+  updateCompareResult,
+  updateCompareResultTable
+} from '@/api/docs/document/compare'
+import {
+  DocumentComparisonResultReasonModel,
+  UpdateDocumentCompareResultRequestModel,
+  UpdateDocumentCompareResultTableRequestModel
+} from '@/@types/pages/docs/documents/services/DocumentRequest'
+import { useRoute } from 'vue-router'
+import { getTextFromHtml } from '@/utils/common'
 
 interface Props {
   categories: RuleModel[]
   rules: RuleModel[]
   status: DocumentResultEnum
   result: CompareReasonResultModel[]
+  comparisonResultId: number
+  type?: 'simple' | 'table'
 }
 
-const props = defineProps<Props>()
+interface Emits {
+  (event: 'refresh', key?: DocumentKeyEnum): void
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  type: 'simple'
+})
+const emits = defineEmits<Emits>()
 
 const { t } = useI18n()
 const { isViewer } = useUserStore()
+const route = useRoute()
 
 const lawReasonMapping = computed(() => {
   const result: CompareReasonOnlyResultModel = {
@@ -38,12 +60,16 @@ const lawReasonMapping = computed(() => {
     reasonId: []
   }
   props.result.forEach((r) => {
-    result.laws = [...result.laws, ...r.laws]
-    result.reasons = [...result.reasons, ...r.reasons]
-    result.lawIds = [...result.lawIds, ...r.lawIds]
-    result.reasonId = [...result.reasonId, ...r.reasonId]
+    result.laws = [...result.laws, ...(r.laws ?? [])]
+    result.reasons = [...result.reasons, ...(r.reasons ?? [])]
+    result.lawIds = [...result.lawIds, ...(r.lawIds ?? [])]
+    result.reasonId = [...result.reasonId, ...(r.reasonId ?? [])]
   })
   return result
+})
+
+const defaultLawIds = computed(() => {
+  return lawReasonMapping.value.laws.map((l) => l.code)
 })
 
 const defaultValue = {
@@ -54,7 +80,8 @@ const defaultValue = {
 const reasonListMappingDefault = computed(() => {
   const temp = lawReasonMapping.value.reasons.map((r) => ({
     ...r,
-    defaultValue: r.en
+    en: getTextFromHtml(r.en),
+    defaultValue: getTextFromHtml(r.en)
   }))
   return temp
 })
@@ -63,11 +90,10 @@ const reasonList = ref<RuleModel[]>(reasonListMappingDefault.value)
 
 const isEdit = ref(false)
 const loading = ref(false)
-const loadingTranslate = ref(false)
 const dialogVisible = ref(false)
 const loadingConfirm = ref(false)
 const documentResultFormRef = ref<FormInstance | null>()
-const documentResultFormData = ref({ ...defaultValue })
+const documentResultFormData = ref({ ...defaultValue, lawIds: defaultLawIds.value })
 const saveDictionaryFormRef = ref<InstanceType<typeof SaveDictionaryForm>>()
 
 const documentResultFormRules: FormRules = {}
@@ -77,7 +103,7 @@ const handleClose = () => {
 }
 
 const handleAddRule = () => {
-  reasonList.value = [...reasonList.value, { ...reasonDefault }]
+  reasonList.value = [...reasonList.value, { ...reasonDefault, isNew: true }]
 }
 
 const handleRemoveRule = (i: number) => {
@@ -94,13 +120,10 @@ const updateRuleValue = ({ index, value }: { index: number; value: Partial<RuleM
 
 const handleTranslate = async (i: number) => {
   try {
-    loadingTranslate.value = true
     const response = await translateEnglishToVietnamese({ content: reasonList.value[i].en })
     updateRuleValue({ index: i, value: { vi: response?.data } })
   } catch (error) {
     console.error(error)
-  } finally {
-    loadingTranslate.value = false
   }
 }
 
@@ -112,18 +135,66 @@ const handleSaveDictionary = (i: number) => {
 }
 
 const handleUpdateCompareResult = () => {
-  documentResultFormRef.value?.validate((valid: boolean, fields) => {
+  documentResultFormRef.value?.validate(async (valid: boolean, fields) => {
     if (valid) {
       loading.value = true
-      setTimeout(() => {
-        loading.value = false
+      try {
+        const lawIds = documentResultFormData.value.lawIds.filter((d) => !lawReasonMapping.value.lawIds.includes(d))
+        const laws = props.rules.filter((r) => lawIds.includes(r.code))
+        const reasons = reasonList.value.filter((r) => r?.isNew)
+        const reasonListIds = reasonList.value.map((r) => r.id)
+        const initialReasons: DocumentComparisonResultReasonModel[] = props.result.map((p) => {
+          const exactlyReasons = p.reasons.filter((r) => reasonListIds.includes(r.id))
+          const reasons = exactlyReasons.map((r) => {
+            const newReason = reasonList.value.find((i) => i.id === r.id)
+            return {
+              code: r.code,
+              en: newReason?.en ?? '',
+              vi: newReason?.vi ?? ''
+            }
+          })
+          const laws = p.laws.filter((r) => documentResultFormData.value.lawIds.includes(r.code))
+          return { comparisonResultReasonId: p.id, reasons, laws }
+        })
+        if (props.type === 'simple') {
+          const reasonMore: DocumentComparisonResultReasonModel = {
+            comparisonResultReasonId: null,
+            reasons,
+            laws
+          }
+          const payload: UpdateDocumentCompareResultRequestModel = {
+            comparisonResultId: props.comparisonResultId,
+            status: documentResultFormData.value.status,
+            comparisonResultReasons:
+              documentResultFormData.value.status === DocumentResultEnum.COMPLY ? [] : [...initialReasons, reasonMore]
+          }
+          await updateCompareResult(payload)
+        } else {
+          const reasonMore: DocumentComparisonResultReasonModel = {
+            comparisonResultReasonId: null,
+            reasons,
+            laws
+          }
+          const payload: UpdateDocumentCompareResultTableRequestModel = {
+            comparisonId: props.comparisonResultId,
+            status: documentResultFormData.value.status,
+            reasons:
+              documentResultFormData.value.status === DocumentResultEnum.COMPLY ? [] : [...initialReasons, reasonMore]
+          }
+          await updateCompareResultTable(payload)
+        }
         ElMessage({
           showClose: true,
           type: 'success',
           message: t('notification.description.updateSuccess')
         })
         isEdit.value = false
-      }, 3000)
+        emits('refresh', (route.query?.type as DocumentKeyEnum) ?? DocumentKeyEnum.INVOICE)
+      } catch (error) {
+        console.error(error)
+      } finally {
+        loading.value = false
+      }
     } else {
       console.error('Form validation failed', fields)
     }
@@ -141,14 +212,14 @@ const concatLawContents = (laws: RuleModel[]) => {
 const suggestionMapping = (arrs: RuleModel[]) => {
   return arrs.map((r) => ({
     id: r.id,
-    value: r.en,
+    value: getTextFromHtml(r.en),
     code: r.code
   }))
 }
 
 const ruleMapping = computed((): SelectOptionModel[] => {
   return props.rules.map((r) => ({
-    label: r.en,
+    label: getTextFromHtml(r.en),
     value: r.code
   }))
 })
@@ -181,9 +252,11 @@ const ruleMapping = computed((): SelectOptionModel[] => {
             $t('docs.compare.complied')
           }}</span>
           <div v-else-if="props.status === DocumentResultEnum.DISCREPANCY">
-            <div class="flex flex-row items-center gap-2" v-for="(res, index) in lawReasonMapping.reasons" :key="index">
-              <div class="h-1 w-1 bg-[#e8590c] rounded-sm" />
-              <span class="text-[#e8590c]">{{ $t('docs.compare.discrepancy') }}{{ res.en ? ': ' + res.en : '' }}</span>
+            <div class="flex flex-row items-start gap-2" v-for="(res, index) in lawReasonMapping.reasons" :key="index">
+              <div class="min-w-1 h-1 w-1 bg-[#e8590c] rounded-sm mt-2" />
+              <span class="text-[#e8590c]"
+                >{{ $t('docs.compare.discrepancy') }}{{ res.en ? ': ' + getTextFromHtml(res.en) : '' }}</span
+              >
               <el-tooltip
                 placement="top"
                 v-if="lawReasonMapping?.laws?.length && !index"
@@ -203,8 +276,8 @@ const ruleMapping = computed((): SelectOptionModel[] => {
             $t('docs.status.valid')
           }}</span>
           <div v-else-if="props.status === DocumentResultEnum.DISCREPANCY">
-            <div class="flex flex-row items-center gap-2" v-for="(res, index) in lawReasonMapping.reasons" :key="index">
-              <div class="h-1 w-1 bg-[#e8590c] rounded-sm" />
+            <div class="flex flex-row items-start gap-2" v-for="(res, index) in lawReasonMapping.reasons" :key="index">
+              <div class="min-w-1 h-1 w-1 bg-[#e8590c] rounded-sm mt-2" />
               <span class="text-[#e8590c]">{{ $t('docs.status.invalid') }}{{ res.vi ? ': ' + res.vi : '' }}</span>
             </div>
           </div>
@@ -243,7 +316,7 @@ const ruleMapping = computed((): SelectOptionModel[] => {
                     @click="() => handleRemoveRule(i)"
                   />
                 </div>
-                <EIBTextareaAutocomplete
+                <EIBTextareaAutoComplete
                   v-model="r.en"
                   is-single-line
                   :suggestions="suggestionMapping(categories)"
@@ -281,15 +354,10 @@ const ruleMapping = computed((): SelectOptionModel[] => {
             <span class="min-w-48 text-sm mt-2">{{ $t('docs.compare.reason') }}</span>
             <div class="flex flex-col gap-2 w-full">
               <div class="flex flex-row items-center gap-2 w-full" v-for="(r, i) in reasonList" :key="r.id">
-                <EIBTextareaAutocomplete v-model="r.vi" is-single-line :index="i" @update-value="updateRuleValue" />
-                <el-button
-                  color="#005d98"
-                  plain
-                  class="h-[38px]"
-                  :loading="loadingTranslate"
-                  @click="handleTranslate(i)"
-                  >{{ $t('docs.compare.translate') }}</el-button
-                >
+                <EIBTextareaAutoComplete v-model="r.vi" is-single-line :index="i" @update-value="updateRuleValue" />
+                <el-button color="#005d98" plain class="h-[38px]" @click="handleTranslate(i)">{{
+                  $t('docs.compare.translate')
+                }}</el-button>
               </div>
             </div>
           </div>

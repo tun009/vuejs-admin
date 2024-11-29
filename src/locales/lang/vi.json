@@ -264,7 +264,8 @@
       "invalid": "Bất hợp lệ"
     },
     "compare": {
-      "chooseContent": "Nhập nội dung trường 47A cần bổ sung",
+      "chooseContent": "Nhập nội dung trường { type } cần bổ sung",
+      "addContent": "Thêm nội dung { type }",
       "reason": "Lý do",
       "enterReason": "Nhập lý do",
       "compareRejectDes": "Sau khi nhấn vào nút “Xác nhận”, hệ thống ghi nhận việc “Từ chối” bộ chứng từ, kết thúc giao dịch xử lý",

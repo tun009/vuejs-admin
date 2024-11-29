@@ -27,7 +27,9 @@ export function refreshTokenApi(data: RefreshTokenRequestModel) {
         Authorization: undefined
       }
     },
-    true
+    {
+      notAuth: true
+    }
   )
 }
 

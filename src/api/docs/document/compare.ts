@@ -1,10 +1,17 @@
+import { UpdateDocumentCompareUndefinedModel } from '@/@types/pages/docs/documents'
 import {
+  PatchDocumentCompareUndefinedRequestModel,
   UpdateDictionaryRequestModel,
+  UpdateDocumentCompareResultTableRequestModel,
+  UpdateDocumentCompareResultRequestModel,
   UpdateDocumentStatusModel
 } from '@/@types/pages/docs/documents/services/DocumentRequest'
 import {
   GetDocumentCompareResponseModel,
-  TranslateEnglishToVietnameseResponseModel
+  GetDocumentCompareUndefinedResponseModel,
+  PatchDocumentCompareUndefinedResponseModel,
+  TranslateEnglishToVietnameseResponseModel,
+  UpdateDocumentCompareResultResponseModel
 } from '@/@types/pages/docs/documents/services/DocumentResponse'
 import { request } from '@/api/service'
 
@@ -36,6 +43,49 @@ export function updateDictionary(id: number | string, data: UpdateDictionaryRequ
   return request<TranslateEnglishToVietnameseResponseModel>({
     url: 'dictionaries/' + id,
     method: 'put',
+    data
+  })
+}
+
+export function updateCompareResult(data: UpdateDocumentCompareResultRequestModel) {
+  return request<UpdateDocumentCompareResultResponseModel>({
+    url: 'comparison/update-result',
+    method: 'patch',
+    data
+  })
+}
+
+export function updateCompareResultTable(data: UpdateDocumentCompareResultTableRequestModel) {
+  return request<UpdateDocumentCompareResultResponseModel>({
+    url: 'comparison/update-result-table',
+    method: 'patch',
+    data
+  })
+}
+
+export function getDocumentCompareUndefined(params: { comparisonUndefinedId: string | number }) {
+  return request<GetDocumentCompareUndefinedResponseModel>({
+    url: 'comparison/summary-comparison-undefined',
+    method: 'get',
+    params
+  })
+}
+
+export function updateDocumentCompareUndefined(data: UpdateDocumentCompareUndefinedModel) {
+  return request<GetDocumentCompareUndefinedResponseModel>({
+    url: 'comparison/update-undefined-requirements',
+    method: 'put',
+    data
+  })
+}
+
+export function patchDocumentCompareUndefined(
+  comparisonUndefinedId: string | number,
+  data: PatchDocumentCompareUndefinedRequestModel
+) {
+  return request<PatchDocumentCompareUndefinedResponseModel>({
+    url: 'comparison/' + comparisonUndefinedId + '/undefined-requirements',
+    method: 'patch',
     data
   })
 }

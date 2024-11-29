@@ -30,7 +30,7 @@ function createService() {
       const apiData = response.data
       // Binary data is returned directly
       const responseType = response.request?.responseType
-      if (responseType === 'blob' || responseType === 'arraybuffer') return apiData
+      if (responseType === 'blob' || responseType === 'arraybuffer') return response
       // This code is the business code agreed with the backend
       const code = apiData.code
       // If there is no code, it means that this is not an api developed by the project backend
@@ -107,15 +107,15 @@ function createService() {
 
 /** Create request method */
 function createRequest(service: AxiosInstance) {
-  return function <T>(config: AxiosRequestConfig, notAuth: boolean = false): Promise<T> {
+  return function <T>(config: AxiosRequestConfig, customConfig?: ApiCustomRequestConfigModel): Promise<T> {
     const token = getToken()
     const defaultConfig = {
       headers: {
         // Carry Token
-        Authorization: notAuth ? undefined : token ? `Bearer ${token}` : undefined,
+        Authorization: customConfig?.notAuth ? undefined : token ? `Bearer ${token}` : undefined,
         'Content-Type': config.data instanceof FormData ? 'multipart/form-data' : 'application/json'
       },
-      timeout: 10000,
+      timeout: 30000,
       baseURL: import.meta.env.VITE_BASE_API
       // data: {}
     }

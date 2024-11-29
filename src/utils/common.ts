@@ -1,8 +1,10 @@
 import { ColumnConfigModel, SelectOptionModel, StatusColorModel } from '@/@types/common'
-import { ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import DOMPurify from 'dompurify'
 import { BranchModel } from '@/@types/pages/login'
-import { TABLE_COLUMN_WIDTH_DEFAULT } from '@/constants/common'
+import { BLOB_EXPORT_TYPES, TABLE_COLUMN_WIDTH_DEFAULT } from '@/constants/common'
+import { regexContentDispositionFileName } from '@/constants/regex'
+import { DocumentExportFileEnum } from '@/@types/pages/docs/documents'
 
 export const getDataWithPagination = <T>(array: T[], pageNum: number, pageSize: number): T[] => {
   const start = pageNum * pageSize
@@ -37,6 +39,14 @@ export const truncateFileName = (fileName: string) => {
   }
 
   return fileName
+}
+
+export const truncateString = (string: string) => {
+  if (string.length > 20) {
+    return string.slice(0, 20) + '…'
+  }
+
+  return string
 }
 
 export const scrollIntoViewParent = (id: string) => {
@@ -164,4 +174,49 @@ export const createColumnConfigs = (object: { [key: string]: string | number }):
 
 export const convertFileUrl = (path: string) => {
   return import.meta.env.VITE_BASE_API + '/files?src=' + path
+}
+
+export function getFileNameFromContentDisposition(contentDisposition: string = '') {
+  const match = contentDisposition.match(regexContentDispositionFileName)
+
+  if (match) {
+    const fileNameWithExtension = match[1]
+    const fileNameWithoutExtension = fileNameWithExtension?.split('.')?.[0]
+    return fileNameWithoutExtension
+  }
+
+  return 'file'
+}
+
+export const downloadFileCommon = (response: any, type: DocumentExportFileEnum = DocumentExportFileEnum.DOCX) => {
+  const blob = new Blob([response?.data as BlobPart], {
+    type: BLOB_EXPORT_TYPES?.[type]
+  })
+  const fileName = getFileNameFromContentDisposition(response?.headers?.['content-disposition'])
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.setAttribute('download', fileName)
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+
+  ElMessage({
+    message: 'Download file thành công',
+    showClose: true,
+    type: 'success'
+  })
+}
+
+// Hàm lấy văn bản từ HTML string và xóa phần tử tạm thời sau khi sử dụng
+export function getTextFromHtml(html: string): string {
+  const tempElement = document.createElement('div') // Tạo phần tử div tạm thời
+  tempElement.innerHTML = html // Chèn HTML vào phần tử này
+
+  const textContent = tempElement.innerText || tempElement.textContent || '' // Lấy văn bản
+
+  // Xóa phần tử div tạm thời
+  tempElement.remove()
+
+  return textContent
 }

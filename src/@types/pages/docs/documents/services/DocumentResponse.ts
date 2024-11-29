@@ -2,7 +2,9 @@ import { BranchModel } from '@/@types/pages/login'
 import {
   ApproveProcessDocumentModel,
   BusinessTypeEnum,
+  CompareHistoryModel,
   DocumentCompareModel,
+  DocumentCompareUndefinedModel,
   DocumentDataLCModel,
   DocumentFileModel,
   DocumentLCAmountModel,
@@ -38,7 +40,15 @@ export type GetDocumentCompareResponseModel = ApiResponseData<DocumentCompareMod
 
 export type GetDocumentSummaryResponseModel = ApiResponseData<DocumentResultModel>
 
+export type GetDocumentHistoryResponseModel = ApiResponseData<CompareHistoryModel>
+
 export type TranslateEnglishToVietnameseResponseModel = ApiResponseData<string>
+
+export type UpdateDocumentCompareResultResponseModel = ApiResponseData<boolean>
+
+export type GetDocumentCompareUndefinedResponseModel = ApiResponseData<DocumentCompareUndefinedModel>
+
+export type PatchDocumentCompareUndefinedResponseModel = ApiResponseData<boolean>
 
 export interface BatchDetailModel {
   id: number

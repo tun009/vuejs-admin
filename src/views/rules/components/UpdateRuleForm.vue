@@ -43,7 +43,7 @@ const handleUpdateRule = () => {
     try {
       if (valid) {
         loading.value = true
-        await updateRule({ id: props.data.id, type: props.data.type, en: updateRuleFormData.en })
+        await updateRule({ id: props.data.id as number, type: props.data.type, en: updateRuleFormData.en })
         ElMessage({
           message: 'Cập nhật thông tin thành công!',
           showClose: true,
