@@ -17,11 +17,12 @@ sonar:
     - develop
 
 test:
+  image: node:18
   stage: test
   script:
     - echo "---------------------------------------------test"
-    - pnpm install
-    - pnpm run test
+    - npm install
+    - npm run test
   # only:
   #   - develop
   tags:
