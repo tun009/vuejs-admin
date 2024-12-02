@@ -42,7 +42,7 @@
               />
               <div class="box-subinfo">
                 <div class="big-title">
-                  {{ chartData?.totalDossierValid ?? 0 + (chartData?.totalDossierInvalid ?? 0)
+                  {{ (chartData?.totalDossierValid ?? 0) + (chartData?.totalDossierInvalid ?? 0)
                   }}<span class="text-base"> /{{ chartData?.totalDossier }} </span>
                 </div>
                 <div class="big-title-text">Bộ đã phê duyệt</div>

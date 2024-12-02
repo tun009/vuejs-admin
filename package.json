@@ -21,8 +21,7 @@
   "dependencies": {
     "@canvasjs/vue-charts": "^1.0.3",
     "@element-plus/icons-vue": "2.3.1",
-    "@tato30/vue-pdf": "^1.11.1",
-    "apexcharts": "^3.54.0",
+    "@tato30/vue-pdf": "^1.9.7",
     "axios": "1.7.7",
     "chart.js": "^4.4.4",
     "chartjs-plugin-datalabels": "^2.2.0",

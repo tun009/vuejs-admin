@@ -403,20 +403,22 @@ onMounted(() => {
                       <div class="ml-[16px]">
                         <div class="flex">
                           <span
-                            class="text-[#fff] rounded-[3px] px-[4px] text-[12px] py-[2px] font-medium"
+                            class="text-[#fff] rounded-[3px] px-[4px] text-[12px] py-[2px] font-medium max-h-6"
                             :style="{
                               backgroundColor: renderColorOcr((item.confidence ?? 0) * 100)
                             }"
                           >
                             {{ formatNumberConfidence(item?.confidence ?? 0) }}%
                           </span>
-                          <span class="ml-2 text-[#adb5bd]">{{ item.name }}</span>
+                          <span class="ml-2 text-[#adb5bd] break-words text-break">{{ item.name }}</span>
                         </div>
                         <div class="mt-[8px] min-h-[12px]">
                           <div v-if="item.type === 'structured_table'">Click để xem</div>
                           <el-input
                             v-else-if="fieldSelect === item.coreKey && item.type !== 'image'"
                             v-model="item.validatedValue"
+                            autosize
+                            type="textarea"
                           />
                           <div v-else-if="item.type === 'image'">
                             <img
@@ -522,5 +524,8 @@ onMounted(() => {
 }
 .box-denied-confirm .el-message-box__input {
   padding-top: 5px !important;
+}
+.text-break {
+  word-break: break-word;
 }
 </style>
