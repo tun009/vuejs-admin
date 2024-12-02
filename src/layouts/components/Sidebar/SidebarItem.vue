@@ -2,7 +2,7 @@
 import { isExternal } from '@/utils/validate'
 import path from 'path-browserify'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { type RouteRecordRaw } from 'vue-router'
+import { useRoute, type RouteRecordRaw } from 'vue-router'
 import SidebarItemLink from './SidebarItemLink.vue'
 // import { useTheme } from '@/hooks/useTheme'
 import { useAppStore } from '@/store/modules/app'
@@ -21,6 +21,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const appStore = useAppStore()
 const { userInfo } = useUserStore()
+const route = useRoute()
 
 /** Whether to always show the root menu */
 const alwaysShowRootMenu = computed(() => props.item.meta?.alwaysShow)
@@ -104,7 +105,7 @@ onUnmounted(() => {
           <SvgIcon
             v-if="theOnlyOneChild.meta.svgIcon"
             :name="
-              hover || resolvePath(theOnlyOneChild?.path ?? '') === pathActive
+              hover || (resolvePath(theOnlyOneChild?.path ?? '') === pathActive && route.path === pathActive)
                 ? theOnlyOneChild.meta.svgIcon + '-active'
                 : theOnlyOneChild.meta.svgIcon
             "
