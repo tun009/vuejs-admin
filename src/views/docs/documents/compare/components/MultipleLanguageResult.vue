@@ -200,8 +200,12 @@ const handleUpdateCompareResult = () => {
 
 const concatLawContents = (laws: RuleModel[]) => {
   let result: string = ''
-  laws.forEach((l) => {
-    result += l.en
+  laws.forEach((l, i) => {
+    if (!i) {
+      result += l.en
+      return
+    }
+    result += '<br />' + l.en
   })
   return result
 }
@@ -259,7 +263,7 @@ const ruleMapping = computed((): SelectOptionModel[] => {
                 v-if="lawReasonMapping?.laws?.length && !index"
                 raw-content
                 :content="concatLawContents(lawReasonMapping?.laws)"
-                popper-class="max-w-[580px]"
+                popper-class="max-w-[580px] !max-h-[112px] overflow-y-auto hidden-scrollbar"
               >
                 <el-icon :size="18" class="cursor-pointer ml-1"><InfoFilled /></el-icon>
               </el-tooltip>

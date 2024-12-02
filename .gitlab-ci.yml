@@ -20,9 +20,13 @@ test:
   stage: test
   script:
     - echo "---------------------------------------------test"
-  only:
-    - master
+    - pnpm install
+    - pnpm run test
+  # only:
+  #   - develop
   tags:
     - test
     - develop
-
+  artifacts:
+    paths:
+      - coverage/

@@ -2,7 +2,7 @@
 import { RuleModel } from '@/@types/pages/rules'
 import { ElInput } from 'element-plus'
 import { computed } from 'vue'
-import { defineProps, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 // Define props for suggestions (array of { key: string, value: string }) and prefix (string)
 interface Props {
