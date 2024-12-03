@@ -22,8 +22,13 @@ test:
   stage: test
   script:
     - echo "test"
+    - export http_proxy=http://10.30.153.169:3128
+    - export https_proxy=http://10.30.153.169:3128
     - npm install -f --verbose
+    - npm install @vitest/coverage-v8@2.1.1
     - npm run test:coverage
+    - unset http_proxy
+    - unset https_proxy
   # only:
   #   - develop
   tags:
@@ -32,3 +37,6 @@ test:
   artifacts:
     paths:
       - coverage/
+  cache:
+    paths:
+      - node_modules/
