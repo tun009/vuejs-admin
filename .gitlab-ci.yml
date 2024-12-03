@@ -37,3 +37,6 @@ test:
   artifacts:
     paths:
       - coverage/
+  cache:
+    paths:
+      - node_modules/
