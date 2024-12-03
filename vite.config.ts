@@ -86,10 +86,14 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
     test: {
       include: ['tests/**/*.test.ts'],
       environment: 'jsdom',
+      reporters: ['junit'],
+      outputFile: {
+        junit: './coverage/junit-report.xml'
+      },
       coverage: {
-        provider: 'v8', // Có thể chọn 'v8' hoặc 'istanbul' nếu cần
-        reporter: ['text', 'html', 'lcov'], // Chọn các báo cáo bạn muốn (text, html, lcov)
-        all: true, // Bao gồm tất cả các file mã nguồn (kể cả chưa được test)
+        provider: 'v8',
+        reporter: ['cobertura'],
+
         reportOnFailure: true,
         ignoreEmptyLines: true
       }
