@@ -22,8 +22,12 @@ test:
   stage: test
   script:
     - echo "test"
+    - export http_proxy=http://10.30.153.169:3128
+    - export https_proxy=http://10.30.153.169:3128
     - npm install -f --verbose
     - npm run test:coverage
+    - unset http_proxy
+    - unset https_proxy
   # only:
   #   - develop
   tags:
