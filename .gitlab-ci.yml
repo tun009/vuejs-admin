@@ -5,23 +5,23 @@ stages:
 variables:
   HOST: '192.168.101.132'
 
-# sonar:
-#   stage: sonar
-#   script:
-#     - echo "scanning sonar"
-#     - sonar-scanner -Dsonar.projectKey=eximbank-ui -Dsonar.sources=. -Dsonar.host.url=https://sonar.cyberspace.vn/ -Dsonar.login=sqp_51b2de09b4acb6c7fd019fb238f4c7d1fcad2e91
-#   only:
-#     - develop
-#   allow_failure: true
-#   tags:
-#     - sonar
-#     - develop
+sonar:
+  stage: sonar
+  script:
+    - echo "scanning sonar"
+    - sonar-scanner -Dsonar.projectKey=eximbank-ui -Dsonar.sources=. -Dsonar.host.url=https://sonar.cyberspace.vn/ -Dsonar.login=sqp_51b2de09b4acb6c7fd019fb238f4c7d1fcad2e91
+  only:
+    - develop
+  allow_failure: true
+  tags:
+    - sonar
+    - develop
 
 test:
   image: hub.vtcc.vn:8989/node:18.16.1-bullseye
   stage: test
   script:
-    - echo "---------------------------------------------test"
+    - echo "test"
     - npm install -f --verbose
     - npm run test:coverage
   # only:
