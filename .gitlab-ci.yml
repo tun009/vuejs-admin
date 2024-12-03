@@ -27,8 +27,6 @@ test:
   # only:
   #   - develop
   tags:
-    - test
-    - develop
     - gitlab-runner-02
   coverage: /All files(?:[^|]*\|){4}\s*(\S+)/
   artifacts:
