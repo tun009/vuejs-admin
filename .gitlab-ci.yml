@@ -41,7 +41,7 @@ test:
     when: always
     paths:
       - coverage/cobertura-coverage.xml
-      - coverage/junit-report.xml
+      - junit-report.xml
     expose_as: 'Unit Test Report'
     reports:
       junit: junit-report.xml
