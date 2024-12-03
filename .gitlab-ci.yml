@@ -6,16 +6,19 @@ variables:
   HOST: '192.168.101.132'
 
 sonar:
-  stage: sonar
+  stage: test
   script:
     - echo "scanning sonar"
-    - sonar-scanner -Dsonar.projectKey=eximbank-ui -Dsonar.sources=. -Dsonar.host.url=https://sonar.cyberspace.vn/ -Dsonar.login=sqp_51b2de09b4acb6c7fd019fb238f4c7d1fcad2e91 -Dsonar.tests=tests -Dsonar.javascript.lcov.reportPaths=coverage/lcov-report/index.html
-  only:
-    - develop
+    - sonar-scanner -Dsonar.projectKey=eximbank-ui -Dsonar.sources=. -Dsonar.host.url=https://sonar.cyberspace.vn/ -Dsonar.login=sqp_51b2de09b4acb6c7fd019fb238f4c7d1fcad2e91 -Dsonar.tests=tests -Dsonar.javascript.lcov.reportPaths=coverage/cobertura-coverage.xml
+  # only:
+  #   - develop
   allow_failure: true
   tags:
     - sonar
     - develop
+  needs:
+    - job: test
+      artifacts: true
 
 test:
   image: hub.vtcc.vn:8989/node:18.16.1-bullseye
@@ -35,8 +38,17 @@ test:
     - local
   coverage: /All files(?:[^|]*\|){4}\s*(\S+)/
   artifacts:
+    when: always
     paths:
-      - coverage/
+      - coverage/cobertura-coverage.xml
+      - coverage/junit-report.xml
+    expose_as: 'Unit Test Report'
+    reports:
+      junit: junit-report.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/cobertura-coverage.xml
+    expire_in: 1 week
   cache:
     paths:
       - node_modules/
