@@ -85,7 +85,14 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
     /** Vitest unit test configuration: https://cn.vitest.dev/config */
     test: {
       include: ['tests/**/*.test.ts'],
-      environment: 'jsdom'
+      environment: 'jsdom',
+      coverage: {
+        provider: 'v8', // Có thể chọn 'v8' hoặc 'istanbul' nếu cần
+        reporter: ['text', 'html', 'lcov'], // Chọn các báo cáo bạn muốn (text, html, lcov)
+        all: true, // Bao gồm tất cả các file mã nguồn (kể cả chưa được test)
+        reportOnFailure: true,
+        ignoreEmptyLines: true
+      }
     }
   }
 }
