@@ -22,7 +22,8 @@ test:
   stage: test
   script:
     - echo "---------------------------------------------test"
-    - npm run test
+    - npm install -g vitest
+    - npm run test:coverage
   # only:
   #   - develop
   tags:
