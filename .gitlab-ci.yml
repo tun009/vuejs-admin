@@ -22,9 +22,8 @@ test:
   stage: test
   script:
     - echo "---------------------------------------------test"
-    - npm install -g pnpm
-    - pnpm install -f
-    - pnpm run test:coverage
+    - npm install -f
+    - npm run test:coverage
   # only:
   #   - develop
   tags:
