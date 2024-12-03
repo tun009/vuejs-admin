@@ -16,7 +16,7 @@
     "lint": "pnpm lint:eslint && pnpm lint:prettier",
     "prepare": "husky",
     "test": "vitest",
-    "test:coverage": "vitest run --coverage --reporter=junit",
+    "test:coverage": "vitest run --coverage",
     "postinstall": "chmod +x .husky/*"
   },
   "dependencies": {
