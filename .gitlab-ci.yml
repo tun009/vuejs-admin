@@ -22,7 +22,7 @@ test:
   stage: test
   script:
     - echo "---------------------------------------------test"
-    - npm install -f
+    - npm install -f --verbose
     - npm run test:coverage
   # only:
   #   - develop
