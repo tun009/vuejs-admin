@@ -9,7 +9,7 @@ sonar:
   stage: sonar
   script:
     - echo "scanning sonar"
-    - sonar-scanner -Dsonar.projectKey=eximbank-ui -Dsonar.sources=. -Dsonar.host.url=https://sonar.cyberspace.vn/ -Dsonar.login=sqp_51b2de09b4acb6c7fd019fb238f4c7d1fcad2e91
+    - sonar-scanner -Dsonar.projectKey=eximbank-ui -Dsonar.sources=. -Dsonar.host.url=https://sonar.cyberspace.vn/ -Dsonar.login=sqp_51b2de09b4acb6c7fd019fb238f4c7d1fcad2e91 -Dsonar.tests=tests -Dsonar.javascript.lcov.reportPaths=coverage/lcov-report/index.html
   only:
     - develop
   allow_failure: true
