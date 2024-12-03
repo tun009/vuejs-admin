@@ -16,6 +16,7 @@
     "lint": "pnpm lint:eslint && pnpm lint:prettier",
     "prepare": "husky",
     "test": "vitest",
+    "test:coverage": "vitest run --coverage",
     "postinstall": "chmod +x .husky/*"
   },
   "dependencies": {
@@ -62,6 +63,7 @@
     "@typescript-eslint/parser": "8.6.0",
     "@vitejs/plugin-vue": "5.1.4",
     "@vitejs/plugin-vue-jsx": "4.0.1",
+    "@vitest/coverage-v8": "^2.1.1",
     "@vue/eslint-config-prettier": "9.0.0",
     "@vue/eslint-config-typescript": "13.0.0",
     "@vue/test-utils": "2.4.6",

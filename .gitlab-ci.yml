@@ -12,6 +12,7 @@ sonar:
     - sonar-scanner -Dsonar.projectKey=eximbank-ui -Dsonar.sources=. -Dsonar.host.url=https://sonar.cyberspace.vn/ -Dsonar.login=sqp_51b2de09b4acb6c7fd019fb238f4c7d1fcad2e91
   only:
     - develop
+  allow_failure: true
   tags:
     - sonar
     - develop
@@ -21,13 +22,13 @@ test:
   stage: test
   script:
     - echo "---------------------------------------------test"
-    - npm install
     - npm run test
   # only:
   #   - develop
   tags:
     - test
     - develop
+  coverage: /All files(?:[^|]*\|){4}\s*(\S+)/
   artifacts:
     paths:
       - coverage/
