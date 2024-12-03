@@ -56,10 +56,12 @@ listenerRouteChange((route) => {
 .el-breadcrumb {
   line-height: var(--prefix-navigationbar-height);
   .no-redirect {
-    color: var(--el-text-color-placeholder);
+    color: var(--el-text-color-primary);
+    font-weight: 500;
   }
   a {
     font-weight: normal;
+    opacity: 0.8;
   }
 }
 </style>

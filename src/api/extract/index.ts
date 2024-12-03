@@ -6,7 +6,8 @@ import {
   ExtractHistoryResponseModel,
   ExtractNotePostResponseModel,
   ExtractNoteResponseModel,
-  DocumentTypeResponseModel
+  DocumentTypeResponseModel,
+  ExtractSettingResponseModel
 } from '@/@types/pages/extract/service/ExtractResponse'
 import { request } from '@/api/service'
 import {
@@ -94,5 +95,11 @@ export function ocrDocumentApi(id: number) {
   return request<ExtractDossierPostResponseModel>({
     url: `dossier-docs/${id}/ocr`,
     method: 'patch'
+  })
+}
+export function getExtractConfidence() {
+  return request<ExtractSettingResponseModel>({
+    url: 'confidence-config',
+    method: 'get'
   })
 }

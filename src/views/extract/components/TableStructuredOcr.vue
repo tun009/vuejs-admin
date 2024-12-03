@@ -25,6 +25,9 @@ const toggleEdit = (rowIndex: number, colIndex: number, dataCol: ExtractResultOc
 </script>
 <template>
   <table class="table table-structured-cp">
+    <caption>
+      To display table structured
+    </caption>
     <thead>
       <tr>
         <th>STT</th>
