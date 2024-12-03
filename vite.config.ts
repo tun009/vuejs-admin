@@ -88,7 +88,7 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
       environment: 'jsdom',
       reporters: ['junit'],
       outputFile: {
-        junit: './coverage/junit-report.xml'
+        junit: './junit-report.xml'
       },
       coverage: {
         provider: 'v8',
