@@ -16,12 +16,15 @@ export const handleComingSoon = () => {
   ElMessageBox.confirm('Coming soon...')
 }
 
-export const renderLabelByValue = (options: SelectOptionModel[], value: string | number): string => {
+export const renderLabelByValue = (options: SelectOptionModel[] | undefined, value: string | number): string => {
   if (!options || !options.length) return ''
   return options.find((i) => i.value === value)?.label ?? ''
 }
 
-export const renderColorByValue = (options: SelectOptionModel[], value: string | number): StatusColorModel => {
+export const renderColorByValue = (
+  options: SelectOptionModel[] | undefined,
+  value: string | number
+): StatusColorModel => {
   if (!options || !options.length) return {} as StatusColorModel
   return options.find((i) => i.value === value)?.color ?? ({} as StatusColorModel)
 }
@@ -36,7 +39,7 @@ export const truncateFileName = (fileName: string) => {
   const extension = fileName.slice(dotIndex)
 
   if (namePart.length > 20) {
-    return namePart.slice(0, 20) + '…' + extension
+    return namePart.slice(0, 20) + '...' + extension
   }
 
   return fileName
@@ -44,7 +47,7 @@ export const truncateFileName = (fileName: string) => {
 
 export const truncateString = (string: string) => {
   if (string.length > 20) {
-    return string.slice(0, 20) + '…'
+    return string.slice(0, 20) + '...'
   }
 
   return string
@@ -53,7 +56,7 @@ export const truncateString = (string: string) => {
 export const scrollIntoViewParent = (id: string) => {
   const element = document.getElementById(id)
   if (!element) return
-  element?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  element?.scrollIntoView?.({ behavior: 'smooth', block: 'start' })
 }
 
 export function resetNullUndefinedFields(obj: Record<string, any>, defaultValue: string | number | boolean = ''): void {
@@ -70,13 +73,13 @@ export const sanitizeString = (symbolId: string) => {
   return DOMPurify.sanitize(symbolId)
 }
 
-export const withAllSelection = (options: SelectOptionModel[]): SelectOptionModel[] => {
-  return [{ label: 'Tất cả', value: -1 }, ...options]
+export const withAllSelection = (options?: SelectOptionModel[] | null): SelectOptionModel[] => {
+  return [{ label: 'Tất cả', value: -1 }, ...(options ?? [])]
 }
 
 export const omitPropertyFromObject = (
   obj: Record<string, any>,
-  filterValue: string | number | boolean
+  filterValue?: string | number | boolean | null
 ): Record<string, any> => {
   const newObj: Record<string, any> = {}
   for (const key in obj) {
@@ -98,9 +101,10 @@ export const groupByField = <T>(data: T[], key: keyof T): Record<string, T[]> =>
   }, {})
 }
 
-export const mappingBranches = (branches: BranchModel[]): SelectOptionModel[] => {
+export const mappingBranches = (branches?: BranchModel[] | null): SelectOptionModel[] => {
+  if (!branches) return []
   return branches.map((b: BranchModel) => ({
-    label: b.name,
+    label: b.name ?? '',
     value: b.id,
     description: b.code
   }))
@@ -110,7 +114,7 @@ export const formatNumberConfidence = (num: number) => {
   if (Number.isInteger(num * 100)) {
     return (num * 100).toString()
   } else {
-    return Math.round(num * 10 * 100) / 10
+    return (Math.round(num * 10 * 100) / 10).toString()
   }
 }
 
@@ -228,4 +232,7 @@ export const renderColorByConfidence = (conf: number = 0, settings: UpdateConfid
     if (conf >= item.min && conf <= item.max) color = item.color
   })
   return color
+}
+export const withDefaultString = (value: string | null, defaultString: string = '-') => {
+  return value ? value : defaultString
 }

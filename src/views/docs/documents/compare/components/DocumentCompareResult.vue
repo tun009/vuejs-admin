@@ -7,7 +7,7 @@ import { debounce } from 'lodash-es'
 import { ref } from 'vue'
 import AddCompareContentForm from './AddCompareContentForm.vue'
 import { CompareReasonResultModel, DocumentCompareModel, DocumentResultEnum } from '@/@types/pages/docs/documents'
-import { convertFileUrl, createColumnConfigs } from '@/utils/common'
+import { convertFileUrl, createColumnConfigs, withDefaultString } from '@/utils/common'
 import MultipleLanguageResult from './MultipleLanguageResult.vue'
 import PreviewExtractImage from './PreviewExtractImage.vue'
 import { RuleModel } from '@/@types/pages/rules'
@@ -193,7 +193,11 @@ const convertTableDataCompareErrorResults = (compareResult: DocumentCompareModel
                         compareResult.comparisonResults?.[child]?.comparisonReasonResults
                       )?.includes(v?.key)
                     }"
-                    >{{ Array.isArray(v?.value) ? v?.value?.join(', ') : v?.value }}</span
+                    >{{
+                      Array.isArray(v?.value)
+                        ? withDefaultString(v?.value?.join(', '))
+                        : withDefaultString(v?.value as string)
+                    }}</span
                   >
                 </p>
               </template>

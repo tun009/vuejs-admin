@@ -9,20 +9,34 @@ sonar:
   stage: sonar
   script:
     - echo "scanning sonar"
-    - sonar-scanner -Dsonar.projectKey=eximbank-ui -Dsonar.sources=. -Dsonar.host.url=https://sonar.cyberspace.vn/ -Dsonar.login=sqp_51b2de09b4acb6c7fd019fb238f4c7d1fcad2e91
+    - sonar-scanner -Dsonar.projectKey=eximbank-ui -Dsonar.sources=. -Dsonar.host.url=https://sonar.cyberspace.vn/ -Dsonar.login=sqp_51b2de09b4acb6c7fd019fb238f4c7d1fcad2e91 -Dsonar.tests=tests -Dsonar.javascript.lcov.reportPaths=coverage/lcov-report/index.html
+  only:
+    - develop
+  allow_failure: true
+  tags:
+    - sonar
+    - develop
+
+test:
+  image: hub.vtcc.vn:8989/node:18.16.1-bullseye
+  stage: test
+  script:
+    - echo "test"
+    - export http_proxy=http://10.30.153.169:3128
+    - export https_proxy=http://10.30.153.169:3128
+    - npm install -f --verbose
+    - npm install @vitest/coverage-v8@2.1.1
+    - npm run test:coverage
+    - unset http_proxy
+    - unset https_proxy
   # only:
   #   - develop
   tags:
-    - sonar
-    # - develop
-
-test:
-  stage: test
-  script:
-    - echo "---------------------------------------------test"
-  only:
-    - master
-  tags:
-    - test
-    - develop
-
+    - local
+  coverage: /All files(?:[^|]*\|){4}\s*(\S+)/
+  artifacts:
+    paths:
+      - coverage/
+  cache:
+    paths:
+      - node_modules/
