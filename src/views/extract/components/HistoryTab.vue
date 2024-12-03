@@ -22,9 +22,10 @@ watch(
 )
 const historiesData = ref<ExtractHistoryModel[][]>([])
 const dataHistoriesGroupDay = ref<ExtractHistoryGroupedDayModel[]>([])
-const dataHistoriesConvert: ExtractHistoryGroupedResultModel[] = []
+let dataHistoriesConvert: ExtractHistoryGroupedResultModel[] = []
 const fetchHistories = async () => {
   try {
+    dataHistoriesConvert = []
     const response = await getDossierHistoriesApi(props.dossierDocId)
     historiesData.value = response.data
     historiesData.value.forEach((item) => {

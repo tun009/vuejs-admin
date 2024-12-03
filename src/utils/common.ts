@@ -5,6 +5,7 @@ import { BranchModel } from '@/@types/pages/login'
 import { BLOB_EXPORT_TYPES, TABLE_COLUMN_WIDTH_DEFAULT } from '@/constants/common'
 import { regexContentDispositionFileName } from '@/constants/regex'
 import { DocumentExportFileEnum } from '@/@types/pages/docs/documents'
+import { UpdateConfidenceRequestModel } from '@/@types/pages/docs/settings/services/SettingRequest'
 
 export const getDataWithPagination = <T>(array: T[], pageNum: number, pageSize: number): T[] => {
   const start = pageNum * pageSize
@@ -224,7 +225,14 @@ export function getTextFromHtml(html: string): string {
 
   return textContent
 }
-
+export const renderColorByConfidence = (conf: number = 0, settings: UpdateConfidenceRequestModel[]): string => {
+  conf = parseFloat(conf.toFixed(3))
+  let color = '#7a8da5'
+  settings.forEach((item) => {
+    if (conf >= item.min && conf <= item.max) color = item.color
+  })
+  return color
+}
 export const withDefaultString = (value: string | null, defaultString: string = '-') => {
   return value ? value : defaultString
 }

@@ -43,11 +43,11 @@ export const SOLListColumnConfigs = [
   },
   {
     field: 'name',
-    label: 'Tên DVKD'
+    label: 'Tên ĐVKD'
   },
   {
     field: 'totalDossierHandle',
-    label: 'Số lượng BCT đăng ký',
+    label: 'Số lượng BCT đã xử lý',
     width: 200
   }
 ]
