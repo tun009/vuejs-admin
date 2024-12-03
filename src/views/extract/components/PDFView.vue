@@ -56,10 +56,10 @@ const tagLabelToPage = (boxInfos: number[][][], pageNum: number) => {
   listActivesRemove.forEach((element) => {
     element.remove()
   })
-  const pElement = document.createElement('p')
   const elementPage = document.getElementById('page-' + (pageNum + 1)) as HTMLElement
   if (boxInfos?.length > 0) {
     boxInfos.forEach((boxInfo, index) => {
+      const pElement = document.createElement('p')
       pElement.className = 'box-label'
       // renderElementByRotation(pElement, boxInfo)
       pElement.style.width = caculatorDistance(getRectangle(boxInfo, 'width'))

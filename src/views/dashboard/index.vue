@@ -105,15 +105,14 @@
           :columnConfigs="fieldChangedListColumnConfigs"
           :data="fieldsChangedData"
           height="100%"
-          :callback="getRatio"
           hiddenChecked
           hiddenPagination
         >
-          <template #field="{ row }">
+          <template #key="{ row }">
             <div>
-              <span>{{ row.name }}</span>
+              <span>{{ row.key }}</span>
               <br />
-              <span class="text-[#adb5bd]">{{ row.field }}</span>
+              <span class="text-[#adb5bd]">{{ row.docType }}</span>
             </div>
           </template>
           <template #rate="{ row }">
@@ -126,7 +125,6 @@
         <EIBTable
           :columnConfigs="SOLListColumnConfigs"
           :data="SOLData"
-          :callback="getStatsBranch"
           height="100%"
           hiddenChecked
           hiddenPagination
@@ -144,7 +142,7 @@ import EIBSelect from '@/components/common/EIBSelect.vue'
 import { businessTypeOptions } from '@/@types/pages/docs/documents'
 import DoughnutChart from './components/DoughnutChart.vue'
 import SumaryChart from './components/SumaryChart.vue'
-import { TIME_FIRST_DAY, TIME_LAST_DAY, formatYYYYMMDD, shortcutsDateRange } from '@/constants/date'
+import { formatYYYYMMDD, shortcutsDateRange } from '@/constants/date'
 const dateTimeFilter = ref(defaultDateRange())
 
 import EIBTable from '@/components/common/EIBTable.vue'
@@ -158,7 +156,7 @@ import {
 } from '@/@types/pages/dashboard'
 import { getDashboardBranchApi, getDashboardRatioApi, getDashboardSumaryApi } from '@/api/dashboard'
 import { BG_COLOR_INVALID_CHARTS, BG_COLOR_VALID_CHARTS } from '@/constants/chart'
-import { defaultDateRange } from '@/utils/date'
+import { addOneDayToDate, defaultDateRange } from '@/utils/date'
 import { formatNumberConfidence, omitPropertyFromObject } from '@/utils/common'
 import { getDocummentTypeApi } from '@/api/extract'
 import { SelectOptionModel } from '@/@types/common'
@@ -189,8 +187,8 @@ const initDossierTypes = async () => {
 const getOverview = async () => {
   try {
     const response = await getDashboardSumaryApi({
-      beginDate: dateTimeFilter.value[0] + TIME_FIRST_DAY,
-      endDate: dateTimeFilter.value[1] + TIME_LAST_DAY,
+      beginDate: dateTimeFilter.value[0],
+      endDate: addOneDayToDate(dateTimeFilter.value[1]),
       ...(filterValue.bizType === -1 ? {} : { bizType: filterValue.bizType })
     })
     // hard code
@@ -219,8 +217,8 @@ const getOverview = async () => {
 const getRatio = async () => {
   try {
     const response = await getDashboardRatioApi({
-      beginDate: dateTimeFilter.value[0] + TIME_FIRST_DAY,
-      endDate: dateTimeFilter.value[1] + TIME_LAST_DAY,
+      beginDate: dateTimeFilter.value[0],
+      endDate: addOneDayToDate(dateTimeFilter.value[1]),
       ...omitPropertyFromObject(filterValue, -1)
     })
 
@@ -235,8 +233,8 @@ const getRatio = async () => {
 const getStatsBranch = async () => {
   try {
     const response = await getDashboardBranchApi({
-      beginDate: dateTimeFilter.value[0] + TIME_FIRST_DAY,
-      endDate: dateTimeFilter.value[1] + TIME_LAST_DAY,
+      beginDate: dateTimeFilter.value[0],
+      endDate: addOneDayToDate(dateTimeFilter.value[1]),
       ...omitPropertyFromObject(filterValue, -1)
     })
     SOLData.value = response.data.map((item, index) => ({

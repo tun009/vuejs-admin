@@ -18,3 +18,11 @@ export const defaultDateRange = () => {
 export const formatDate = (date: string, format: string) => {
   return dayjs(date).format(format)
 }
+export const addOneDayToDate = (dateStr: string): string => {
+  const date = new Date(dateStr)
+  date.setDate(date.getDate() + 1)
+  const year = date.getFullYear()
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const day = date.getDate().toString().padStart(2, '0')
+  return `${year}-${month}-${day}`
+}

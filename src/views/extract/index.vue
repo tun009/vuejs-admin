@@ -4,6 +4,7 @@ import {
   comparisonDocumentApi,
   getDossierDetailApi,
   getDossierListApi,
+  getExtractConfidence,
   ocrDocumentApi,
   saveDossierDocApi
 } from '@/api/extract'
@@ -27,7 +28,7 @@ import 'splitpanes/dist/splitpanes.css'
 import { useRoute } from 'vue-router'
 
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
-import { renderLabelByValue, formatNumberConfidence, renderColorByValue } from '@/utils/common'
+import { renderLabelByValue, formatNumberConfidence, renderColorByValue, renderColorByConfidence } from '@/utils/common'
 import { documentStatusOptions } from '@/@types/pages/docs/documents'
 import { ArrowLeft, More, CloseBold, Select } from '@element-plus/icons-vue'
 import { ExtractPostDossierRequestModel } from '@/@types/pages/extract/service/ExtractRequest'
@@ -38,6 +39,7 @@ import { DOCUMENT_DETAIL_PAGE, EXTRACT_PAGE } from '@/constants/router'
 import { DocTypeEnum } from '@/@types/pages/rules'
 import { updateDocumentStatus } from '@/api/docs/document/compare'
 import { DocumentStatusEnum } from '@/@types/common'
+import { UpdateConfidenceRequestModel } from '@/@types/pages/docs/settings/services/SettingRequest'
 const dossierListData = ref<ExtractDossierModel[]>([])
 const documentDetail = ref<ExtractDocumentModel>()
 const activeName = ref('ocr')
@@ -55,6 +57,7 @@ const isLoadingOcr = ref<boolean>(false)
 const { showConfirmModal } = useConfirmModal()
 const route = useRoute()
 const baseURL = import.meta.env.VITE_BASE_API
+const dataConfigs = ref<UpdateConfidenceRequestModel[]>([] as UpdateConfidenceRequestModel[])
 const getDossiersList = async (id: number) => {
   try {
     const response = await getDossierListApi(id)
@@ -104,6 +107,7 @@ const resetOptions = () => {
   isLoadedPdf.value = false
   activeName.value = 'ocr'
   documentDetail.value = {} as ExtractDocumentModel
+  resetFieldActive()
 }
 const headerTable = ref<ExtractResultOcrTableHeaderModel[]>([])
 const bodyTable = ref<ExtractResultOcrTableChildrenModel[][]>([])
@@ -145,13 +149,6 @@ const mappingBodyTable = (header: ExtractResultOcrTableHeaderModel[], body: Extr
 const renderClassOcr = (conf: number = 0) => {
   return conf > 0.75 ? 'trust-hight' : 'trust-medium'
 }
-const renderColorOcr = (cd: number = 0) => {
-  if (cd === 0 || cd === undefined) return '#7a8da5'
-  else if (cd <= 25) return '#C4190D'
-  else if (cd <= 75) return '#f76707'
-  else if (cd <= 90) return '#1c7ed6'
-  else return '#0ca678'
-}
 const isLoadedPdf = ref<boolean>(false)
 const onLoadedPDF = () => {
   isLoadedPdf.value = true
@@ -178,6 +175,7 @@ const handleCompareDossier = () => {
           type: 'success',
           message: 'Xác nhận đối sánh bộ chứng từ thành công'
         })
+        goToBackDocumentPage()
         done()
       } catch (error) {
         console.error(error)
@@ -254,6 +252,7 @@ const saveDossier = async () => {
       })
       closeTable()
       // getDossiersDetail(idDossierActive.value)
+      getDossiersList(Number(route?.query?.batchId))
       loading.value = false
     }
   } catch (error: any) {
@@ -273,8 +272,10 @@ const goToBackDocumentPage = () => {
 }
 const handleOcrDoc = async () => {
   try {
-    isLoadedPdf.value = false
     isLoadingOcr.value = true
+    setTimeout(() => {
+      isLoadingOcr.value = false
+    }, 2000)
     const response = await ocrDocumentApi(Number(route?.query?.dossierDocId))
     if (response.data)
       ElMessage({
@@ -282,13 +283,21 @@ const handleOcrDoc = async () => {
         type: 'success',
         message: 'Trích xuất OCR thành công'
       })
-    isLoadedPdf.value = true
-    isLoadingOcr.value = false
+    getDossiersDetail(Number(route?.query?.dossierDocId))
+  } catch (error: any) {
+    throw new Error(error)
+  }
+}
+const getConfidenceDetail = async () => {
+  try {
+    const response = await getExtractConfidence()
+    dataConfigs.value = response.data
   } catch (error: any) {
     throw new Error(error)
   }
 }
 onMounted(() => {
+  getConfidenceDetail()
   getDossiersList(Number(route?.query?.batchId))
   if (route?.query?.dossierDocId) getDossierById(Number(route?.query?.dossierDocId))
 })
@@ -405,12 +414,12 @@ onMounted(() => {
                           <span
                             class="text-[#fff] rounded-[3px] px-[4px] text-[12px] py-[2px] font-medium max-h-6"
                             :style="{
-                              backgroundColor: renderColorOcr((item.confidence ?? 0) * 100)
+                              backgroundColor: renderColorByConfidence(item.confidence, dataConfigs)
                             }"
                           >
                             {{ formatNumberConfidence(item?.confidence ?? 0) }}%
                           </span>
-                          <span class="ml-2 text-[#adb5bd] break-words text-break">{{ item.name }}</span>
+                          <span class="ml-2 text-[#868e96] break-words text-break">{{ item.name }}</span>
                         </div>
                         <div class="mt-[8px] min-h-[12px]">
                           <div v-if="item.type === 'structured_table'">Click để xem</div>
@@ -446,7 +455,7 @@ onMounted(() => {
                           <span
                             class="text-[#fff] rounded-[3px] px-[4px] text-[12px] py-[2px] font-medium"
                             :style="{
-                              backgroundColor: renderColorOcr(0)
+                              backgroundColor: '#7a8da5'
                             }"
                           >
                             {{ formatNumberConfidence(0) }}%
