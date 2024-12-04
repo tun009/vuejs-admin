@@ -19,7 +19,10 @@
     virtual-triggering
     v-model:visible="isShow"
   >
-    <el-checkbox-group v-model="localModelValue">
+    <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">
+      Check all
+    </el-checkbox>
+    <el-checkbox-group v-model="localModelValue" @change="handleCheckedChange">
       <el-checkbox v-for="option in options" :key="option.value" :label="option.label" :value="option.value">
         {{ option.label }}
       </el-checkbox>
@@ -28,9 +31,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, unref } from 'vue'
+import { computed, onMounted, ref, unref } from 'vue'
 import { SelectOptionModel } from '@/@types/common'
 import { ArrowDownBold } from '@element-plus/icons-vue'
+import { CheckboxValueType } from 'element-plus'
 
 interface Props {
   title: string
@@ -49,7 +53,24 @@ const props = withDefaults(defineProps<Props>(), {
 })
 const emits = defineEmits<Emits>()
 
+const allValue = computed(() => {
+  return props.options.map((p) => p.value)
+})
+
+const checkAll = ref(true)
+const isIndeterminate = ref(true)
 const isShow = ref<boolean>(false)
+
+const handleCheckAllChange = (val: CheckboxValueType) => {
+  emits('update:model-value', val ? allValue.value : [])
+  isIndeterminate.value = false
+}
+
+const handleCheckedChange = (value: CheckboxValueType[]) => {
+  const checkedCount = value.length
+  checkAll.value = checkedCount === props.options.length
+  isIndeterminate.value = checkedCount > 0 && checkedCount < props.options.length
+}
 
 const localModelValue = computed({
   get() {
@@ -65,4 +86,8 @@ const popoverRef = ref()
 const onClickOutside = () => {
   unref(popoverRef).popperRef?.delayHide?.()
 }
+
+onMounted(() => {
+  emits('update:model-value', allValue.value)
+})
 </script>
