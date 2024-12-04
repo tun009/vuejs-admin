@@ -72,7 +72,7 @@ const handleGetDocuments = async (pagination: PaginationModel) => {
           column: 'createdAt'
         }
       ],
-      ...(status?.length ? { status } : {})
+      ...(status?.length !== documentStatusOptions.length ? { status } : {})
     })
     tableData.value = response.data.list
     return response
