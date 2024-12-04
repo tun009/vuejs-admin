@@ -185,7 +185,7 @@ const convertTableDataCompareErrorResults = (compareResult: DocumentCompareModel
                 <EIBList :data="v?.list ?? []" />
               </template> -->
               <template v-else>
-                <p class="text-base">
+                <p class="text-sm">
                   {{ v?.prefixValue ? `${v?.prefixValue}: ` : ''
                   }}<span
                     :class="{
@@ -242,12 +242,12 @@ const convertTableDataCompareErrorResults = (compareResult: DocumentCompareModel
         <div v-for="(block, i) in compareResult.undefinedResults" :key="i" class="flex flex-col gap-3">
           <div class="flex flex-col gap-2">
             <span class="c-text-des">{{ block?.inputField }}</span>
-            <p class="text-base">{{ block?.inputValue }}</p>
+            <SafeHtmlRenderer class="text-sm" :html="block?.inputValue" />
           </div>
           <div class="flex flex-col gap-3" v-for="(d, di) in block.requirements" :key="di">
             <div class="flex flex-col gap-2">
               <span class="c-text-des">Requirement</span>
-              <p class="text-base">{{ d?.requirement }}</p>
+              <p class="text-sm">{{ d?.requirement }}</p>
             </div>
             <MultipleLanguageResultSimple :comparisonUndefinedId="block?.id" :requirement="d" />
           </div>

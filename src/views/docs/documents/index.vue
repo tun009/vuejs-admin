@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ArrowDownBold, Delete, Filter, Plus, Search } from '@element-plus/icons-vue'
+import { ArrowDownBold, Filter, Plus, Search } from '@element-plus/icons-vue'
 import { onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
@@ -27,8 +27,9 @@ import EIBTable from '@/components/common/EIBTable.vue'
 import {
   TIME_FIRST_DAY,
   TIME_LAST_DAY,
+  formatDDMMYYYY,
+  formatDDMMYYYY_HHMM,
   formatYYYYMMDD,
-  formatYYYYMMDD_HHMM,
   shortcutsDateRange
 } from '@/constants/date'
 import { DOCUMENT_DETAIL_PAGE } from '@/constants/router'
@@ -36,7 +37,7 @@ import { useConfirmModal } from '@/hooks/useConfirm'
 import { Title } from '@/layouts/components'
 import { useUserStore } from '@/store/modules/user'
 import { mappingBranches, omitPropertyFromObject, renderLabelByValue, withAllSelection } from '@/utils/common'
-import { defaultDateRange, formatDate } from '@/utils/date'
+import { defaultDateRange, formatDate, formatDateExactFormat } from '@/utils/date'
 import { debounce } from 'lodash-es'
 import Status from '../components/Status.vue'
 
@@ -58,12 +59,13 @@ const branches = ref<BranchModel[]>([])
 
 const handleGetDocuments = async (pagination: PaginationModel) => {
   try {
-    const { status, ...otherFilter } = filterValue
+    const { status, name, ...otherFilter } = filterValue
     const response = await getDocuments({
       ...pagination,
       ...omitPropertyFromObject(otherFilter, -1),
-      beginDate: uploadTimes.value[0] + TIME_FIRST_DAY,
-      endDate: uploadTimes.value[1] + TIME_LAST_DAY,
+      ...(name ? { name: name.trim() } : {}),
+      beginDate: formatDateExactFormat(uploadTimes.value[0], formatDDMMYYYY, formatYYYYMMDD) + TIME_FIRST_DAY,
+      endDate: formatDateExactFormat(uploadTimes.value[1], formatDDMMYYYY, formatYYYYMMDD) + TIME_LAST_DAY,
       sortItemList: [
         {
           isAsc: false,
@@ -154,7 +156,7 @@ onMounted(() => {
   <div class="flex flex-row justify-between items-center">
     <Title :title="$t('docs.title')" />
     <div class="flex flex-row gap-5 items-center">
-      <span class="font-semibold italic text-base">{{ $t('docs.document.uploadDate') }}</span>
+      <span class="font-semibold text-base !text-[14px]">{{ $t('docs.document.uploadDate') }}</span>
       <el-date-picker
         v-model="uploadTimes"
         type="daterange"
@@ -164,8 +166,8 @@ onMounted(() => {
         :start-placeholder="$t('docs.document.start')"
         :end-placeholder="$t('docs.document.end')"
         :shortcuts="shortcutsDateRange"
-        :format="formatYYYYMMDD"
-        :value-format="formatYYYYMMDD"
+        :format="formatDDMMYYYY"
+        :value-format="formatDDMMYYYY"
       />
     </div>
   </div>
@@ -249,7 +251,7 @@ onMounted(() => {
           <Status :options="documentResultOptions" :status="row?.result" />
         </template>
         <template #createdAt="{ row }">
-          <span>{{ formatDate(row.createdAt, formatYYYYMMDD_HHMM) }}</span>
+          <span>{{ formatDate(row.createdAt, formatDDMMYYYY_HHMM) }}</span>
         </template>
         <template #branchName="{ row }">
           <span>{{ row?.branch?.name }}</span>
@@ -265,10 +267,8 @@ onMounted(() => {
                 class="cursor-pointer"
               />
             </div>
-            <div class="w-[18px] h-[18px]">
-              <el-icon :size="18" color="#e03131" class="cursor-pointer" @click.stop="handleDeleteDocument(row)"
-                ><Delete
-              /></el-icon>
+            <div class="w-[20px] h-[20px]">
+              <SvgIcon :size="20" name="delete-mini" @click.stop="handleDeleteDocument(row)" class="cursor-pointer" />
             </div>
           </div>
         </template>
@@ -282,7 +282,7 @@ onMounted(() => {
     </template>
   </EIBDrawer>
   <Transition :duration="300" name="nested" class="fixed bottom-0 -ml-5">
-    <div v-if="!!checkedItems.length" class="outer px-5 py-3 w-full shadow-md border border-[#f8f9fa] bg-[#4f4f4f1a]">
+    <div v-if="!!checkedItems.length" class="outer px-5 py-3 w-full shadow-md border border-[#f8f9fa] bg-[#fff]">
       <div class="inner flex flex-row gap-x-5 items-center">
         <span class="text-[#495057] text-sm"
           >{{ $t('docs.document.selected') }}
@@ -291,9 +291,11 @@ onMounted(() => {
             >( {{ $t('docs.document.cancelAll') }} )</span
           ></span
         >
-        <el-button type="danger" plain :icon="Delete" @click="() => handleDeleteDocument()">{{
-          $t('button.delete')
-        }}</el-button>
+        <el-button type="danger" plain @click="() => handleDeleteDocument()">
+          <div class="flex flex-row items-center gap-1">
+            <SvgIcon :size="18" name="delete" class="cursor-pointer" /><span>{{ $t('button.delete') }}</span>
+          </div>
+        </el-button>
       </div>
     </div>
   </Transition>

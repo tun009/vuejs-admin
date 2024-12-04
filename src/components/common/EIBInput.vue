@@ -22,6 +22,7 @@ interface Props {
   hiddenError?: boolean
   rows?: number
   autosize?: { minRows: number; maxRows: number }
+  emptyValue?: string
 }
 
 interface Emits {
@@ -34,6 +35,7 @@ const props = withDefaults(defineProps<Props>(), {
   type: 'text',
   size: 'large',
   maxLength: 200,
+  emptyValue: '',
   autosize: () => ({ minRows: 2, maxRows: 6 })
 })
 
@@ -65,7 +67,9 @@ const updateValue = (value: string) => {
         $t('base.input.limit', { length: (modelValue ?? '')?.toString()?.length, maxLength: maxLength })
       }}</span>
     </div>
-    <span v-if="readonly" class="text-sm leading-[24px] font-normal text-[#495057]">{{ modelValue }}</span>
+    <span v-if="readonly" class="text-sm leading-[24px] font-normal text-[#495057]">{{
+      modelValue ? modelValue : emptyValue
+    }}</span>
     <el-form-item :prop="name" v-else class="w-full" :class="{ '!mb-0': hiddenError }">
       <el-input
         v-bind="props"

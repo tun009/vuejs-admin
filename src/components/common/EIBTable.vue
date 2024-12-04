@@ -52,7 +52,7 @@ const handleGetData = async () => {
     if (!props.callback) return
     loading.value = true
     const response = await props.callback(pagination.value)
-    if (!response?.data?.total) return
+    if (typeof response?.data?.total !== 'number') return
     totalItems.value = response.data.total
   } catch (error: any) {
     throw new Error(error)
@@ -220,7 +220,7 @@ defineExpose<Exposes>({
 }
 
 .el-scrollbar__bar.is-horizontal {
-  height: 6px !important;
+  height: 10px !important;
 }
 
 td.action-row {

@@ -1,10 +1,9 @@
 <template>
   <!--  eslint-disable-next-line -->
-  <!-- //NOSONAR --><div v-html="sanitizeString(html)" />
+  <!-- //NOSONAR --><div v-html="html.replace(/\n/g, '<br />')" />
 </template>
 
 <script setup lang="ts">
-import { sanitizeString } from '@/utils/common'
 
 interface Props {
   html?: string

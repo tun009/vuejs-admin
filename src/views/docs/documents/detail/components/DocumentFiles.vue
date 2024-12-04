@@ -12,7 +12,7 @@ import EIBTable from '@/components/common/EIBTable.vue'
 import { useRoute } from 'vue-router'
 import Status from '@/views/docs/components/Status.vue'
 import { formatDate } from '@/utils/date'
-import { formatYYYYMMDD_HHMM } from '@/constants/date'
+import { formatDDMMYYYY_HHMM } from '@/constants/date'
 import { DocumentStatusEnum } from '@/@types/common'
 import { useConfirmModal } from '@/hooks/useConfirm'
 
@@ -141,7 +141,7 @@ const handleDeleteFile = async (row: DocumentFileModel) => {
           <Status :options="documentStatusOptions" :status="row.status" />
         </template>
         <template #createdAt="{ row }">
-          <span>{{ formatDate(row.createdAt, formatYYYYMMDD_HHMM) }}</span>
+          <span>{{ formatDate(row.createdAt, formatDDMMYYYY_HHMM) }}</span>
         </template>
         <template #actions="{ row }">
           <div class="flex flex-row gap-2">

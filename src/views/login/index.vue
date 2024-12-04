@@ -26,7 +26,7 @@ const loginFormData: LoginFormModel = reactive({
 
 const loginFormRules: FormRules = {
   username: [requireRule()],
-  password: [requireRule(), limitLengthRule({ min: 8, max: 16 })],
+  password: [requireRule(), limitLengthRule({ min: 8, max: 100 })],
   code: []
 }
 const handleLogin = () => {

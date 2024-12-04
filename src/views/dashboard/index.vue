@@ -13,8 +13,8 @@
           start-placeholder="Bắt đầu"
           end-placeholder="Kết thúc"
           :shortcuts="shortcutsDateRange"
-          :format="formatYYYYMMDD"
-          :value-format="formatYYYYMMDD"
+          :format="formatDDMMYYYY"
+          :value-format="formatDDMMYYYY"
           :clearable="false"
         />
       </div>
@@ -142,9 +142,7 @@ import EIBSelect from '@/components/common/EIBSelect.vue'
 import { businessTypeOptions } from '@/@types/pages/docs/documents'
 import DoughnutChart from './components/DoughnutChart.vue'
 import SumaryChart from './components/SumaryChart.vue'
-import { formatYYYYMMDD, shortcutsDateRange } from '@/constants/date'
-const dateTimeFilter = ref(defaultDateRange())
-
+import { formatDDMMYYYY, formatYYYYMMDD, shortcutsDateRange } from '@/constants/date'
 import EIBTable from '@/components/common/EIBTable.vue'
 import {
   fieldChangedListColumnConfigs,
@@ -156,10 +154,12 @@ import {
 } from '@/@types/pages/dashboard'
 import { getDashboardBranchApi, getDashboardRatioApi, getDashboardSumaryApi } from '@/api/dashboard'
 import { BG_COLOR_INVALID_CHARTS, BG_COLOR_VALID_CHARTS } from '@/constants/chart'
-import { addOneDayToDate, defaultDateRange } from '@/utils/date'
+import { addOneDayToDate, defaultDateRange, formatDateExactFormat } from '@/utils/date'
 import { formatNumberConfidence, omitPropertyFromObject } from '@/utils/common'
 import { getDocummentTypeApi } from '@/api/extract'
 import { SelectOptionModel } from '@/@types/common'
+
+const dateTimeFilter = ref(defaultDateRange())
 const filterValue = reactive<FilterReportRatioModel>({ bizType: -1, docTypeId: -1 } as FilterReportRatioModel)
 
 const percentage_valid = ref<number[]>([])
@@ -187,8 +187,8 @@ const initDossierTypes = async () => {
 const getOverview = async () => {
   try {
     const response = await getDashboardSumaryApi({
-      beginDate: dateTimeFilter.value[0],
-      endDate: addOneDayToDate(dateTimeFilter.value[1]),
+      beginDate: formatDateExactFormat(dateTimeFilter.value[0], formatDDMMYYYY, formatYYYYMMDD),
+      endDate: addOneDayToDate(formatDateExactFormat(dateTimeFilter.value[1], formatDDMMYYYY, formatYYYYMMDD)),
       ...(filterValue.bizType === -1 ? {} : { bizType: filterValue.bizType })
     })
     // hard code
@@ -217,8 +217,8 @@ const getOverview = async () => {
 const getRatio = async () => {
   try {
     const response = await getDashboardRatioApi({
-      beginDate: dateTimeFilter.value[0],
-      endDate: addOneDayToDate(dateTimeFilter.value[1]),
+      beginDate: formatDateExactFormat(dateTimeFilter.value[0], formatDDMMYYYY, formatYYYYMMDD),
+      endDate: addOneDayToDate(formatDateExactFormat(dateTimeFilter.value[1], formatDDMMYYYY, formatYYYYMMDD)),
       ...omitPropertyFromObject(filterValue, -1)
     })
 
@@ -233,8 +233,8 @@ const getRatio = async () => {
 const getStatsBranch = async () => {
   try {
     const response = await getDashboardBranchApi({
-      beginDate: dateTimeFilter.value[0],
-      endDate: addOneDayToDate(dateTimeFilter.value[1]),
+      beginDate: formatDateExactFormat(dateTimeFilter.value[0], formatDDMMYYYY, formatYYYYMMDD),
+      endDate: addOneDayToDate(formatDateExactFormat(dateTimeFilter.value[1], formatDDMMYYYY, formatYYYYMMDD)),
       ...omitPropertyFromObject(filterValue, -1)
     })
     SOLData.value = response.data.map((item, index) => ({

@@ -41,7 +41,7 @@ const onConfirm = () => {
       try {
         emits('update:loading', true)
         await updateDocumentStatus(batchId.value, {
-          approveDossier: DocumentStatusEnum.VALIDATED,
+          approveDossier: DocumentStatusEnum.DENIED,
           message: compareRejectFormData.reason
         })
         ElMessage.success(t('notification.description.rejectSuccess'))
