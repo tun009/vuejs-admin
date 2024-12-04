@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { sanitizeString } from '@/utils/common'
 import { isExternal } from '@/utils/validate'
 
 interface Props {
@@ -11,7 +10,7 @@ const props = defineProps<Props>()
 
 <template>
   <!--  eslint-disable-next-line -->
-  <!-- //NOSONAR --><a v-if="isExternal(props.to)" :href="sanitizeString(props.to)" target="_blank" rel="noopener">
+  <!-- //NOSONAR --><a v-if="isExternal(props.to)" :href="props.to" target="_blank" rel="noopener">
     <slot />
   </a>
   <router-link v-else :to="props.to">

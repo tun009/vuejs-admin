@@ -1,7 +1,10 @@
 import { getDateRangeByDistance } from '@/utils/date'
 
 export const formatYYYYMMDDHHmmss = 'YYYY-MM-DD HH:mm:ss'
+export const formatYYYYMMDDHHmm = 'YYYY-MM-DD HH:mm:ss'
 export const formatYYYYMMDD = 'YYYY-MM-DD'
+export const formatDDMMYYYY = 'DD-MM-YYYY'
+export const _formatDDMMYYYY_HHmm = 'DD-MM-YYYY HH:mm'
 export const formatYYYYMMDD_HHMM = 'YYYY/MM/DD HH:MM'
 export const formatDDMMYYYY_HHMM = 'DD/MM/YYYY HH:MM'
 

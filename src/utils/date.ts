@@ -1,4 +1,4 @@
-import { formatYYYYMMDD } from '@/constants/date'
+import { formatDDMMYYYY } from '@/constants/date'
 import dayjs from 'dayjs'
 
 export const getDateRangeByDistance = (distance: number) => {
@@ -12,7 +12,11 @@ export const defaultDateRange = () => {
   const today = dayjs()
   const sevenDaysAgo = dayjs().subtract(7, 'day')
 
-  return [sevenDaysAgo.format(formatYYYYMMDD), today.format(formatYYYYMMDD)]
+  return [sevenDaysAgo.format(formatDDMMYYYY), today.format(formatDDMMYYYY)]
+}
+
+export const formatDateExactFormat = (dateString: string, fromFormat: string, toFormat: string) => {
+  return dayjs(dateString, fromFormat).format(toFormat)
 }
 
 export const formatDate = (date: string, format: string) => {

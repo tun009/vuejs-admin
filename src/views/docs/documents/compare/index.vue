@@ -17,7 +17,7 @@ import { getDocumentCompare, updateDocumentStatus } from '@/api/docs/document/co
 import { getRules } from '@/api/rules'
 import EIBDialog from '@/components/common/EIBDialog.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
-import { formatYYYYMMDD_HHMM } from '@/constants/date'
+import { _formatDDMMYYYY_HHmm } from '@/constants/date'
 import { DOCUMENT_DETAIL_PAGE } from '@/constants/router'
 import { useConfirmModal } from '@/hooks/useConfirm'
 import { useUserStore } from '@/store/modules/user'
@@ -145,7 +145,7 @@ const handleReturnForMaker = async () => {
   loadingConfirm.value = true
   try {
     await updateDocumentStatus(batchId.value, {
-      approveDossier: DocumentStatusEnum.VALIDATED
+      approveDossier: DocumentStatusEnum.ADJUST_REQUESTED
     })
     ElMessage.success(t('notification.description.returnSuccess'))
     dialogVisible.value = false
@@ -283,7 +283,7 @@ onMounted(() => {
     class="flex flex-row justify-between py-2 px-4 border border-[#ced4da] fixed top-0 left-0 w-full bg-white dark:bg-[#141414] z-[10]"
   >
     <el-button color="#005d98" plain :icon="ArrowLeft" @click="handleBack">{{ $t('button.back') }}</el-button>
-    <el-text class="text-[24px] mx-auto">{{ $t('docs.compare.checkDoc') }} {{ documentTypeLabel }}</el-text>
+    <el-text class="text-[20px] mx-auto">{{ $t('docs.compare.checkDoc') }} {{ documentTypeLabel }}</el-text>
     <div class="flex flex-row gap-3" v-if="!isViewer">
       <el-button color="#c92a2a" type="danger" :icon="Close" @click="dialogVisible = true">{{
         $t('button.reject')
@@ -309,7 +309,7 @@ onMounted(() => {
               </div>
               <div class="flex flex-col gap-1">
                 <span class="c-text-value">{{ $t('docs.compare.createdAtDoc') }}</span>
-                <span class="text-base">{{ formatDate(documentDetail?.createdAt, formatYYYYMMDD_HHMM) }}</span>
+                <span class="text-base">{{ formatDate(documentDetail?.createdAt, _formatDDMMYYYY_HHmm) }}</span>
               </div>
               <div class="flex flex-col gap-1">
                 <span class="c-text-value">{{ $t('docs.compare.totalAmount') }}</span>

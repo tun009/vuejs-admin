@@ -102,6 +102,7 @@ const handleCancelUpdateProfile = () => {
           v-model="changeProfileFormData.phoneNumber"
           required
           :readonly="!isEdit"
+          empty-value="Chưa có thông tin"
         />
         <div class="flex flex-row items-center justify-between" v-if="!isEdit">
           <EIBInput label="profile.password" readonly model-value="*********" />
@@ -115,6 +116,7 @@ const handleCancelUpdateProfile = () => {
           </EIBDrawer>
         </div>
       </el-form>
+      <el-divider />
       <div class="mt-2">
         <div v-if="isEdit">
           <el-button :loading="loading" @click.prevent="handleUpdateProfile" type="primary">{{
@@ -125,9 +127,17 @@ const handleCancelUpdateProfile = () => {
           }}</el-button>
         </div>
         <div v-else>
-          <el-button type="primary" plain @click="isEdit = true">{{ $t('profile.updateProfile') }}</el-button>
+          <el-button type="primary" class="custom-button" plain @click="isEdit = true">{{
+            $t('profile.updateProfile')
+          }}</el-button>
         </div>
       </div>
     </el-col>
   </el-card>
 </template>
+
+<style>
+.custom-button.el-button--primary.is-plain {
+  background-color: unset;
+}
+</style>
