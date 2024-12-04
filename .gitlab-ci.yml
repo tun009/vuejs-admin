@@ -9,7 +9,7 @@ sonar:
   stage: test
   script:
     - echo "scanning sonar"
-    - sonar-scanner -Dsonar.projectKey=eximbank-ui -Dsonar.sources=. -Dsonar.host.url=https://sonar.cyberspace.vn/ -Dsonar.login=sqp_51b2de09b4acb6c7fd019fb238f4c7d1fcad2e91 -Dsonar.tests=tests -Dsonar.exclusions=Docker**,tests/** -Dsonar.cpd.exclusions=** -Dsonar.javascript.coverage.reportPaths=coverage/cobertura-coverage.xml
+    - sonar-scanner -Dsonar.projectKey=eximbank-ui -Dsonar.sources=. -Dsonar.host.url=https://sonar.cyberspace.vn/ -Dsonar.login=sqp_51b2de09b4acb6c7fd019fb238f4c7d1fcad2e91 -Dsonar.tests=tests -Dsonar.exclusions=Docker**,tests/** -Dsonar.cpd.exclusions=** -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
   # only:
   #   - develop
   allow_failure: true
@@ -40,14 +40,14 @@ test:
   artifacts:
     when: always
     paths:
-      - coverage/cobertura-coverage.xml
+      - coverage/lcov.info
       - junit-report.xml
     expose_as: 'Unit Test Report'
     reports:
       junit: junit-report.xml
       coverage_report:
         coverage_format: cobertura
-        path: coverage/cobertura-coverage.xml
+        path: coverage/lcov.info
     expire_in: 1 week
   cache:
     paths:
