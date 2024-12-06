@@ -229,7 +229,7 @@ onMounted(() => {
       >
         <template #branch="{ row }">
           <div>
-            <span>{{ row.branch?.name }}</span>
+            <span>{{ row?.branch?.name }}</span>
           </div>
         </template>
         <template #status="{ row }">

@@ -437,8 +437,8 @@ export const documentTypeOptions: SelectOptionModel[] = [
 ]
 
 export interface FilterDocumentModel {
-  status: DocumentStatusEnum[]
   query: string
+  status: DocumentStatusEnum[]
   result: number
   bizType: number
   branchId: number
