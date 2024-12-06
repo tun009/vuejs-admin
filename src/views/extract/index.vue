@@ -16,6 +16,9 @@ import {
   ExtractResultOcrTableChildrenModel,
   ExtractResultOcrTableHeaderModel
 } from '@/@types/pages/extract'
+import { convertFileUrl } from '@/utils/common'
+
+import PreviewExtractImage from '@/views/docs/documents/compare/components/PreviewExtractImage.vue'
 import PDFView from './components/PDFView.vue'
 import HistoryTab from './components/HistoryTab.vue'
 import NoteTab from './components/NoteTab.vue'
@@ -430,14 +433,13 @@ onMounted(() => {
                             type="textarea"
                           />
                           <div v-else-if="item.type === 'image'">
-                            <img
-                              v-if="item?.validatedValue"
-                              :src="'data:image/png;base64,' + item.validatedValue"
-                              alt=""
-                              class="h-[70px]"
+                            <PreviewExtractImage
+                              :url="convertFileUrl(documentDetail?.pathFile as string)"
+                              :page="item?.pageId + 1"
+                              :bboxes="item?.bboxes ?? []"
                             />
                           </div>
-                          <div v-else>{{ item.validatedValue }}</div>
+                          <div v-else class="text-4-line">{{ item.validatedValue }}</div>
                         </div>
                       </div>
                     </div>
@@ -529,6 +531,13 @@ onMounted(() => {
   }
   .item-dossier:hover {
     background-color: #e1edfe;
+  }
+  .text-4-line {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 .box-denied-confirm .el-message-box__input {
