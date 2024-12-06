@@ -13,6 +13,7 @@ export interface UserInfoModel {
   phoneNumber: string
   role: RoleEnum
   branch: BranchModel
+  firstLogin: boolean
 }
 
 export interface LoginFormModel {

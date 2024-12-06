@@ -6,8 +6,13 @@ import { useI18n } from 'vue-i18n'
 
 import EIBUpload from '@/components/common/EIBUpload.vue'
 import { warningNotification } from '@/utils/notification'
-import { DocumentFileModel, documentStatusOptions, fileListColumnConfigs } from '@/@types/pages/docs/documents'
-import { deleteDocumentFile, getDocumentFiles } from '@/api/docs/document'
+import {
+  DocumentExportFileEnum,
+  DocumentFileModel,
+  documentStatusOptions,
+  fileListColumnConfigs
+} from '@/@types/pages/docs/documents'
+import { addFileToDocument, deleteDocumentFile, downloadSingleFile, getDocumentFiles } from '@/api/docs/document'
 import EIBTable from '@/components/common/EIBTable.vue'
 import { useRoute } from 'vue-router'
 import Status from '@/views/docs/components/Status.vue'
@@ -15,6 +20,7 @@ import { formatDate } from '@/utils/date'
 import { formatDDMMYYYY_HHMM } from '@/constants/date'
 import { DocumentStatusEnum } from '@/@types/common'
 import { useConfirmModal } from '@/hooks/useConfirm'
+import { downloadFileCommon } from '@/utils/common'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -46,29 +52,33 @@ const handleClose = (done: () => void) => {
     })
 }
 
-const handleAddDocument = () => {
-  loading.value = true
-  if (!files.value.length) {
-    warningNotification(t('notification.description.emptyFiles'))
-    return
-  }
+const handleAddDocument = async () => {
+  try {
+    loading.value = true
+    if (!files.value.length) {
+      warningNotification(t('notification.description.emptyFiles'))
+      return
+    }
 
-  const formData = new FormData()
-  for (const file of files.value) {
-    formData.append('files', file)
-  }
+    const formData = new FormData()
+    for (const file of files.value) {
+      formData.append('files', file)
+    }
 
-  // call api upload
-
-  setTimeout(() => {
-    loading.value = false
+    // call api upload
+    await addFileToDocument(batchId.value, formData)
     ElMessage({
       message: t('notification.description.createSuccess'),
       showClose: true,
       type: 'success'
     })
     dialogVisible.value = false
-  }, 2000)
+    handleGetDocumentFiles()
+  } catch (error) {
+    console.error(error)
+  } finally {
+    loading.value = false
+  }
 }
 
 const handleGetDocumentFiles = async () => {
@@ -107,6 +117,15 @@ const handleDeleteFile = async (row: DocumentFileModel) => {
     }
   })
 }
+
+const handleDownloadFile = async (src: string) => {
+  try {
+    const response = await downloadSingleFile({ src })
+    downloadFileCommon(response, DocumentExportFileEnum.PDF)
+  } catch (error) {
+    console.error(error)
+  }
+}
 </script>
 
 <template>
@@ -139,6 +158,9 @@ const handleDeleteFile = async (row: DocumentFileModel) => {
       >
         <template #status="{ row }">
           <Status :options="documentStatusOptions" :status="row.status" />
+        </template>
+        <template #fileName="{ row }">
+          <div @click.stop="handleDownloadFile(row.filePath)">{{ row.fileName }}</div>
         </template>
         <template #createdAt="{ row }">
           <span>{{ formatDate(row.createdAt, formatDDMMYYYY_HHMM) }}</span>

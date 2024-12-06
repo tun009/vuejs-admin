@@ -134,6 +134,18 @@ const redirectOcrResult = () => {
     }
   })
 }
+
+const isNotHaveCompareInfo = computed(() => {
+  return (
+    !isOcred.value ||
+    [
+      DocumentStatusEnum.ERROR,
+      DocumentStatusEnum.EXTRACTION_ERROR,
+      DocumentStatusEnum.COMPARISON_ERROR,
+      DocumentStatusEnum.CLASSIFICATION_ERROR
+    ].includes(props.data?.status)
+  )
+})
 onMounted(() => {
   handleGetDocumentResults()
   handleGetDocumentAmount()
@@ -147,6 +159,7 @@ onMounted(() => {
     :title="$t('docs.detail.updateLcUsed')"
     v-model="dialogVisible"
     :loading="loadingConfirm"
+    confirm-text="Cập nhật"
     @on-confirm="updateLCFormRef?.onConfirm"
   >
     <UpdateLCForm
@@ -167,28 +180,28 @@ onMounted(() => {
           <div class="flex flex-row">
             <div class="grid grid-cols-2 pl-3 gap-3 flex-[2]">
               <div class="flex flex-row gap-2">
-                <span>{{ $t('docs.document.businessType') }}:</span>
+                <span class="font-bold">{{ $t('docs.document.businessType') }}:</span>
                 <span class="c-text-value">{{ renderLabelByValue(businessTypeOptions, data?.bizType) }}</span>
               </div>
               <div class="flex flex-row gap-2">
-                <span>{{ $t('docs.document.customerName') }}:</span>
+                <span class="font-bold">{{ $t('docs.document.customerName') }}:</span>
                 <span class="c-text-value">{{ data?.customerName }}</span>
               </div>
               <div class="flex flex-row gap-2">
-                <span>{{ $t('docs.document.sol') }}:</span>
+                <span class="font-bold">{{ $t('docs.document.sol') }}:</span>
                 <span class="c-text-value">{{ data?.branch?.name }}</span>
               </div>
               <div class="flex flex-row gap-2">
-                <span>{{ $t('docs.document.cifCode') }}:</span>
+                <span class="font-bold">{{ $t('docs.document.cifCode') }}:</span>
                 <span class="c-text-value">{{ data?.cif }}</span>
               </div>
             </div>
             <div class="flex flex-row gap-2 flex-1">
-              <span>{{ $t('docs.document.status') }}:</span>
+              <span class="font-bold">{{ $t('docs.document.status') }}:</span>
               <div v-if="data?.status === DocumentStatusEnum.CHECKED" class="flex flex-col gap-2">
                 <div class="flex gap-1">
                   <Status :options="documentStatusOptions" :status="data?.status" />
-                  <span class="c-text-value">{{ $t('docs.document.by') }}</span> {{ data?.handleBy }}
+                  <span class="c-text-value">{{ $t('docs.document.by') }}</span> {{ data?.censorBy?.name }}
                 </div>
                 <el-button
                   v-if="isMaker"
@@ -212,11 +225,11 @@ onMounted(() => {
               >
                 <div class="flex gap-1">
                   <Status :options="documentStatusOptions" :status="DocumentStatusEnum.CHECKED" />
-                  <span class="c-text-value">{{ $t('docs.document.by') }}</span> {{ data?.handleBy }}
+                  <span class="c-text-value">{{ $t('docs.document.by') }}</span> {{ data?.censorBy?.name }}
                 </div>
                 <div class="flex gap-1">
                   <Status :options="documentStatusOptions" :status="data?.status" />
-                  <span class="c-text-value">{{ $t('docs.document.by') }}</span> {{ data?.approveBy }}
+                  <span class="c-text-value">{{ $t('docs.document.by') }}</span> {{ data?.approveBy?.name }}
                 </div>
               </div>
               <div v-else class="c-text-value">
@@ -313,9 +326,8 @@ onMounted(() => {
       <div class="flex flex-col gap-5">
         <div class="flex flex-row justify-between items-center">
           <span class="text-[#005d98] dark:text-[#409eff] font-semibold text-base">Thông tin đối sánh</span>
-          <el-dropdown placement="top-start" :disabled="!isValidated">
+          <el-dropdown v-if="!isViewer" placement="top-start" :disabled="!isValidated">
             <el-button
-              v-if="!isViewer"
               :disabled="!isValidated"
               :type="!isValidated ? 'info' : 'primary'"
               class="flex flex-row items-center"
@@ -350,9 +362,11 @@ onMounted(() => {
         <div class="flex flex-row gap-5 pl-3 items-center">
           <div class="flex-1 flex flex-col gap-3">
             <strong>{{ $t('docs.detail.checkResult') }}</strong>
-            <p v-if="!isOcred" class="c-text-value">{{ $t('docs.detail.noInformation') }}</p>
+            <p v-if="isNotHaveCompareInfo" class="c-text-value">
+              {{ $t('docs.detail.noInformation') }}
+            </p>
             <div
-              v-else-if="isOcred && documentSummary?.status === DocumentResultEnum.DISCREPANCY"
+              v-else-if="documentSummary?.status === DocumentResultEnum.DISCREPANCY"
               class="rounded-md px-3 py-2 bg-[#fff4e6] flex flex-row gap-2 items-center w-fit text-[#d9480f]"
             >
               <el-icon size="20"><WarnTriangleFilled /></el-icon>
@@ -363,7 +377,7 @@ onMounted(() => {
               <span class="text-base">{{ $t('docs.status.valid') }}</span>
             </div>
           </div>
-          <div v-if="isOcred" class="flex flex-col gap-2 flex-[2]">
+          <div v-if="!isNotHaveCompareInfo" class="flex flex-col gap-2 flex-[2]">
             <span
               ><span class="font-semibold mr-2">{{ $t('docs.detail.deliveryTimeRequest') }}: </span
               ><span>{{ renderLabelByValue(documentResultOptions, documentSummary?.timeOfShipment) }}</span></span
@@ -379,7 +393,7 @@ onMounted(() => {
           </div>
         </div>
         <EIBTable
-          v-if="isOcred"
+          v-if="!isNotHaveCompareInfo"
           ref="documentResultListTableRef"
           locales
           hidden-pagination

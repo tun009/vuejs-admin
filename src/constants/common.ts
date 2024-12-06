@@ -30,3 +30,30 @@ export const processingDocumentStatus = [
   DocumentStatusEnum.CLASSIFIED,
   DocumentStatusEnum.OCRING
 ]
+
+export const endedDocumentStatus = [DocumentStatusEnum.DENIED, DocumentStatusEnum.VALIDATED]
+
+export const errorDocumentStatus = [
+  DocumentStatusEnum.CLASSIFICATION_ERROR,
+  DocumentStatusEnum.EXTRACTION_ERROR,
+  DocumentStatusEnum.COMPARISON_ERROR
+]
+
+export const makerStepDocumentStatus = [
+  DocumentStatusEnum.WAIT_CHECK,
+  DocumentStatusEnum.CHECKING,
+  DocumentStatusEnum.CHECKED,
+  DocumentStatusEnum.ADJUST_REQUESTED
+]
+
+export const checkerStepDocumentStatus = [DocumentStatusEnum.WAIT_VALIDATE, DocumentStatusEnum.VALIDATING]
+
+export const statusAccessDeleteDocumentStatus = [
+  DocumentStatusEnum.NEW,
+  DocumentStatusEnum.CLASSIFYING,
+  DocumentStatusEnum.CLASSIFIED,
+  DocumentStatusEnum.OCRING,
+  DocumentStatusEnum.OCRED,
+  ...makerStepDocumentStatus,
+  ...errorDocumentStatus
+]

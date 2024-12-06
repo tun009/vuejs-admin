@@ -5,6 +5,7 @@ interface Props {
   title?: string
   modelValue: boolean
   loading?: boolean
+  confirmText?: string
   type?: 'default' | 'text' | 'success' | 'warning' | 'info' | 'primary' | 'danger'
 }
 
@@ -15,6 +16,7 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {
   title: 'Xác nhận',
+  confirmText: 'Xác nhận',
   type: 'primary'
 })
 const emits = defineEmits<Emits>()
@@ -39,7 +41,7 @@ const localModelValue = computed({
           <slot name="footer-right" />
           <el-button @click="localModelValue = false">Đóng</el-button>
           <el-button :type="type" plain @click="$emit('on-confirm')" :loading="loading" :disabled="loading">
-            Xác nhận
+            {{ confirmText }}
           </el-button>
         </div>
       </div>

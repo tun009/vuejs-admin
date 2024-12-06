@@ -6,6 +6,7 @@ import {
   UpdateLCAmountRequestModel
 } from '@/@types/pages/docs/documents/services/DocumentRequest'
 import {
+  AddFileToDocumentResponseModel,
   GetBatchDetailResponseModel,
   GetBranchResponseModel,
   GetDocumentDataLCResponseModel,
@@ -146,9 +147,26 @@ export function downloadDocumentFile(batchId: string | number, params: { type: D
   })
 }
 
+export function downloadSingleFile(params: { src: string }) {
+  return request({
+    url: 'files',
+    method: 'get',
+    responseType: 'blob',
+    params
+  })
+}
+
 export function getDocumentHistories(batchId: string | number) {
   return request<GetDocumentHistoryResponseModel>({
     url: 'comparison-log/' + batchId,
     method: 'get'
+  })
+}
+
+export function addFileToDocument(id: string | number, data: FormData) {
+  return request<AddFileToDocumentResponseModel>({
+    url: 'dossier-files/' + id + '/add-file',
+    method: 'patch',
+    data
   })
 }

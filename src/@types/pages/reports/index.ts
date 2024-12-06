@@ -73,7 +73,7 @@ export interface ReportDetailModel {
 
 export interface FilterReportModel {
   name: string
-  status: number[]
+  status: DocumentStatusEnum[]
   result: number
   bizType: number
   branchId: number
@@ -470,7 +470,7 @@ export const documentTypeOptions: SelectOptionModel[] = [
 
 export interface FilterDocumentModel {
   name: string
-  status: number[]
+  status: DocumentStatusEnum[]
   result: number
   bizType: number
   branchId: number

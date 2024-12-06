@@ -43,6 +43,13 @@ const onDragLeave = () => {
 
 const addFiles = (fileList: FileList) => {
   let isInvalidFileSize = false
+  const isInvalidFormat = Array.from(fileList).some((item) => {
+    return !props.allowedExtensions.includes(item.type)
+  })
+  if (isInvalidFormat) {
+    warningNotification(t('notification.description.invalidFormat'))
+    return
+  }
   Array.from(fileList).forEach((item) => {
     if (item.size > MAX_FILE_SIZE) {
       isInvalidFileSize = true
@@ -71,6 +78,8 @@ const onFileChange = (event: Event) => {
   const input = event.target as HTMLInputElement
   if (input.files) {
     addFiles(input.files)
+    if (!fileInput.value) return
+    fileInput.value.value = ''
   }
 }
 

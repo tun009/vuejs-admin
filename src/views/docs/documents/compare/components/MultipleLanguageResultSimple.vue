@@ -4,26 +4,25 @@ import {
   DocumentResultEnum,
   documentResultValidOptions
 } from '@/@types/pages/docs/documents'
+import { updateDocumentCompareUndefined } from '@/api/docs/document/compare'
 import EIBDialog from '@/components/common/EIBDialog.vue'
+import EIBInput from '@/components/common/EIBInput.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
-import { useUserStore } from '@/store/modules/user'
+import { getTextFromHtml } from '@/utils/common'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import SaveDictionaryForm from './SaveDictionaryForm.vue'
-import EIBInput from '@/components/common/EIBInput.vue'
-import { updateDocumentCompareUndefined } from '@/api/docs/document/compare'
-import { getTextFromHtml } from '@/utils/common'
 
 interface Props {
   comparisonUndefinedId: number
   requirement: DocumentCompareUndefinedRequirementModel
+  isHavePermission?: boolean
 }
 
 const props = defineProps<Props>()
 
 const { t } = useI18n()
-const { isViewer } = useUserStore()
 
 const isEdit = ref(false)
 const loading = ref(false)
@@ -97,7 +96,7 @@ const handleUpdateCompareResult = () => {
     <div v-if="!isEdit">
       <div class="flex flex-row gap-2 items-center">
         <span class="c-text-des">{{ $t('docs.compare.result') }}</span>
-        <SvgIcon v-if="!isViewer" @click="isEdit = !isEdit" class="w-4 h-4 cursor-pointer" name="edit-pen" />
+        <SvgIcon v-if="isHavePermission" @click="isEdit = !isEdit" class="w-4 h-4 cursor-pointer" name="edit-pen" />
       </div>
       <div class="flex flex-row gap-10">
         <div class="flex flex-col gap-1 flex-1">

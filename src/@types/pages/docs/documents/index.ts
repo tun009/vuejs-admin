@@ -102,6 +102,11 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
     minWidth: 150
   },
   {
+    field: 'lcNo',
+    label: 'docs.document.lcCode',
+    minWidth: 200
+  },
+  {
     field: 'handleBy',
     label: 'docs.document.handler',
     minWidth: 150
@@ -248,7 +253,12 @@ export const documentStatusOptions: SelectOptionModel[] = [
     color: STATUS_COLORS.WAIT_CHECK
   },
   {
-    label: 'Cần điều chỉnh',
+    label: 'Đang phê duyệt',
+    value: DocumentStatusEnum.VALIDATING,
+    color: STATUS_COLORS.WAIT_CHECK
+  },
+  {
+    label: 'YC điều chỉnh',
     value: DocumentStatusEnum.ADJUST_REQUESTED,
     color: STATUS_COLORS.WAIT_CHECK
   },
@@ -265,6 +275,21 @@ export const documentStatusOptions: SelectOptionModel[] = [
   {
     label: 'Lỗi',
     value: DocumentStatusEnum.ERROR,
+    color: STATUS_COLORS.ERROR
+  },
+  {
+    label: 'Lỗi phân loại',
+    value: DocumentStatusEnum.CLASSIFICATION_ERROR,
+    color: STATUS_COLORS.ERROR
+  },
+  {
+    label: 'Lỗi nhận dạng',
+    value: DocumentStatusEnum.EXTRACTION_ERROR,
+    color: STATUS_COLORS.ERROR
+  },
+  {
+    label: 'Lỗi đối sánh',
+    value: DocumentStatusEnum.COMPARISON_ERROR,
     color: STATUS_COLORS.ERROR
   }
 ]
@@ -444,7 +469,7 @@ export const documentTypeOptions: SelectOptionModel[] = [
 
 export interface FilterDocumentModel {
   name: string
-  status: number[]
+  status: DocumentStatusEnum[]
   result: number
   bizType: number
   branchId: number
@@ -575,6 +600,7 @@ export interface ComparisonCellResultModel {
 
 export interface DocumentCompareModel {
   id: number
+  sort?: string | number
   title: string
   key: DocumentKeyEnum
   status: DocumentResultEnum
