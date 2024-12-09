@@ -34,6 +34,7 @@ import { addOneDayToDate, defaultDateRange, formatDate, formatDateExactFormat } 
 import { debounce } from 'lodash-es'
 import Status from '../components/Status.vue'
 import { checkerStepDocumentStatus, endedDocumentStatus, statusAccessDeleteDocumentStatus } from '@/constants/common'
+import { updateDocumentStatus } from '@/api/docs/document/compare'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -85,7 +86,28 @@ const handleGetDocuments = async (pagination: PaginationModel) => {
   }
 }
 
-const handleRedirectToDocumentDetail = (row: DocumentModel) => {
+const handleRedirectToDocumentDetail = async (row: DocumentModel) => {
+  let status: DocumentStatusEnum | null = null
+  if (isMaker && row.status === DocumentStatusEnum.WAIT_CHECK) {
+    status = DocumentStatusEnum.CHECKING
+  } else if (row.status === DocumentStatusEnum.WAIT_CHECK || row.status === DocumentStatusEnum.WAIT_VALIDATE) {
+    if (
+      !isMaker &&
+      (isAdmin || userInfo.username === row.createdBy?.username || userInfo?.username === row.approveBy?.username)
+    ) {
+      status = DocumentStatusEnum.VALIDATING
+    }
+  }
+
+  if (status) {
+    try {
+      await updateDocumentStatus(row.id, {
+        approveDossier: status
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
   router.push(DOCUMENT_DETAIL_PAGE(row.id))
 }
 

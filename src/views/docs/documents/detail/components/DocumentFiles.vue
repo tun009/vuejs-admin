@@ -72,6 +72,7 @@ const handleAddDocument = async () => {
       showClose: true,
       type: 'success'
     })
+    files.value = []
     dialogVisible.value = false
     handleGetDocumentFiles()
   } catch (error) {

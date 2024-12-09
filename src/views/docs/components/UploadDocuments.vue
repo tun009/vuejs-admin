@@ -64,7 +64,6 @@ const addDocumentFormData: AddDocumentRequestModel = reactive({
   cif: '',
   customerName: '',
   name: ''
-  // amountClaimed: 0
 })
 
 const addDocumentFormRules: FormRules<AddDocumentRequestModel> = {
@@ -73,7 +72,6 @@ const addDocumentFormRules: FormRules<AddDocumentRequestModel> = {
   customerName: [requireRule()],
   name: [requireRule()],
   branchId: []
-  // amountClaimed: [requireRule()]
 }
 
 const handleAddDocument = () => {
@@ -104,6 +102,7 @@ const handleAddDocument = () => {
           showClose: true,
           type: 'success'
         })
+        files.value = []
         emits('refresh')
         emits('update:model-value', false)
       } else {
