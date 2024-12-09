@@ -176,15 +176,6 @@ onMounted(() => {
             is-row
           />
 
-          <!-- <EIBInput
-            label="docs.document.totalAmount"
-            placeholder="docs.document.totalAmount"
-            name="amountClaimed"
-            v-model="addDocumentFormData.amountClaimed"
-            required
-            is-row
-          /> -->
-
           <EIBInput
             label="docs.document.cifCode"
             placeholder="docs.document.cifCode"

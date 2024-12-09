@@ -110,10 +110,11 @@ function createService() {
 function createRequest(service: AxiosInstance) {
   return function <T>(config: AxiosRequestConfig, customConfig?: ApiCustomRequestConfigModel): Promise<T> {
     const token = getToken()
+    const exactToken = token ? `Bearer ${token}` : undefined
     const defaultConfig = {
       headers: {
         // Carry Token
-        Authorization: customConfig?.notAuth ? undefined : token ? `Bearer ${token}` : undefined,
+        Authorization: customConfig?.notAuth ? undefined : exactToken,
         'Content-Type': config.data instanceof FormData ? 'multipart/form-data' : 'application/json'
       },
       timeout: 30000,

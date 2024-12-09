@@ -377,8 +377,6 @@ const ruleMapping = computed((): SelectOptionModel[] => {
 @import '@/styles/mixins.scss';
 .animated-box {
   @extend %scrollbar;
-}
-.animated-box {
   overflow-x: hidden;
   max-height: 500px;
   transition:

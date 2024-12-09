@@ -182,9 +182,6 @@ const convertTableDataCompareErrorResults = (compareResult: DocumentCompareModel
                   :bboxes="v?.value?.bboxes ?? []"
                 />
               </template>
-              <!-- <template v-else-if="v?.type === 'list'">
-                <EIBList :data="v?.list ?? []" />
-              </template> -->
               <template v-else>
                 <p class="text-sm">
                   {{ v?.prefixValue ? `${v?.prefixValue}: ` : ''
