@@ -3,6 +3,7 @@ import { RoleEnum } from '@/@types/pages/users'
 import { STATUS_COLORS } from '@/constants/color'
 import { BranchModel } from '../../login'
 import { RuleModel, RuleTypeEnum } from '../../rules'
+import { UserModel } from './services/DocumentResponse'
 
 // document enum
 export enum BusinessTypeEnum {
@@ -66,8 +67,10 @@ export interface DocumentModel {
   customerName: string
   totalAmount: string
   createdAt: string
-  handleBy: string
-  approveBy: string
+  handleBy?: UserModel
+  approveBy?: UserModel
+  censorBy?: UserModel
+  createdBy?: UserModel
   result: DocumentResultEnum
   doneAt: string
 }

@@ -82,7 +82,9 @@ const handleCheckCompareResult = (index: number) => {
   try {
     conditionSelect.value = index
     const id = `document-compare-${index}`
-    scrollIntoViewParent(id)
+    setTimeout(() => {
+      scrollIntoViewParent(id)
+    }, 100)
   } catch (error) {
     console.error(error)
   }
@@ -160,8 +162,10 @@ const handleReturnForMaker = async () => {
   }
 }
 
-const handleGetDocumentCompare = async (key: DocumentKeyEnum = DocumentKeyEnum.INVOICE) => {
-  loading.value = true
+const handleGetDocumentCompare = async (key: DocumentKeyEnum, haveLoading: boolean = true) => {
+  if (haveLoading) {
+    loading.value = true
+  }
   try {
     const { data } = await getDocumentCompare({ batchId: batchId.value, key })
     if (!data) return
@@ -224,15 +228,10 @@ const handleGetRules = async () => {
 }
 
 const compareResults = computed(() => {
-  return documentCompareConfigs.value.map((d) => {
-    const keys = Object.keys(d?.comparisonResults ?? {}) ?? []
-    const invalidResult = keys.some((k) => d.comparisonResults[k].status === DocumentResultEnum.DISCREPANCY)
-    const status = invalidResult ? DocumentResultEnum.DISCREPANCY : DocumentResultEnum.COMPLY
-    return {
-      label: d.title,
-      status
-    }
-  })
+  return documentCompareConfigs.value.map((d) => ({
+    label: d.title,
+    status: d.status
+  }))
 })
 
 const isHaveActionButton = computed(() => {
@@ -397,7 +396,7 @@ onMounted(() => {
                 :is-have-permission="isHaveActionButton"
                 @update:condition="(condition: number) => (conditionSelect = condition)"
                 @scroll-by-index="handleCheckCompareResult"
-                @refresh="handleGetDocumentCompare(documentType)"
+                @refresh="handleGetDocumentCompare(documentType, false)"
               />
             </el-tab-pane>
             <el-tab-pane :label="$t('docs.compare.editHistory')" name="history">
