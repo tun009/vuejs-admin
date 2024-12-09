@@ -21,7 +21,7 @@ import { _formatDDMMYYYY_HHmm } from '@/constants/date'
 import { DOCUMENT_DETAIL_PAGE } from '@/constants/router'
 import { useConfirmModal } from '@/hooks/useConfirm'
 import { useUserStore } from '@/store/modules/user'
-import { resetNullUndefinedFields, scrollIntoViewParent } from '@/utils/common'
+import { formatNumberWithCommas, resetNullUndefinedFields, scrollIntoViewParent } from '@/utils/common'
 import { formatDate } from '@/utils/date'
 import { ArrowLeft, Check, CircleCheckFilled, Close, WarnTriangleFilled } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -147,7 +147,8 @@ const handleReturnForMaker = async () => {
   loadingConfirmReturnMaker.value = true
   try {
     await updateDocumentStatus(batchId.value, {
-      approveDossier: DocumentStatusEnum.ADJUST_REQUESTED
+      approveDossier: DocumentStatusEnum.ADJUST_REQUESTED,
+      message: compareRejectFormRef?.value?.getReason()
     })
     ElMessage.success(t('notification.description.returnSuccess'))
     dialogVisible.value = false
@@ -242,7 +243,7 @@ const isHaveActionButton = computed(() => {
     return false
   }
   if (isChecker) {
-    if (checkerStepDocumentStatus.includes(status) && userInfo.username === documentDetail.value?.createdBy?.username)
+    if (checkerStepDocumentStatus.includes(status) || userInfo.username === documentDetail.value?.createdBy?.username)
       return true
     return false
   }
@@ -340,7 +341,7 @@ onMounted(() => {
               </div>
               <div class="flex flex-col gap-1">
                 <span class="c-text-value">{{ $t('docs.compare.totalAmount') }}</span>
-                <span class="text-base">{{ amount?.totalAmount ?? 0 }} {{ currency }}</span>
+                <span class="text-base">{{ formatNumberWithCommas(amount?.totalAmount ?? 0) }} {{ currency }}</span>
               </div>
             </div>
             <el-divider />

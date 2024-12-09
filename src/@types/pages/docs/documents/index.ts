@@ -129,7 +129,7 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
   {
     field: 'customerName',
     label: 'docs.document.customerName',
-    minWidth: 150
+    minWidth: 200
   },
   {
     field: 'totalAmount',
@@ -198,6 +198,11 @@ export const documentStatusOptions: SelectOptionModel[] = [
   {
     label: 'Đang xử lý OCR',
     value: DocumentStatusEnum.OCRING,
+    color: STATUS_COLORS.CLASSIFYING
+  },
+  {
+    label: 'Đang đối sánh',
+    value: DocumentStatusEnum.COMPARING,
     color: STATUS_COLORS.CLASSIFYING
   },
   {
@@ -308,11 +313,13 @@ export const documentResultOptions: SelectOptionModel[] = [
   },
   {
     label: 'Hợp lệ',
-    value: DocumentResultEnum.COMPLY
+    value: DocumentResultEnum.COMPLY,
+    color: STATUS_COLORS.VALIDATED
   },
   {
     label: 'Bất hợp lệ',
-    value: DocumentResultEnum.DISCREPANCY
+    value: DocumentResultEnum.DISCREPANCY,
+    color: STATUS_COLORS.WAIT_CHECK
   }
 ]
 

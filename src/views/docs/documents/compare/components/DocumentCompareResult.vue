@@ -208,6 +208,7 @@ const convertTableDataCompareErrorResults = (compareResult: DocumentCompareModel
         <MultipleLanguageResult
           :categories="categories"
           :rules="rules"
+          :is-have-permission="isHavePermission"
           :comparisonResultId="compareResult.comparisonResults?.[child]?.id"
           :status="compareResult.comparisonResults?.[child]?.status"
           :result="compareResult.comparisonResults?.[child]?.comparisonReasonResults"
@@ -229,6 +230,7 @@ const convertTableDataCompareErrorResults = (compareResult: DocumentCompareModel
             <span :class="{ 'text-red-500': c.stt === index + 1 }">{{ row?.[c.key] }}</span>
           </template>
         </EIBTable>
+
         <MultipleLanguageResult
           type="table"
           :categories="categories"

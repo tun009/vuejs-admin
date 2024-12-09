@@ -17,6 +17,7 @@ interface Emits {
 
 interface Exposes {
   onConfirm: () => void
+  getReason: () => string
 }
 
 const emits = defineEmits<Emits>()
@@ -37,6 +38,10 @@ const compareRejectFormRules: FormRules = {
 const batchId = computed(() => {
   return route.params?.id as string
 })
+
+const getReason = () => {
+  return compareRejectFormData.reason
+}
 
 const onConfirm = () => {
   compareRejectRef.value?.validate(async (valid: boolean, fields) => {
@@ -62,7 +67,8 @@ const onConfirm = () => {
 }
 
 defineExpose<Exposes>({
-  onConfirm
+  onConfirm,
+  getReason
 })
 </script>
 

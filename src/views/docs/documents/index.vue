@@ -164,7 +164,7 @@ const isHaveEditDocument = (username: string, status: DocumentStatusEnum) => {
 }
 
 const isHaveDeleteDocument = (username: string, status: DocumentStatusEnum) => {
-  if ([DocumentStatusEnum.DENIED, DocumentStatusEnum.VALIDATED].includes(status)) return false
+  if (endedDocumentStatus.includes(status)) return false
   if (!statusAccessDeleteDocumentStatus.includes(status)) return false
   if (isAdmin || isMaker) return true
   if (isChecker && username === userInfo.username) return true
@@ -276,6 +276,9 @@ onMounted(() => {
         </template>
         <template #createdAt="{ row }">
           <span>{{ formatDate(row.createdAt, formatDDMMYYYY_HHMM) }}</span>
+        </template>
+        <template #doneAt="{ row }">
+          <span>{{ formatDate(row.doneAt, formatDDMMYYYY_HHMM) }}</span>
         </template>
         <template #branchName="{ row }">
           <span>{{ row?.branch?.name }}</span>

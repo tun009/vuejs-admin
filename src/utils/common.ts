@@ -254,3 +254,7 @@ export const trimObjectValues = (obj: Record<string, any>): Record<string, any> 
   })
   return obj
 }
+
+export const formatNumberWithCommas = (num: number | string): string => {
+  return Number(num).toLocaleString()
+}

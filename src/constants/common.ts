@@ -28,7 +28,8 @@ export const processingDocumentStatus = [
   DocumentStatusEnum.NEW,
   DocumentStatusEnum.CLASSIFYING,
   DocumentStatusEnum.CLASSIFIED,
-  DocumentStatusEnum.OCRING
+  DocumentStatusEnum.OCRING,
+  DocumentStatusEnum.COMPARING
 ]
 
 export const endedDocumentStatus = [DocumentStatusEnum.DENIED, DocumentStatusEnum.VALIDATED]

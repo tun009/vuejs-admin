@@ -124,8 +124,15 @@ const isValidated = computed(() => props.data.status === DocumentStatusEnum.VALI
 
 const getValueLC = (coreKey: string): string | undefined | null => {
   const lcByKey = dataLC.value.find((lc) => lc.coreKey === coreKey)
-  return lcByKey?.validatedValue ?? lcByKey?.extractionValue
+  return lcByKey?.validatedValue ?? lcByKey?.extractionValue ?? '-'
 }
+
+const getToleranceFromText = (text: string) => {
+  const keys = text.split('/')
+  if (keys.length < 2) return text
+  return '+/- ' + keys[0] + '%'
+}
+
 const redirectOcrResult = () => {
   router.push({
     path: EXTRACT_PAGE,
@@ -290,7 +297,7 @@ onMounted(() => {
           >
           <span
             >{{ $t('docs.detail.tolerance') }}:
-            <span class="c-text-value">{{ getValueLC('tolerance_percent') }}</span></span
+            <span class="c-text-value">{{ getToleranceFromText(getValueLC('tolerance_percent') ?? '-') }}</span></span
           >
           <span
             >{{ $t('docs.detail.partialDelivery') }}:
