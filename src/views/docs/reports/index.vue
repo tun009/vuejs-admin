@@ -151,7 +151,7 @@ onMounted(() => {
     <div class="flex flex-row justify-between gap-10 items-center mb-5">
       <div class="flex flex-row gap5 items-center gap-5">
         <EIBInput
-          v-model="filterValue.name"
+          v-model="filterValue.query"
           custom-class="w-[360px]"
           placeholder="docs.document.searchByName"
           :prefix-icon="Search"
@@ -207,7 +207,7 @@ onMounted(() => {
       >
         <template #branch="{ row }">
           <div>
-            <span>{{ row.branch.name }}</span>
+            <span>{{ row.branch?.name }}</span>
           </div>
         </template>
         <template #status="{ row }">

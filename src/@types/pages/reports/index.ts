@@ -1,6 +1,6 @@
 import { ColumnConfigModel, DocumentStatusEnum, SelectOptionModel } from '@/@types/common'
-import { RoleEnum } from '@/@types/pages/users'
 import { STATUS_COLORS } from '@/constants/color'
+import { DocumentResultEnum } from '../docs/documents'
 
 export interface ReportModel {
   batchId: number
@@ -18,7 +18,7 @@ export interface ReportModel {
 
 export interface ReportDetailModel {
   batchId: number
-  batchName: string
+  name: string
   lcNo: string
   bizType: string
   branch: {
@@ -92,11 +92,6 @@ export enum BusinessTypeEnum {
   LC_OUT = 'LC_OUT'
 }
 
-export enum DocumentResultEnum {
-  COMPLIED = 'COMPLIED',
-  DISCREPANCY = 'DISCREPANCY'
-}
-
 export enum ProcessingStepEnum {
   NEW = 'NEW',
   OCR = 'OCR',
@@ -141,7 +136,7 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
     minWidth: 30
   },
   {
-    field: 'batchName',
+    field: 'name',
     label: 'Tên bộ chứng từ'
   },
   {
@@ -177,33 +172,6 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
     field: 'timeCheckerHandle',
     label: 'Checker xử lý'
   }
-]
-
-// mock data
-export const HANDLER_LIST = [RoleEnum.MAKER, RoleEnum.CHECKER]
-export const DOCUMENT_STATUS_LIST = [
-  DocumentStatusEnum.NEW,
-  DocumentStatusEnum.CLASSIFYING,
-  DocumentStatusEnum.CLASSIFIED,
-  DocumentStatusEnum.OCRING,
-  DocumentStatusEnum.OCRED,
-  DocumentStatusEnum.WAIT_CHECK,
-  DocumentStatusEnum.CHECKING,
-  DocumentStatusEnum.CHECKED,
-  DocumentStatusEnum.WAIT_VALIDATE,
-  DocumentStatusEnum.ADJUST_REQUESTED,
-  DocumentStatusEnum.VALIDATED,
-  DocumentStatusEnum.DENIED,
-  DocumentStatusEnum.ERROR
-]
-
-export const BUSINESS_TYPE_LIST = [BusinessTypeEnum.NA, BusinessTypeEnum.LC_OUT, BusinessTypeEnum.LC_IN]
-export const DOCUMENT_RESULT_LIST = [DocumentResultEnum.COMPLIED, DocumentResultEnum.DISCREPANCY]
-export const PROCESSING_STEP_LIST = [
-  ProcessingStepEnum.NEW,
-  ProcessingStepEnum.OCR,
-  ProcessingStepEnum.CHECK,
-  ProcessingStepEnum.VALIDATE
 ]
 
 export interface DocumentFileModel {
@@ -336,7 +304,7 @@ export const documentResultOptions: SelectOptionModel[] = [
   },
   {
     label: 'Hợp lệ',
-    value: DocumentResultEnum.COMPLIED
+    value: DocumentResultEnum.COMPLY
   },
   {
     label: 'Bất hợp lệ',
@@ -469,7 +437,7 @@ export const documentTypeOptions: SelectOptionModel[] = [
 ]
 
 export interface FilterDocumentModel {
-  name: string
+  query: string
   status: number[]
   result: number
   bizType: number

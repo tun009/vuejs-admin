@@ -16,12 +16,25 @@ export interface SettingMD {
   docType: string
 }
 
+export enum AutoCheckConfigEnum {
+  MANUAL = 'MANUAL',
+  THRESHOLD = 'THRESHOLD',
+  AUTO = 'AUTO'
+}
+
+export interface AutoConfigSettingModel {
+  id: number
+  type: AutoCheckConfigEnum
+  autoThreshold: number
+}
+
 // export const dataSelectDocs: SelectOptionModel[] = [{ label: 'INVOICE', value: 1519 }]
 
 export const infoListColumnConfigs: ColumnConfigModel[] = [
   {
     field: 'stt',
-    label: 'STT'
+    label: 'STT',
+    width: 80
   },
   {
     field: 'name',
@@ -32,7 +45,7 @@ export const infoListColumnConfigs: ColumnConfigModel[] = [
     label: 'Core_key'
   },
   {
-    field: 'docType',
+    field: 'type',
     label: 'Loại dữ liệu'
   },
   {

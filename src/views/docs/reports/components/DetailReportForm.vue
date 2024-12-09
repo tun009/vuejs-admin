@@ -56,7 +56,7 @@ defineExpose<Exposes>({
   <div>
     <div>
       <p class="text-[#495057] font-bold text-[14px]">Tên bộ chứng từ:</p>
-      <p class="text-[14px]">{{ props.data?.batchName }}</p>
+      <p class="text-[14px]">{{ props.data?.name }}</p>
     </div>
     <div class="flex mt-[16px]">
       <div class="w-[50%]">
