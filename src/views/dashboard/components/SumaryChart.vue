@@ -5,12 +5,6 @@ import { onUpdated, ref, watch } from 'vue'
 const props = defineProps<{
   data: DasboardOverviewModel
 }>()
-// const dataConverted = computed(() => {
-//   return options.value.data[0]?.dataPoints.map((item) => ({
-//     ...item,
-//     y: Number(props.data[item.key]) || 0
-//   }))
-// })
 const totalDossiers = ref<number>(0)
 const isRendenderChart = ref<boolean>(false)
 watch(

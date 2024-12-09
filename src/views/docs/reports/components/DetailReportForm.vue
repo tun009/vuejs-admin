@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { ReportDetailModel } from '@/@types/pages/reports'
 import EIBTable from '@/components/common/EIBTable.vue'
 import Status from '@/views/docs/components/Status.vue'
 import { ref } from 'vue'
-import { documentResultOptions, documentStatusOptions } from '@/@types/pages/reports'
+import { documentResultOptions, documentStatusOptions, ReportDetailModel } from '@/@types/pages/reports'
 
 interface Props {
   data: ReportDetailModel

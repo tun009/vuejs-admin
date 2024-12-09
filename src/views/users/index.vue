@@ -2,8 +2,6 @@
 import ConfigRoleUserForm from './components/ConfigRoleUserForm.vue'
 
 import { PaginationModel } from '@/@types/common'
-import { FilterUserModel, UserModel, userListColumnConfigs } from '@/@types/pages/users'
-import { getUsers } from '@/api/users'
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import EIBInput from '@/components/common/EIBInput.vue'
 import EIBTable from '@/components/common/EIBTable.vue'
@@ -15,8 +13,14 @@ import UpdateUserForm from './components/UpdateUserForm.vue'
 import { omitPropertyFromObject, mappingBranches, withAllSelection } from '@/utils/common'
 import { useConfirmModal } from '@/hooks/useConfirm'
 import { debounce } from 'lodash-es'
-import { deleteUser, lockUser } from '@/api/users'
-import { roleTypeOptions, statusTypeOptions } from '@/@types/pages/users'
+import { deleteUser, lockUser, getUsers } from '@/api/users'
+import {
+  roleTypeOptions,
+  statusTypeOptions,
+  FilterUserModel,
+  UserModel,
+  userListColumnConfigs
+} from '@/@types/pages/users'
 import { getBranches } from '@/api/docs/document'
 
 const { showConfirmModal } = useConfirmModal()

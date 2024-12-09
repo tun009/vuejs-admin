@@ -231,7 +231,7 @@ export const withDefaultString = (value: string | null, defaultString: string = 
   return value ? value : defaultString
 }
 
-export const renderColorByConfidence = (conf: number = 0, settings: UpdateConfidenceRequestModel[]): string => {
+export const renderColorByConfidence = (conf: number, settings: UpdateConfidenceRequestModel[]): string => {
   conf = parseFloat(conf.toFixed(3))
   let color = '#7a8da5'
   settings.forEach((item) => {

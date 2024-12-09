@@ -417,7 +417,7 @@ onMounted(() => {
                           <span
                             class="text-[#fff] rounded-[3px] px-[4px] text-[12px] py-[2px] font-medium max-h-6"
                             :style="{
-                              backgroundColor: renderColorByConfidence(item.confidence, dataConfigs)
+                              backgroundColor: renderColorByConfidence(item.confidence ?? 0, dataConfigs)
                             }"
                           >
                             {{ formatNumberConfidence(item?.confidence ?? 0) }}%

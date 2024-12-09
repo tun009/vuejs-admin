@@ -4,7 +4,7 @@ import { DirectiveBinding } from 'vue'
 export default {
   mounted(el: HTMLElement, binding: DirectiveBinding) {
     const handler = (event: Event) => {
-      if (!(el as HTMLElement).contains(event.target as Node)) {
+      if (!el.contains(event.target as Node)) {
         binding.value()
       }
     }
