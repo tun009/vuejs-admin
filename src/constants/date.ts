@@ -14,11 +14,11 @@ export const TIME_LAST_DAY = 'T23:59:59Z'
 export const shortcutsDateRange = [
   {
     text: 'Last 7 days',
-    value: () => getDateRangeByDistance(30)
+    value: () => getDateRangeByDistance(7)
   },
   {
     text: 'Last 30 days',
-    value: () => getDateRangeByDistance(60)
+    value: () => getDateRangeByDistance(30)
   },
   {
     text: 'Last 90 days',
