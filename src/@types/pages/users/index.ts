@@ -50,7 +50,8 @@ export const roleSelectOptions: SelectOptionModel[] = [
 export const userListColumnConfigs: ColumnConfigModel[] = [
   {
     field: 'stt',
-    label: 'Stt'
+    label: 'Stt',
+    width: 80
   },
   {
     field: 'name',

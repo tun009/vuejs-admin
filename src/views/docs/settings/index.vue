@@ -6,7 +6,8 @@ import {
   SettingMD,
   infoListColumnConfigs,
   UpdateConfidenceFormModel,
-  UpdateConfidenceColorFormModel
+  UpdateConfidenceColorFormModel,
+  AutoCheckConfigEnum
 } from '@/@types/pages/docs/settings'
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
@@ -16,12 +17,21 @@ import { CONFIDENCES, CONFIDENCE_COLOR_FORM_DEFAULT } from '@/constants/setting'
 import { Title } from '@/layouts/components'
 import { getDocummentTypeApi } from '@/api/extract'
 import { SelectOptionModel } from '@/@types/common'
-import { getDocDataField, getConfidence, updateConfidence } from '@/api/docs/settings'
-import { requireRule } from '@/utils/validate'
+import {
+  getDocDataField,
+  getConfidence,
+  updateConfidence,
+  getAutoCheckConfig,
+  updateCheckConfig
+} from '@/api/docs/settings'
+import { requireRule, RULE_CONFIDENCE } from '@/utils/validate'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { sortObjectsByMultipleFields } from '@/utils/common'
 import { useI18n } from 'vue-i18n'
-import { UpdateConfidenceRequestModel } from '@/@types/pages/docs/settings/services/SettingRequest'
+import {
+  UpdateCheckConfigRequestModel,
+  UpdateConfidenceRequestModel
+} from '@/@types/pages/docs/settings/services/SettingRequest'
 
 const { t } = useI18n()
 
@@ -45,20 +55,29 @@ interface Emits {
 
 const emits = defineEmits<Emits>()
 const rules: FormRules<UpdateConfidenceFormModel> = {
-  toConfidence1: [requireRule()],
-  toConfidence2: [requireRule()],
-  toConfidence3: [requireRule()],
+  toConfidence1: RULE_CONFIDENCE('Ngưỡng tin cậy không hợp lệ', ruleForm, '', 'toConfidence2'),
+  toConfidence2: RULE_CONFIDENCE('Ngưỡng tin cậy không hợp lệ', ruleForm, 'toConfidence1', 'toConfidence3'),
+  toConfidence3: RULE_CONFIDENCE('Ngưỡng tin cậy không hợp lệ', ruleForm, 'toConfidence2', 'toConfidence4'),
   toConfidence4: [requireRule()]
 }
 const ruleForm1 = ref({
   dataSource: 0
 })
-const automation = ref({
-  type: 0,
-  extractionThreshold: 80
+const automation = ref<UpdateCheckConfigRequestModel>({
+  id: 0,
+  type: AutoCheckConfigEnum.MANUAL,
+  autoThreshold: 0
 })
 
 const openUpdateInfoExtractDrawer = ref(false)
+const validateInput = (event: any, item: any) => {
+  const input = event.target.value
+  const regex = /^[0-9]*$/
+  if (!regex.test(input)) {
+    ruleForm.value[item as keyof UpdateConfidenceFormModel] = input.replace(/[^0-9]/g, '')
+  }
+}
+
 const handleGetDocTypes = async () => {
   try {
     const response = await getDocummentTypeApi()
@@ -103,6 +122,16 @@ const handleUpdateInfoExtract = (row: SettingModel) => {
   rowSelect.value = row
 }
 
+const getCheckConfig = async () => {
+  try {
+    const response = await getAutoCheckConfig()
+    automation.value = response.data
+    automation.value.autoThreshold = automation.value.autoThreshold * 100
+  } catch (error: any) {
+    throw new Error(error)
+  }
+}
+
 const handleUpdateConfidence = async () => {
   ruleFormConfidence.value?.validate(async (valid: boolean, fields) => {
     try {
@@ -138,6 +167,23 @@ const handleUpdateConfidence = async () => {
   })
 }
 
+const handleUpdateCheckConfig = async () => {
+  try {
+    const payload = { ...automation.value, autoThreshold: automation.value.autoThreshold / 100 }
+    loading.value = true
+    await updateCheckConfig(payload)
+    ElMessage({
+      message: t('notification.description.updateSuccess'),
+      showClose: true,
+      type: 'success'
+    })
+  } catch (error) {
+    console.error(error)
+  } finally {
+    loading.value = false
+  }
+}
+
 watch(
   [() => docTypeID],
   async () => {
@@ -152,6 +198,7 @@ onMounted(() => {
   getDataField()
   handleGetDocTypes()
   getConfidenceDetail()
+  getCheckConfig()
 })
 </script>
 
@@ -215,6 +262,7 @@ onMounted(() => {
                         v-model="ruleForm[item as keyof UpdateConfidenceFormModel]"
                         :rules="rules[item as keyof UpdateConfidenceFormModel]"
                         :rule-form-ref="$refs.ruleFormConfidence"
+                        @input="validateInput($event, item)"
                         :name-ref="item"
                         :name="item"
                         required
@@ -255,7 +303,7 @@ onMounted(() => {
               <div class="mt-1 d-flex flex-column g-4">
                 <el-radio-group v-model="automation.type">
                   <div class="w-full">
-                    <el-radio :label="2"
+                    <el-radio label="MANUAL"
                       ><span>Không tự động</span><br />
                       <div class="radio-description">
                         Dữ liệu sau khi nhận dạng OCR sẽ luôn ở trạng thái
@@ -266,7 +314,7 @@ onMounted(() => {
                     </el-radio>
                   </div>
                   <div class="w-full">
-                    <el-radio :label="1"
+                    <el-radio label="THRESHOLD"
                       ><span>Dựa vào độ tin cậy</span><br />
                       <div class="radio-description">
                         Các trường dữ liệu có độ tin cậy ≥ Ngưỡng tự động, sẽ tự động chuyển sang trạng thái
@@ -277,17 +325,17 @@ onMounted(() => {
                       <div class="pt-6 pl-3 text-[14px]">Ngưỡng tự động</div>
                       <div class="confidence-slider-wrapper pl-3">
                         <el-slider
-                          :disabled="automation.type !== 1"
-                          v-model="automation.extractionThreshold"
+                          :disabled="automation.type !== AutoCheckConfigEnum.THRESHOLD"
+                          v-model="automation.autoThreshold"
                           :show-tooltip="false"
                           class="confidence-slider"
                         />
-                        <span class="confidence-value">{{ `${automation.extractionThreshold}%` }}</span>
+                        <span class="confidence-value">{{ `${automation.autoThreshold}%` }}</span>
                         <div class="confidence-value-controls">
-                          <button :disabled="automation.type !== 1">
+                          <button :disabled="automation.type !== AutoCheckConfigEnum.THRESHOLD">
                             <el-icon class="el-icon-caret-top pointer" />
                           </button>
-                          <button :disabled="automation.type !== 1">
+                          <button :disabled="automation.type !== AutoCheckConfigEnum.THRESHOLD">
                             <el-icon class="el-icon-caret-bottom pointer" />
                           </button>
                         </div>
@@ -295,7 +343,7 @@ onMounted(() => {
                     </div>
                   </div>
                   <div class="w-full">
-                    <el-radio :label="0"
+                    <el-radio label="AUTO"
                       ><span>Luôn tự động</span><br />
                       <div class="radio-description">
                         Dữ liệu sau khi nhận dạng OCR sẽ luôn ở trạng thái
@@ -305,7 +353,13 @@ onMounted(() => {
                   </div>
                 </el-radio-group>
               </div>
-              <el-button type="primary" style="width: 110px" class="btn-red mt-10 save-btn" variant="none"
+              <el-button
+                type="primary"
+                style="width: 110px"
+                class="btn-red mt-10 save-btn"
+                variant="none"
+                :loading="loading"
+                @click.prevent="handleUpdateCheckConfig"
                 >Lưu thay đổi</el-button
               >
             </div>
