@@ -3,6 +3,7 @@ import { useUserStoreHook } from '@/store/modules/user'
 import { ElMessage } from 'element-plus'
 import { get, merge } from 'lodash-es'
 import { getToken } from '../utils/cache/cookies'
+import { trimObjectValues } from '@/utils/common'
 
 /** Log out and force refresh the page (will redirect to the login page) */
 function logout() {
@@ -120,7 +121,10 @@ function createRequest(service: AxiosInstance) {
       // data: {}
     }
     // Merge the default configuration defaultConfig and the passed-in custom configuration config into mergeConfig
-    const mergeConfig = merge(defaultConfig, config)
+    const mergeConfig = merge(defaultConfig, {
+      ...config,
+      ...(config?.data ? { data: trimObjectValues(config?.data) } : {})
+    })
     return service(mergeConfig)
   }
 }

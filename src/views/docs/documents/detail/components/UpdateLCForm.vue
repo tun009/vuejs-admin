@@ -2,6 +2,7 @@
 import { DocumentLCAmountModel, UpdateLCAmountFormModel } from '@/@types/pages/docs/documents'
 import { updateLCAmount } from '@/api/docs/document'
 import EIBInput from '@/components/common/EIBInput.vue'
+import { formatNumberWithCommas } from '@/utils/common'
 import { warningNotification } from '@/utils/notification'
 import { requireRule } from '@/utils/validate'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
@@ -58,10 +59,10 @@ defineExpose<Exposes>({
 <template>
   <div class="flex flex-col gap-4">
     <div class="grid grid-cols-3 gap-x-3 gap-y-2">
-      <span class="col-span-2">{{ $t('docs.detail.totalLc') }}:</span>
-      <span>{{ defaultForm?.totalAmount }}</span>
-      <span class="col-span-2">{{ $t('docs.detail.totalLcUsed') }}:</span>
-      <span>{{ defaultForm?.amountUsed }}</span>
+      <span class="col-span-2 text-[#868e96]">{{ $t('docs.detail.totalLc') }}:</span>
+      <span>{{ formatNumberWithCommas(defaultForm?.totalAmount) }}</span>
+      <span class="col-span-2 text-[#868e96]">{{ $t('docs.detail.totalLcUsed') }}:</span>
+      <span>{{ formatNumberWithCommas(defaultForm?.amountUsed) }}</span>
     </div>
     <div class="flex flex-col gap-2">
       <el-form
@@ -75,8 +76,8 @@ defineExpose<Exposes>({
           v-model.number="updateLCFormData.amountUsed"
           name="amountUsed"
           type="number"
-          label="docs.detail.amount"
-          placeholder="docs.detail.enterReason"
+          label="docs.detail.newValue"
+          placeholder="docs.detail.enterValueLC"
         />
       </el-form>
     </div>

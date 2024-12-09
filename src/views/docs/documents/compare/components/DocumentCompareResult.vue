@@ -20,6 +20,7 @@ interface Props {
   categories: RuleModel[]
   rules: RuleModel[]
   configs: DocumentCompareModel[]
+  isHavePermission?: boolean
 }
 
 interface Emits {
@@ -207,6 +208,7 @@ const convertTableDataCompareErrorResults = (compareResult: DocumentCompareModel
         <MultipleLanguageResult
           :categories="categories"
           :rules="rules"
+          :is-have-permission="isHavePermission"
           :comparisonResultId="compareResult.comparisonResults?.[child]?.id"
           :status="compareResult.comparisonResults?.[child]?.status"
           :result="compareResult.comparisonResults?.[child]?.comparisonReasonResults"
@@ -228,12 +230,14 @@ const convertTableDataCompareErrorResults = (compareResult: DocumentCompareModel
             <span :class="{ 'text-red-500': c.stt === index + 1 }">{{ row?.[c.key] }}</span>
           </template>
         </EIBTable>
+
         <MultipleLanguageResult
           type="table"
           :categories="categories"
           :rules="rules"
           :comparisonResultId="compareResult.id"
           :status="compareResult.status"
+          :is-have-permission="isHavePermission"
           @refresh="emits('refresh')"
           :result="convertTableDataCompareErrorResults(compareResult)"
         />
@@ -249,7 +253,11 @@ const convertTableDataCompareErrorResults = (compareResult: DocumentCompareModel
               <span class="c-text-des">Requirement</span>
               <p class="text-sm">{{ d?.requirement }}</p>
             </div>
-            <MultipleLanguageResultSimple :comparisonUndefinedId="block?.id" :requirement="d" />
+            <MultipleLanguageResultSimple
+              :comparisonUndefinedId="block?.id"
+              :requirement="d"
+              :is-have-permission="isHavePermission"
+            />
           </div>
         </div>
       </div>

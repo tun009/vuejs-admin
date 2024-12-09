@@ -20,7 +20,6 @@ import {
 import EIBDialog from '@/components/common/EIBDialog.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
 import EIBTextareaAutoComplete from '@/components/common/EIBTextareaAutoComplete.vue'
-import { useUserStore } from '@/store/modules/user'
 import { getTextFromHtml } from '@/utils/common'
 import { InfoFilled } from '@element-plus/icons-vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
@@ -35,6 +34,7 @@ interface Props {
   result: CompareReasonResultModel[]
   comparisonResultId: number
   type?: 'simple' | 'table'
+  isHavePermission?: boolean
 }
 
 interface Emits {
@@ -47,7 +47,6 @@ const props = withDefaults(defineProps<Props>(), {
 const emits = defineEmits<Emits>()
 
 const { t } = useI18n()
-const { isViewer } = useUserStore()
 
 const lawReasonMapping = computed(() => {
   const result: CompareReasonOnlyResultModel = {
@@ -244,7 +243,7 @@ const ruleMapping = computed((): SelectOptionModel[] => {
     <div v-if="!isEdit">
       <div class="flex flex-row gap-2 items-center">
         <span class="c-text-des">{{ $t('docs.compare.result') }}</span>
-        <SvgIcon v-if="!isViewer" @click="isEdit = !isEdit" class="w-4 h-4 cursor-pointer" name="edit-pen" />
+        <SvgIcon v-if="isHavePermission" @click="isEdit = !isEdit" class="w-4 h-4 cursor-pointer" name="edit-pen" />
       </div>
       <div class="flex flex-row gap-10">
         <div class="flex flex-col gap-1 flex-1">

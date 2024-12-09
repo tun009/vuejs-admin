@@ -13,6 +13,7 @@
       "createSuccess": "Thêm mới thành công",
       "confirmClose": "Bạn chắc chắn thoát khỏi?",
       "limitSize": "Dung lượng file không vượt quá 16MB!",
+      "invalidFormat": "Chỉ cho phép tải lên file PDF hoặc hình ảnh JPEG, JPG, PNG.",
       "limitQuantity": "Tổng số file không vượt quá {count}!",
       "emptyFiles": "Vui lòng chọn ít nhất 1 file!",
       "saveSuccess": "Lưu thành công",
@@ -26,12 +27,14 @@
     "title": {
       "deleteFile": "Xác nhận xóa file?",
       "confirmCompare": "Xác nhận kết quả kiểm tra bộ chứng từ",
-      "approveCompare": "Phê duyệt kết quả kiểm tra bộ chứng từ"
+      "approveCompare": "Phê duyệt kết quả kiểm tra bộ chứng từ",
+      "changePassword": "Thay đổi mật khẩu"
     },
     "description": {
       "deleteFile": "Bạn có chắc chắn xóa file <strong>{ name }</strong> không?",
       "confirmCompare": "Sau khi nhấn vào nút “Xác nhận”, hệ thống ghi nhận việc kiểm tra kết quả đã hoàn tất, chuyển sang trạng thái “Đã kiểm tra”</br ></br />Bạn xác nhận hoàn thành kiểm tra chứ?",
-      "approveCompare": "Sau khi nhấn vào nút “Phê duyệt”, hệ thống ghi nhận việc kiểm tra kết quả đã hoàn tất, chuyển sang trạng thái “Đã phê duyệt”, kết thúc luồng xử lý giao dịch, không thể thực hiện chỉnh sửa nữa.</br ></br />Bạn xác nhận phê duyệt chứ?"
+      "approveCompare": "Sau khi nhấn vào nút “Phê duyệt”, hệ thống ghi nhận việc kiểm tra kết quả đã hoàn tất, chuyển sang trạng thái “Đã phê duyệt”, kết thúc luồng xử lý giao dịch, không thể thực hiện chỉnh sửa nữa.</br ></br />Bạn xác nhận phê duyệt chứ?",
+      "changePassword": "Bạn cần thay đổi mật khẩu lần đầu để có thể tiếp tục sử dụng"
     }
   },
   "layouts": {
@@ -172,6 +175,7 @@
       "stt": "Stt",
       "documentName": "Tên bộ chứng từ",
       "businessType": "Loại nghiệp vụ",
+      "lcCode": "Mã LC",
       "status": "Trạng thái",
       "processingStep": "Bước xử lý",
       "sol": "SOL",
@@ -228,7 +232,7 @@
       "preDoc": "Bộ trước",
       "nextDoc": "Bộ sau",
       "documentInformation": "Thông tin bộ chứng từ",
-      "fileList": "Danh sách file giấy từ",
+      "fileList": "Danh sách file chứng từ",
       "lcInformation": "Thông tin LC",
       "lcProgress": "Tổng trị giá LC đã sử dụng ({ currency }) / Tổng giá trị LC",
       "lcNumber": "Số LC",
@@ -256,7 +260,9 @@
       "totalLc": "Tổng giá trị LC",
       "totalLcUsed": "Tổng trị giá LC đã sử dụng hiện tại",
       "enterReason": "Nhập lý do",
-      "amount": "Số tiền"
+      "amount": "Số tiền",
+      "newValue": "Thông tin trị giá mới",
+      "enterValueLC": "Nhập lại số trị giá LC đã sử dụng"
     },
     "status": {
       "processing": "Đang xử lý",

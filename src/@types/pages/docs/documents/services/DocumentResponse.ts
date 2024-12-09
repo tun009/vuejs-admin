@@ -15,10 +15,13 @@ import {
 } from '..'
 
 import { BaseListResponseModel, DocumentStatusEnum } from '@/@types/common'
+import { RoleEnum, UserStatusEnum } from '@/@types/pages/users'
 
 export type GetDocumentResponseModel = BaseListResponseModel<DocumentModel>
 
 export type GetDocumentDetailResponseModel = ApiResponseData<DocumentModel>
+
+export type AddFileToDocumentResponseModel = ApiResponseData<boolean>
 
 export type GetDocumentFileResponseModel = ApiResponseData<DocumentFileModel[]>
 
@@ -50,13 +53,22 @@ export type GetDocumentCompareUndefinedResponseModel = ApiResponseData<DocumentC
 
 export type PatchDocumentCompareUndefinedResponseModel = ApiResponseData<boolean>
 
+export interface UserModel {
+  id: number
+  name: string
+  role: RoleEnum
+  status: UserStatusEnum
+  username: string
+}
+
 export interface BatchDetailModel {
   id: number
   dossierName: string
   bizType: BusinessTypeEnum
   status: DocumentStatusEnum
-  handleBy: string
-  approveBy: string
+  censorBy?: UserModel
+  createdBy?: UserModel
+  approveBy?: UserModel
   step: ProcessingStepEnum
   branch: BranchModel
   cif: string

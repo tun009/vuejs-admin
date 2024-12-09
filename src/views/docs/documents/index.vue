@@ -24,27 +24,21 @@ import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import EIBInput from '@/components/common/EIBInput.vue'
 import EIBTable from '@/components/common/EIBTable.vue'
-import {
-  TIME_FIRST_DAY,
-  TIME_LAST_DAY,
-  formatDDMMYYYY,
-  formatDDMMYYYY_HHMM,
-  formatYYYYMMDD,
-  shortcutsDateRange
-} from '@/constants/date'
+import { formatDDMMYYYY, formatDDMMYYYY_HHMM, formatYYYYMMDD, shortcutsDateRange } from '@/constants/date'
 import { DOCUMENT_DETAIL_PAGE } from '@/constants/router'
 import { useConfirmModal } from '@/hooks/useConfirm'
 import { Title } from '@/layouts/components'
 import { useUserStore } from '@/store/modules/user'
 import { mappingBranches, omitPropertyFromObject, renderLabelByValue, withAllSelection } from '@/utils/common'
-import { defaultDateRange, formatDate, formatDateExactFormat } from '@/utils/date'
+import { addOneDayToDate, defaultDateRange, formatDate, formatDateExactFormat } from '@/utils/date'
 import { debounce } from 'lodash-es'
 import Status from '../components/Status.vue'
+import { checkerStepDocumentStatus, endedDocumentStatus, statusAccessDeleteDocumentStatus } from '@/constants/common'
 
 const { t } = useI18n()
 const router = useRouter()
 const { showConfirmModal } = useConfirmModal()
-const { isViewer } = useUserStore()
+const { isViewer, isAdmin, isChecker, isMaker, userInfo } = useUserStore()
 
 const openFilter = ref(false)
 const tableData = ref<DocumentModel[]>([])
@@ -59,20 +53,30 @@ const branches = ref<BranchModel[]>([])
 
 const handleGetDocuments = async (pagination: PaginationModel) => {
   try {
-    const { status, name, ...otherFilter } = filterValue
+    const { status, ...otherFilter } = filterValue
+    const isErrorStatus = status.includes(DocumentStatusEnum.ERROR)
+    let exactStatus = [...status]
+    if (isErrorStatus) {
+      exactStatus = exactStatus
+        .filter((e) => e !== DocumentStatusEnum.ERROR)
+        .concat([
+          DocumentStatusEnum.CLASSIFICATION_ERROR,
+          DocumentStatusEnum.EXTRACTION_ERROR,
+          DocumentStatusEnum.COMPARISON_ERROR
+        ])
+    }
     const response = await getDocuments({
       ...pagination,
       ...omitPropertyFromObject(otherFilter, -1),
-      ...(name ? { name: name.trim() } : {}),
-      beginDate: formatDateExactFormat(uploadTimes.value[0], formatDDMMYYYY, formatYYYYMMDD) + TIME_FIRST_DAY,
-      endDate: formatDateExactFormat(uploadTimes.value[1], formatDDMMYYYY, formatYYYYMMDD) + TIME_LAST_DAY,
+      beginDate: formatDateExactFormat(uploadTimes.value[0], formatDDMMYYYY, formatYYYYMMDD),
+      endDate: addOneDayToDate(formatDateExactFormat(uploadTimes.value[1], formatDDMMYYYY, formatYYYYMMDD)),
       sortItemList: [
         {
           isAsc: false,
           column: 'createdAt'
         }
       ],
-      ...(status?.length !== documentStatusOptions.length ? { status } : {})
+      ...(status?.length !== documentStatusOptions.length ? { status: exactStatus } : {})
     })
     tableData.value = response.data.list
     return response
@@ -147,6 +151,26 @@ const handleGetBranches = async () => {
   }
 }
 
+const isHaveEditDocument = (username: string, status: DocumentStatusEnum) => {
+  if (endedDocumentStatus.includes(status)) return false
+  if (isAdmin) return true
+  if (isMaker) {
+    return !checkerStepDocumentStatus.includes(status)
+  }
+  if (isChecker) {
+    if (username === userInfo.username) return true
+    return checkerStepDocumentStatus.includes(status)
+  }
+}
+
+const isHaveDeleteDocument = (username: string, status: DocumentStatusEnum) => {
+  if (endedDocumentStatus.includes(status)) return false
+  if (!statusAccessDeleteDocumentStatus.includes(status)) return false
+  if (isAdmin || isMaker) return true
+  if (isChecker && username === userInfo.username) return true
+  return false
+}
+
 onMounted(() => {
   handleGetBranches()
 })
@@ -213,7 +237,7 @@ onMounted(() => {
       <EIBMultipleFilter
         v-model="filterValue.status"
         :title="$t('docs.document.status')"
-        :options="documentStatusOptions"
+        :options="documentStatusOptions.slice(0, -3)"
       />
       <EIBSingleFilter
         v-model="filterValue.result"
@@ -253,6 +277,9 @@ onMounted(() => {
         <template #createdAt="{ row }">
           <span>{{ formatDate(row.createdAt, formatDDMMYYYY_HHMM) }}</span>
         </template>
+        <template #doneAt="{ row }">
+          <span>{{ formatDate(row.doneAt, formatDDMMYYYY_HHMM) }}</span>
+        </template>
         <template #branchName="{ row }">
           <span>{{ row?.branch?.name }}</span>
         </template>
@@ -260,7 +287,7 @@ onMounted(() => {
           <div class="flex flex-row gap-2 items-center h-[63px] px-3" @click.stop>
             <div class="w-[18px]">
               <SvgIcon
-                v-if="![DocumentStatusEnum.DENIED, DocumentStatusEnum.VALIDATED].includes(row.status)"
+                v-if="isHaveEditDocument(row?.createdBy?.username, row.status)"
                 :size="18"
                 name="edit-info"
                 @click.stop="handleUpdateDocument(row)"
@@ -268,7 +295,13 @@ onMounted(() => {
               />
             </div>
             <div class="w-[20px] h-[20px]">
-              <SvgIcon :size="20" name="delete-mini" @click.stop="handleDeleteDocument(row)" class="cursor-pointer" />
+              <SvgIcon
+                v-if="isHaveDeleteDocument(row?.createdBy?.username, row.status)"
+                :size="20"
+                name="delete-mini"
+                @click.stop="handleDeleteDocument(row)"
+                class="cursor-pointer"
+              />
             </div>
           </div>
         </template>
