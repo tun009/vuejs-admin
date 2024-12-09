@@ -158,33 +158,6 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
   }
 ]
 
-// mock data
-export const HANDLER_LIST = [RoleEnum.MAKER, RoleEnum.CHECKER]
-export const DOCUMENT_STATUS_LIST = [
-  DocumentStatusEnum.NEW,
-  DocumentStatusEnum.CLASSIFYING,
-  DocumentStatusEnum.CLASSIFIED,
-  DocumentStatusEnum.OCRING,
-  DocumentStatusEnum.OCRED,
-  DocumentStatusEnum.WAIT_CHECK,
-  DocumentStatusEnum.CHECKING,
-  DocumentStatusEnum.CHECKED,
-  DocumentStatusEnum.WAIT_VALIDATE,
-  DocumentStatusEnum.ADJUST_REQUESTED,
-  DocumentStatusEnum.VALIDATED,
-  DocumentStatusEnum.DENIED,
-  DocumentStatusEnum.ERROR
-]
-
-export const BUSINESS_TYPE_LIST = [BusinessTypeEnum.NA, BusinessTypeEnum.LC_OUT, BusinessTypeEnum.LC_IN]
-export const DOCUMENT_RESULT_LIST = [DocumentResultEnum.COMPLY, DocumentResultEnum.DISCREPANCY]
-export const PROCESSING_STEP_LIST = [
-  ProcessingStepEnum.NEW,
-  ProcessingStepEnum.OCR,
-  ProcessingStepEnum.CHECK,
-  ProcessingStepEnum.VALIDATE
-]
-
 export interface DocumentFileModel {
   id: number | string
   fileName: string

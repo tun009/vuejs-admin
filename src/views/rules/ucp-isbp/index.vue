@@ -7,7 +7,7 @@ import EIBInput from '@/components/common/EIBInput.vue'
 import EIBTable from '@/components/common/EIBTable.vue'
 import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
 import { Title } from '@/layouts/components'
-import { omitPropertyFromObject } from '@/utils/common'
+import { getTextFromHtml, omitPropertyFromObject } from '@/utils/common'
 import { Search } from '@element-plus/icons-vue'
 import debounce from 'lodash-es/debounce'
 import { onMounted, reactive, ref, watch } from 'vue'
@@ -106,6 +106,9 @@ onMounted(() => {
             <br />
             <span class="!text-blue-500">{{ row.solId }}</span>
           </div>
+        </template>
+        <template #en="{ row }">
+          <span>{{ getTextFromHtml(row.en) }}</span>
         </template>
         <template #actions="{ row }">
           <div class="flex flex-row gap-2">

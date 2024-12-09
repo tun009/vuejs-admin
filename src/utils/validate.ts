@@ -118,3 +118,37 @@ export const patternRule = (pattern: RegExp) => ({
   message: i18n.global.t('validate.phoneNumber'),
   trigger: 'blur'
 })
+
+export const RULE_CONFIDENCE = (field: string, form: any, beforeField: string, afterField: string) => {
+  console.log(field, form, beforeField, afterField)
+  const validateConfidence = (_rule: any, value: any, cb: any) => {
+    if (
+      (beforeField && Number(value) <= Number(form.value[beforeField])) ||
+      Number(value) >= Number(form.value[afterField])
+    ) {
+      cb(new Error())
+    } else {
+      cb()
+    }
+  }
+  return [
+    REQUIRED(field),
+    {
+      validator: validateConfidence,
+      message: i18n.global.t('Ngưỡng tin cậy không hợp lệ', {
+        _field_: i18n.global.t(field)
+      }),
+      trigger: 'blur'
+    }
+  ]
+}
+
+export const REQUIRED = (field: string) => {
+  return {
+    required: true,
+    message: i18n.global.t('Trường này là bắt buộc', {
+      _field_: i18n.global.t(field)
+    }),
+    trigger: 'blur'
+  }
+}
