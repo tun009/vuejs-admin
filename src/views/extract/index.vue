@@ -9,7 +9,6 @@ import {
   saveDossierDocApi
 } from '@/api/extract'
 import { useConfirmModal } from '@/hooks/useConfirm'
-const { isAdmin } = useUserStore()
 
 import {
   ExtractDocumentModel,
@@ -51,6 +50,7 @@ import { pdfService } from '@/services/pdfService'
 import { getBatchDetail } from '@/api/docs/document'
 import { BatchDetailModel } from '@/@types/pages/docs/documents/services/DocumentResponse'
 import { useUserStore } from '@/store/modules/user'
+const { userInfo, isAdmin } = useUserStore()
 const dossierListData = ref<ExtractDossierModel[]>([])
 const documentDetail = ref<ExtractDocumentModel>()
 const activeName = ref('ocr')
@@ -323,9 +323,29 @@ const getPermission = async () => {
     console.error(error)
   }
 }
+const reCheckDosssier = async () => {
+  try {
+    loading.value = true
+    await updateDocumentStatus(route?.query?.batchId as string, {
+      approveDossier: DocumentStatusEnum.CHECKING,
+      message: ''
+    })
+    getPermission()
+    loading.value = false
+  } catch (error) {
+    console.error(error)
+  }
+}
 const canPermissionOcr = computed(() => {
   return (
-    ![DocumentStatusEnum.ADJUST_REQUESTED, DocumentStatusEnum.DENIED].includes(batchDetailData.value.status) && isAdmin
+    ![
+      DocumentStatusEnum.ADJUST_REQUESTED,
+      DocumentStatusEnum.DENIED,
+      DocumentStatusEnum.WAIT_VALIDATE,
+      DocumentStatusEnum.VALIDATING,
+      DocumentStatusEnum.VALIDATED
+    ].includes(batchDetailData.value.status) &&
+    (isAdmin || batchDetailData?.value?.censorBy?.username === userInfo?.username)
   )
 })
 onMounted(() => {
@@ -433,8 +453,8 @@ onUnmounted(() => {
           </template>
           <template #default>
             <div class="flex justify-between p-4 font-semibold items-center">
-              <span>{{ documentDetail?.fileName }}</span>
-              <el-dropdown placement="bottom-end" trigger="click">
+              <span class="min-h-[32px]">{{ documentDetail?.fileName }}</span>
+              <el-dropdown placement="bottom-end" trigger="click" v-if="canPermissionOcr">
                 <el-button :icon="More" class="p-[8px]" />
                 <template #dropdown>
                   <el-dropdown-menu>
@@ -500,6 +520,7 @@ onUnmounted(() => {
                             <el-input
                               v-else-if="fieldSelect === item.coreKey && item.type !== 'image'"
                               v-model="item.validatedValue"
+                              :disabled="!canPermissionOcr"
                               autosize
                               type="textarea"
                             />
@@ -550,22 +571,37 @@ onUnmounted(() => {
                 <div class="tab-footer p-[16px] flex justify-between shadow-[inset_0_1px_0_0_#d0d0d0]">
                   <template v-if="batchDetailData.status === DocumentStatusEnum.ADJUST_REQUESTED">
                     <ExtractTextInfoDenied :content="batchDetailData?.errorMessage ?? 'Từ chối'" />
-                    <el-button class="text-[#fff] bg-[#1c7ed6]" @click="saveDossier()" :loading="loading"
+                    <el-button class="text-[#fff] bg-[#1c7ed6]" @click="reCheckDosssier()" :loading="loading"
                       ><SvgIcon name="ic-save" class="mr-1" />Kiểm tra lại</el-button
                     >
                   </template>
                   <template v-else-if="batchDetailData.status === DocumentStatusEnum.DENIED">
-                    <ExtractTextInfoDenied :content="batchDetailData?.errorMessage ?? 'Từ chối'" />
+                    <ExtractTextInfoDenied
+                      :content="batchDetailData?.errorMessage ?? 'Từ chối'"
+                      class="ml-auto mr-[20px]"
+                    />
                   </template>
                   <template v-else>
-                    <el-button :icon="CloseBold" class="text-[#c92a2a] border-[#c92a2a]" @click="handleDeniedDossier()"
+                    <el-button
+                      :icon="CloseBold"
+                      class="text-[#c92a2a] border-[#c92a2a]"
+                      @click="handleDeniedDossier()"
+                      :disabled="!canPermissionOcr"
                       >Từ chối</el-button
                     >
                     <div class="flex">
-                      <el-button class="text-[#fff] bg-[#1c7ed6]" @click="saveDossier()" :loading="loading"
+                      <el-button
+                        class="text-[#fff] bg-[#1c7ed6]"
+                        @click="saveDossier()"
+                        :loading="loading"
+                        :disabled="!canPermissionOcr"
                         ><SvgIcon name="ic-save" class="mr-1" />Lưu lại</el-button
                       >
-                      <el-button :icon="Select" class="text-[#fff] bg-[#099268]" @click="handleCompareDossier()"
+                      <el-button
+                        :icon="Select"
+                        class="text-[#fff] bg-[#099268]"
+                        @click="handleCompareDossier()"
+                        :disabled="!canPermissionOcr"
                         >Đối sánh</el-button
                       >
                     </div>
