@@ -2,6 +2,7 @@
 interface Props {
   color?: string
   content: string
+  class?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -11,8 +12,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 <template>
   <div
-    class="flex items-center text-[#c92a2a] gap-[8px] ml-[10px] mt-[6px] ml-auto mr-[20px]"
-    :class="[`text-[${props?.color}]]`]"
+    class="flex items-center text-[#c92a2a] gap-[8px] ml-[10px] mt-[6px]"
+    :class="[`text-[${props?.color}] ${props?.class}`]"
   >
     <el-dropdown placement="top">
       <el-icon :size="18" class="cursor-pointer ml-1 outline-[0px]" :class="[`text-[${props?.color}]`]"
