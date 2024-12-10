@@ -148,6 +148,7 @@ const saveDossierClassify = async () => {
       type: 'success',
       message: 'Cập nhật thành công'
     })
+    emits('close-dialog')
   } catch {
     ElMessage({
       showClose: true,

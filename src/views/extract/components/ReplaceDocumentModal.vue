@@ -5,21 +5,20 @@ import { warningNotification } from '@/utils/notification'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-
 interface Props {
   modelValue: boolean
   dossierDocId: number
+  title?: string
 }
+const { t } = useI18n()
 
 interface Emits {
   (event: 'update:model-value', value: boolean): void
   (event: 'refresh'): void
 }
-
 const props = defineProps<Props>()
+const titleWithDefault = props.title || t('docs.document.replaceDocument')
 const emits = defineEmits<Emits>()
-
-const { t } = useI18n()
 
 const files = ref<File[]>([])
 const loading = ref(false)
@@ -73,12 +72,7 @@ const handleAddDocument = async () => {
 </script>
 
 <template>
-  <el-dialog
-    v-model="localModelValue"
-    :title="$t('docs.document.replaceDocument')"
-    width="50%"
-    :before-close="handleClose"
-  >
+  <el-dialog v-model="localModelValue" :title="titleWithDefault" width="50%" :before-close="handleClose">
     <template #footer>
       <div class="dialog-footer flex flex-row justify-between items-center">
         <span class="text-sm text-gray-600">{{ $t('docs.document.uploadNoteSingle') }}</span>
