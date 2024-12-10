@@ -284,8 +284,7 @@ onMounted(() => {
             >{{ $t('docs.detail.lcNumber') }}: <span class="c-text-value">{{ getValueLC('doc_credit_no') }}</span></span
           >
           <span
-            >{{ $t('docs.detail.createdAtLc') }}:
-            <span class="c-text-value">{{ getValueLC('date_of_issue') }}</span></span
+            >{{ $t('docs.detail.createdAtLc') }}: <span class="c-text-value">{{ getValueLC('date_issue') }}</span></span
           >
           <span
             >{{ $t('docs.detail.expirationDateLc') }}:

@@ -1,3 +1,4 @@
+import { confirmButtonDeleteClass } from '@/constants/common'
 import { ElMessageBox, ElMessage, MessageBoxState, ElMessageBoxOptions, MessageBoxType } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 
@@ -16,7 +17,8 @@ export function useConfirmModal() {
     onConfirm,
     options = {},
     type = 'confirm',
-    showMesageSucess = true
+    showMesageSucess = true,
+    isDelete = false
   }: {
     message?: string
     title?: string
@@ -25,6 +27,7 @@ export function useConfirmModal() {
     options?: Partial<ElMessageBoxOptions>
     type?: MessageBoxType
     showMesageSucess?: boolean
+    isDelete?: boolean
   }) => {
     const messageBoxMethod = messageBoxMethods[type]
     messageBoxMethod(message, title, {
@@ -41,6 +44,7 @@ export function useConfirmModal() {
       confirmButtonText: t('button.confirm'),
       dangerouslyUseHTMLString: true,
       draggable: true,
+      ...(isDelete ? { confirmButtonClass: confirmButtonDeleteClass } : {}),
       ...options
     }).then(() => {
       successCallback?.()

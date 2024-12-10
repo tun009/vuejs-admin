@@ -1,30 +1,46 @@
 <script lang="ts" setup>
-import { Delete, Plus } from '@element-plus/icons-vue'
+import { Plus } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import EIBUpload from '@/components/common/EIBUpload.vue'
-import { warningNotification } from '@/utils/notification'
+import { DocumentStatusEnum } from '@/@types/common'
 import {
   DocumentExportFileEnum,
   DocumentFileModel,
   documentStatusOptions,
   fileListColumnConfigs
 } from '@/@types/pages/docs/documents'
+import { BatchDetailModel } from '@/@types/pages/docs/documents/services/DocumentResponse'
 import { addFileToDocument, deleteDocumentFile, downloadSingleFile, getDocumentFiles } from '@/api/docs/document'
 import EIBTable from '@/components/common/EIBTable.vue'
-import { useRoute } from 'vue-router'
-import Status from '@/views/docs/components/Status.vue'
-import { formatDate } from '@/utils/date'
+import EIBUpload from '@/components/common/EIBUpload.vue'
+import {
+  checkerStepDocumentStatus,
+  deleteAccessStatus,
+  endedDocumentStatus,
+  makerStepDocumentStatus,
+  statusAccessDeleteDocumentStatus
+} from '@/constants/common'
 import { formatDDMMYYYY_HHMM } from '@/constants/date'
-import { DocumentStatusEnum } from '@/@types/common'
 import { useConfirmModal } from '@/hooks/useConfirm'
+import { useUserStore } from '@/store/modules/user'
 import { downloadFileCommon } from '@/utils/common'
+import { formatDate } from '@/utils/date'
+import { errorNotification, warningNotification } from '@/utils/notification'
+import Status from '@/views/docs/components/Status.vue'
+import { useRoute } from 'vue-router'
+
+interface Props {
+  data: BatchDetailModel
+}
+
+const props = defineProps<Props>()
 
 const { t } = useI18n()
 const route = useRoute()
 const { showConfirmModal } = useConfirmModal()
+const { isMaker, isViewer, isAdmin, isChecker, userInfo } = useUserStore()
 
 const batchId = computed(() => route.params?.id as string)
 
@@ -100,7 +116,13 @@ onMounted(() => {
   handleGetDocumentFiles()
 })
 
+console.log(deleteAccessStatus)
+
 const handleDeleteFile = async (row: DocumentFileModel) => {
+  if (!deleteAccessStatus.includes(row?.status)) {
+    errorNotification('Không thể xóa chứng từ, hệ thống đang thực hiện xử lý!')
+    return
+  }
   showConfirmModal({
     title: t('confirm.title.deleteFile'),
     message: t('confirm.description.deleteFile', { name: row.fileName }),
@@ -115,7 +137,11 @@ const handleDeleteFile = async (row: DocumentFileModel) => {
       } finally {
         instance.confirmButtonLoading = false
       }
-    }
+    },
+    options: {
+      confirmButtonText: 'Xác nhận xóa'
+    },
+    isDelete: true
   })
 }
 
@@ -127,12 +153,36 @@ const handleDownloadFile = async (src: string) => {
     console.error(error)
   }
 }
+
+const isHaveAddButton = computed(() => {
+  if (isViewer) return false
+  const isClassificationErrorByCreator =
+    props.data.status === DocumentStatusEnum.CLASSIFICATION_ERROR &&
+    userInfo.username === props.data.createdBy?.username
+
+  const isMakerEligible = isMaker && makerStepDocumentStatus.includes(props.data.status)
+
+  const isCheckerOrAdminEligible =
+    isAdmin ||
+    (checkerStepDocumentStatus.includes(props.data.status) &&
+      (userInfo.username === props.data.createdBy?.username || userInfo.username === props.data.approveBy?.username))
+
+  return isClassificationErrorByCreator || isMakerEligible || isCheckerOrAdminEligible
+})
+
+const isHaveDeleteFile = (username: string, status: DocumentStatusEnum) => {
+  if (endedDocumentStatus.includes(status)) return false
+  if (!statusAccessDeleteDocumentStatus.includes(status)) return false
+  if (isAdmin || isMaker) return true
+  if (isChecker && username === userInfo.username) return true
+  return false
+}
 </script>
 
 <template>
   <el-card>
     <div class="flex flex-col gap-4">
-      <div class="flex flex-row justify-end">
+      <div v-if="isHaveAddButton" class="flex flex-row justify-end">
         <el-button type="primary" :icon="Plus" @click="dialogVisible = true">{{ $t('button.add') }}</el-button>
       </div>
       <el-dialog v-model="dialogVisible" :title="$t('docs.document.addFile')" width="75%" :before-close="handleClose">
@@ -168,14 +218,15 @@ const handleDownloadFile = async (src: string) => {
         </template>
         <template #actions="{ row }">
           <div class="flex flex-row gap-2">
-            <el-icon
-              v-if="row.status === DocumentStatusEnum.NEW"
-              :size="18"
-              color="#e03131"
-              class="cursor-pointer"
-              @click="handleDeleteFile(row)"
-              ><Delete
-            /></el-icon>
+            <div class="w-5 h-5">
+              <SvgIcon
+                v-if="isHaveDeleteFile(row?.createdBy?.username, row.status)"
+                :size="20"
+                name="delete-mini"
+                @click.stop="handleDeleteFile(row)"
+                class="cursor-pointer"
+              />
+            </div>
           </div> </template
       ></EIBTable>
     </div>
