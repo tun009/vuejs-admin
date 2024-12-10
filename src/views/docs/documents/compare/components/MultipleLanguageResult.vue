@@ -345,6 +345,7 @@ const ruleMapping = computed((): SelectOptionModel[] => {
               multiple
               hidden-error
               :max-collapse-tags="2"
+              popper-class="multiple-language-result"
             />
           </div>
         </div>
@@ -390,5 +391,23 @@ const ruleMapping = computed((): SelectOptionModel[] => {
   height: 0;
   opacity: 0.5;
   padding: 0;
+}
+</style>
+
+<style>
+.el-select-dropdown__item {
+  white-space: unset;
+}
+
+.multiple-language-result .el-select__selection .el-tag {
+  max-width: 640px !important;
+}
+
+.multiple-language-result .el-scrollbar__view.el-select-dropdown__list {
+  max-width: 768px !important;
+}
+
+.multiple-language-result .el-select-dropdown__item.is-selected::after {
+  display: none;
 }
 </style>

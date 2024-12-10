@@ -53,7 +53,7 @@ onMounted(() => {
         <DocumentInformation :data="documentDetail" @refresh="handleGetDocumentDetail" />
       </el-tab-pane>
       <el-tab-pane :label="$t('docs.detail.fileList')" name="docFile">
-        <DocumentFiles />
+        <DocumentFiles :data="documentDetail" />
       </el-tab-pane>
     </el-tabs>
   </div>

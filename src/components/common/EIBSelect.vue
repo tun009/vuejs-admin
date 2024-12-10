@@ -15,13 +15,17 @@ interface Props {
   hiddenError?: boolean
   multiple?: boolean
   maxCollapseTags?: number
+  teleported?: boolean
+  popperClass?: string
 }
 
 interface Emits {
   (event: 'update:modelValue', value: string): void
 }
 
-defineProps<Props>()
+withDefaults(defineProps<Props>(), {
+  teleported: true
+})
 
 const emit = defineEmits<Emits>()
 const updateValue = (value: string) => {
@@ -43,7 +47,7 @@ const updateValue = (value: string) => {
         class="mb-1"
         :class="{
           'text-gray-600': readonly,
-          'w-40 text-right mb-5': isRow
+          'w-32 text-right mb-5': isRow
         }"
         ><span v-if="required && !readonly" class="text-red-600 mr-1">*</span>{{ $t(label) }}</label
       >
@@ -56,10 +60,12 @@ const updateValue = (value: string) => {
         @update:model-value="updateValue"
         :disabled="readonly"
         class="w-full"
+        :teleported="teleported"
         collapse-tags
         collapse-tags-tooltip
         :multiple="multiple"
         :max-collapse-tags="maxCollapseTags"
+        :popper-class="popperClass"
       >
         <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
           <div class="flex flex-row gap-2">
@@ -90,19 +96,5 @@ const updateValue = (value: string) => {
   .select-description {
     color: #868e96;
   }
-}
-</style>
-
-<style>
-.el-select-dropdown__item {
-  white-space: unset;
-}
-
-.el-popper.el-select__popper {
-  max-width: 50vw;
-}
-
-.el-select__selection .el-tag {
-  max-width: 700px !important;
 }
 </style>
