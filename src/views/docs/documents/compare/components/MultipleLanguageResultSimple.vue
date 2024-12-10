@@ -18,9 +18,15 @@ interface Props {
   comparisonUndefinedId: number
   requirement: DocumentCompareUndefinedRequirementModel
   isHavePermission?: boolean
+  customClass?: string
+}
+
+interface Emits {
+  (event: 'refresh'): void
 }
 
 const props = defineProps<Props>()
+const emits = defineEmits<Emits>()
 
 const { t } = useI18n()
 
@@ -66,6 +72,7 @@ const handleUpdateCompareResult = () => {
           message: t('notification.description.updateSuccess')
         })
         isEdit.value = false
+        emits('refresh')
       } catch (error) {
         console.error(error)
       } finally {
@@ -92,7 +99,7 @@ const handleUpdateCompareResult = () => {
       @update:visible="(visible: boolean) => (dialogVisible = visible)"
     />
   </EIBDialog>
-  <div class="mb-3">
+  <div class="mb-3" :class="customClass">
     <div v-if="!isEdit">
       <div class="flex flex-row gap-2 items-center">
         <span class="c-text-des">{{ $t('docs.compare.result') }}</span>

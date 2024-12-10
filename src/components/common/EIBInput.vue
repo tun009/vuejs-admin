@@ -59,7 +59,7 @@ const updateValue = (value: string) => {
         class="mb-1"
         :class="{
           'text-[#868e96]': readonly,
-          'text-right w-40 mb-5': isRow
+          'text-right w-32 mb-5': isRow
         }"
         ><span v-if="required && !readonly" class="text-red-600 mr-1">*</span>{{ $t(label) }}</label
       >

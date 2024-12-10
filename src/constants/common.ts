@@ -7,6 +7,8 @@ export const MAX_FILE_SIZE = 16 * 1024 * 1024
 export const MAX_FILE_LIMIT = 10
 export const MAX_FILE_SINGLE_LIMIT = 1
 export const TABLE_COLUMN_WIDTH_DEFAULT = 250
+export const confirmButtonDeleteClass =
+  'bg-[#fff] hover:bg-[#fff] border-[#c92a2a] hover:border-[#c92a2a] hover:text-[#c92a2a] text-[#c92a2a]'
 
 export const BLOB_EXPORT_TYPES = {
   [DocumentExportFileEnum.DOCX]: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -48,6 +50,8 @@ export const makerStepDocumentStatus = [
 ]
 
 export const checkerStepDocumentStatus = [DocumentStatusEnum.WAIT_VALIDATE, DocumentStatusEnum.VALIDATING]
+
+export const deleteAccessStatus = [...makerStepDocumentStatus.slice(0, 3), ...errorDocumentStatus]
 
 export const statusAccessDeleteDocumentStatus = [
   DocumentStatusEnum.NEW,

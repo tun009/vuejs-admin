@@ -19,11 +19,18 @@ import {
 } from '@/@types/pages/docs/documents'
 import { BranchModel } from '@/@types/pages/login'
 import { deleteDocument, getBranches, getDocuments } from '@/api/docs/document'
+import { updateDocumentStatus } from '@/api/docs/document/compare'
 import EIBMultipleFilter from '@/components/Filter/EIBMultipleFilter.vue'
 import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import EIBInput from '@/components/common/EIBInput.vue'
 import EIBTable from '@/components/common/EIBTable.vue'
+import {
+  checkerStepDocumentStatus,
+  deleteAccessStatus,
+  endedDocumentStatus,
+  statusAccessDeleteDocumentStatus
+} from '@/constants/common'
 import { formatDDMMYYYY, formatDDMMYYYY_HHMM, formatYYYYMMDD, shortcutsDateRange } from '@/constants/date'
 import { DOCUMENT_DETAIL_PAGE } from '@/constants/router'
 import { useConfirmModal } from '@/hooks/useConfirm'
@@ -31,10 +38,9 @@ import { Title } from '@/layouts/components'
 import { useUserStore } from '@/store/modules/user'
 import { mappingBranches, omitPropertyFromObject, renderLabelByValue, withAllSelection } from '@/utils/common'
 import { addOneDayToDate, defaultDateRange, formatDate, formatDateExactFormat } from '@/utils/date'
+import { errorNotification } from '@/utils/notification'
 import { debounce } from 'lodash-es'
 import Status from '../components/Status.vue'
-import { checkerStepDocumentStatus, endedDocumentStatus, statusAccessDeleteDocumentStatus } from '@/constants/common'
-import { updateDocumentStatus } from '@/api/docs/document/compare'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -43,6 +49,7 @@ const { isViewer, isAdmin, isChecker, isMaker, userInfo } = useUserStore()
 
 const openFilter = ref(false)
 const tableData = ref<DocumentModel[]>([])
+const tableDisabledIds = ref<(string | number)[]>([])
 const rowSelect = ref<DocumentModel>({} as DocumentModel)
 const dialogVisible = ref(false)
 const openDrawer = ref(false)
@@ -80,6 +87,12 @@ const handleGetDocuments = async (pagination: PaginationModel) => {
       ...(status?.length !== documentStatusOptions.length ? { status: exactStatus } : {})
     })
     tableData.value = response.data.list
+    const disabledIds = response.data.list
+      .filter((c) => {
+        return !isHaveDeleteDocument(c?.createdBy?.username ?? '', c.status)
+      })
+      ?.map((d) => d.id)
+    tableDisabledIds.value = disabledIds
     return response
   } catch (error: any) {
     throw new Error(error)
@@ -117,6 +130,15 @@ const handleClearAllChecked = () => {
 }
 
 const handleDeleteDocument = (data?: DocumentModel) => {
+  if (data && !deleteAccessStatus.includes(data?.status)) {
+    errorNotification('Không thể xóa bộ chứng từ, hệ thống đang thực hiện xử lý!')
+    return
+  }
+  const d = checkedItems.value.some((c) => !deleteAccessStatus.includes(c?.status))
+  if (!data && d) {
+    errorNotification('Không thể xóa bộ chứng từ, hệ thống đang thực hiện xử lý!')
+    return
+  }
   showConfirmModal({
     message: t('docs.document.deleteDocsConfirm', { name: data?.dossierName ?? t('docs.document.selectedDocs') }),
     title: t('docs.document.deleteDocsTitle'),
@@ -136,7 +158,11 @@ const handleDeleteDocument = (data?: DocumentModel) => {
       } finally {
         instance.confirmButtonLoading = false
       }
-    }
+    },
+    options: {
+      confirmButtonText: 'Xác nhận xóa'
+    },
+    isDelete: true
   })
 }
 
@@ -283,6 +309,7 @@ onMounted(() => {
         :height="!!checkedItems.length && openFilter ? 520 : !checkedItems.length && !openFilter ? 600 : 560"
         @row-click="handleRedirectToDocumentDetail"
         :hidden-checked="isViewer"
+        :disabled-ids="tableDisabledIds"
       >
         <template #status="{ row }">
           <Status :options="documentStatusOptions" :status="row?.status" />
@@ -316,7 +343,7 @@ onMounted(() => {
                 class="cursor-pointer"
               />
             </div>
-            <div class="w-[20px] h-[20px]">
+            <div class="w-5 h-5">
               <SvgIcon
                 v-if="isHaveDeleteDocument(row?.createdBy?.username, row.status)"
                 :size="20"
