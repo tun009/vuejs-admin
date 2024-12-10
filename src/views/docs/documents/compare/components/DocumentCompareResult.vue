@@ -254,6 +254,7 @@ const convertTableDataCompareErrorResults = (compareResult: DocumentCompareModel
               :comparisonUndefinedId="block?.id"
               :requirement="d"
               :is-have-permission="isHavePermission"
+              @refresh="emits('refresh')"
             />
           </div>
         </div>

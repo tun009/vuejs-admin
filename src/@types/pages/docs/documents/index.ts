@@ -164,7 +164,7 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
 export interface DocumentFileModel {
   id: number | string
   fileName: string
-  status: string
+  status: DocumentStatusEnum
   createdAt: string
   createdBy: string
 }

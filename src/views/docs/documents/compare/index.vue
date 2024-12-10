@@ -21,7 +21,7 @@ import { _formatDDMMYYYY_HHmm } from '@/constants/date'
 import { DOCUMENT_DETAIL_PAGE } from '@/constants/router'
 import { useConfirmModal } from '@/hooks/useConfirm'
 import { useUserStore } from '@/store/modules/user'
-import { formatNumberWithCommas, resetNullUndefinedFields, scrollIntoViewParent } from '@/utils/common'
+import { formatNumberWithCommas, getTextFromHtml, resetNullUndefinedFields, scrollIntoViewParent } from '@/utils/common'
 import { formatDate } from '@/utils/date'
 import { ArrowLeft, Check, CircleCheckFilled, Close, WarnTriangleFilled } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -211,7 +211,10 @@ const handleGetCategories = async () => {
   try {
     const response = await getRules(getAllCategoryRequestModel)
     if (!response?.data?.list) return
-    categories.value = response.data.list
+    categories.value = response.data.list?.map((c) => ({
+      ...c,
+      en: getTextFromHtml(c.en)
+    }))
   } catch (error: any) {
     throw new Error(error)
   }
