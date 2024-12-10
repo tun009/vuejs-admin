@@ -1,4 +1,4 @@
-import { UpdateInfoExtractFormModel } from '..'
+import { AutoConfigSettingModel, UpdateInfoExtractFormModel } from '..'
 
 export interface UpdateConfidenceRequestModel {
   id: number
@@ -6,5 +6,7 @@ export interface UpdateConfidenceRequestModel {
   min: number
   max: number
 }
+
+export type UpdateCheckConfigRequestModel = AutoConfigSettingModel
 
 export type UpdateInfoExtractRequestModel = UpdateInfoExtractFormModel

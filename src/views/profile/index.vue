@@ -140,4 +140,8 @@ const handleCancelUpdateProfile = () => {
 .custom-button.el-button--primary.is-plain {
   background-color: unset;
 }
+
+.custom-button.el-button--primary.is-plain:hover {
+  color: #005d98;
+}
 </style>

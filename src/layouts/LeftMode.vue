@@ -1,15 +1,26 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useAppStore } from '@/store/modules/app'
 import { useSettingsStore } from '@/store/modules/settings'
 import { AppMain, NavigationBar, Sidebar } from './components'
 import { useDevice } from '@/hooks/useDevice'
+import ChangePassword from '@/views/profile/ChangePassword.vue'
+import EIBDrawer from '@/components/common/EIBDrawer.vue'
+import { useConfirmModal } from '@/hooks/useConfirm'
+import { useI18n } from 'vue-i18n'
+import { useUserStore } from '@/store/modules/user'
+
+const { showConfirmModal } = useConfirmModal()
+const { t } = useI18n()
 
 const { isMobile } = useDevice()
 const appStore = useAppStore()
 const settingsStore = useSettingsStore()
 const { showTagsView, fixedHeader } = storeToRefs(settingsStore)
+const { userInfo } = useUserStore()
+
+const openDrawer = ref(false)
 
 /** Define the calculated property layoutClasses to control the class name of the layout */
 const layoutClasses = computed(() => {
@@ -25,6 +36,25 @@ const layoutClasses = computed(() => {
 const handleClickOutside = () => {
   appStore.closeSidebar(false)
 }
+
+onMounted(() => {
+  if (userInfo.firstLogin) {
+    showConfirmModal({
+      title: t('confirm.title.changePassword'),
+      message: t('confirm.description.changePassword'),
+      onConfirm: async (_instance, done) => {
+        done()
+        openDrawer.value = true
+      },
+      showMesageSucess: false,
+      options: {
+        showCancelButton: false,
+        showClose: false,
+        closeOnClickModal: false
+      }
+    })
+  }
+})
 </script>
 
 <template>
@@ -43,6 +73,14 @@ const handleClickOutside = () => {
       <AppMain class="app-main" />
     </div>
   </div>
+  <EIBDrawer title="profile.changePassword" v-model="openDrawer" require-confirm>
+    <template #default>
+      <div class="mt-3 flex flex-col gap-5">
+        <el-text>{{ $t('profile.changePasswordDes') + '*&^%#@!' }}</el-text>
+        <ChangePassword ref="changePasswordRef" @close="openDrawer = false" require-confirm />
+      </div>
+    </template>
+  </EIBDrawer>
 </template>
 
 <style lang="scss" scoped>

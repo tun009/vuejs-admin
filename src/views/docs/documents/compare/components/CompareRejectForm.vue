@@ -3,9 +3,11 @@ import { DocumentStatusEnum } from '@/@types/common'
 import { CompareRejectFormModel } from '@/@types/pages/docs/documents'
 import { updateDocumentStatus } from '@/api/docs/document/compare'
 import EIBInput from '@/components/common/EIBInput.vue'
+import { DOCUMENT_DETAIL_PAGE } from '@/constants/router'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 import { useRoute } from 'vue-router'
 
 interface Emits {
@@ -15,11 +17,13 @@ interface Emits {
 
 interface Exposes {
   onConfirm: () => void
+  getReason: () => string
 }
 
 const emits = defineEmits<Emits>()
 
 const route = useRoute()
+const router = useRouter()
 const { t } = useI18n()
 
 const compareRejectRef = ref<FormInstance | null>()
@@ -35,6 +39,10 @@ const batchId = computed(() => {
   return route.params?.id as string
 })
 
+const getReason = () => {
+  return compareRejectFormData.reason
+}
+
 const onConfirm = () => {
   compareRejectRef.value?.validate(async (valid: boolean, fields) => {
     if (valid) {
@@ -45,6 +53,7 @@ const onConfirm = () => {
           message: compareRejectFormData.reason
         })
         ElMessage.success(t('notification.description.rejectSuccess'))
+        router.push(DOCUMENT_DETAIL_PAGE(batchId.value))
       } catch (error) {
         console.error(error)
       } finally {
@@ -58,7 +67,8 @@ const onConfirm = () => {
 }
 
 defineExpose<Exposes>({
-  onConfirm
+  onConfirm,
+  getReason
 })
 </script>
 

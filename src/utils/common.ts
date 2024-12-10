@@ -197,6 +197,7 @@ export const downloadFileCommon = (response: any, type: DocumentExportFileEnum =
   const blob = new Blob([response?.data as BlobPart], {
     type: BLOB_EXPORT_TYPES?.[type]
   })
+  console.log(response?.headers)
   const fileName = getFileNameFromContentDisposition(response?.headers?.['content-disposition'])
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
@@ -230,11 +231,30 @@ export const withDefaultString = (value: string | null, defaultString: string = 
   return value ? value : defaultString
 }
 
-export const renderColorByConfidence = (conf: number = 0, settings: UpdateConfidenceRequestModel[]): string => {
+export const renderColorByConfidence = (conf: number, settings: UpdateConfidenceRequestModel[]): string => {
   conf = parseFloat(conf.toFixed(3))
   let color = '#7a8da5'
   settings.forEach((item) => {
     if (conf >= item.min && conf <= item.max) color = item.color
   })
   return color
+}
+
+export const trimObjectValues = (obj: Record<string, any>): Record<string, any> => {
+  // Lặp qua tất cả các thuộc tính của đối tượng
+  Object.keys(obj).forEach((key) => {
+    const value = obj[key]
+    // Nếu giá trị là string, thực hiện trim
+    if (typeof value === 'string') {
+      obj[key] = value.trim()
+    } else if (typeof value === 'object' && value !== null) {
+      // Nếu giá trị là object thì gọi đệ quy để xử lý trường hợp object con
+      obj[key] = trimObjectValues(value)
+    }
+  })
+  return obj
+}
+
+export const formatNumberWithCommas = (num: number | string): string => {
+  return Number(num).toLocaleString()
 }

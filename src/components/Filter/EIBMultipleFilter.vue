@@ -20,7 +20,7 @@
     v-model:visible="isShow"
   >
     <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">
-      Check all
+      Tất cả
     </el-checkbox>
     <el-checkbox-group v-model="localModelValue" @change="handleCheckedChange">
       <el-checkbox v-for="option in options" :key="option.value" :label="option.label" :value="option.value">

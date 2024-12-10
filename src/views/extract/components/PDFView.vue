@@ -45,9 +45,7 @@ const getClosestFloor = (num1: number, num2: number) => {
     return Math.floor(num1)
   }
 }
-// const rotationPage = () => {
-//   rotation.value += 90
-// }
+
 const onLoadedPDF = () => {
   emit('loaded-data')
 }
@@ -185,13 +183,7 @@ onBeforeUnmount(() => {
           scale = val
         }
       "
-    >
-      <template #button>
-        <!-- <el-icon title="Xoay" size="16" class="mt-[3px] cursor-pointer" @click="rotationPage()"
-          ><RefreshRight
-        /></el-icon> -->
-      </template>
-    </ControlSlider>
+    />
     <div class="flex items-center justify-center gap-[5px] mr-[10px]">
       Trang
       <el-icon

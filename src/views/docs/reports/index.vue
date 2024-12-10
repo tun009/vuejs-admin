@@ -2,7 +2,7 @@
 import { ArrowDownBold, Filter, Search } from '@element-plus/icons-vue'
 import { reactive, ref, watch, onMounted } from 'vue'
 
-import { PaginationModel } from '@/@types/common'
+import { DocumentStatusEnum, PaginationModel } from '@/@types/common'
 import {
   ReportModel,
   FilterDocumentModel,
@@ -18,10 +18,10 @@ import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import EIBInput from '@/components/common/EIBInput.vue'
 import EIBTable from '@/components/common/EIBTable.vue'
 import { Title } from '@/layouts/components'
-import { defaultDateRange } from '@/utils/date'
+import { addOneDayToDate, defaultDateRange, formatDateExactFormat } from '@/utils/date'
 import { debounce } from 'lodash-es'
 import { getReports, getDetailReport, downloadFileExcel } from '@/api/reports/'
-import { TIME_FIRST_DAY, TIME_LAST_DAY, formatYYYYMMDD, shortcutsDateRange } from '@/constants/date'
+import { formatDDMMYYYY, formatYYYYMMDD, shortcutsDateRange } from '@/constants/date'
 import DetailReportForm from './components/DetailReportForm.vue'
 import { omitPropertyFromObject, withAllSelection, mappingBranches, downloadFileCommon } from '@/utils/common'
 import { getBranches } from '@/api/users'
@@ -42,18 +42,29 @@ const reportDetail = ref<ReportDetailModel>({} as ReportDetailModel)
 const handleGetReports = async (pagination: PaginationModel) => {
   try {
     const { status, ...otherFilter } = filterValue
+    const isErrorStatus = status.includes(DocumentStatusEnum.ERROR)
+    let exactStatus = [...status]
+    if (isErrorStatus) {
+      exactStatus = exactStatus
+        .filter((e) => e !== DocumentStatusEnum.ERROR)
+        .concat([
+          DocumentStatusEnum.CLASSIFICATION_ERROR,
+          DocumentStatusEnum.EXTRACTION_ERROR,
+          DocumentStatusEnum.COMPARISON_ERROR
+        ])
+    }
     const response = await getReports({
       ...pagination,
       ...omitPropertyFromObject(otherFilter, -1),
-      beginDate: uploadTimes.value[0] + TIME_FIRST_DAY,
-      endDate: uploadTimes.value[1] + TIME_LAST_DAY,
+      beginDate: formatDateExactFormat(uploadTimes.value[0], formatDDMMYYYY, formatYYYYMMDD),
+      endDate: addOneDayToDate(formatDateExactFormat(uploadTimes.value[1], formatDDMMYYYY, formatYYYYMMDD)),
       sortItemList: [
         {
           isAsc: false,
           column: 'createdAt'
         }
       ],
-      ...(status?.length ? { status } : {})
+      ...(status?.length !== documentStatusOptions.length ? { status: exactStatus } : {})
     })
     tableData.value = response.data.list
     return response
@@ -83,10 +94,21 @@ const downloadFile = async () => {
   try {
     const pagination = documentTableRef?.value?.getPagination()
     const { status, ...otherFilter } = filterValue
+    const isErrorStatus = status.includes(DocumentStatusEnum.ERROR)
+    let exactStatus = [...status]
+    if (isErrorStatus) {
+      exactStatus = exactStatus
+        .filter((e) => e !== DocumentStatusEnum.ERROR)
+        .concat([
+          DocumentStatusEnum.CLASSIFICATION_ERROR,
+          DocumentStatusEnum.EXTRACTION_ERROR,
+          DocumentStatusEnum.COMPARISON_ERROR
+        ])
+    }
     const response = await downloadFileExcel({
       ...omitPropertyFromObject(otherFilter, -1),
-      beginDate: uploadTimes.value[0] + TIME_FIRST_DAY,
-      endDate: uploadTimes.value[1] + TIME_LAST_DAY,
+      beginDate: formatDateExactFormat(uploadTimes.value[0], formatDDMMYYYY, formatYYYYMMDD),
+      endDate: addOneDayToDate(formatDateExactFormat(uploadTimes.value[1], formatDDMMYYYY, formatYYYYMMDD)),
       sortItemList: [
         {
           isAsc: false,
@@ -94,7 +116,7 @@ const downloadFile = async () => {
         }
       ],
       ...pagination,
-      ...(status?.length ? { status } : {})
+      ...(status?.length !== documentStatusOptions.length ? { status: exactStatus } : {})
     })
     downloadFileCommon(response, DocumentExportFileEnum.EXCEL)
   } catch (error) {
@@ -151,7 +173,7 @@ onMounted(() => {
     <div class="flex flex-row justify-between gap-10 items-center mb-5">
       <div class="flex flex-row gap5 items-center gap-5">
         <EIBInput
-          v-model="filterValue.name"
+          v-model="filterValue.query"
           custom-class="w-[360px]"
           placeholder="docs.document.searchByName"
           :prefix-icon="Search"
@@ -207,7 +229,7 @@ onMounted(() => {
       >
         <template #branch="{ row }">
           <div>
-            <span>{{ row.branch.name }}</span>
+            <span>{{ row?.branch?.name }}</span>
           </div>
         </template>
         <template #status="{ row }">

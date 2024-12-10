@@ -21,7 +21,7 @@ import { _formatDDMMYYYY_HHmm } from '@/constants/date'
 import { DOCUMENT_DETAIL_PAGE } from '@/constants/router'
 import { useConfirmModal } from '@/hooks/useConfirm'
 import { useUserStore } from '@/store/modules/user'
-import { resetNullUndefinedFields, scrollIntoViewParent } from '@/utils/common'
+import { formatNumberWithCommas, resetNullUndefinedFields, scrollIntoViewParent } from '@/utils/common'
 import { formatDate } from '@/utils/date'
 import { ArrowLeft, Check, CircleCheckFilled, Close, WarnTriangleFilled } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -33,11 +33,14 @@ import CompareSummarySkeleton from './components/CompareSummarySkeleton.vue'
 import DocumentCompareResult from './components/DocumentCompareResult.vue'
 import ResizableSplitter from './components/ResizableSplitter.vue'
 import UpdateCompareHistory from './components/UpdateCompareHistory.vue'
+import { sortBy } from 'lodash-es'
+import { checkerStepDocumentStatus, endedDocumentStatus, makerStepDocumentStatus } from '@/constants/common'
+import { RoleEnum } from '@/@types/pages/users'
 
 const router = useRouter()
 const route = useRoute()
 const { showConfirmModal } = useConfirmModal()
-const { isViewer, isMaker } = useUserStore()
+const { isViewer, isMaker, isChecker, userInfo } = useUserStore()
 const documentCompareConfigs = ref<DocumentCompareModel[]>([])
 
 const { t } = useI18n()
@@ -47,6 +50,7 @@ const conditionSelect = ref<number>(0)
 const activeName = ref<'result' | 'history'>('result')
 const dialogVisible = ref(false)
 const loadingConfirm = ref(false)
+const loadingConfirmReturnMaker = ref(false)
 const categories = ref<RuleModel[]>([])
 const rules = ref<RuleModel[]>([])
 const compareRejectFormRef = ref<InstanceType<typeof CompareRejectForm>>()
@@ -78,7 +82,9 @@ const handleCheckCompareResult = (index: number) => {
   try {
     conditionSelect.value = index
     const id = `document-compare-${index}`
-    scrollIntoViewParent(id)
+    setTimeout(() => {
+      scrollIntoViewParent(id)
+    }, 100)
   } catch (error) {
     console.error(error)
   }
@@ -106,7 +112,6 @@ const handleConfirmCompare = () => {
         await updateDocumentStatus(batchId.value, {
           approveDossier: DocumentStatusEnum.CHECKED
         })
-        ElMessage.success(t('notification.description.updateSuccess'))
       } catch (error) {
         console.error(error)
       } finally {
@@ -129,7 +134,6 @@ const handleApproveCompare = () => {
         await updateDocumentStatus(batchId.value, {
           approveDossier: DocumentStatusEnum.VALIDATED
         })
-        ElMessage.success(t('notification.description.updateSuccess'))
         dialogVisible.value = false
       } catch (error) {
         console.error(error)
@@ -142,26 +146,32 @@ const handleApproveCompare = () => {
 }
 
 const handleReturnForMaker = async () => {
-  loadingConfirm.value = true
+  loadingConfirmReturnMaker.value = true
   try {
     await updateDocumentStatus(batchId.value, {
-      approveDossier: DocumentStatusEnum.ADJUST_REQUESTED
+      approveDossier: DocumentStatusEnum.ADJUST_REQUESTED,
+      message: compareRejectFormRef?.value?.getReason()
     })
     ElMessage.success(t('notification.description.returnSuccess'))
     dialogVisible.value = false
+    router.push(DOCUMENT_DETAIL_PAGE(batchId.value))
   } catch (error) {
     console.error(error)
   } finally {
-    loadingConfirm.value = false
+    loadingConfirmReturnMaker.value = false
   }
 }
 
-const handleGetDocumentCompare = async (key: DocumentKeyEnum = DocumentKeyEnum.INVOICE) => {
-  loading.value = true
+const handleGetDocumentCompare = async (key: DocumentKeyEnum, haveLoading: boolean = true) => {
+  if (haveLoading) {
+    loading.value = true
+  }
   try {
     const { data } = await getDocumentCompare({ batchId: batchId.value, key })
     if (!data) return
-    documentCompareConfigs.value = data
+    const temp = data.map((item) => ({ ...item, sort: Number(item.title.split('.')?.[0] ?? 0) }))
+    const dataMapping = sortBy(temp, 'sort')
+    documentCompareConfigs.value = dataMapping
   } catch (error) {
     console.error(error)
   } finally {
@@ -218,15 +228,31 @@ const handleGetRules = async () => {
 }
 
 const compareResults = computed(() => {
-  return documentCompareConfigs.value.map((d) => {
-    const keys = Object.keys(d?.comparisonResults ?? {}) ?? []
-    const invalidResult = keys.some((k) => d.comparisonResults[k].status === DocumentResultEnum.DISCREPANCY)
-    const status = invalidResult ? DocumentResultEnum.DISCREPANCY : DocumentResultEnum.COMPLY
-    return {
-      label: d.title,
-      status
-    }
-  })
+  return documentCompareConfigs.value.map((d) => ({
+    label: d.title,
+    status: d.status
+  }))
+})
+
+const isHaveActionButton = computed(() => {
+  const status = documentDetail.value.status
+  if (isViewer || !status || endedDocumentStatus.includes(status)) return false
+  if (isMaker) {
+    if (makerStepDocumentStatus.includes(status)) return true
+    return false
+  }
+  if (isChecker) {
+    if (checkerStepDocumentStatus.includes(status) || userInfo.username === documentDetail.value?.createdBy?.username)
+      return true
+    return false
+  }
+  return true
+})
+
+const isDisabledReturnMaker = computed(() => {
+  if (loadingConfirmReturnMaker.value) return true
+  if (documentDetail.value?.createdBy?.role !== RoleEnum.MAKER) return true
+  return false
 })
 
 watch(
@@ -247,9 +273,10 @@ onMounted(() => {
   handleGetDocumentAmount()
   handleGetDocumentDetail()
   handleGetDocumentDataLC()
+  handleGetDocumentCompare(documentType.value)
+  if (isViewer) return
   handleGetCategories()
   handleGetRules()
-  handleGetDocumentCompare(documentType.value)
 })
 </script>
 
@@ -266,13 +293,13 @@ onMounted(() => {
       @update:loading="(loading: boolean) => (loadingConfirm = loading)"
       @update:visible="(visible: boolean) => (dialogVisible = visible)"
     />
-    <template #footer-left
+    <template v-if="!isMaker" #footer-left
       ><el-button
         type="primary"
         plain
         @click="handleReturnForMaker"
-        :loading="loadingConfirm"
-        :disabled="loadingConfirm"
+        :loading="loadingConfirmReturnMaker"
+        :disabled="isDisabledReturnMaker"
       >
         {{ $t('docs.compare.returnMaker') }}
       </el-button></template
@@ -284,7 +311,7 @@ onMounted(() => {
   >
     <el-button color="#005d98" plain :icon="ArrowLeft" @click="handleBack">{{ $t('button.back') }}</el-button>
     <el-text class="text-[20px] mx-auto">{{ $t('docs.compare.checkDoc') }} {{ documentTypeLabel }}</el-text>
-    <div class="flex flex-row gap-3" v-if="!isViewer">
+    <div class="flex flex-row gap-3" v-if="isHaveActionButton">
       <el-button color="#c92a2a" type="danger" :icon="Close" @click="dialogVisible = true">{{
         $t('button.reject')
       }}</el-button>
@@ -313,7 +340,7 @@ onMounted(() => {
               </div>
               <div class="flex flex-col gap-1">
                 <span class="c-text-value">{{ $t('docs.compare.totalAmount') }}</span>
-                <span class="text-base">{{ amount?.totalAmount ?? 0 }} {{ currency }}</span>
+                <span class="text-base">{{ formatNumberWithCommas(amount?.totalAmount ?? 0) }} {{ currency }}</span>
               </div>
             </div>
             <el-divider />
@@ -349,7 +376,9 @@ onMounted(() => {
                     <WarnTriangleFilled class="text-[#e03131]" v-if="step.status === DocumentResultEnum.DISCREPANCY" />
                     <CircleCheckFilled class="text-[#d8d8d8]" v-if="step.status === DocumentResultEnum.NA" />
                   </el-icon>
-                  <span class="c-text-primary">{{ step.label }}</span>
+                  <span class="c-text-primary" :class="{ 'font-bold': index === conditionSelect }">{{
+                    step.label
+                  }}</span>
                 </div>
               </div>
             </div>
@@ -364,9 +393,10 @@ onMounted(() => {
                 :condition-select="conditionSelect"
                 :categories="categories"
                 :rules="rules"
+                :is-have-permission="isHaveActionButton"
                 @update:condition="(condition: number) => (conditionSelect = condition)"
                 @scroll-by-index="handleCheckCompareResult"
-                @refresh="handleGetDocumentCompare(documentType)"
+                @refresh="handleGetDocumentCompare(documentType, false)"
               />
             </el-tab-pane>
             <el-tab-pane :label="$t('docs.compare.editHistory')" name="history">

@@ -3,6 +3,7 @@ import { RoleEnum } from '@/@types/pages/users'
 import { STATUS_COLORS } from '@/constants/color'
 import { BranchModel } from '../../login'
 import { RuleModel, RuleTypeEnum } from '../../rules'
+import { UserModel } from './services/DocumentResponse'
 
 // document enum
 export enum BusinessTypeEnum {
@@ -66,8 +67,10 @@ export interface DocumentModel {
   customerName: string
   totalAmount: string
   createdAt: string
-  handleBy: string
-  approveBy: string
+  handleBy?: UserModel
+  approveBy?: UserModel
+  censorBy?: UserModel
+  createdBy?: UserModel
   result: DocumentResultEnum
   doneAt: string
 }
@@ -102,6 +105,11 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
     minWidth: 150
   },
   {
+    field: 'lcNo',
+    label: 'docs.document.lcCode',
+    minWidth: 200
+  },
+  {
     field: 'handleBy',
     label: 'docs.document.handler',
     minWidth: 150
@@ -124,7 +132,7 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
   {
     field: 'customerName',
     label: 'docs.document.customerName',
-    minWidth: 150
+    minWidth: 200
   },
   {
     field: 'totalAmount',
@@ -151,33 +159,6 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
     label: 'docs.document.actions',
     minWidth: 120
   }
-]
-
-// mock data
-export const HANDLER_LIST = [RoleEnum.MAKER, RoleEnum.CHECKER]
-export const DOCUMENT_STATUS_LIST = [
-  DocumentStatusEnum.NEW,
-  DocumentStatusEnum.CLASSIFYING,
-  DocumentStatusEnum.CLASSIFIED,
-  DocumentStatusEnum.OCRING,
-  DocumentStatusEnum.OCRED,
-  DocumentStatusEnum.WAIT_CHECK,
-  DocumentStatusEnum.CHECKING,
-  DocumentStatusEnum.CHECKED,
-  DocumentStatusEnum.WAIT_VALIDATE,
-  DocumentStatusEnum.ADJUST_REQUESTED,
-  DocumentStatusEnum.VALIDATED,
-  DocumentStatusEnum.DENIED,
-  DocumentStatusEnum.ERROR
-]
-
-export const BUSINESS_TYPE_LIST = [BusinessTypeEnum.NA, BusinessTypeEnum.LC_OUT, BusinessTypeEnum.LC_IN]
-export const DOCUMENT_RESULT_LIST = [DocumentResultEnum.COMPLY, DocumentResultEnum.DISCREPANCY]
-export const PROCESSING_STEP_LIST = [
-  ProcessingStepEnum.NEW,
-  ProcessingStepEnum.OCR,
-  ProcessingStepEnum.CHECK,
-  ProcessingStepEnum.VALIDATE
 ]
 
 export interface DocumentFileModel {
@@ -223,6 +204,11 @@ export const documentStatusOptions: SelectOptionModel[] = [
     color: STATUS_COLORS.CLASSIFYING
   },
   {
+    label: 'Đang đối sánh',
+    value: DocumentStatusEnum.COMPARING,
+    color: STATUS_COLORS.CLASSIFYING
+  },
+  {
     label: 'Đã đối sánh',
     value: DocumentStatusEnum.OCRED,
     color: STATUS_COLORS.OCRED
@@ -248,7 +234,12 @@ export const documentStatusOptions: SelectOptionModel[] = [
     color: STATUS_COLORS.WAIT_CHECK
   },
   {
-    label: 'Cần điều chỉnh',
+    label: 'Đang phê duyệt',
+    value: DocumentStatusEnum.VALIDATING,
+    color: STATUS_COLORS.WAIT_CHECK
+  },
+  {
+    label: 'YC điều chỉnh',
     value: DocumentStatusEnum.ADJUST_REQUESTED,
     color: STATUS_COLORS.WAIT_CHECK
   },
@@ -265,6 +256,21 @@ export const documentStatusOptions: SelectOptionModel[] = [
   {
     label: 'Lỗi',
     value: DocumentStatusEnum.ERROR,
+    color: STATUS_COLORS.ERROR
+  },
+  {
+    label: 'Lỗi phân loại',
+    value: DocumentStatusEnum.CLASSIFICATION_ERROR,
+    color: STATUS_COLORS.ERROR
+  },
+  {
+    label: 'Lỗi nhận dạng',
+    value: DocumentStatusEnum.EXTRACTION_ERROR,
+    color: STATUS_COLORS.ERROR
+  },
+  {
+    label: 'Lỗi đối sánh',
+    value: DocumentStatusEnum.COMPARISON_ERROR,
     color: STATUS_COLORS.ERROR
   }
 ]
@@ -310,11 +316,13 @@ export const documentResultOptions: SelectOptionModel[] = [
   },
   {
     label: 'Hợp lệ',
-    value: DocumentResultEnum.COMPLY
+    value: DocumentResultEnum.COMPLY,
+    color: STATUS_COLORS.VALIDATED
   },
   {
     label: 'Bất hợp lệ',
-    value: DocumentResultEnum.DISCREPANCY
+    value: DocumentResultEnum.DISCREPANCY,
+    color: STATUS_COLORS.WAIT_CHECK
   }
 ]
 
@@ -444,7 +452,7 @@ export const documentTypeOptions: SelectOptionModel[] = [
 
 export interface FilterDocumentModel {
   name: string
-  status: number[]
+  status: DocumentStatusEnum[]
   result: number
   bizType: number
   branchId: number
@@ -575,6 +583,7 @@ export interface ComparisonCellResultModel {
 
 export interface DocumentCompareModel {
   id: number
+  sort?: string | number
   title: string
   key: DocumentKeyEnum
   status: DocumentResultEnum

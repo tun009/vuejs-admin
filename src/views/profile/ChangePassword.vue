@@ -9,6 +9,10 @@ import { FormInstance, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+interface Props {
+  requireConfirm?: boolean
+}
+
 interface Emits {
   (event: 'close'): void
 }
@@ -17,6 +21,7 @@ interface Exposes {
   handleClose: () => void
 }
 
+defineProps<Props>()
 const emits = defineEmits<Emits>()
 
 const { t } = useI18n()
@@ -124,6 +129,8 @@ defineExpose<Exposes>({
     <el-button :loading="loading" @click.prevent="handleChangePassword" type="primary">{{
       $t('button.update')
     }}</el-button>
-    <el-button :disabled="loading" @click="handleClose" type="default">{{ $t('button.cancel') }}</el-button>
+    <el-button v-if="!requireConfirm" :disabled="loading" @click="handleClose" type="default">{{
+      $t('button.cancel')
+    }}</el-button>
   </div>
 </template>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { RuleModel } from '@/@types/pages/rules'
 import { ElInput } from 'element-plus'
-import { computed } from 'vue'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import SafeHtmlRenderer from '../SafeHtmlRenderer.vue'
 
 // Define props for suggestions (array of { key: string, value: string }) and prefix (string)
 interface Props {
@@ -283,8 +283,9 @@ const localModelValue = computed({
           :id="activeSuggestionIndex === index ? '_suggestion-active' : ''"
           :class="{ active: activeSuggestionIndex === index }"
           @click="onSelectSuggestion(suggestion)"
-          v-html="highlightText(suggestion.value)"
-        />
+        >
+          <SafeHtmlRenderer :html="highlightText(suggestion.value)" />
+        </li>
       </ul>
     </div>
   </div>
@@ -292,16 +293,13 @@ const localModelValue = computed({
 
 <style lang="scss" scoped>
 @import '@/styles/mixins.scss';
-
-.autocomplete-dropdown {
-  @extend %scrollbar;
-}
 /* Style for the autocomplete dropdown */
 .autocomplete-wrapper {
   position: relative;
 }
 
 .autocomplete-dropdown {
+  @extend %scrollbar;
   position: absolute;
   top: 100%;
   left: 0;

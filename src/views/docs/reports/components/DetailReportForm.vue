@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { ReportDetailModel } from '@/@types/pages/reports'
 import EIBTable from '@/components/common/EIBTable.vue'
 import Status from '@/views/docs/components/Status.vue'
 import { ref } from 'vue'
-import { documentResultOptions, documentStatusOptions } from '@/@types/pages/reports'
+import { documentResultOptions, documentStatusOptions, ReportDetailModel } from '@/@types/pages/reports'
 
 interface Props {
   data: ReportDetailModel
@@ -56,7 +55,7 @@ defineExpose<Exposes>({
   <div>
     <div>
       <p class="text-[#495057] font-bold text-[14px]">Tên bộ chứng từ:</p>
-      <p class="text-[14px]">{{ props.data?.batchName }}</p>
+      <p class="text-[14px]">{{ props.data?.name }}</p>
     </div>
     <div class="flex mt-[16px]">
       <div class="w-[50%]">
