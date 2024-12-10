@@ -70,6 +70,7 @@ export interface BatchDetailModel {
   partialShipments: string
   periodPresentation: string
   datePresentation: string
+  errorMessage?: string
 }
 
 export type GetBatchDetailResponseModel = ApiResponseData<BatchDetailModel>
