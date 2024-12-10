@@ -45,23 +45,49 @@ defineExpose<Exposes>({
         </template>
       </el-table-column>
       <el-table-column prop="admin" label="Admin" align="center" width="90">
-        <template #default>
+        <template #default="scope">
           <div class="text-center">
-            <el-checkbox size="large" disabled v-model="checked1" />
+            <el-checkbox size="large" disabled v-model="checked1" v-if="scope.$index != 7 && scope.$index != 18" />
           </div>
         </template>
       </el-table-column>
       <el-table-column prop="checker" label="Checker" align="center" width="90">
-        <template #default>
+        <template #default="scope">
           <div class="text-center">
-            <el-checkbox size="large" disabled v-model="checked2" />
+            <el-checkbox
+              size="large"
+              disabled
+              v-model="checked2"
+              v-if="scope.$index != 7 && scope.$index != 18 && scope.$index != 27 && scope.$index != 33"
+            />
           </div>
         </template>
       </el-table-column>
       <el-table-column prop="maker" label="Maker" align="center" width="90">
-        <template #default>
+        <template #default="scope">
           <div class="text-center">
-            <el-checkbox size="large" disabled v-model="checked3" />
+            <el-checkbox
+              size="large"
+              disabled
+              v-model="checked3"
+              v-if="
+                scope.$index != 19 &&
+                scope.$index != 24 &&
+                scope.$index != 25 &&
+                scope.$index != 26 &&
+                scope.$index != 27 &&
+                scope.$index != 28 &&
+                scope.$index != 29 &&
+                scope.$index != 30 &&
+                scope.$index != 31 &&
+                scope.$index != 32 &&
+                scope.$index != 33 &&
+                scope.$index != 34 &&
+                scope.$index != 36 &&
+                scope.$index != 37 &&
+                scope.$index != 39
+              "
+            />
           </div>
         </template>
       </el-table-column>
@@ -73,7 +99,35 @@ defineExpose<Exposes>({
               disabled
               v-model="checked4"
               v-if="
-                scope.$index != 3 && scope.$index != 4 && scope.$index != 5 && scope.$index != 8 && scope.$index != 9
+                scope.$index != 3 &&
+                scope.$index != 4 &&
+                scope.$index != 5 &&
+                scope.$index != 7 &&
+                scope.$index != 9 &&
+                scope.$index != 10 &&
+                scope.$index != 11 &&
+                scope.$index != 13 &&
+                scope.$index != 15 &&
+                scope.$index != 16 &&
+                scope.$index != 18 &&
+                scope.$index != 19 &&
+                scope.$index != 20 &&
+                scope.$index != 24 &&
+                scope.$index != 25 &&
+                scope.$index != 26 &&
+                scope.$index != 27 &&
+                scope.$index != 28 &&
+                scope.$index != 29 &&
+                scope.$index != 30 &&
+                scope.$index != 31 &&
+                scope.$index != 32 &&
+                scope.$index != 33 &&
+                scope.$index != 34 &&
+                scope.$index != 35 &&
+                scope.$index != 36 &&
+                scope.$index != 37 &&
+                scope.$index != 38 &&
+                scope.$index != 39
               "
             />
           </div>

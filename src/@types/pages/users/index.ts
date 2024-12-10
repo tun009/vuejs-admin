@@ -50,16 +50,16 @@ export const roleSelectOptions: SelectOptionModel[] = [
 export const userListColumnConfigs: ColumnConfigModel[] = [
   {
     field: 'stt',
-    label: 'Stt',
+    label: 'STT',
     width: 80
   },
   {
     field: 'name',
-    label: 'Name'
+    label: 'Họ tên'
   },
   {
     field: 'role',
-    label: 'Role'
+    label: 'Vai trò'
   },
   {
     field: 'branch',
@@ -67,11 +67,11 @@ export const userListColumnConfigs: ColumnConfigModel[] = [
   },
   {
     field: 'status',
-    label: 'Status'
+    label: 'Trạng thái'
   },
   {
     field: 'actions',
-    label: 'Actions'
+    label: 'Hành động'
   }
 ]
 
@@ -135,7 +135,7 @@ export const configRoleUserTableData = [
     title: 1
   },
   {
-    name: 'Xem thông tin các bộ chứng từ',
+    name: 'Xem danh sách các bộ chứng từ',
     title: 2
   },
   {
@@ -151,23 +151,139 @@ export const configRoleUserTableData = [
     title: 2
   },
   {
+    name: 'Xem chi tiết bộ chứng từ',
+    title: 2
+  },
+  {
+    name: 'Trình phê duyệt bộ chứng từ',
+    title: 2
+  },
+  {
     name: 'Trích xuất thông tin',
     title: 1
   },
   {
-    name: 'Xem kết quả sau khi OCR hoàn tất',
+    name: 'Chỉnh sửa thông tin trích xuất',
     title: 2
   },
   {
-    name: 'Chỉnh sửa thông tin sau khi OCR hoàn tất',
+    name: 'Thay thế chứng từ',
     title: 2
   },
   {
-    name: 'Phê duyệt kết quả sau khi kiểm tra',
+    name: 'Chỉnh sửa phân loại chứng từ',
     title: 2
   },
   {
     name: 'Xem lịch sử chỉnh sửa thông tin',
+    title: 2
+  },
+  {
+    name: 'Ghi chú thông tin',
+    title: 2
+  },
+  {
+    name: 'Đối sánh thông tin',
+    title: 1
+  },
+  {
+    name: 'Đối sánh bộ chứng từ',
+    title: 2
+  },
+  {
+    name: 'Chỉnh sửa kết quả đối sánh thông tin',
+    title: 2
+  },
+  {
+    name: 'Xem lịch sử chỉnh sửa kết quả',
+    title: 2
+  },
+  {
+    name: 'Xác nhận kết quả kiểm tra bộ chứng từ',
+    title: 2
+  },
+  {
+    name: 'Phê duyệt kết quả kiểm tra bộ chứng từ',
+    title: 2
+  },
+  {
+    name: 'Tải kết quả kiểm tra bộ chứng từ',
+    title: 2
+  },
+  {
+    name: 'Báo cáo',
+    title: 1
+  },
+  {
+    name: 'Xem báo cáo, thống kê dữ liệu',
+    title: 2
+  },
+  {
+    name: 'Xem chi tiết thống kê dữ liệu',
+    title: 2
+  },
+  {
+    name: 'Cài đặt',
+    title: 1
+  },
+  {
+    name: 'Cài đặt tên trường trích xuất',
+    title: 2
+  },
+  {
+    name: 'Cài đặt màu sắc theo độ tin cậy',
+    title: 2
+  },
+  {
+    name: 'Cài đặt luồng kiểm tra',
+    title: 2
+  },
+  {
+    name: 'Quản lý người dùng',
+    title: 1
+  },
+  {
+    name: 'Danh sách người dùng',
+    title: 2
+  },
+  {
+    name: 'Thêm người dùng',
+    title: 2
+  },
+  {
+    name: 'Cập nhật thông tin người dùng',
+    title: 2
+  },
+  {
+    name: 'Khóa tài khoản người dùng',
+    title: 2
+  },
+  {
+    name: 'Xóa người dùng',
+    title: 2
+  },
+  {
+    name: 'Quản lý rule chứng từ',
+    title: 1
+  },
+  {
+    name: 'Xem danh sách luật UCP/ISBP',
+    title: 2
+  },
+  {
+    name: 'Chỉnh sửa nội dung luật UCP/ISBP',
+    title: 2
+  },
+  {
+    name: 'Quản lý danh mục các bất hợp lệ',
+    title: 1
+  },
+  {
+    name: 'Xem danh sách danh mục các bất hợp lệ',
+    title: 2
+  },
+  {
+    name: 'Chỉnh sửa nội dung các bất hợp lệ trên từng loại chứng từ',
     title: 2
   }
 ]
