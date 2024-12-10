@@ -120,7 +120,6 @@ export const patternRule = (pattern: RegExp) => ({
 })
 
 export const RULE_CONFIDENCE = (field: string, form: any, beforeField: string, afterField: string) => {
-  console.log(field, form, beforeField, afterField)
   const validateConfidence = (_rule: any, value: any, cb: any) => {
     if (
       (beforeField && Number(value) <= Number(form.value[beforeField])) ||

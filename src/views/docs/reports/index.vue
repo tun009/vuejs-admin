@@ -9,9 +9,9 @@ import {
   businessTypeOptions,
   docListColumnConfigs,
   documentResultOptions,
-  documentStatusOptions,
   ReportDetailModel
 } from '@/@types/pages/reports'
+import { documentStatusOptions } from '@/@types/pages/docs/documents'
 import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
 import EIBMultipleFilter from '@/components/Filter/EIBMultipleFilter.vue'
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
@@ -173,7 +173,7 @@ onMounted(() => {
     <div class="flex flex-row justify-between gap-10 items-center mb-5">
       <div class="flex flex-row gap5 items-center gap-5">
         <EIBInput
-          v-model="filterValue.query"
+          v-model="filterValue.name"
           custom-class="w-[360px]"
           placeholder="docs.document.searchByName"
           :prefix-icon="Search"

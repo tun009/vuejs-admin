@@ -134,7 +134,7 @@ onMounted(() => {
     />
   </el-form>
   <div>
-    <el-button :loading="loading" @click.prevent="handleAddUser" type="primary">{{ $t('button.update') }}</el-button>
+    <el-button :loading="loading" @click.prevent="handleAddUser" type="primary">Hoàn tất</el-button>
     <el-button :disabled="loading" @click="handleClose" type="default">{{ $t('button.cancel') }}</el-button>
   </div>
 </template>

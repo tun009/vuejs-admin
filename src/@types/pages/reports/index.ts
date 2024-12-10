@@ -133,11 +133,12 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
   {
     field: 'stt',
     label: 'STT',
-    minWidth: 30
+    minWidth: 40
   },
   {
     field: 'name',
-    label: 'Tên bộ chứng từ'
+    label: 'Tên bộ chứng từ',
+    width: 250
   },
   {
     field: 'bizType',
@@ -145,11 +146,16 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
   },
   {
     field: 'status',
-    label: 'Trạng thái'
+    label: 'Trạng thái',
+    width: 200
   },
   {
     field: 'result',
     label: 'Kết quả xử lý'
+  },
+  {
+    field: 'comparisonTimes',
+    label: 'Tổng lần đối sánh'
   },
   {
     field: 'branch',
@@ -437,7 +443,7 @@ export const documentTypeOptions: SelectOptionModel[] = [
 ]
 
 export interface FilterDocumentModel {
-  query: string
+  name: string
   status: DocumentStatusEnum[]
   result: number
   bizType: number

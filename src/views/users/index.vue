@@ -19,7 +19,8 @@ import {
   statusTypeOptions,
   FilterUserModel,
   UserModel,
-  userListColumnConfigs
+  userListColumnConfigs,
+  UserStatusEnum
 } from '@/@types/pages/users'
 import { getBranches } from '@/api/docs/document'
 
@@ -27,6 +28,9 @@ const { showConfirmModal } = useConfirmModal()
 // import EIBMultipleFilter from '@/components/Filter/EIBMultipleFilter.vue'
 import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
 import { BranchModel } from '@/@types/pages/login'
+import { useUserStore } from '@/store/modules/user'
+
+const { isAdmin } = useUserStore()
 
 const configRoleUserFormRef = ref<InstanceType<typeof ConfigRoleUserForm>>()
 
@@ -79,13 +83,7 @@ const handleGetUser = async (pagination: PaginationModel) => {
   try {
     const response = await getUsers({
       ...pagination,
-      ...omitPropertyFromObject(filterValue, -1),
-      sortItemList: [
-        {
-          isAsc: false,
-          column: 'name'
-        }
-      ]
+      ...omitPropertyFromObject(filterValue, -1)
     })
     tableData.value = response.data.list
     return response
@@ -114,7 +112,11 @@ const handleDeleteUser = (data?: UserModel) => {
       } finally {
         instance.confirmButtonLoading = false
       }
-    }
+    },
+    options: {
+      confirmButtonText: 'Xác nhận xóa'
+    },
+    isDelete: true
   })
 }
 
@@ -148,6 +150,22 @@ const handleGetBranches = async () => {
     branches.value = data
   } catch (error) {
     console.error(error)
+  }
+}
+
+const getNameStatus = (name: string) => {
+  if (name == UserStatusEnum.ACTIVE) {
+    return 'Hoạt động'
+  } else {
+    return 'Khóa tài khoản'
+  }
+}
+
+const isHaveDeleteDocument = () => {
+  if (isAdmin) {
+    return true
+  } else {
+    return false
   }
 }
 
@@ -225,12 +243,17 @@ onMounted(() => {
             <span>{{ row?.branch?.name }}</span>
           </div>
         </template>
+        <template #status="{ row }">
+          <div>
+            <span>{{ getNameStatus(row?.status) }}</span>
+          </div>
+        </template>
         <template #actions="{ row }">
-          <div class="flex flex-row gap-2">
+          <div class="flex flex-row gap-2 m-auto text-center">
             <SvgIcon :size="18" name="edit-info" @click.stop="handleUpdateUser(row)" class="cursor-pointer" />
-            <el-icon :size="18" color="#e03131" class="cursor-pointer" @click="handleDeleteUser(row)"
-              ><Delete
-            /></el-icon>
+            <div class="w-[20px] h-[20px]" v-if="isHaveDeleteDocument()">
+              <SvgIcon :size="20" name="delete-mini" class="cursor-pointer" @click="handleDeleteUser(row)" />
+            </div>
           </div>
         </template>
       </EIBTable>
