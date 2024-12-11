@@ -8,10 +8,12 @@ import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import svgLoader from 'vite-svg-loader'
 
 export default ({ mode }: ConfigEnv): UserConfigExport => {
-  loadEnv(mode, process.cwd()) as ImportMetaEnv
+  const viteEnv = loadEnv(mode, process.cwd()) as ImportMetaEnv
+  const { VITE_PUBLIC_PATH } = viteEnv
+  console.log(VITE_PUBLIC_PATH)
   return {
     /** Modify base according to actual situation when packaging */
-    // base: VITE_PUBLIC_PATH,
+    base: VITE_PUBLIC_PATH,
     resolve: {
       alias: {
         /** The @ symbol points to the src directory */
