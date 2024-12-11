@@ -73,7 +73,8 @@ const handleGetDocuments = async (pagination: PaginationModel) => {
     const isErrorStatus = status.includes(DocumentStatusEnum.ERROR)
     let exactStatus = [...status]
     if (isErrorStatus) {
-      exactStatus = exactStatus.filter((e) => e !== DocumentStatusEnum.ERROR).concat(errorDocumentStatus)
+      const statusNoError = exactStatus.filter((e) => e !== DocumentStatusEnum.ERROR)
+      exactStatus = [...statusNoError, ...errorDocumentStatus]
     }
     const response = await getDocuments({
       ...pagination,
