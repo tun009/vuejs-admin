@@ -38,13 +38,19 @@ const onConfirm = () => {
   updateLCRef.value?.validate(async (valid: boolean, fields) => {
     if (!props.defaultForm?.batchId) return
     if (updateLCFormData.amountUsed > props.defaultForm.totalAmount) return warningNotification('validate.maxValue')
+    if (updateLCFormData.amountUsed < 0) return warningNotification('validate.minValue')
     if (valid) {
       emits('update:loading', true)
-      await updateLCAmount({ amountUsed: updateLCFormData.amountUsed, batchId: props.defaultForm?.batchId })
-      ElMessage.success('Thành công!')
-      emits('update:loading', false)
-      emits('update:amount', updateLCFormData.amountUsed)
-      emits('update:visible', false)
+      try {
+        await updateLCAmount({ amountUsed: updateLCFormData.amountUsed, batchId: props.defaultForm?.batchId })
+        ElMessage.success('Thành công!')
+        emits('update:amount', updateLCFormData.amountUsed)
+        emits('update:visible', false)
+      } catch (error) {
+        console.error(error)
+      } finally {
+        emits('update:loading', false)
+      }
     } else {
       console.error('Form validation failed', fields)
     }

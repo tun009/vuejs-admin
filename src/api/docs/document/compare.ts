@@ -10,6 +10,7 @@ import {
   GetDocumentCompareResponseModel,
   GetDocumentCompareUndefinedResponseModel,
   PatchDocumentCompareUndefinedResponseModel,
+  RetryDocumentResponseModel,
   TranslateEnglishToVietnameseResponseModel,
   UpdateDocumentCompareResultResponseModel
 } from '@/@types/pages/docs/documents/services/DocumentResponse'
@@ -87,5 +88,19 @@ export function patchDocumentCompareUndefined(
     url: 'comparison/' + comparisonUndefinedId + '/undefined-requirements',
     method: 'patch',
     data
+  })
+}
+
+export function retryComparisonDocument(id: number) {
+  return request<RetryDocumentResponseModel>({
+    url: `batches/${id}/comparison`,
+    method: 'patch'
+  })
+}
+
+export function retryOcrDocument(id: number) {
+  return request<RetryDocumentResponseModel>({
+    url: `batches/${id}/ocr`,
+    method: 'patch'
   })
 }

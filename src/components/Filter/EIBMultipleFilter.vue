@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, unref } from 'vue'
+import { computed, ref, unref } from 'vue'
 import { SelectOptionModel } from '@/@types/common'
 import { ArrowDownBold } from '@element-plus/icons-vue'
 import { CheckboxValueType } from 'element-plus'
@@ -45,6 +45,10 @@ interface Props {
 
 interface Emits {
   (event: 'update:model-value', value: string[] | number[]): void
+}
+
+interface Exposes {
+  handleCheckAll: () => void
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -64,6 +68,11 @@ const isShow = ref<boolean>(false)
 const handleCheckAllChange = (val: CheckboxValueType) => {
   emits('update:model-value', val ? allValue.value : [])
   isIndeterminate.value = false
+}
+
+const handleCheckAll = () => {
+  emits('update:model-value', allValue.value)
+  checkAll.value = true
 }
 
 const handleCheckedChange = (value: CheckboxValueType[]) => {
@@ -87,7 +96,7 @@ const onClickOutside = () => {
   unref(popoverRef).popperRef?.delayHide?.()
 }
 
-onMounted(() => {
-  emits('update:model-value', allValue.value)
+defineExpose<Exposes>({
+  handleCheckAll
 })
 </script>

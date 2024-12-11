@@ -23,7 +23,7 @@ import EIBTextareaAutoComplete from '@/components/common/EIBTextareaAutoComplete
 import { getTextFromHtml } from '@/utils/common'
 import { InfoFilled } from '@element-plus/icons-vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
-import { computed, ref } from 'vue'
+import { computed, ref, toRaw } from 'vue'
 import { useI18n } from 'vue-i18n'
 import SaveDictionaryForm from './SaveDictionaryForm.vue'
 
@@ -137,10 +137,10 @@ const handleUpdateCompareResult = () => {
       try {
         const lawIds = documentResultFormData.value.lawIds.filter((d) => !lawReasonMapping.value.lawIds.includes(d))
         const laws = props.rules.filter((r) => lawIds.includes(r.code))
-        const reasons = reasonList.value.filter((r) => r?.isNew)
+        const reasons = reasonList.value.filter((r) => r?.isNew).map((c) => toRaw(c))
         const reasonListIds = reasonList.value.map((r) => r.id)
         const initialReasons: DocumentComparisonResultReasonModel[] = props.result.map((p) => {
-          const exactlyReasons = p.reasons.filter((r) => reasonListIds.includes(r.id))
+          const exactlyReasons = p.reasons.filter((r) => reasonListIds.includes(r.id) && !r?.isNew)
           const reasons = exactlyReasons.map((r) => {
             const newReason = reasonList.value.find((i) => i.id === r.id)
             return {
@@ -164,7 +164,13 @@ const handleUpdateCompareResult = () => {
             comparisonResultReasons:
               documentResultFormData.value.status === DocumentResultEnum.COMPLY ? [] : [...initialReasons, reasonMore]
           }
-          await updateCompareResult(payload)
+          const exactlyReasons = payload.comparisonResultReasons.filter((c) => c.laws.length || c.reasons.length)
+          const exactlyPayload: UpdateDocumentCompareResultRequestModel = {
+            ...payload,
+            comparisonResultReasons: exactlyReasons
+          }
+          await updateCompareResult(exactlyPayload)
+          reasonList.value = reasonList.value.map((c) => ({ ...c, isNew: false }))
         } else {
           const reasonMore: DocumentComparisonResultReasonModel = {
             comparisonResultReasonId: null,
@@ -177,7 +183,16 @@ const handleUpdateCompareResult = () => {
             reasons:
               documentResultFormData.value.status === DocumentResultEnum.COMPLY ? [] : [...initialReasons, reasonMore]
           }
-          await updateCompareResultTable(payload)
+          const exactlyReasons = payload.reasons.filter((c) => c.laws.length || c.reasons.length)
+          const exactlyPayload: UpdateDocumentCompareResultTableRequestModel = {
+            ...payload,
+            reasons: exactlyReasons
+          }
+          await updateCompareResultTable(exactlyPayload)
+          reasonList.value = reasonList.value.map((c) => ({ ...c, isNew: false }))
+        }
+        if (documentResultFormData.value.status === DocumentResultEnum.COMPLY) {
+          reasonList.value = []
         }
         ElMessage({
           showClose: true,
@@ -254,9 +269,7 @@ const ruleMapping = computed((): SelectOptionModel[] => {
           <div v-else-if="props.status === DocumentResultEnum.DISCREPANCY">
             <div class="flex flex-row items-start gap-2" v-for="(res, index) in lawReasonMapping.reasons" :key="index">
               <div class="min-w-1 h-1 w-1 bg-[#e8590c] rounded-sm mt-2" />
-              <span class="text-[#e8590c]"
-                >{{ $t('docs.compare.discrepancy') }}{{ res.en ? ': ' + getTextFromHtml(res.en) : '' }}</span
-              >
+              <span class="text-[#e8590c]">{{ getTextFromHtml(res.en) }}</span>
               <el-tooltip
                 placement="top"
                 v-if="lawReasonMapping?.laws?.length && !index"
@@ -278,7 +291,7 @@ const ruleMapping = computed((): SelectOptionModel[] => {
           <div v-else-if="props.status === DocumentResultEnum.DISCREPANCY">
             <div class="flex flex-row items-start gap-2" v-for="(res, index) in lawReasonMapping.reasons" :key="index">
               <div class="min-w-1 h-1 w-1 bg-[#e8590c] rounded-sm mt-2" />
-              <span class="text-[#e8590c]">{{ $t('docs.status.invalid') }}{{ res.vi ? ': ' + res.vi : '' }}</span>
+              <span class="text-[#e8590c]">{{ res.vi }}</span>
             </div>
           </div>
           <span v-else>{{ $t('docs.compare.na') }}</span>
@@ -322,6 +335,7 @@ const ruleMapping = computed((): SelectOptionModel[] => {
                   :suggestions="suggestionMapping(categories)"
                   :index="i"
                   @update-value="updateRuleValue"
+                  :value-list="reasonList"
                 />
                 <el-button
                   color="#005d98"
@@ -355,7 +369,13 @@ const ruleMapping = computed((): SelectOptionModel[] => {
             <span class="min-w-48 text-sm mt-2">{{ $t('docs.compare.reason') }}</span>
             <div class="flex flex-col gap-2 w-full">
               <div class="flex flex-row items-center gap-2 w-full" v-for="(r, i) in reasonList" :key="r.id">
-                <EIBTextareaAutoComplete v-model="r.vi" is-single-line :index="i" @update-value="updateRuleValue" />
+                <EIBTextareaAutoComplete
+                  v-model="r.vi"
+                  is-single-line
+                  :index="i"
+                  @update-value="updateRuleValue"
+                  :value-list="reasonList"
+                />
                 <el-button color="#005d98" plain class="h-[38px]" @click="handleTranslate(i)">{{
                   $t('docs.compare.translate')
                 }}</el-button>

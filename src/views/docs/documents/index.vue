@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ArrowDownBold, Filter, Plus, Search } from '@element-plus/icons-vue'
-import { onMounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
@@ -29,6 +29,7 @@ import {
   checkerStepDocumentStatus,
   deleteAccessStatus,
   endedDocumentStatus,
+  errorDocumentStatus,
   statusAccessDeleteDocumentStatus
 } from '@/constants/common'
 import { formatDDMMYYYY, formatDDMMYYYY_HHMM, formatYYYYMMDD, shortcutsDateRange } from '@/constants/date'
@@ -47,6 +48,11 @@ const router = useRouter()
 const { showConfirmModal } = useConfirmModal()
 const { isViewer, isAdmin, isChecker, isMaker, userInfo } = useUserStore()
 
+const defaultStatus = computed(() => {
+  return documentStatusOptions.slice(0, -3).map((c) => c.value as DocumentStatusEnum)
+})
+
+const multipleFilterRef = ref<InstanceType<typeof EIBMultipleFilter>>()
 const openFilter = ref(false)
 const tableData = ref<DocumentModel[]>([])
 const tableDisabledIds = ref<(string | number)[]>([])
@@ -56,7 +62,9 @@ const openDrawer = ref(false)
 const checkedItems = ref<DocumentModel[]>([])
 const documentTableRef = ref<InstanceType<typeof EIBTable>>()
 const uploadTimes = ref(defaultDateRange())
-const filterValue = reactive<FilterDocumentModel>({} as FilterDocumentModel)
+const filterValue = reactive<FilterDocumentModel>({
+  status: defaultStatus.value
+} as FilterDocumentModel)
 const branches = ref<BranchModel[]>([])
 
 const handleGetDocuments = async (pagination: PaginationModel) => {
@@ -65,13 +73,7 @@ const handleGetDocuments = async (pagination: PaginationModel) => {
     const isErrorStatus = status.includes(DocumentStatusEnum.ERROR)
     let exactStatus = [...status]
     if (isErrorStatus) {
-      exactStatus = exactStatus
-        .filter((e) => e !== DocumentStatusEnum.ERROR)
-        .concat([
-          DocumentStatusEnum.CLASSIFICATION_ERROR,
-          DocumentStatusEnum.EXTRACTION_ERROR,
-          DocumentStatusEnum.COMPARISON_ERROR
-        ])
+      exactStatus = exactStatus.filter((e) => e !== DocumentStatusEnum.ERROR).concat(errorDocumentStatus)
     }
     const response = await getDocuments({
       ...pagination,
@@ -101,13 +103,21 @@ const handleGetDocuments = async (pagination: PaginationModel) => {
 
 const handleRedirectToDocumentDetail = async (row: DocumentModel) => {
   let status: DocumentStatusEnum | null = null
-  if (isMaker && row.status === DocumentStatusEnum.WAIT_CHECK) {
-    status = DocumentStatusEnum.CHECKING
-  } else if (row.status === DocumentStatusEnum.WAIT_CHECK || row.status === DocumentStatusEnum.WAIT_VALIDATE) {
+
+  if (row.status === DocumentStatusEnum.WAIT_CHECK) {
+    if (isMaker) {
+      status = DocumentStatusEnum.CHECKING
+    } else if (isAdmin) {
+      status =
+        userInfo.username === row.createdBy?.username ? DocumentStatusEnum.CHECKING : DocumentStatusEnum.VALIDATING
+    }
+  } else if (row.status === DocumentStatusEnum.WAIT_VALIDATE && (isChecker || isAdmin)) {
     if (
-      !isMaker &&
-      (isAdmin || userInfo.username === row.createdBy?.username || userInfo?.username === row.approveBy?.username)
+      isChecker &&
+      (userInfo.username === row.createdBy?.username || userInfo?.username === row.approveBy?.username)
     ) {
+      status = DocumentStatusEnum.VALIDATING
+    } else if (isAdmin) {
       status = DocumentStatusEnum.VALIDATING
     }
   }
@@ -170,7 +180,7 @@ const handleResetFilter = () => {
   filterValue.bizType = -1
   filterValue.branchId = -1
   filterValue.result = -1
-  filterValue.status = []
+  multipleFilterRef.value?.handleCheckAll()
 }
 
 const handleGetData = debounce(() => documentTableRef?.value?.handleGetData(), 300)
@@ -283,6 +293,7 @@ onMounted(() => {
         :options="businessTypeOptions"
       />
       <EIBMultipleFilter
+        ref="multipleFilterRef"
         v-model="filterValue.status"
         :title="$t('docs.document.status')"
         :options="documentStatusOptions.slice(0, -3)"

@@ -51,7 +51,11 @@ export const makerStepDocumentStatus = [
 
 export const checkerStepDocumentStatus = [DocumentStatusEnum.WAIT_VALIDATE, DocumentStatusEnum.VALIDATING]
 
-export const deleteAccessStatus = [...makerStepDocumentStatus.slice(0, 3), ...errorDocumentStatus]
+export const deleteAccessStatus = [
+  DocumentStatusEnum.NEW,
+  ...makerStepDocumentStatus.slice(0, 3),
+  ...errorDocumentStatus
+]
 
 export const statusAccessDeleteDocumentStatus = [
   DocumentStatusEnum.NEW,
@@ -61,4 +65,12 @@ export const statusAccessDeleteDocumentStatus = [
   DocumentStatusEnum.OCRED,
   ...makerStepDocumentStatus,
   ...errorDocumentStatus
+]
+
+export const documentAfterCheckStatus = [
+  DocumentStatusEnum.WAIT_VALIDATE,
+  DocumentStatusEnum.ADJUST_REQUESTED,
+  DocumentStatusEnum.VALIDATED,
+  DocumentStatusEnum.VALIDATING,
+  DocumentStatusEnum.DENIED
 ]

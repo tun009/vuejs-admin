@@ -178,7 +178,7 @@ defineExpose<Exposes>({
     </el-table>
 
     <el-pagination
-      v-if="!hiddenPagination"
+      v-if="!hiddenPagination && !!totalItems"
       background
       :current-page="pagination.pageNum + 1"
       :page-size="pagination.pageSize"
