@@ -53,6 +53,8 @@ export type GetDocumentCompareUndefinedResponseModel = ApiResponseData<DocumentC
 
 export type PatchDocumentCompareUndefinedResponseModel = ApiResponseData<boolean>
 
+export type RetryDocumentResponseModel = ApiResponseData<DocumentModel>
+
 export interface UserModel {
   id: number
   name: string

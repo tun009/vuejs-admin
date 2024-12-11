@@ -107,8 +107,9 @@ export const passwordRule = () => ({
   message: i18n.global.t('validate.password'),
   trigger: 'blur'
 })
-export const maxValueRule = (value: number, trigger: 'change' | 'blur' = 'blur') => ({
-  max: value,
+
+export const maxValueRule = (max: number, trigger: 'change' | 'blur' = 'blur') => ({
+  max,
   message: i18n.global.t('validate.maxValue'),
   trigger
 })

@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { SettingModel, UpdateInfoExtractFormModel } from '@/@types/pages/docs/settings'
+import { updateInfoExtract } from '@/api/docs/settings'
+import EIBInput from '@/components/common/EIBInput.vue'
 import { ElMessage, FormInstance } from 'element-plus'
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { SettingModel, UpdateInfoExtractFormModel } from '@/@types/pages/docs/settings'
-import EIBInput from '@/components/common/EIBInput.vue'
-import { updateInfoExtract } from '@/api/docs/settings'
 
 interface Props {
   data: SettingModel

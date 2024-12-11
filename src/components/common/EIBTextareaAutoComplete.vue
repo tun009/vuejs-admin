@@ -3,6 +3,7 @@ import { RuleModel } from '@/@types/pages/rules'
 import { ElInput } from 'element-plus'
 import { computed, onMounted, ref } from 'vue'
 import SafeHtmlRenderer from '../SafeHtmlRenderer.vue'
+import { warningNotification } from '@/utils/notification'
 
 // Define props for suggestions (array of { key: string, value: string }) and prefix (string)
 interface Props {
@@ -12,13 +13,15 @@ interface Props {
   defaultValue?: string
   modelValue: string
   index: number
+  valueList: RuleModel[]
 }
 const props = withDefaults(defineProps<Props>(), {
   suggestions: () => [],
   prefix: '',
   isSingleLine: true,
   defaultValue: '',
-  modelValue: ''
+  modelValue: '',
+  valueList: () => []
 })
 
 interface Emits {
@@ -108,13 +111,20 @@ const onKeyDown = (event: any) => {
       handleScrollSuggestion(true)
     } else if (event.key === 'Enter' && activeSuggestionIndex.value !== -1) {
       // Select the current active suggestion
-      onSelectSuggestion(filteredSuggestions.value[activeSuggestionIndex.value])
+      onSelectSuggestion(filteredSuggestions.value[activeSuggestionIndex.value], false)
     }
   }
 }
 
 // Handle selection of a suggestion
-const onSelectSuggestion = (suggestion: { id?: number; value: string; code: string }) => {
+const onSelectSuggestion = (suggestion: { id?: number; value: string; code: string }, notification: boolean = true) => {
+  const reasonCodes = props.valueList.map((c) => c.code)
+  if (suggestion.code && reasonCodes.includes(suggestion.code)) {
+    if (notification) {
+      warningNotification('Không thể chọn cùng 1 lý do!')
+    }
+    return
+  }
   const lines = getLines()
   const line = lines[currentLineIndex.value]
   const discrepancyPart = extractDiscrepancyPart(line)
@@ -187,6 +197,11 @@ const onEnter = () => {
 
     if (discrepancyPart && activeSuggestionIndex.value !== -1) {
       const suggestion = filteredSuggestions.value[activeSuggestionIndex.value]
+      const reasonCodes = props.valueList.map((c) => c.code)
+      if (suggestion.code && reasonCodes.includes(suggestion.code)) {
+        warningNotification('Không thể chọn cùng 1 lý do!')
+        return
+      }
 
       // Keep props.prefix and replace the part after it
       lines[lastLineIndex] = lastLine.slice(0, lastLine.indexOf(props.prefix) + props.prefix.length) + suggestion.value

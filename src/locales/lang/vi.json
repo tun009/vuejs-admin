@@ -134,7 +134,8 @@
     "password": "Vui lòng nhập đúng định dạng mật khẩu",
     "passwordNotMatch": "Mật khẩu không khớp",
     "passwordOld": "Mật khẩu mới không được giống mật khẩu cũ",
-    "maxValue": "Không thể vượt qua giá trị tối đa"
+    "maxValue": "Không thể vượt qua giá trị tối đa",
+    "minValue": "Không thể nhỏ hơn giá trị tối thiểu"
   },
   "base": {
     "input": {
@@ -234,7 +235,7 @@
       "documentInformation": "Thông tin bộ chứng từ",
       "fileList": "Danh sách file chứng từ",
       "lcInformation": "Thông tin LC",
-      "lcProgress": "Tổng trị giá LC đã sử dụng ({ currency }) / Tổng giá trị LC",
+      "lcProgress": "Tổng trị giá LC đã sử dụng ({ currency }) / Tổng trị giá LC",
       "lcNumber": "Số LC",
       "createdAtLc": "Ngàp lập LC",
       "expirationDateLc": "Ngày hết hạn LC",
@@ -257,7 +258,7 @@
       "note": "Lưu ý",
       "noteDes": "sau khi trình checker thì Hệ thống sẽ ghi nhận bạn đã hoàn tất việc kiểm tra bộ chứng từ, chuyển sang trạng thái “Chờ phê duyệt” và bạn không thể chỉnh sửa được nữa",
       "updateLcUsed": "Cập nhập Tổng trị giá LC đã sử dụng",
-      "totalLc": "Tổng giá trị LC",
+      "totalLc": "Tổng trị giá LC",
       "totalLcUsed": "Tổng trị giá LC đã sử dụng hiện tại",
       "enterReason": "Nhập lý do",
       "amount": "Số tiền",

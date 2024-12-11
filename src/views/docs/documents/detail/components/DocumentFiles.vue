@@ -164,7 +164,8 @@ const isHaveAddButton = computed(() => {
 
   const isCheckerOrAdminEligible =
     isAdmin ||
-    (checkerStepDocumentStatus.includes(props.data.status) &&
+    (isChecker &&
+      checkerStepDocumentStatus.includes(props.data.status) &&
       (userInfo.username === props.data.createdBy?.username || userInfo.username === props.data.approveBy?.username))
 
   return isClassificationErrorByCreator || isMakerEligible || isCheckerOrAdminEligible

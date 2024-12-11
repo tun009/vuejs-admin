@@ -122,7 +122,7 @@ const convertTableDataCompareErrorResults = (compareResult: DocumentCompareModel
 </script>
 
 <template>
-  <EIBDrawer size="100%" title="docs.document.updateDocument" v-model="dialogVisible" v-if="dialogVisible">
+  <EIBDrawer size="75%" title="docs.document.updateDocument" v-model="dialogVisible" v-if="dialogVisible">
     <template #default>
       <AddCompareContentForm
         ref="addCompareContentFormRef"

@@ -24,13 +24,20 @@ import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import Loading from '@/components/common/EIBLoading.vue'
 import EIBTable from '@/components/common/EIBTable.vue'
 import { PROGRESS_COLORS } from '@/constants/color'
+import { documentAfterCheckStatus, errorDocumentStatus, processingDocumentStatus } from '@/constants/common'
 import { COMPARE_DOCUMENT_DETAIL_PAGE, EXTRACT_PAGE } from '@/constants/router'
 import { useUserStore } from '@/store/modules/user'
-import { downloadFileCommon, renderLabelByValue, resetNullUndefinedFields } from '@/utils/common'
+import {
+  downloadFileCommon,
+  formatNumberWithCommas,
+  renderLabelByValue,
+  resetNullUndefinedFields
+} from '@/utils/common'
 import Status from '@/views/docs/components/Status.vue'
 import { useRoute, useRouter } from 'vue-router'
 import UpdateLCForm from './UpdateLCForm.vue'
-import { processingDocumentStatus } from '@/constants/common'
+import { retryComparisonDocument, retryOcrDocument } from '@/api/docs/document/compare'
+import { successNotification } from '@/utils/notification'
 
 interface Props {
   data: BatchDetailModel
@@ -41,11 +48,11 @@ interface Emits {
 }
 
 const props = defineProps<Props>()
-defineEmits<Emits>()
+const emits = defineEmits<Emits>()
 
 const router = useRouter()
 const route = useRoute()
-const { isViewer, isMaker } = useUserStore()
+const { isViewer, isMaker, isChecker, isAdmin, userInfo } = useUserStore()
 
 const tableData = ref<DocumentSumaryModel[]>([])
 const documentResultListTableRef = ref<InstanceType<typeof EIBTable>>()
@@ -133,6 +140,20 @@ const getToleranceFromText = (text: string) => {
   return '+/- ' + keys[0] + '%'
 }
 
+const handleRetryError = async () => {
+  try {
+    if (props.data.status === DocumentStatusEnum.COMPARISON_ERROR) {
+      await retryComparisonDocument(props.data.id)
+    } else {
+      await retryOcrDocument(props.data.id)
+    }
+    successNotification('Hệ thống đang thử lại. Vui lòng chờ kết quả!')
+    emits('refresh')
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 const redirectOcrResult = () => {
   router.push({
     path: EXTRACT_PAGE,
@@ -153,6 +174,12 @@ const isNotHaveCompareInfo = computed(() => {
     ].includes(props.data?.status)
   )
 })
+
+const hasPermission = computed(() => {
+  if (isAdmin) return true
+  return props.data.censorBy?.username === userInfo.username || props.data.approveBy?.username === userInfo.username
+})
+
 onMounted(() => {
   handleGetDocumentResults()
   handleGetDocumentAmount()
@@ -205,7 +232,31 @@ onMounted(() => {
             </div>
             <div class="flex flex-row gap-2 flex-1">
               <span class="font-bold">{{ $t('docs.document.status') }}:</span>
-              <div v-if="data?.status === DocumentStatusEnum.CHECKED" class="flex flex-col gap-2">
+              <div v-if="errorDocumentStatus.includes(data?.status)" class="flex flex-col gap-2">
+                <div class="flex gap-1" v-if="isChecker && data?.censorBy?.name">
+                  <Status :options="documentStatusOptions" :status="DocumentStatusEnum.CHECKED" />
+                  <span class="c-text-value">{{ $t('docs.document.by') }}</span> {{ data?.censorBy?.name }}
+                </div>
+                <div class="flex gap-4" v-if="data?.status === DocumentStatusEnum.CLASSIFICATION_ERROR">
+                  <Status :options="documentStatusOptions" :status="data?.status" />
+                  <div class="flex flex-row items-center gap-1 cursor-pointer" v-if="hasPermission">
+                    <span class="underline text-primary text-base underline-offset-2 font-semibold">Kiểm tra</span>
+                    <SvgIcon :size="20" name="cheveron-right" class="cursor-pointer" />
+                  </div>
+                </div>
+                <div class="flex gap-2" v-else>
+                  <Status :options="documentStatusOptions" :status="data?.status" />
+                  <div
+                    class="flex flex-row items-center gap-1 cursor-pointer"
+                    v-if="hasPermission"
+                    @click="handleRetryError"
+                  >
+                    <SvgIcon :size="20" name="retry-min" class="cursor-pointer" />
+                    <span class="underline text-primary text-base underline-offset-2 font-semibold">Thử lại</span>
+                  </div>
+                </div>
+              </div>
+              <div v-else-if="data?.status === DocumentStatusEnum.CHECKED" class="flex flex-col gap-2">
                 <div class="flex gap-1">
                   <Status :options="documentStatusOptions" :status="data?.status" />
                   <span class="c-text-value">{{ $t('docs.document.by') }}</span> {{ data?.censorBy?.name }}
@@ -219,17 +270,7 @@ onMounted(() => {
                   >{{ $t('docs.document.presentationChecker') }}</el-button
                 >
               </div>
-              <div
-                v-else-if="
-                  [
-                    DocumentStatusEnum.WAIT_VALIDATE,
-                    DocumentStatusEnum.ADJUST_REQUESTED,
-                    DocumentStatusEnum.VALIDATED,
-                    DocumentStatusEnum.DENIED
-                  ].includes(data?.status)
-                "
-                class="flex flex-col gap-2"
-              >
+              <div v-else-if="documentAfterCheckStatus.includes(data?.status)" class="flex flex-col gap-2">
                 <div class="flex gap-1">
                   <Status :options="documentStatusOptions" :status="DocumentStatusEnum.CHECKED" />
                   <span class="c-text-value">{{ $t('docs.document.by') }}</span> {{ data?.censorBy?.name }}
@@ -274,7 +315,8 @@ onMounted(() => {
           />
           <div class="text-gray-700 dark:text-slate-300 flex flex-col gap-1">
             <span
-              ><span class="text-2xl">{{ amount.amountUsed }}</span> / {{ amount.totalAmount }}</span
+              ><span class="text-2xl">{{ formatNumberWithCommas(amount.amountUsed) }}</span> /
+              {{ formatNumberWithCommas(amount.totalAmount) }}</span
             >
             <span>{{ $t('docs.detail.lcProgress', { currency: getValueLC('currency') }) }}</span>
           </div>
