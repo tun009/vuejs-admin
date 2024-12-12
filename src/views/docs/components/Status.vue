@@ -19,7 +19,7 @@ const color = computed(() => {
 
 <template>
   <div
-    class="px-2 py-0.5 w-fit rounded-sm"
+    class="px-2 py-0.5 w-fit rounded-sm whitespace-nowrap h-fit"
     :class="[`text-[${color?.text}] bg-[${color?.backgound}]`]"
     :style="{ color: color?.text, backgroundColor: color?.backgound }"
   >

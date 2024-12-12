@@ -9,6 +9,7 @@ export const MAX_FILE_SINGLE_LIMIT = 1
 export const TABLE_COLUMN_WIDTH_DEFAULT = 250
 export const confirmButtonDeleteClass =
   'bg-[#fff] hover:bg-[#fff] border-[#c92a2a] hover:border-[#c92a2a] hover:text-[#c92a2a] text-[#c92a2a]'
+export const KEEP_ALIVE_ROUTER_NAME = ['Document']
 
 export const BLOB_EXPORT_TYPES = {
   [DocumentExportFileEnum.DOCX]: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
