@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ArrowDownBold, Filter, Search } from '@element-plus/icons-vue'
-import { reactive, ref, watch, onMounted } from 'vue'
+import { reactive, ref, watch, onMounted, computed } from 'vue'
 
 import { DocumentStatusEnum, PaginationModel } from '@/@types/common'
 import {
@@ -8,10 +8,9 @@ import {
   FilterDocumentModel,
   businessTypeOptions,
   docListColumnConfigs,
-  documentResultOptions,
   ReportDetailModel
 } from '@/@types/pages/reports'
-import { documentStatusOptions } from '@/@types/pages/docs/documents'
+import { documentStatusOptions, documentResultOptions } from '@/@types/pages/docs/documents'
 import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
 import EIBMultipleFilter from '@/components/Filter/EIBMultipleFilter.vue'
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
@@ -28,13 +27,17 @@ import { getBranches } from '@/api/users'
 import { BranchModel } from '@/@types/pages/login'
 import Status from '../components/Status.vue'
 import { DocumentExportFileEnum } from '@/@types/pages/docs/documents'
+import { errorDocumentStatus } from '@/constants/common'
 
 const openFilter = ref(false)
+const defaultStatus = computed(() => {
+  return documentStatusOptions.slice(0, -3).map((c) => c.value as DocumentStatusEnum)
+})
 const tableData = ref<ReportModel[]>([])
 const checkedItems = ref<ReportModel[]>([])
 const documentTableRef = ref<InstanceType<typeof EIBTable>>()
 const uploadTimes = ref(defaultDateRange())
-const filterValue = reactive<FilterDocumentModel>({} as FilterDocumentModel)
+const filterValue = reactive<FilterDocumentModel>({ status: defaultStatus.value } as FilterDocumentModel)
 const openDetailReportDrawer = ref(false)
 const branches = ref<BranchModel[]>([])
 const reportDetail = ref<ReportDetailModel>({} as ReportDetailModel)
@@ -44,14 +47,18 @@ const handleGetReports = async (pagination: PaginationModel) => {
     const { status, ...otherFilter } = filterValue
     const isErrorStatus = status.includes(DocumentStatusEnum.ERROR)
     let exactStatus = [...status]
+    // if (isErrorStatus) {
+    //   exactStatus = exactStatus
+    //     .filter((e) => e !== DocumentStatusEnum.ERROR)
+    //     .concat([
+    //       DocumentStatusEnum.CLASSIFICATION_ERROR,
+    //       DocumentStatusEnum.EXTRACTION_ERROR,
+    //       DocumentStatusEnum.COMPARISON_ERROR
+    //     ])
+    // }
     if (isErrorStatus) {
-      exactStatus = exactStatus
-        .filter((e) => e !== DocumentStatusEnum.ERROR)
-        .concat([
-          DocumentStatusEnum.CLASSIFICATION_ERROR,
-          DocumentStatusEnum.EXTRACTION_ERROR,
-          DocumentStatusEnum.COMPARISON_ERROR
-        ])
+      const statusNoError = exactStatus.filter((e) => e !== DocumentStatusEnum.ERROR)
+      exactStatus = [...statusNoError, ...errorDocumentStatus]
     }
     const response = await getReports({
       ...pagination,
@@ -154,18 +161,18 @@ onMounted(() => {
   <div class="flex flex-row justify-between items-center">
     <Title title="Báo cáo" />
     <div class="flex flex-row gap-5 items-center">
-      <span class="font-semibold italic text-base">Ngày upload:</span>
+      <span class="font-semibold text-base !text-[14px]">Ngày upload:</span>
       <el-date-picker
         v-model="uploadTimes"
         type="daterange"
         class="w-fit"
         unlink-panels
-        range-separator="đến"
-        start-placeholder="Bắt đầu"
-        end-placeholder="Kết thúc"
+        :range-separator="$t('docs.document.to')"
+        :start-placeholder="$t('docs.document.start')"
+        :end-placeholder="$t('docs.document.end')"
         :shortcuts="shortcutsDateRange"
-        :format="formatYYYYMMDD"
-        :value-format="formatYYYYMMDD"
+        :format="formatDDMMYYYY"
+        :value-format="formatDDMMYYYY"
       />
     </div>
   </div>

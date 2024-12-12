@@ -133,7 +133,7 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
   {
     field: 'stt',
     label: 'STT',
-    minWidth: 40
+    width: 80
   },
   {
     field: 'name',
@@ -142,7 +142,8 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
   },
   {
     field: 'bizType',
-    label: 'Loại nghiệp vụ'
+    label: 'Loại nghiệp vụ',
+    width: 200
   },
   {
     field: 'status',
@@ -151,32 +152,38 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
   },
   {
     field: 'result',
-    label: 'Kết quả xử lý'
+    label: 'Kết quả xử lý',
+    width: 200
   },
   {
     field: 'comparisonTimes',
-    label: 'Tổng lần đối sánh'
+    label: 'Tổng lần đối sánh',
+    width: 200
   },
   {
     field: 'branch',
-    label: 'SOL'
+    label: 'SOL',
+    width: 200
   },
   {
     field: 'totalTimeProcessHandle',
     label: 'Tổng thời gian xử lý',
-    minWidth: 140
+    width: 200
   },
   {
     field: 'timeSystemHandle',
-    label: 'Hệ thống xử lý'
+    label: 'Hệ thống xử lý',
+    width: 200
   },
   {
     field: 'timeMakerHandle',
-    label: 'Maker xử lý'
+    label: 'Maker xử lý',
+    width: 200
   },
   {
     field: 'timeCheckerHandle',
-    label: 'Checker xử lý'
+    label: 'Checker xử lý',
+    width: 200
   }
 ]
 
