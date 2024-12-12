@@ -248,7 +248,7 @@ const convertTableDataCompareErrorResults = (compareResult: DocumentCompareModel
           <div class="flex flex-col gap-3" v-for="(d, di) in block.requirements" :key="di">
             <div class="flex flex-col gap-2">
               <span class="c-text-des">Requirement</span>
-              <p class="text-sm">{{ d?.requirement }}</p>
+              <SafeHtmlRenderer class="text-sm" :html="d?.requirement" />
             </div>
             <MultipleLanguageResultSimple
               :comparisonUndefinedId="block?.id"
