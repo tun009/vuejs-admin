@@ -43,6 +43,10 @@ import { errorNotification } from '@/utils/notification'
 import { debounce } from 'lodash-es'
 import Status from '../components/Status.vue'
 
+defineOptions({
+  name: 'Document'
+})
+
 const { t } = useI18n()
 const router = useRouter()
 const { showConfirmModal } = useConfirmModal()

@@ -114,7 +114,7 @@ export const constantRoutes: RouteRecordRaw[] = [
           keepAlive: true,
           title: 'dataProcessing'
         },
-        name: 'Data procesing'
+        name: 'Document'
       },
       {
         path: DOCS_PAGE + SETTINGS_PAGE,
