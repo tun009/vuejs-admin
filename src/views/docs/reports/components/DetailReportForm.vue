@@ -2,8 +2,8 @@
 import EIBTable from '@/components/common/EIBTable.vue'
 import Status from '@/views/docs/components/Status.vue'
 import { ref } from 'vue'
-import { documentResultOptions, documentStatusOptions, ReportDetailModel } from '@/@types/pages/reports'
-
+import { ReportDetailModel } from '@/@types/pages/reports'
+import { documentStatusOptions, documentResultOptions } from '@/@types/pages/docs/documents'
 interface Props {
   data: ReportDetailModel
 }
