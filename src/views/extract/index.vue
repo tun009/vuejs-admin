@@ -131,7 +131,7 @@ const handleClickField = (item: ExtractResultOcrModel) => {
   if (item.type === 'structured_table' && item?.headers?.length > 0) clickTable(item)
   else {
     resizeTable.value = 100
-    pdfViewRef.value?.tagLabelToPage(item.bboxes, item.pageId)
+    pdfViewRef.value?.tagLabelToPage(item.bboxes, item.pageId, item.type)
     // waiting for close table animation...
     setTimeout(() => {
       isShowTable.value = false

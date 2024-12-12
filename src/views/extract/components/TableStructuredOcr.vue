@@ -2,7 +2,11 @@
 import { ExtractResultOcrTableChildrenModel, ExtractResultOcrTableHeaderModel } from '@/@types/pages/extract'
 import { ref } from 'vue'
 interface ExtractPdfViewExpose {
-  tagLabelToPage: (boxInfo: number[], pageNum: number) => void
+  tagLabelToPage: (
+    boxInfo: number[],
+    pageNum: number,
+    type: 'list[text]' | 'text' | 'image' | 'structured_table'
+  ) => void
 }
 const props = defineProps<{
   header: ExtractResultOcrTableHeaderModel[]
@@ -20,7 +24,7 @@ const toggleEdit = (rowIndex: number, colIndex: number, dataCol: ExtractResultOc
   const key = `${rowIndex}-${colIndex}`
   editingRows.value[key] = !isEditing(rowIndex, colIndex)
   if (props.pdfViewRef) {
-    props.pdfViewRef.tagLabelToPage(dataCol.bboxes, dataCol.pageId)
+    props.pdfViewRef.tagLabelToPage(dataCol.bboxes, dataCol.pageId, dataCol.type)
   }
 }
 </script>

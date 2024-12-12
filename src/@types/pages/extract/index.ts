@@ -33,7 +33,7 @@ export interface ExtractResultOcrTableChildrenModel {
   id: number
   name: string
   pageId: number
-  type: string
+  type: 'list[text]' | 'text' | 'image' | 'structured_table'
   validatedValue: string
 }
 export interface ExtractDossierTypeModel {
