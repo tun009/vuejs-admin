@@ -49,7 +49,11 @@ const getClosestFloor = (num1: number, num2: number) => {
 const onLoadedPDF = () => {
   emit('loaded-data')
 }
-const tagLabelToPage = (boxInfos: number[][][], pageNum: number) => {
+const tagLabelToPage = (
+  boxInfos: number[][][],
+  pageNum: number,
+  type: 'list[text]' | 'text' | 'image' | 'structured_table'
+) => {
   const listActivesRemove = document.querySelectorAll('.box-label')
   listActivesRemove.forEach((element) => {
     element.remove()
@@ -64,9 +68,7 @@ const tagLabelToPage = (boxInfos: number[][][], pageNum: number) => {
       pElement.style.height = caculatorDistance(getRectangle(boxInfo, 'height'))
       pElement.style.top = caculatorDistance(getRectangle(boxInfo, 'top'))
       pElement.style.left = caculatorDistance(getRectangle(boxInfo, 'left'))
-      console.log('hehehe')
-
-      if (boxInfo.length > 0) pElement.style.transform = ` rotate(${getDegRotate(boxInfo)}deg)`
+      if (boxInfo.length > 0 && type !== 'image') pElement.style.transform = ` rotate(${getDegRotate(boxInfo)}deg)`
       pElement.style.backgroundColor = 'rgba(240, 91, 91, 0.3) '
       pElement.style.border = '1px solid #e03'
       pElement.style.position = 'absolute'
@@ -124,7 +126,11 @@ const getRectangle = (bbox: number[][], style: string) => {
   }
 }
 interface ExtractPdfViewExpose {
-  tagLabelToPage: (boxInfo: number[][][], pageNum: number) => void
+  tagLabelToPage: (
+    boxInfo: number[][][],
+    pageNum: number,
+    type: 'list[text]' | 'text' | 'image' | 'structured_table'
+  ) => void
   goToPageView: (pageNum: number) => void
 }
 defineExpose<ExtractPdfViewExpose>({
