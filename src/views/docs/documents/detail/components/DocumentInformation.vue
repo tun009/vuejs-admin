@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import { CircleCheckFilled, View, WarnTriangleFilled } from '@element-plus/icons-vue'
-import { computed, onMounted, ref } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
 
 import ApproveProcessDocument from './ApproveProcessDocument.vue'
+import ClassifyModal from '@/views/extract/components/ClassifyModal.vue'
 
 import { DocumentStatusEnum } from '@/@types/common'
 import {
@@ -54,6 +55,8 @@ const router = useRouter()
 const route = useRoute()
 const { isViewer, isMaker, isChecker, isAdmin, userInfo } = useUserStore()
 
+const classifyModalRef = ref()
+const openClassifyDrawer = ref(false)
 const tableData = ref<DocumentSumaryModel[]>([])
 const documentResultListTableRef = ref<InstanceType<typeof EIBTable>>()
 const openApproveProcessDrawer = ref(false)
@@ -179,6 +182,14 @@ const hasPermission = computed(() => {
   if (isAdmin) return true
   return props.data.censorBy?.username === userInfo.username || props.data.approveBy?.username === userInfo.username
 })
+const openModalClassify = async () => {
+  openClassifyDrawer.value = true
+  await nextTick()
+  classifyModalRef.value?.openModalClassify()
+}
+const closeDialogClassify = () => {
+  openClassifyDrawer.value = false
+}
 
 onMounted(() => {
   handleGetDocumentResults()
@@ -239,7 +250,11 @@ onMounted(() => {
                 </div>
                 <div class="flex gap-4" v-if="data?.status === DocumentStatusEnum.CLASSIFICATION_ERROR">
                   <Status :options="documentStatusOptions" :status="data?.status" />
-                  <div class="flex flex-row items-center gap-1 cursor-pointer" v-if="hasPermission">
+                  <div
+                    @click="openModalClassify()"
+                    class="flex flex-row items-center gap-1 cursor-pointer"
+                    v-if="hasPermission"
+                  >
                     <span class="underline text-primary text-base underline-offset-2 font-semibold">Kiểm tra</span>
                     <SvgIcon :size="20" name="cheveron-right" class="cursor-pointer" />
                   </div>
@@ -482,6 +497,16 @@ onMounted(() => {
         ref="updateUserFormRef"
         @refresh="$emit('refresh')"
         @close="openApproveProcessDrawer = false"
+      />
+    </template>
+  </EIBDrawer>
+  <EIBDrawer v-if="openClassifyDrawer" title="Danh sách chứng từ" v-model="openClassifyDrawer" size="93%">
+    <template #default>
+      <ClassifyModal
+        ref="classifyModalRef"
+        @close-dialog="closeDialogClassify()"
+        show-content-right
+        :batch-id="route.params?.id as string"
       />
     </template>
   </EIBDrawer>
