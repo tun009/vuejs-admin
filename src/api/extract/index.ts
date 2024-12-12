@@ -58,7 +58,7 @@ export function saveDossierDocApi(id: number, data: ExtractPostDossierRequestMod
     data
   })
 }
-export function getDossierClassifyApi(id: number) {
+export function getDossierClassifyApi(id: number | string) {
   return request<ExtractClassifyResponseModel>({
     url: `dossier-files`,
     method: 'get',

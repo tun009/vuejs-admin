@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { DasboardOverviewModel } from '@/@types/pages/dashboard'
 import { formatNumberConfidence } from '@/utils/common'
-import { onUpdated, ref, watch } from 'vue'
+import { onBeforeUnmount, onMounted, onUpdated, ref, watch } from 'vue'
 const props = defineProps<{
   data: DasboardOverviewModel
 }>()
@@ -110,8 +110,27 @@ const reRenderText = (time: number = 1000) => {
     }
   }, time)
 }
+const circleWidth = ref(170)
+const circleStrokeWidth = ref(22)
+
+const updateDimensions = () => {
+  if (window.innerWidth < 1500) {
+    circleWidth.value = 130
+    circleStrokeWidth.value = 18
+  } else {
+    circleWidth.value = 170
+    circleStrokeWidth.value = 22
+  }
+}
 window.addEventListener('resize', () => {
   reRenderText(2000)
+})
+onMounted(() => {
+  updateDimensions()
+  window.addEventListener('resize', updateDimensions)
+})
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', updateDimensions)
 })
 onUpdated(() => {
   reRenderText(2000)
@@ -120,7 +139,7 @@ onUpdated(() => {
 <template>
   <CanvasJSChart :options="options" :styles="styleOptions" ref="chartSumary" v-if="isRendenderChart" />
   <div class="mt-[30px] mr-[10%]" v-else>
-    <el-progress :width="170" type="circle" :percentage="0" :stroke-width="22" color="#dee2e6">
+    <el-progress :width="circleWidth" type="circle" :percentage="0" :stroke-width="circleStrokeWidth" color="#dee2e6">
       <template #default>
         <div class="font-semibold text-[20px]">0</div>
         <div class="text-[14px] text-[#868e96] mt-[5px]">Bộ chứng từ</div>

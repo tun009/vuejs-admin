@@ -19,7 +19,7 @@ import {
 } from '@/@types/pages/extract'
 import { convertFileUrl } from '@/utils/common'
 
-import PreviewExtractImageWithCache from './components/PreviewExtractImageWithCache.vue'
+import PreviewExtractImage from '@/views/docs/documents/compare/components/PreviewExtractImage.vue'
 import PDFView from './components/PDFView.vue'
 import HistoryTab from './components/HistoryTab.vue'
 import NoteTab from './components/NoteTab.vue'
@@ -45,8 +45,6 @@ import { DocTypeEnum } from '@/@types/pages/rules'
 import { updateDocumentStatus } from '@/api/docs/document/compare'
 import { DocumentStatusEnum } from '@/@types/common'
 import { UpdateConfidenceRequestModel } from '@/@types/pages/docs/settings/services/SettingRequest'
-import * as pdfjs from 'pdfjs-dist'
-import { pdfService } from '@/services/pdfService'
 import { getBatchDetail } from '@/api/docs/document'
 import { BatchDetailModel } from '@/@types/pages/docs/documents/services/DocumentResponse'
 import { useUserStore } from '@/store/modules/user'
@@ -54,7 +52,7 @@ const { userInfo, isAdmin } = useUserStore()
 const dossierListData = ref<ExtractDossierModel[]>([])
 const documentDetail = ref<ExtractDocumentModel>()
 const activeName = ref('ocr')
-const fieldSelect = ref('')
+const fieldSelect = ref<number | null>()
 const pdfViewRef = ref()
 const classifyModalRef = ref()
 const openClassifyDrawer = ref(false)
@@ -70,7 +68,6 @@ const { showConfirmModal } = useConfirmModal()
 const route = useRoute()
 const baseURL = import.meta.env.VITE_BASE_API
 const dataConfigs = ref<UpdateConfidenceRequestModel[]>([] as UpdateConfidenceRequestModel[])
-let pdfDocument: pdfjs.PDFDocumentProxy | null
 const batchDetailData = ref<BatchDetailModel>({} as BatchDetailModel)
 
 const getDossiersList = async (id: number) => {
@@ -114,7 +111,6 @@ const getDossiersDetail = async (id: number) => {
     ocrDataDetail.value = documentDetail.value.result[0]
     docTypeOcrData.value = documentDetail.value?.docType
     if (docTypeOcrData.value === DocTypeEnum.DRAFT) isFirstViewExtract.value = true
-    pdfDocument = await pdfService.loadDocument(convertFileUrl(documentDetail?.value.pathFile as string))
     isLoadViewContentRight.value = true
   } catch (error: any) {
     throw new Error(error)
@@ -131,7 +127,7 @@ const resetOptions = () => {
 const headerTable = ref<ExtractResultOcrTableHeaderModel[]>([])
 const bodyTable = ref<ExtractResultOcrTableChildrenModel[][]>([])
 const handleClickField = (item: ExtractResultOcrModel) => {
-  fieldSelect.value = item.coreKey
+  fieldSelect.value = item.id
   if (item.type === 'structured_table' && item?.headers?.length > 0) clickTable(item)
   else {
     resizeTable.value = 100
@@ -221,7 +217,8 @@ const handleDeniedDossier = () => {
   ).then(async ({ value }) => {
     await updateDocumentStatus(route?.query?.batchId as string, {
       approveDossier: DocumentStatusEnum.DENIED,
-      message: value
+      message: value,
+      isOCR: true
     })
     ElMessage({
       type: 'success',
@@ -241,7 +238,7 @@ const viewSecondExtract = () => {
   resetFieldActive()
 }
 const resetFieldActive = () => {
-  fieldSelect.value = ''
+  fieldSelect.value = null
   const listActivesRemove = document.querySelectorAll('.box-label')
   listActivesRemove.forEach((element) => {
     element.remove()
@@ -258,6 +255,10 @@ const saveDossier = async () => {
             row.forEach((child) => {
               dataUpdate.push({ docDataId: child.id, value: child?.validatedValue ?? '' })
             })
+          })
+        } else if (item.type === 'list[text]' && (item?.listText?.length ?? 0) > 0) {
+          item.listText?.forEach((childItem) => {
+            dataUpdate.push({ docDataId: childItem.id, value: childItem?.validatedValue ?? '' })
           })
         } else dataUpdate.push({ docDataId: item.id, value: item?.validatedValue ?? '' })
       })
@@ -328,7 +329,8 @@ const reCheckDosssier = async () => {
     loading.value = true
     await updateDocumentStatus(route?.query?.batchId as string, {
       approveDossier: DocumentStatusEnum.CHECKING,
-      message: ''
+      message: '',
+      isOCR: true
     })
     getPermission()
     loading.value = false
@@ -435,7 +437,12 @@ onUnmounted(() => {
                   <el-icon class="cursor-pointer mr-[5px]" @click="closeTable"><CloseBold /></el-icon>
                 </div>
                 <div class="h-[93%] overflow-auto">
-                  <TableStructuredOcr :header="headerTable" :body="bodyTable" :pdfViewRef="pdfViewRef" />
+                  <TableStructuredOcr
+                    :header="headerTable"
+                    :body="bodyTable"
+                    :pdfViewRef="pdfViewRef"
+                    :disabled="!canPermissionOcr"
+                  />
                 </div>
               </pane>
             </splitpanes>
@@ -496,11 +503,15 @@ onUnmounted(() => {
                 >
                   <template v-if="isLoadedPdf">
                     <div
-                      v-for="(item, index) in ocrDataDetail"
+                      v-for="(item, index) in ocrDataDetail.filter((field) => field?.id)"
                       :key="index"
                       class="mt-[12px] py-[5px] px-[6px] item-dossier cursor-pointer"
-                      :class="[renderClassOcr(item?.confidence), fieldSelect === item.coreKey ? 'bg-[#e1edfe]' : '']"
-                      @click="handleClickField(item)"
+                      :class="[renderClassOcr(item?.confidence), fieldSelect === item?.id ? 'bg-[#e1edfe]' : '']"
+                      @click="
+                        () => {
+                          if (item && item.type !== 'list[text]') handleClickField(item)
+                        }
+                      "
                     >
                       <div class="mx-[16px] border-l-[2px] border-solid">
                         <div class="ml-[16px]">
@@ -508,30 +519,44 @@ onUnmounted(() => {
                             <span
                               class="text-[#fff] rounded-[3px] px-[4px] text-[12px] py-[2px] font-medium max-h-6"
                               :style="{
-                                backgroundColor: renderColorByConfidence(item.confidence ?? 0, dataConfigs)
+                                backgroundColor: renderColorByConfidence(item?.confidence ?? 0, dataConfigs)
                               }"
                             >
                               {{ formatNumberConfidence(item?.confidence ?? 0) }}%
                             </span>
-                            <span class="ml-2 text-[#868e96] break-words text-break">{{ item.name }}</span>
+                            <span class="ml-2 text-[#868e96] break-words text-break">{{ item?.name }}</span>
                           </div>
                           <div class="mt-[8px] min-h-[12px]">
-                            <div v-if="item.type === 'structured_table'">Click để xem</div>
+                            <div v-if="item?.type === 'structured_table'">Click để xem</div>
                             <el-input
-                              v-else-if="fieldSelect === item.coreKey && item.type !== 'image'"
+                              v-else-if="
+                                fieldSelect === item?.id && item?.type !== 'image' && item?.type !== 'list[text]'
+                              "
                               v-model="item.validatedValue"
                               :disabled="!canPermissionOcr"
                               autosize
                               type="textarea"
                             />
-                            <div v-else-if="item.type === 'image' && item?.bboxes?.length > 0">
-                              <PreviewExtractImageWithCache
-                                :pdfDocument="pdfDocument"
+                            <div v-else-if="item?.type === 'image' && item?.bboxes?.length > 0">
+                              <PreviewExtractImage
+                                :url="convertFileUrl(documentDetail?.pathFile as string)"
                                 :page="item?.pageId + 1"
                                 :bboxes="item?.bboxes ?? []"
                               />
                             </div>
-                            <div v-else class="text-4-line">{{ item.validatedValue }}</div>
+                            <div v-else-if="item?.type === 'list[text]' && (item?.listText?.length ?? 0) > 0">
+                              <template v-for="(child_text, index_text_child) in item.listText" :key="index_text_child">
+                                <el-input
+                                  v-if="fieldSelect === child_text?.id"
+                                  v-model="child_text.validatedValue"
+                                  :disabled="!canPermissionOcr"
+                                  autosize
+                                  type="textarea"
+                                />
+                                <div v-else @click="handleClickField(child_text)">{{ child_text?.validatedValue }}</div>
+                              </template>
+                            </div>
+                            <div v-else class="text-4-line">{{ item?.validatedValue }}</div>
                           </div>
                         </div>
                       </div>
@@ -554,7 +579,7 @@ onUnmounted(() => {
                             >
                               {{ formatNumberConfidence(0) }}%
                             </span>
-                            <span class="ml-2 text-[#adb5bd]">{{ item.coreKey }}</span>
+                            <span class="ml-2 text-[#adb5bd]">{{ item?.coreKey }}</span>
                           </div>
                           <div class="mt-[8px] min-h-[12px]">
                             <el-skeleton class="w-full" animated>
@@ -621,7 +646,13 @@ onUnmounted(() => {
     </div>
   </div>
   <EIBDrawer v-if="openClassifyDrawer" title="Danh sách chứng từ" v-model="openClassifyDrawer" size="93%">
-    <template #default> <ClassifyModal ref="classifyModalRef" @close-dialog="closeDialogClassify()" /> </template>
+    <template #default>
+      <ClassifyModal
+        ref="classifyModalRef"
+        :batch-id="route?.query?.batchId as string"
+        @close-dialog="closeDialogClassify()"
+      />
+    </template>
   </EIBDrawer>
   <ReplaceDocumentModal
     v-if="isShowModalReplace"

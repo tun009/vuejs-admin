@@ -64,6 +64,9 @@ const tagLabelToPage = (boxInfos: number[][][], pageNum: number) => {
       pElement.style.height = caculatorDistance(getRectangle(boxInfo, 'height'))
       pElement.style.top = caculatorDistance(getRectangle(boxInfo, 'top'))
       pElement.style.left = caculatorDistance(getRectangle(boxInfo, 'left'))
+      console.log('hehehe')
+
+      if (boxInfo.length > 0) pElement.style.transform = ` rotate(${getDegRotate(boxInfo)}deg)`
       pElement.style.backgroundColor = 'rgba(240, 91, 91, 0.3) '
       pElement.style.border = '1px solid #e03'
       pElement.style.position = 'absolute'
@@ -89,6 +92,10 @@ const goToPageView = (page: number, mode: ScrollBehavior = 'smooth') => {
 }
 const caculatorDistance = (unit: number) => {
   return `${unit.toString()}%`
+}
+const getDegRotate = (bbox: number[][]) => {
+  const tanX = (bbox[1][1] - bbox[0][1]) / (bbox[1][0] - bbox[0][0])
+  return (Math.atan(tanX) * 180) / Math.PI
 }
 const getRectangle = (bbox: number[][], style: string) => {
   const result: any = {}

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import ReplaceDocumentModal from './ReplaceDocumentModal.vue'
 import { ExtractClassifyModel, ExtractClassifyResultModel } from '@/@types/pages/extract'
 import { getDossierClassifyApi, getDocummentTypeApi, saveDossierClassifyApi } from '@/api/extract'
 import { VuePDF, usePDF } from '@tato30/vue-pdf'
@@ -12,7 +13,6 @@ import { ref } from 'vue'
 import { SelectOptionModel } from '@/@types/common'
 import { ElMessage } from 'element-plus'
 import { ExtractPostClassifyRequestModel } from '@/@types/pages/extract/service/ExtractRequest'
-import { useRoute } from 'vue-router'
 import { useConfirmModal } from '@/hooks/useConfirm'
 const { showConfirmModal } = useConfirmModal()
 
@@ -22,9 +22,9 @@ const pageActive = ref<string>()
 const baseURL = import.meta.env.VITE_BASE_API
 const idFullScreen = 'image-container'
 const scale = ref(0.7)
-const route = useRoute()
 interface Props {
   showContentRight?: boolean
+  batchId: number | string
 }
 interface Emits {
   (e: 'close-dialog'): void
@@ -32,6 +32,7 @@ interface Emits {
 
 const props = defineProps<Props>()
 const emits = defineEmits<Emits>()
+const isShowModalReplace = ref<boolean>(false)
 
 const loading = ref<boolean>(false)
 const dragOptions = {
@@ -53,7 +54,7 @@ const getDocumentType = async () => {
 }
 const getDossierById = async () => {
   try {
-    const response = await getDossierClassifyApi(Number(route?.query?.batchId))
+    const response = await getDossierClassifyApi(props.batchId)
     // response.data = [
     //   {
     //     id: 5215,
@@ -182,6 +183,9 @@ const handleDragEnd = (event: any, doc: ExtractClassifyModel) => {
     doc.pdfEtract = pdf
   }
 }
+const openModalReplaceDocument = () => {
+  isShowModalReplace.value = true
+}
 </script>
 <template>
   <div class="h-[92vh] mx-[-20px] mb-[-4rem] classify-modal">
@@ -198,7 +202,7 @@ const handleDragEnd = (event: any, doc: ExtractClassifyModel) => {
                 class="custom-collapse"
                 @change="handleCollapseChange(doc)"
               >
-                <el-collapse-item :name="index_doc">
+                <el-collapse-item :name="doc.id">
                   <template #title>
                     <div class="collapse-header ml-1">
                       {{ doc?.fileName }}
@@ -291,7 +295,7 @@ const handleDragEnd = (event: any, doc: ExtractClassifyModel) => {
           </div>
         </div>
       </div>
-      <div v-if="props.showContentRight" class="w-[300px] p-[16px] border-t border-b border-gray-300 border-solid">
+      <div v-if="props.showContentRight" class="w-[350px] p-[16px] border-t border-b border-gray-300 border-solid">
         <div class="bg-[#fff4e6] rounded-[4px] p-[12px] border border-[#f76707] border-solid border-1">
           <div class="flex"><SvgIcon name="warning" class="mr-1" /><span> Hệ thống phát hiện</span></div>
           <ul class="list-disc ml-[20px]">
@@ -314,7 +318,7 @@ const handleDragEnd = (event: any, doc: ExtractClassifyModel) => {
         <el-button
           class="mr-[20px] border-[#005d98] text-[#005d98] mt-[16px]"
           type="default"
-          @click="saveDossierClassify()"
+          @click="openModalReplaceDocument()"
           ><SvgIcon name="ic-reload-documents" class="ml-1" />Thay thế chứng từ</el-button
         >
       </div>
@@ -326,6 +330,12 @@ const handleDragEnd = (event: any, doc: ExtractClassifyModel) => {
       >
     </div>
   </div>
+  <ReplaceDocumentModal
+    v-if="isShowModalReplace"
+    title="Thay thế chứng từ"
+    v-model="isShowModalReplace"
+    :dossierDocId="Number(activeNames)"
+  />
 </template>
 <style lang="scss">
 .classify-modal {

@@ -46,6 +46,7 @@ export interface UpdateDocumentCompareResultTableRequestModel {
 export interface UpdateDocumentStatusModel {
   approveDossier: DocumentStatusEnum
   message?: string
+  isOCR?: boolean
 }
 
 export interface AddDocumentRequestModel {

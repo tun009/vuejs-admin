@@ -1,4 +1,5 @@
 import { SelectOptionModel, StatusColorModel } from '@/@types/common'
+import { STATUS_COLORS } from '@/constants/color'
 
 export enum DossierStatusEnum {
   ACTIVE,
@@ -12,12 +13,13 @@ export interface ExtractResultOcrModel {
   name: string
   extractionValue: string
   validatedValue: string
-  type: string
+  type: 'list[text]' | 'text' | 'image' | 'structured_table'
   bboxes: number[][][]
   pageId: number
   headers: ExtractResultOcrTableHeaderModel[]
   children: ExtractResultOcrTableChildrenModel[][]
   childrenMapping: ExtractResultOcrTableChildrenModel[][]
+  listText?: ExtractResultOcrModel[]
 }
 export interface ExtractResultOcrTableHeaderModel {
   key: string
@@ -94,10 +96,10 @@ export interface ExtractClassifyModel {
 }
 export enum ExtractHistoryTypeEnum {
   EDIT = 'EDIT',
-  OCR = 'OCR',
+  COMPARISON = 'COMPARISON',
   DENIED = 'DENIED',
   REPLACE = 'REPLACE',
-  EXTRACTION = 'EXTRACTION'
+  OCR = 'OCR'
 }
 export interface ExtractHistoryModel {
   type: ExtractHistoryTypeEnum
@@ -122,6 +124,7 @@ export interface ExtractHistoryGroupedResultModel {
   day: string
   hour: string
   value: ExtractHistoryGroupedModel[]
+  fileName?: string
 }
 export interface ExtractHistoryGroupedDayModel {
   day: string
@@ -130,23 +133,28 @@ export interface ExtractHistoryGroupedDayModel {
 export const extractHistoryTypes: SelectOptionModel[] = [
   {
     label: 'Chỉnh sửa',
-    value: ExtractHistoryTypeEnum.EDIT
+    value: ExtractHistoryTypeEnum.EDIT,
+    color: STATUS_COLORS.VALIDATED
   },
   {
     label: 'Thực hiện đối sánh lại bộ chứng từ',
-    value: ExtractHistoryTypeEnum.OCR
+    value: ExtractHistoryTypeEnum.COMPARISON,
+    color: STATUS_COLORS.VALIDATED
   },
   {
     label: 'Từ chối bộ chứng từ',
-    value: ExtractHistoryTypeEnum.DENIED
+    value: ExtractHistoryTypeEnum.DENIED,
+    color: STATUS_COLORS.ERROR
   },
   {
     label: 'Thay thế chứng từ bởi file ',
-    value: ExtractHistoryTypeEnum.REPLACE
+    value: ExtractHistoryTypeEnum.REPLACE,
+    color: STATUS_COLORS.VALIDATED
   },
   {
     label: 'Thực hiện trích xuất OCR chứng từ',
-    value: ExtractHistoryTypeEnum.EXTRACTION
+    value: ExtractHistoryTypeEnum.OCR,
+    color: STATUS_COLORS.VALIDATED
   }
 ]
 export interface ExtractNotePostModel {

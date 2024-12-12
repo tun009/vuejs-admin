@@ -23,7 +23,7 @@
         <EIBSelect class="!w-[200px]" v-model="filterValue.bizType" :options="businessTypeOptions" hiddenError />
       </div>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
       <div class="p-4 box-container-top bg-white dark:bg-[#181818]">
         <div class="chart-box-title">THÔNG TIN CHUNG</div>
         <div class="flex justify-center">

@@ -8,6 +8,7 @@ const props = defineProps<{
   header: ExtractResultOcrTableHeaderModel[]
   body: ExtractResultOcrTableChildrenModel[][]
   pdfViewRef: ExtractPdfViewExpose | null
+  disabled: boolean
 }>()
 const editingRows = ref<Record<string, boolean>>({})
 const isEditing = (rowIndex: number, colIndex: number) => {
@@ -25,7 +26,7 @@ const toggleEdit = (rowIndex: number, colIndex: number, dataCol: ExtractResultOc
 </script>
 <template>
   <table class="table table-structured-cp">
-    <caption>
+    <caption class="hidden">
       To display table structured
     </caption>
     <thead>
@@ -42,20 +43,21 @@ const toggleEdit = (rowIndex: number, colIndex: number, dataCol: ExtractResultOc
         <td v-for="(data_col, index_col) in data_row" :key="index_col">
           <el-input
             v-if="isEditing(index_row, index_col)"
-            v-model="data_col.extractionValue"
+            v-model="data_col.validatedValue"
             :class="{
               'no-content': data_col?.confidence == 0
             }"
             type="textarea"
             autosize
             spellcheck="false"
+            :disabled="disabled"
           />
           <div
             v-else
             class="cursor-pointer min-h-[25px] w-full break-words"
             @click="toggleEdit(index_row, index_col, data_col)"
           >
-            {{ data_col?.extractionValue }}
+            {{ data_col?.validatedValue }}
           </div>
         </td>
       </tr>

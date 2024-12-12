@@ -7,7 +7,7 @@ import {
   extractHistoryTypes
 } from '@/@types/pages/extract'
 import { getDossierHistoriesApi } from '@/api/extract'
-import { groupByField, renderLabelByValue } from '@/utils/common'
+import { groupByField, renderLabelByValue, renderColorByValue } from '@/utils/common'
 import { nextTick, ref, watch } from 'vue'
 
 const props = defineProps<{
@@ -113,8 +113,9 @@ const groupDataToExtractHistory = (data: Record<string, any>[]): ExtractHistoryG
               </div>
             </template>
             <template v-else>
-              <div class="text-[#099268]">
+              <div :style="{ color: renderColorByValue(extractHistoryTypes, item_history?.type).text }">
                 {{ renderLabelByValue(extractHistoryTypes, item_history?.type) }}
+                <span v-if="item_history?.type === ExtractHistoryTypeEnum.REPLACE"> {{ item_history?.fileName }}</span>
               </div>
             </template>
           </div>
