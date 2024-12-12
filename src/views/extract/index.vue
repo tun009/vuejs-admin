@@ -249,19 +249,21 @@ const saveDossier = async () => {
     loading.value = true
     const dataUpdate = [] as ExtractPostDossierRequestModel[]
     documentDetail.value!.result.forEach((doc) => {
-      doc.forEach((item) => {
-        if (item.type === 'structured_table' && item?.children?.length > 0) {
-          item?.children?.forEach((row) => {
-            row.forEach((child) => {
-              dataUpdate.push({ docDataId: child.id, value: child?.validatedValue ?? '' })
+      doc
+        .filter((x) => x.id)
+        .forEach((item) => {
+          if (item.type === 'structured_table' && item?.children?.length > 0) {
+            item?.children?.forEach((row) => {
+              row.forEach((child) => {
+                dataUpdate.push({ docDataId: child.id, value: child?.validatedValue ?? '' })
+              })
             })
-          })
-        } else if (item.type === 'list[text]' && (item?.listText?.length ?? 0) > 0) {
-          item.listText?.forEach((childItem) => {
-            dataUpdate.push({ docDataId: childItem.id, value: childItem?.validatedValue ?? '' })
-          })
-        } else dataUpdate.push({ docDataId: item.id, value: item?.validatedValue ?? '' })
-      })
+          } else if (item.type === 'list[text]' && (item?.listText?.length ?? 0) > 0) {
+            item.listText?.forEach((childItem) => {
+              dataUpdate.push({ docDataId: childItem.id, value: childItem?.validatedValue ?? '' })
+            })
+          } else dataUpdate.push({ docDataId: item.id, value: item?.validatedValue ?? '' })
+        })
     })
     const response = await saveDossierDocApi(Number(route?.query?.dossierDocId), dataUpdate)
     if (response.data) {
