@@ -208,7 +208,7 @@ export interface ApproveProcessDocumentModel {
   username: string
 }
 
-export const documentStatusOptions: SelectOptionModel[] = [
+export const reportStatusOptions: SelectOptionModel[] = [
   {
     label: 'Mới',
     value: DocumentStatusEnum.NEW,
@@ -255,7 +255,7 @@ export const documentStatusOptions: SelectOptionModel[] = [
     color: STATUS_COLORS.WAIT_CHECK
   },
   {
-    label: 'Cần điều chỉnh',
+    label: 'Đang phê duyệt',
     value: DocumentStatusEnum.ADJUST_REQUESTED,
     color: STATUS_COLORS.WAIT_CHECK
   },
