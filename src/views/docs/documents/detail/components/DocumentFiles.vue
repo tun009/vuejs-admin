@@ -35,7 +35,12 @@ interface Props {
   data: BatchDetailModel
 }
 
+interface Emits {
+  (event: 'refresh'): void
+}
+
 const props = defineProps<Props>()
+const emits = defineEmits<Emits>()
 
 const { t } = useI18n()
 const route = useRoute()
@@ -91,6 +96,7 @@ const handleAddDocument = async () => {
     files.value = []
     dialogVisible.value = false
     handleGetDocumentFiles()
+    emits('refresh')
   } catch (error) {
     console.error(error)
   } finally {
@@ -115,8 +121,6 @@ const handleGetDocumentFiles = async () => {
 onMounted(() => {
   handleGetDocumentFiles()
 })
-
-console.log(deleteAccessStatus)
 
 const handleDeleteFile = async (row: DocumentFileModel) => {
   if (!deleteAccessStatus.includes(row?.status)) {
