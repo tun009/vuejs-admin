@@ -268,18 +268,30 @@ const ruleMapping = computed((): SelectOptionModel[] => {
             $t('docs.compare.complied')
           }}</span>
           <div v-else-if="props.status === DocumentResultEnum.DISCREPANCY">
-            <div class="flex flex-row items-start gap-2" v-for="(res, index) in lawReasonMapping.reasons" :key="index">
-              <div class="min-w-1 h-1 w-1 bg-[#e8590c] rounded-sm mt-2" />
-              <span class="text-[#e8590c]">{{ getTextFromHtml(res.en) }}</span>
-              <el-tooltip
-                placement="top"
-                v-if="lawReasonMapping?.laws?.length && !index"
-                raw-content
-                :content="concatLawContents(lawReasonMapping?.laws)"
-                popper-class="max-w-[580px] !max-h-[112px] overflow-y-auto hidden-scrollbar"
+            <div v-if="lawReasonMapping.reasons.length">
+              <div
+                class="flex flex-row items-start gap-2"
+                v-for="(res, index) in lawReasonMapping.reasons"
+                :key="index"
               >
-                <el-icon :size="18" class="cursor-pointer ml-1"><InfoFilled /></el-icon>
-              </el-tooltip>
+                <div class="min-w-1 h-1 w-1 bg-[#e8590c] rounded-sm mt-2" />
+                <span class="text-[#e8590c]">{{ getTextFromHtml(res.en) }}</span>
+                <el-tooltip
+                  placement="top"
+                  v-if="lawReasonMapping?.laws?.length && !index"
+                  raw-content
+                  :content="concatLawContents(lawReasonMapping?.laws)"
+                  popper-class="max-w-[580px] !max-h-[112px] overflow-y-auto hidden-scrollbar"
+                >
+                  <el-icon :size="18" class="cursor-pointer ml-1"><InfoFilled /></el-icon>
+                </el-tooltip>
+              </div>
+            </div>
+            <div v-else>
+              <div class="flex flex-row items-start gap-2">
+                <div class="min-w-1 h-1 w-1 bg-[#e8590c] rounded-sm mt-2" />
+                <span class="text-[#e8590c]">Discrepancy</span>
+              </div>
             </div>
           </div>
           <span v-else>{{ $t('docs.compare.na') }}</span>
@@ -290,9 +302,21 @@ const ruleMapping = computed((): SelectOptionModel[] => {
             $t('docs.status.valid')
           }}</span>
           <div v-else-if="props.status === DocumentResultEnum.DISCREPANCY">
-            <div class="flex flex-row items-start gap-2" v-for="(res, index) in lawReasonMapping.reasons" :key="index">
-              <div class="min-w-1 h-1 w-1 bg-[#e8590c] rounded-sm mt-2" />
-              <span class="text-[#e8590c]">{{ res.vi }}</span>
+            <div v-if="lawReasonMapping.reasons.length">
+              <div
+                class="flex flex-row items-start gap-2"
+                v-for="(res, index) in lawReasonMapping.reasons"
+                :key="index"
+              >
+                <div class="min-w-1 h-1 w-1 bg-[#e8590c] rounded-sm mt-2" />
+                <span class="text-[#e8590c]">{{ res.vi ? res.vi : 'Bất hợp lệ' }}</span>
+              </div>
+            </div>
+            <div v-else>
+              <div class="flex flex-row items-start gap-2">
+                <div class="min-w-1 h-1 w-1 bg-[#e8590c] rounded-sm mt-2" />
+                <span class="text-[#e8590c]">Bất hợp lệ</span>
+              </div>
             </div>
           </div>
           <span v-else>{{ $t('docs.compare.na') }}</span>

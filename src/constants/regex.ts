@@ -19,3 +19,4 @@ export const regexNullOrEmpty = /(?!^$)([^\s])/
 export const regexNonNegativeRealNumber = /^\d+(\.\d+)?$/
 
 export const regexContentDispositionFileName = /filename="?(.*)"?/
+export const regexDateYyyyMmDd = /^\d{4}-\d{2}-\d{2}$/

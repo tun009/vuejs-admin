@@ -42,6 +42,7 @@ import { addOneDayToDate, defaultDateRange, formatDate, formatDateExactFormat } 
 import { errorNotification } from '@/utils/notification'
 import { debounce } from 'lodash-es'
 import Status from '../components/Status.vue'
+import { RoleEnum } from '@/@types/pages/users'
 
 defineOptions({
   name: 'Document'
@@ -114,7 +115,9 @@ const handleRedirectToDocumentDetail = async (row: DocumentModel) => {
       status = DocumentStatusEnum.CHECKING
     } else if (isAdmin) {
       status =
-        userInfo.username === row.createdBy?.username ? DocumentStatusEnum.CHECKING : DocumentStatusEnum.VALIDATING
+        userInfo.username === row.createdBy?.username || row.createdBy?.role === RoleEnum.CHECKER
+          ? DocumentStatusEnum.VALIDATING
+          : DocumentStatusEnum.CHECKING
     }
   } else if (row.status === DocumentStatusEnum.WAIT_VALIDATE && (isChecker || isAdmin)) {
     if (

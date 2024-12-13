@@ -39,6 +39,7 @@ import { useRoute, useRouter } from 'vue-router'
 import UpdateLCForm from './UpdateLCForm.vue'
 import { retryComparisonDocument, retryOcrDocument } from '@/api/docs/document/compare'
 import { successNotification } from '@/utils/notification'
+import { convertOcrToDateFormat, formatDateOcrLC } from '@/utils/date'
 
 interface Props {
   data: BatchDetailModel
@@ -244,7 +245,10 @@ onMounted(() => {
             <div class="flex flex-row gap-2 flex-1">
               <span class="font-bold">{{ $t('docs.document.status') }}:</span>
               <div v-if="errorDocumentStatus.includes(data?.status)" class="flex flex-col gap-2">
-                <div class="flex gap-1" v-if="isChecker && data?.censorBy?.name">
+                <div
+                  class="flex gap-1"
+                  v-if="isChecker && data?.censorBy?.name && data?.censorBy?.name !== userInfo.username"
+                >
                   <Status :options="documentStatusOptions" :status="DocumentStatusEnum.CHECKED" />
                   <span class="c-text-value">{{ $t('docs.document.by') }}</span> {{ data?.censorBy?.name }}
                 </div>
@@ -341,11 +345,12 @@ onMounted(() => {
             >{{ $t('docs.detail.lcNumber') }}: <span class="c-text-value">{{ getValueLC('doc_credit_no') }}</span></span
           >
           <span
-            >{{ $t('docs.detail.createdAtLc') }}: <span class="c-text-value">{{ getValueLC('date_issue') }}</span></span
+            >{{ $t('docs.detail.createdAtLc') }}:
+            <span class="c-text-value">{{ formatDateOcrLC(getValueLC('date_issue') ?? '') }}</span></span
           >
           <span
             >{{ $t('docs.detail.expirationDateLc') }}:
-            <span class="c-text-value">{{ getValueLC('expiry_date') }}</span></span
+            <span class="c-text-value">{{ formatDateOcrLC(getValueLC('expiry_date') ?? '') }}</span></span
           >
           <span
             >{{ $t('docs.detail.expirationPositionLc') }}:
@@ -361,7 +366,7 @@ onMounted(() => {
           >
           <span
             >{{ $t('docs.detail.presentationDateDoc') }}:
-            <span class="c-text-value">{{ getValueLC('upload_date') }}</span></span
+            <span class="c-text-value">{{ convertOcrToDateFormat(getValueLC('upload_date') ?? '-') }}</span></span
           >
           <span
             >{{ $t('docs.detail.deadlinePresentingDoc') }}:

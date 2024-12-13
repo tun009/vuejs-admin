@@ -1,4 +1,5 @@
 import { formatDDMMYYYY } from '@/constants/date'
+import { regexDateYyyyMmDd } from '@/constants/regex'
 import dayjs from 'dayjs'
 
 export const getDateRangeByDistance = (distance: number) => {
@@ -22,6 +23,7 @@ export const formatDateExactFormat = (dateString: string, fromFormat: string, to
 export const formatDate = (date: string, format: string) => {
   return dayjs(date).format(format)
 }
+
 export const addOneDayToDate = (dateStr: string): string => {
   const date = new Date(dateStr)
   date.setDate(date.getDate() + 1)
@@ -29,4 +31,19 @@ export const addOneDayToDate = (dateStr: string): string => {
   const month = (date.getMonth() + 1).toString().padStart(2, '0')
   const day = date.getDate().toString().padStart(2, '0')
   return `${year}-${month}-${day}`
+}
+
+export const formatDateOcrLC = (input: string): string => {
+  if (input.length !== 6) return '-'
+  const day = input.substring(0, 2)
+  const month = input.substring(2, 4)
+  const year = '20' + input.substring(4, 6)
+
+  return `${day}/${month}/${year}`
+}
+
+export const convertOcrToDateFormat = (input: string): string => {
+  if (!regexDateYyyyMmDd.test(input)) return '-'
+  const [year, month, day] = input.split('-')
+  return `${day}/${month}/${year}`
 }
