@@ -8,7 +8,8 @@ import {
   FilterDocumentModel,
   businessTypeOptions,
   docListColumnConfigs,
-  ReportDetailModel
+  ReportDetailModel,
+  reportStatusOptions
 } from '@/@types/pages/reports'
 import { documentStatusOptions, documentResultOptions } from '@/@types/pages/docs/documents'
 import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
@@ -31,8 +32,9 @@ import { errorDocumentStatus } from '@/constants/common'
 
 const openFilter = ref(false)
 const defaultStatus = computed(() => {
-  return documentStatusOptions.slice(0, -3).map((c) => c.value as DocumentStatusEnum)
+  return reportStatusOptions.map((c) => c.value as DocumentStatusEnum)
 })
+const multipleFilterRef = ref<InstanceType<typeof EIBMultipleFilter>>()
 const tableData = ref<ReportModel[]>([])
 const checkedItems = ref<ReportModel[]>([])
 const documentTableRef = ref<InstanceType<typeof EIBTable>>()
@@ -71,7 +73,7 @@ const handleGetReports = async (pagination: PaginationModel) => {
           column: 'createdAt'
         }
       ],
-      ...(status?.length !== documentStatusOptions.length ? { status: exactStatus } : {})
+      ...(status?.length !== reportStatusOptions.length ? { status: exactStatus } : {})
     })
     tableData.value = response.data.list
     return response
@@ -94,7 +96,8 @@ const handleResetFilter = () => {
   filterValue.bizType = -1
   filterValue.branchId = -1
   filterValue.result = -1
-  filterValue.status = []
+  // filterValue.status = []
+  multipleFilterRef.value?.handleCheckAll()
 }
 
 const downloadFile = async () => {
@@ -123,7 +126,7 @@ const downloadFile = async () => {
         }
       ],
       ...pagination,
-      ...(status?.length !== documentStatusOptions.length ? { status: exactStatus } : {})
+      ...(status?.length !== reportStatusOptions.length ? { status: exactStatus } : {})
     })
     downloadFileCommon(response, DocumentExportFileEnum.EXCEL)
   } catch (error) {
@@ -214,7 +217,12 @@ onMounted(() => {
       :class="{ 'h-10 mb-2': openFilter, 'h-0': !openFilter }"
     >
       <EIBSingleFilter v-model="filterValue.bizType" title="Loại nghiệp vụ" :options="businessTypeOptions" />
-      <EIBMultipleFilter v-model="filterValue.status" title="Trạng thái" :options="documentStatusOptions" />
+      <EIBMultipleFilter
+        ref="multipleFilterRef"
+        v-model="filterValue.status"
+        title="Trạng thái"
+        :options="reportStatusOptions"
+      />
       <EIBSingleFilter v-model="filterValue.result" title="Kết quả" :options="documentResultOptions" />
       <EIBSingleFilter
         v-model="filterValue.branchId"
