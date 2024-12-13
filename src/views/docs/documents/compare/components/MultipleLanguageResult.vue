@@ -20,7 +20,7 @@ import {
 import EIBDialog from '@/components/common/EIBDialog.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
 import EIBTextareaAutoComplete from '@/components/common/EIBTextareaAutoComplete.vue'
-import { getTextFromHtml } from '@/utils/common'
+import { getTextFromHtml, removeDuplicateItemInArray } from '@/utils/common'
 import { InfoFilled } from '@element-plus/icons-vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { computed, ref, toRaw } from 'vue'
@@ -213,8 +213,9 @@ const handleUpdateCompareResult = () => {
 }
 
 const concatLawContents = (laws: RuleModel[]) => {
+  const exactLaws = removeDuplicateItemInArray(laws, 'code')
   let result: string = ''
-  laws.forEach((l, i) => {
+  exactLaws.forEach((l, i) => {
     if (!i) {
       result += l.en
       return

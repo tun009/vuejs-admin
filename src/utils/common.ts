@@ -258,3 +258,31 @@ export const trimObjectValues = (obj: Record<string, any>): Record<string, any> 
 export const formatNumberWithCommas = (num: number | string): string => {
   return Number(num).toLocaleString()
 }
+
+export const removeDuplicateItemInArray = <T>(arr: T[], key: keyof T): T[] => {
+  const seen = new Set()
+  return arr.filter((item) => {
+    if (seen.has(item[key])) {
+      return false
+    } else {
+      seen.add(item[key])
+      return true
+    }
+  })
+}
+
+export const groupByKey = (arr: any[], field: string) => {
+  const grouped: { [key: string]: number[] } = {}
+
+  arr.forEach((item) => {
+    if (!grouped?.[item?.[field]]) {
+      grouped[item?.[field]] = []
+    }
+    grouped[item?.[field]].push(item.stt)
+  })
+
+  return Object.keys(grouped).map((key) => ({
+    key,
+    stt: grouped[key]
+  }))
+}

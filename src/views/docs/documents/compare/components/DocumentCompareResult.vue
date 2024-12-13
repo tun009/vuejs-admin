@@ -7,7 +7,7 @@ import { debounce } from 'lodash-es'
 import { ref } from 'vue'
 import AddCompareContentForm from './AddCompareContentForm.vue'
 import { CompareReasonResultModel, DocumentCompareModel, DocumentResultEnum } from '@/@types/pages/docs/documents'
-import { convertFileUrl, createColumnConfigs, withDefaultString } from '@/utils/common'
+import { convertFileUrl, createColumnConfigs, groupByKey, withDefaultString } from '@/utils/common'
 import MultipleLanguageResult from './MultipleLanguageResult.vue'
 import PreviewExtractImage from './PreviewExtractImage.vue'
 import { RuleModel } from '@/@types/pages/rules'
@@ -223,8 +223,12 @@ const convertTableDataCompareErrorResults = (compareResult: DocumentCompareModel
           <template #fieldName="{ row }">
             <SafeHtmlRenderer :html="row?.fieldName?.replace(/\n/g, '<br>')" />
           </template>
-          <template v-for="(c, i) in convertTableDataCompareError(compareResult)" #[c?.key]="{ row, index }" :key="i">
-            <span :class="{ 'text-red-500': c.stt === index + 1 }">{{ row?.[c.key] }}</span>
+          <template
+            v-for="(c, i) in groupByKey(convertTableDataCompareError(compareResult), 'key')"
+            #[c?.key]="{ row, index }"
+            :key="i"
+          >
+            <span :class="{ 'text-red-500': c.stt.includes(index + 1) }">{{ row?.[c.key] }}</span>
           </template>
         </EIBTable>
 
