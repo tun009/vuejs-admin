@@ -509,7 +509,7 @@ onUnmounted(() => {
                 >
                   <template v-if="isLoadedPdf">
                     <div
-                      v-for="(item, index) in ocrDataDetail.filter((field) => field?.id)"
+                      v-for="(item, index) in ocrDataDetail?.filter((field) => field?.id)"
                       :key="index"
                       class="mt-[12px] py-[5px] px-[6px] item-dossier cursor-pointer"
                       :class="[renderClassOcr(item?.confidence), fieldSelect === item?.id ? 'bg-[#e1edfe]' : '']"
