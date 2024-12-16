@@ -153,12 +153,12 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
   {
     field: 'result',
     label: 'Kết quả xử lý',
-    width: 200
+    width: 150
   },
   {
     field: 'comparisonTimes',
     label: 'Tổng lần đối sánh',
-    width: 200
+    width: 150
   },
   {
     field: 'branch',
