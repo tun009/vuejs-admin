@@ -27,12 +27,13 @@ watch(
 )
 const renderIndexLabel = () => {
   const dataPoints = options.value.data[0].dataPoints
-  for (let i = 0; i < dataPoints.length; i++) {
-    if (dataPoints[i].y > 0) {
-      const percentage = totalDossiers.value > 0 ? formatNumberConfidence(dataPoints[i].y / totalDossiers.value) : 0
-      // dataPoints[i].indexLabel = `${dataPoints[i].name}: ${dataPoints[i].y} (${percentage}%)`
-      dataPoints[i].indexLabel = percentage + '%'
-    } else dataPoints[i].indexLabel = ''
+  for (const dataPoint of dataPoints) {
+    if (dataPoint.y > 0) {
+      const percentage = totalDossiers.value > 0 ? formatNumberConfidence(dataPoint.y / totalDossiers.value) : 0
+      dataPoint.indexLabel = percentage + '%'
+    } else {
+      dataPoint.indexLabel = ''
+    }
   }
 }
 const chartSumary = ref()

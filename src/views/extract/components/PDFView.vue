@@ -5,10 +5,7 @@ import ControlSlider from './ControlSlider.vue'
 import ExtractOcrLoading from './ExtractOcrLoading.vue'
 import { ArrowUp, ArrowDown } from '@element-plus/icons-vue'
 import { debounce } from 'lodash-es'
-import { useUserStore } from '@/store/modules/user'
-const { isAdmin, isChecker, isMaker, isViewer } = useUserStore()
-console.log(isAdmin, isChecker, isMaker, isViewer)
-
+import { ExtractResultOcrPageBBboxesModel } from '@/@types/pages/extract'
 const props = defineProps<{
   url?: string
   isLoadingOcr?: boolean
@@ -50,25 +47,25 @@ const onLoadedPDF = () => {
   emit('loaded-data')
 }
 const tagLabelToPage = (
-  boxInfos: number[][][],
-  pageNum: number,
+  boxInfos: ExtractResultOcrPageBBboxesModel[],
   type: 'list[text]' | 'text' | 'image' | 'structured_table'
 ) => {
   const listActivesRemove = document.querySelectorAll('.box-label')
   listActivesRemove.forEach((element) => {
     element.remove()
   })
-  const elementPage = document.getElementById('page-' + (pageNum + 1)) as HTMLElement
   if (boxInfos?.length > 0) {
     boxInfos.forEach((boxInfo, index) => {
+      const elementPage = document.getElementById('page-' + (boxInfo.page + 1)) as HTMLElement
       const pElement = document.createElement('p')
       pElement.className = 'box-label'
       // renderElementByRotation(pElement, boxInfo)
-      pElement.style.width = caculatorDistance(getRectangle(boxInfo, 'width'))
-      pElement.style.height = caculatorDistance(getRectangle(boxInfo, 'height'))
-      pElement.style.top = caculatorDistance(getRectangle(boxInfo, 'top'))
-      pElement.style.left = caculatorDistance(getRectangle(boxInfo, 'left'))
-      if (boxInfo.length > 0 && type !== 'image') pElement.style.transform = ` rotate(${getDegRotate(boxInfo)}deg)`
+      pElement.style.width = caculatorDistance(getRectangle(boxInfo.bboxes, 'width'))
+      pElement.style.height = caculatorDistance(getRectangle(boxInfo.bboxes, 'height'))
+      pElement.style.top = caculatorDistance(getRectangle(boxInfo.bboxes, 'top'))
+      pElement.style.left = caculatorDistance(getRectangle(boxInfo.bboxes, 'left'))
+      if (boxInfo.bboxes.length > 0 && type !== 'image')
+        pElement.style.transform = ` rotate(${getDegRotate(boxInfo.bboxes)}deg)`
       pElement.style.backgroundColor = 'rgba(240, 91, 91, 0.3) '
       pElement.style.border = '1px solid #e03'
       pElement.style.position = 'absolute'
@@ -79,7 +76,7 @@ const tagLabelToPage = (
         scrollToElement(elementScrollTo)
       }
     })
-  } else scrollToElement(elementPage)
+  }
 }
 const scrollToElement = (elm: HTMLElement | null, mode: ScrollBehavior = 'smooth') => {
   if (elm) {
@@ -127,8 +124,7 @@ const getRectangle = (bbox: number[][], style: string) => {
 }
 interface ExtractPdfViewExpose {
   tagLabelToPage: (
-    boxInfo: number[][][],
-    pageNum: number,
+    boxInfo: ExtractResultOcrPageBBboxesModel[],
     type: 'list[text]' | 'text' | 'image' | 'structured_table'
   ) => void
   goToPageView: (pageNum: number) => void

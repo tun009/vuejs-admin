@@ -17,8 +17,6 @@ import {
   ExtractResultOcrTableChildrenModel,
   ExtractResultOcrTableHeaderModel
 } from '@/@types/pages/extract'
-import { convertFileUrl } from '@/utils/common'
-
 import PreviewExtractImage from '@/views/docs/documents/compare/components/PreviewExtractImage.vue'
 import PDFView from './components/PDFView.vue'
 import HistoryTab from './components/HistoryTab.vue'
@@ -33,7 +31,13 @@ import 'splitpanes/dist/splitpanes.css'
 import { useRoute } from 'vue-router'
 
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
-import { renderLabelByValue, formatNumberConfidence, renderColorByValue, renderColorByConfidence } from '@/utils/common'
+import {
+  renderLabelByValue,
+  formatNumberConfidence,
+  renderColorByValue,
+  renderColorByConfidence,
+  convertFileUrl
+} from '@/utils/common'
 import { documentStatusOptions } from '@/@types/pages/docs/documents'
 import { ArrowLeft, More, CloseBold, Select } from '@element-plus/icons-vue'
 import { ExtractPostDossierRequestModel } from '@/@types/pages/extract/service/ExtractRequest'
@@ -131,7 +135,7 @@ const handleClickField = (item: ExtractResultOcrModel) => {
   if (item.type === 'structured_table' && item?.headers?.length > 0) clickTable(item)
   else {
     resizeTable.value = 100
-    pdfViewRef.value?.tagLabelToPage(item.bboxes, item.pageId, item.type)
+    pdfViewRef.value?.tagLabelToPage(item.pageBboxes, item.type)
     // waiting for close table animation...
     setTimeout(() => {
       isShowTable.value = false

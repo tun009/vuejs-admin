@@ -20,6 +20,11 @@ export interface ExtractResultOcrModel {
   children: ExtractResultOcrTableChildrenModel[][]
   childrenMapping: ExtractResultOcrTableChildrenModel[][]
   listText?: ExtractResultOcrModel[]
+  pageBboxes?: ExtractResultOcrPageBBboxesModel[]
+}
+export interface ExtractResultOcrPageBBboxesModel {
+  bboxes: number[][]
+  page: number
 }
 export interface ExtractResultOcrTableHeaderModel {
   key: string
@@ -35,6 +40,7 @@ export interface ExtractResultOcrTableChildrenModel {
   pageId: number
   type: 'list[text]' | 'text' | 'image' | 'structured_table'
   validatedValue: string
+  pageBboxes?: ExtractResultOcrPageBBboxesModel[]
 }
 export interface ExtractDossierTypeModel {
   id: number

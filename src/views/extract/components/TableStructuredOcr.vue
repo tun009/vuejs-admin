@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { ExtractResultOcrTableChildrenModel, ExtractResultOcrTableHeaderModel } from '@/@types/pages/extract'
+import {
+  ExtractResultOcrPageBBboxesModel,
+  ExtractResultOcrTableChildrenModel,
+  ExtractResultOcrTableHeaderModel
+} from '@/@types/pages/extract'
 import { ref } from 'vue'
 interface ExtractPdfViewExpose {
   tagLabelToPage: (
-    boxInfo: number[],
-    pageNum: number,
+    boxInfo: ExtractResultOcrPageBBboxesModel[],
     type: 'list[text]' | 'text' | 'image' | 'structured_table'
   ) => void
 }
@@ -24,18 +27,18 @@ const toggleEdit = (rowIndex: number, colIndex: number, dataCol: ExtractResultOc
   const key = `${rowIndex}-${colIndex}`
   editingRows.value[key] = !isEditing(rowIndex, colIndex)
   if (props.pdfViewRef) {
-    props.pdfViewRef.tagLabelToPage(dataCol.bboxes, dataCol.pageId, dataCol.type)
+    props.pdfViewRef.tagLabelToPage(dataCol?.pageBboxes ?? [], dataCol.type)
   }
 }
 </script>
 <template>
-  <table class="table table-structured-cp">
+  <table class="table table-structured-cp" :class="{ 'table-fixed': props.header.length < 5 }">
     <caption class="hidden">
       To display table structured
     </caption>
     <thead>
       <tr>
-        <th>STT</th>
+        <th class="w-[100px]">STT</th>
         <th v-for="(header, index_header) in props.header" :key="index_header">
           {{ header.name }}
         </th>
@@ -49,7 +52,7 @@ const toggleEdit = (rowIndex: number, colIndex: number, dataCol: ExtractResultOc
             v-if="isEditing(index_row, index_col)"
             v-model="data_col.validatedValue"
             :class="{
-              'no-content': data_col?.confidence == 0
+              'no-content': data_col?.confidence === 0
             }"
             type="textarea"
             autosize
