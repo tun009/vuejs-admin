@@ -2,6 +2,7 @@
 import { RuleModel, UpdateRuleRequestModel } from '@/@types/pages/rules'
 import { updateRule } from '@/api/rules'
 import Input from '@/components/common/EIBInput.vue'
+import EIBSelect from '@/components/common/EIBSelect.vue'
 // import { requireRule } from '@/utils/validate'
 import { ElMessage, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
@@ -80,7 +81,7 @@ defineExpose<Exposes>({
     @keyup.enter="handleUpdateRule"
     class="flex flex-col gap-1"
   >
-    <Input label="Loại chứng từ" placeholder="" name="name" v-model="updateRuleFormData.name" disabled />
+    <EIBSelect label="Loại chứng từ" v-model="updateRuleFormData.name" name="name" :options="[]" readonly />
     <Input label="Mã" name="code" placeholder="" v-model="updateRuleFormData.code" disabled />
     <Input
       label="Nội dung"
