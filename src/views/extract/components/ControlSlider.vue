@@ -11,8 +11,8 @@ const emit = defineEmits<{
 }>()
 const zoomIn = () => {
   scale.value = parseFloat(scale.value.toString())
-  if (scale.value < 2) {
-    scale.value = Math.min(scale.value + 0.1, 2)
+  if (scale.value < 2.5) {
+    scale.value = Math.min(scale.value + 0.1, 2.5)
   }
   emit('update:scale', scale.value)
 }
@@ -42,12 +42,23 @@ const toggleFullScreen = () => {
     }
   }
 }
+const handleMouseWheel = (event: WheelEvent) => {
+  if (event.ctrlKey) {
+    event.preventDefault()
+    if (event.deltaY < 0) {
+      zoomIn()
+    } else {
+      zoomOut()
+    }
+  }
+}
 onMounted(() => {
   window.addEventListener('keydown', handleKeyDown)
+  window.addEventListener('wheel', handleMouseWheel, { passive: false })
 })
-
 onBeforeUnmount(() => {
   window.removeEventListener('keydown', handleKeyDown)
+  window.removeEventListener('wheel', handleMouseWheel)
 })
 watch(
   () => props.scale,
