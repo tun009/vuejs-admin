@@ -23,7 +23,13 @@ import { debounce } from 'lodash-es'
 import { getReports, getDetailReport, downloadFileExcel } from '@/api/reports/'
 import { formatDDMMYYYY, formatYYYYMMDD, shortcutsDateRange } from '@/constants/date'
 import DetailReportForm from './components/DetailReportForm.vue'
-import { omitPropertyFromObject, withAllSelection, mappingBranches, downloadFileCommon } from '@/utils/common'
+import {
+  omitPropertyFromObject,
+  withAllSelection,
+  mappingBranches,
+  downloadFileCommon,
+  renderLabelByValue
+} from '@/utils/common'
 import { getBranches } from '@/api/users'
 import { BranchModel } from '@/@types/pages/login'
 import Status from '../components/Status.vue'
@@ -49,15 +55,6 @@ const handleGetReports = async (pagination: PaginationModel) => {
     const { status, ...otherFilter } = filterValue
     const isErrorStatus = status.includes(DocumentStatusEnum.ERROR)
     let exactStatus = [...status]
-    // if (isErrorStatus) {
-    //   exactStatus = exactStatus
-    //     .filter((e) => e !== DocumentStatusEnum.ERROR)
-    //     .concat([
-    //       DocumentStatusEnum.CLASSIFICATION_ERROR,
-    //       DocumentStatusEnum.EXTRACTION_ERROR,
-    //       DocumentStatusEnum.COMPARISON_ERROR
-    //     ])
-    // }
     if (isErrorStatus) {
       const statusNoError = exactStatus.filter((e) => e !== DocumentStatusEnum.ERROR)
       exactStatus = [...statusNoError, ...errorDocumentStatus]
@@ -170,6 +167,7 @@ onMounted(() => {
         type="daterange"
         class="w-fit"
         unlink-panels
+        :clearable="false"
         :range-separator="$t('docs.document.to')"
         :start-placeholder="$t('docs.document.start')"
         :end-placeholder="$t('docs.document.end')"
@@ -243,9 +241,14 @@ onMounted(() => {
         @row-click="detailReport"
       >
         <template #branch="{ row }">
-          <div>
+          <div class="h-10">
             <span>{{ row?.branch?.name }}</span>
+            <br />
+            <span class="!text-[#868e96]">{{ row?.branch?.code }}</span>
           </div>
+        </template>
+        <template #bizType="{ row }">
+          <span>{{ renderLabelByValue(businessTypeOptions, row?.bizType) }}</span>
         </template>
         <template #status="{ row }">
           <Status :options="documentStatusOptions" :status="row?.status" />
