@@ -36,7 +36,7 @@ const SOLListColumnConfigs = [
     label: 'Số trường OCR có chỉnh sửa'
   },
   {
-    field: 'totalRequestOcrEdit',
+    field: 'totalRequestComparisonEdit',
     label: 'Số yêu cầu đối sánh có chỉnh sửa'
   }
 ]
