@@ -167,7 +167,7 @@ const isHaveAddButton = computed(() => {
   const isMakerEligible = isMaker && makerStepDocumentStatus.includes(props.data.status)
 
   const isCheckerOrAdminEligible =
-    isAdmin ||
+    (isAdmin && [...makerStepDocumentStatus, ...checkerStepDocumentStatus].includes(props.data.status)) ||
     (isChecker &&
       checkerStepDocumentStatus.includes(props.data.status) &&
       (userInfo.username === props.data.createdBy?.username || userInfo.username === props.data.approveBy?.username))
@@ -190,7 +190,7 @@ const isHaveDeleteFile = (username: string, status: DocumentStatusEnum) => {
       <div v-if="isHaveAddButton" class="flex flex-row justify-end">
         <el-button type="primary" :icon="Plus" @click="dialogVisible = true">{{ $t('button.add') }}</el-button>
       </div>
-      <el-dialog v-model="dialogVisible" :title="$t('docs.document.addFile')" width="75%" :before-close="handleClose">
+      <el-dialog v-model="dialogVisible" :title="$t('docs.document.addFile')" width="60%" :before-close="handleClose">
         <EIBUpload :files="files" @add-files="addFiles" @set-files="setFiles" />
         <template #footer>
           <div class="dialog-footer flex flex-row justify-between items-center">
@@ -222,7 +222,7 @@ const isHaveDeleteFile = (username: string, status: DocumentStatusEnum) => {
           <span>{{ formatDate(row.createdAt, formatDDMMYYYY_HHMM) }}</span>
         </template>
         <template #actions="{ row }">
-          <div class="flex flex-row gap-2">
+          <div class="flex flex-row gap-2 justify-center">
             <div class="w-5 h-5">
               <SvgIcon
                 v-if="isHaveDeleteFile(row?.createdBy?.username, row.status)"

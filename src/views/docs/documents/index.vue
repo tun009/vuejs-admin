@@ -107,6 +107,7 @@ const handleGetDocuments = async (pagination: PaginationModel) => {
   }
 }
 
+/* NOSONAR */
 const handleRedirectToDocumentDetail = async (row: DocumentModel) => {
   let status: DocumentStatusEnum | null = null
 
@@ -121,13 +122,14 @@ const handleRedirectToDocumentDetail = async (row: DocumentModel) => {
     }
   } else if (row.status === DocumentStatusEnum.WAIT_VALIDATE && (isChecker || isAdmin)) {
     if (
+      isAdmin &&
       isChecker &&
       (userInfo.username === row.createdBy?.username || userInfo?.username === row.approveBy?.username)
     ) {
       status = DocumentStatusEnum.VALIDATING
-    } else if (isAdmin) {
-      status = DocumentStatusEnum.VALIDATING
     }
+  } else if (row.status === DocumentStatusEnum.CHECKED && isAdmin) {
+    status = DocumentStatusEnum.VALIDATING
   }
 
   if (status) {
@@ -252,6 +254,7 @@ onMounted(() => {
         type="daterange"
         class="w-fit"
         unlink-panels
+        :clearable="false"
         :range-separator="$t('docs.document.to')"
         :start-placeholder="$t('docs.document.start')"
         :end-placeholder="$t('docs.document.end')"
@@ -352,7 +355,7 @@ onMounted(() => {
           <span>{{ row?.branch?.name }}</span>
         </template>
         <template #actions="{ row }">
-          <div class="flex flex-row gap-2 items-center h-[63px] px-3" @click.stop>
+          <div class="flex flex-row gap-2 items-center h-[63px] px-3 justify-center" @click.stop>
             <div class="w-[18px]">
               <SvgIcon
                 v-if="isHaveEditDocument(row?.createdBy?.username, row.status)"

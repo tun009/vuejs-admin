@@ -13,6 +13,7 @@ export const regexMac = /^(([a-f0-9][02468ace]:([a-f0-9]{2}:){4})|([a-f0-9][0246
 export const regexAccents1 = /[\u0300-\u036f]/g
 export const regexAccents2 = /đ/g
 export const regexAccents3 = /Đ/g
+export const regexAccents4 = / /g
 
 export const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,100}$/
 export const regexNullOrEmpty = /(?!^$)([^\s])/

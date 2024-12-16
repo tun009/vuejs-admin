@@ -41,3 +41,11 @@ export const removeAccents = (str: string) => {
   const res = str.normalize('NFD').replace(regexAccents1, '').replace(regexAccents2, 'd').replace(regexAccents3, 'D')
   return res
 }
+
+export const removeAccentsAndReplaceSpaces = (word: string): string => {
+  const lowerCaseWord = word.toLowerCase()
+  const wordWithoutAccents = lowerCaseWord.normalize('NFD').replace(regexAccents1, '')
+  const wordWithUnderscores = wordWithoutAccents.replace(/ /g, '_')
+
+  return wordWithUnderscores
+}

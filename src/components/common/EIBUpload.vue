@@ -5,7 +5,7 @@ import { uploadDocumentColumnConfig } from '@/@types/common'
 import { MAX_FILE_LIMIT, MAX_FILE_SIZE } from '@/constants/common'
 import { truncateFileName } from '@/utils/common'
 import { warningNotification } from '@/utils/notification'
-import { Delete, Plus } from '@element-plus/icons-vue'
+import { Plus } from '@element-plus/icons-vue'
 import { computed, ref } from 'vue'
 import EIBTable from './EIBTable.vue'
 
@@ -136,10 +136,10 @@ const handleDeleteFile = (index: number) => {
         locales
       >
         <template #actions="{ index }">
-          <div>
-            <el-icon :size="18" color="#e03131" class="cursor-pointer mx-auto" @click="() => handleDeleteFile(index)"
-              ><Delete
-            /></el-icon>
+          <div class="flex flex-row gap-2 justify-center">
+            <div class="w-5 h-5">
+              <SvgIcon @click="() => handleDeleteFile(index)" :size="20" name="delete-mini" class="cursor-pointer" />
+            </div>
           </div>
         </template>
       </EIBTable>

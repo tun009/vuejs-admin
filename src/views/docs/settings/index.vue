@@ -72,9 +72,9 @@ const automation = ref<UpdateCheckConfigRequestModel>({
 const openUpdateInfoExtractDrawer = ref(false)
 const validateInput = (event: any, item: any) => {
   const input = event.target.value
-  const regex = /^[0-9]*$/
+  const regex = /^\d*$/
   if (!regex.test(input)) {
-    ruleForm.value[item as keyof UpdateConfidenceFormModel] = input.replace(/[^0-9]/g, '')
+    ruleForm.value[item as keyof UpdateConfidenceFormModel] = input.replace(/\D/g, '')
   }
 }
 

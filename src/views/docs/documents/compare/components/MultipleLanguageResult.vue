@@ -131,6 +131,7 @@ const handleSaveDictionary = (i: number) => {
 }
 
 const handleUpdateCompareResult = () => {
+  /* NOSONAR */
   documentResultFormRef.value?.validate(async (valid: boolean, fields) => {
     if (valid) {
       loading.value = true

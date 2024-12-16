@@ -118,6 +118,7 @@ export const formatNumberConfidence = (num: number) => {
   }
 }
 
+/* NOSONAR */
 export function sortObjectsByMultipleFields(array: any[], fields: string[], sortOrder = 'asc') {
   if (!Array.isArray(array)) {
     throw new TypeError('Input must be an array.')
@@ -132,19 +133,17 @@ export function sortObjectsByMultipleFields(array: any[], fields: string[], sort
   }
 
   return array.slice().sort((a, b) => {
-    for (let i = 0; i < fields.length; i++) {
-      const field = fields[i]
+    for (const field of fields) {
+      // Thay thế for loop bằng for-of
       const aValue = a[field]
       const bValue = b[field]
 
-      // Determine if the values are strings or numbers
       const isString = typeof aValue === 'string' && typeof bValue === 'string'
       const isNumber = typeof aValue === 'number' && typeof bValue === 'number'
 
       if (isString) {
-        // Remove leading space characters
-        const trimmedAValue = aValue.trimLeft()
-        const trimmedBValue = bValue.trimLeft()
+        const trimmedAValue = aValue.trimStart()
+        const trimmedBValue = bValue.trimStart()
 
         const comparison = trimmedAValue.localeCompare(trimmedBValue)
 
@@ -158,7 +157,6 @@ export function sortObjectsByMultipleFields(array: any[], fields: string[], sort
           return sortOrder === 'asc' ? comparison : -comparison
         }
       } else {
-        // Handle other data types as needed (e.g., dates, booleans)
         throw new Error(`Unsupported data type for field "${field}": ${typeof aValue}`)
       }
     }
@@ -173,7 +171,7 @@ export const createColumnConfigs = (object: { [key: string]: string | number }):
   return keys.map((k) => ({
     field: k,
     label: k,
-    minWidth: k === 'stt' ? 50 : TABLE_COLUMN_WIDTH_DEFAULT
+    minWidth: k.toLowerCase() === 'stt' ? 50 : TABLE_COLUMN_WIDTH_DEFAULT
   }))
 }
 
