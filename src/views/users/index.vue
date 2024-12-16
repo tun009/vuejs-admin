@@ -83,7 +83,13 @@ const handleGetUser = async (pagination: PaginationModel) => {
   try {
     const response = await getUsers({
       ...pagination,
-      ...omitPropertyFromObject(filterValue, -1)
+      ...omitPropertyFromObject(filterValue, -1),
+      sortItemList: [
+        {
+          isAsc: false,
+          column: 'createdAt'
+        }
+      ]
     })
     tableData.value = response.data.list
     return response
