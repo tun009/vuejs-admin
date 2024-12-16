@@ -7,8 +7,7 @@ import { DOCUMENT_DETAIL_PAGE } from '@/constants/router'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
-import { useRoute } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 interface Emits {
   (event: 'update:loading', value: boolean): void
@@ -50,7 +49,8 @@ const onConfirm = () => {
         emits('update:loading', true)
         await updateDocumentStatus(batchId.value, {
           approveDossier: DocumentStatusEnum.DENIED,
-          message: compareRejectFormData.reason
+          message: compareRejectFormData.reason,
+          isOCR: false
         })
         ElMessage.success(t('notification.description.rejectSuccess'))
         router.push(DOCUMENT_DETAIL_PAGE(batchId.value))

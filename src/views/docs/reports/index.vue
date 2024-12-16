@@ -11,7 +11,7 @@ import {
   ReportDetailModel,
   reportStatusOptions
 } from '@/@types/pages/reports'
-import { documentStatusOptions, documentResultOptions } from '@/@types/pages/docs/documents'
+import { documentStatusOptions, documentResultOptions, DocumentExportFileEnum } from '@/@types/pages/docs/documents'
 import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
 import EIBMultipleFilter from '@/components/Filter/EIBMultipleFilter.vue'
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
@@ -33,7 +33,6 @@ import {
 import { getBranches } from '@/api/users'
 import { BranchModel } from '@/@types/pages/login'
 import Status from '../components/Status.vue'
-import { DocumentExportFileEnum } from '@/@types/pages/docs/documents'
 import { errorDocumentStatus } from '@/constants/common'
 
 const openFilter = ref(false)

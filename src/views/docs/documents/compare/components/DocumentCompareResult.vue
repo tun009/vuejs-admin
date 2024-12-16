@@ -14,6 +14,8 @@ import { RuleModel } from '@/@types/pages/rules'
 import SafeHtmlRenderer from '@/components/SafeHtmlRenderer.vue'
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import MultipleLanguageResultSimple from './MultipleLanguageResultSimple.vue'
+import { ColumnConfigModel } from '@/@types/common'
+import { removeAccentsAndReplaceSpaces } from '@/utils'
 
 interface Props {
   conditionSelect: number
@@ -119,6 +121,44 @@ const convertTableDataCompareErrorResults = (compareResult: DocumentCompareModel
   })
   return response
 }
+
+const convertDataTableOriginalCopy = (data: ColumnConfigModel[]): ColumnConfigModel[] => {
+  const keysMapping = data.map((c) => removeAccentsAndReplaceSpaces(c.field))
+  console.log(keysMapping)
+  if (!keysMapping.includes('ban_sao(bank)')) return data
+  const result: Array<ColumnConfigModel> = []
+  data.forEach((item) => {
+    if (item.field === 'Name') {
+      result.push({
+        field: item.field,
+        label: 'Tên chứng từ',
+        minWidth: item.minWidth
+      })
+    } else if (item.field.includes('Bản sao') || item.field.includes('Bản gốc')) {
+      const groupLabel = item.field.includes('khách') ? 'Phần giao của khách hàng' : 'Phần giao của ngân hàng'
+
+      let group = result.find((r) => r.label === groupLabel)
+      if (!group) {
+        group = {
+          label: groupLabel,
+          field: '',
+          columns: []
+        }
+        result.push(group)
+      }
+
+      group.columns?.push({
+        field: item.field,
+        label: item.label.includes('Bản sao') ? 'Bản sao' : 'Bản gốc',
+        minWidth: item.minWidth
+      })
+    } else {
+      result.push(item)
+    }
+  })
+
+  return result
+}
 </script>
 
 <template>
@@ -167,7 +207,7 @@ const convertTableDataCompareErrorResults = (compareResult: DocumentCompareModel
             <div v-for="(v, v_i) in block.comparisonResultInputValues" :key="v_i">
               <template v-if="v?.type === 'table' && Array.isArray(v?.value) && typeof v?.value?.[0] !== 'string'">
                 <EIBTable
-                  :column-configs="createColumnConfigs(v?.value?.[0]) ?? {}"
+                  :column-configs="convertDataTableOriginalCopy(createColumnConfigs(v?.value?.[0])) ?? {}"
                   :data="v?.value"
                   hidden-checked
                   hidden-pagination

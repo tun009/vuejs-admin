@@ -220,7 +220,7 @@ defineExpose<Exposes>({
 }
 
 .el-scrollbar__bar.is-horizontal {
-  height: 10px !important;
+  height: 8px !important;
 }
 
 td.action-row {
@@ -239,6 +239,10 @@ td.action-row {
       align-items: center;
     }
   }
+}
+
+th {
+  height: 50px;
 }
 </style>
 

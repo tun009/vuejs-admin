@@ -5,7 +5,7 @@
     class="cursor-pointer flex flex-row items-center gap-1 w-fit"
   >
     <span class="font-semibold">{{ title }}:</span>
-    <div class="text-[#005d98] w-6">+{{ modelValue.length }}</div>
+    <div class="text-[#005d98] w-8">+{{ modelValue.length }}</div>
     <el-icon class="ml-2 transition-all duration-300" :class="{ 'rotate-180': isShow, 'rotate-0': !isShow }"
       ><ArrowDownBold
     /></el-icon>

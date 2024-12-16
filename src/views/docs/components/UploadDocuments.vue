@@ -131,7 +131,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <el-dialog v-model="localModelValue" :title="$t('docs.document.addDocument')" width="50%" :before-close="handleClose">
+  <el-dialog v-model="localModelValue" :title="$t('docs.document.addDocument')" width="60%" :before-close="handleClose">
     <el-form
       ref="addDocumentFormRef"
       :model="addDocumentFormData"
