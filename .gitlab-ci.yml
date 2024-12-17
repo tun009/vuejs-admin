@@ -41,9 +41,11 @@ test:
     when: always
     paths:
       - coverage/lcov.info
+      - junit-report.xml
     expose_as: 'Unit Test Report'
     reports:
       coverage_report:
+        coverage_format: cobertura
         path: coverage/lcov.info
     expire_in: 1 week
   cache:
