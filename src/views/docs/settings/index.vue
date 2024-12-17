@@ -224,7 +224,7 @@ onMounted(() => {
           :disabledIds="disabledIds"
         >
           <template #actions="{ row }">
-            <div class="flex flex-row gap-2 p-2">
+            <div class="flex flex-row gap-2 p-2 items-center justify-center">
               <SvgIcon :size="18" name="edit-info" @click.stop="handleUpdateInfoExtract(row)" class="cursor-pointer" />
             </div>
           </template>
