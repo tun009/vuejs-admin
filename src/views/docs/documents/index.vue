@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ArrowDownBold, Filter, Plus, Search } from '@element-plus/icons-vue'
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onActivated, onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
@@ -241,6 +241,10 @@ const isHaveDeleteDocument = (username: string, status: DocumentStatusEnum) => {
 
 onMounted(() => {
   handleGetBranches()
+})
+
+onActivated(() => {
+  handleGetData()
 })
 </script>
 

@@ -1,20 +1,28 @@
 import { SelectOptionModel } from '@/@types/common'
+import { UpdateConfidenceRequestModel } from '@/@types/pages/docs/settings/services/SettingRequest'
 import {
+  convertFileUrl,
+  createColumnConfigs,
   formatNumberConfidence,
+  formatNumberWithCommas,
   getDataWithPagination,
+  getFileNameFromContentDisposition,
+  getTextFromHtml,
   groupByField,
-  handleComingSoon,
   mappingBranches,
   omitPropertyFromObject,
+  removeDuplicateItemInArray,
+  renderColorByConfidence,
   renderColorByValue,
   renderLabelByValue,
   resetNullUndefinedFields,
   scrollIntoViewParent,
   sortObjectsByMultipleFields,
+  trimObjectValues,
   truncateFileName,
-  withAllSelection
+  withAllSelection,
+  withDefaultString
 } from '@/utils/common'
-import { ElMessageBox } from 'element-plus'
 import { describe, expect, it, vi } from 'vitest'
 
 // getDataWithPagination
@@ -41,20 +49,6 @@ describe('getDataWithPagination', () => {
   it('should return only one item if pageSize is 1', () => {
     const data = [1, 2, 3]
     expect(getDataWithPagination(data, 1, 1)).toEqual([2])
-  })
-})
-
-// handleComingSoon
-vi.mock('element-plus', () => ({
-  ElMessageBox: {
-    confirm: vi.fn()
-  }
-}))
-
-describe('handleComingSoon', () => {
-  it('should show a coming soon message box', () => {
-    handleComingSoon()
-    expect(ElMessageBox.confirm).toHaveBeenCalledWith('Coming soon...')
   })
 })
 
@@ -552,9 +546,9 @@ describe('mappingBranches', () => {
   })
 
   it('should map branches with numeric IDs', () => {
-    const branches = [{ id: 100, name: 'Branch A', code: 'A' }]
+    const branches = [{ id: 250, name: 'Branch A', code: 'A' }]
     const result = mappingBranches(branches)
-    expect(result).toEqual([{ label: 'Branch A', value: 100, description: 'A' }])
+    expect(result).toEqual([{ label: 'Branch A', value: 250, description: 'A' }])
   })
 
   it('should map branches with non-alphabetic codes', () => {
@@ -732,5 +726,531 @@ describe('sortObjectsByMultipleFields', () => {
       { name: 'Banana', value: 2 },
       { name: 'Apple', value: 2 }
     ])
+  })
+})
+
+// createColumnConfigs
+describe('createColumnConfigs', () => {
+  it('should return an empty array if input object is null', () => {
+    const result = createColumnConfigs(null)
+    expect(result).toEqual([])
+  })
+
+  it('should return an empty array if input object is undefined', () => {
+    const result = createColumnConfigs(undefined)
+    expect(result).toEqual([])
+  })
+
+  it('should return correct column configs when input object is empty', () => {
+    const result = createColumnConfigs({})
+    expect(result).toEqual([])
+  })
+
+  it('should return column configs with correct field and label', () => {
+    const input = { name: 'John', age: 25 }
+    const result = createColumnConfigs(input)
+    expect(result).toEqual([
+      { field: 'name', label: 'name', minWidth: 250 },
+      { field: 'age', label: 'age', minWidth: 250 }
+    ])
+  })
+
+  it('should assign minWidth of 50 if field is "stt"', () => {
+    const input = { stt: 1 }
+    const result = createColumnConfigs(input)
+    expect(result).toEqual([{ field: 'stt', label: 'stt', minWidth: 50 }])
+  })
+
+  it('should handle numeric values correctly', () => {
+    const input = { price: 1000 }
+    const result = createColumnConfigs(input)
+    expect(result).toEqual([{ field: 'price', label: 'price', minWidth: 250 }])
+  })
+
+  it('should handle a single key object', () => {
+    const input = { id: 1 }
+    const result = createColumnConfigs(input)
+    expect(result).toEqual([{ field: 'id', label: 'id', minWidth: 250 }])
+  })
+
+  it('should handle multiple keys', () => {
+    const input = { name: 'Alice', age: 30, city: 'Paris' }
+    const result = createColumnConfigs(input)
+    expect(result).toEqual([
+      { field: 'name', label: 'name', minWidth: 250 },
+      { field: 'age', label: 'age', minWidth: 250 },
+      { field: 'city', label: 'city', minWidth: 250 }
+    ])
+  })
+
+  it('should handle keys with mixed case', () => {
+    const input = { userId: 123 }
+    const result = createColumnConfigs(input)
+    expect(result).toEqual([{ field: 'userId', label: 'userId', minWidth: 250 }])
+  })
+
+  it('should return correct column configs for edge case with special characters', () => {
+    const input = { 'user-id': 1, 'user-name': 'Bob' }
+    const result = createColumnConfigs(input)
+    expect(result).toEqual([
+      { field: 'user-id', label: 'user-id', minWidth: 250 },
+      { field: 'user-name', label: 'user-name', minWidth: 250 }
+    ])
+  })
+})
+
+// convertFileUrl
+describe('convertFileUrl', () => {
+  it('should return the correct URL with the path provided', () => {
+    vi.stubEnv('VITE_BASE_API', 'https://api.example.com') // Giả lập biến môi trường
+    const path = 'path/to/file.txt'
+    const result = convertFileUrl(path)
+    expect(result).toBe('https://api.example.com/files?src=path/to/file.txt')
+  })
+
+  it('should handle an empty string path', () => {
+    vi.stubEnv('VITE_BASE_API', 'https://api.example.com')
+    const path = ''
+    const result = convertFileUrl(path)
+    expect(result).toBe('https://api.example.com/files?src=')
+  })
+
+  it('should handle paths with query parameters', () => {
+    vi.stubEnv('VITE_BASE_API', 'https://api.example.com')
+    const path = 'path/to/file.txt?version=1'
+    const result = convertFileUrl(path)
+    expect(result).toBe('https://api.example.com/files?src=path/to/file.txt?version=1')
+  })
+
+  it('should return the correct URL when the path is just a slash', () => {
+    vi.stubEnv('VITE_BASE_API', 'https://api.example.com')
+    const path = '/'
+    const result = convertFileUrl(path)
+    expect(result).toBe('https://api.example.com/files?src=/')
+  })
+
+  it('should handle URLs with special characters in path', () => {
+    vi.stubEnv('VITE_BASE_API', 'https://api.example.com')
+    const path = 'path/to/file@name.txt'
+    const result = convertFileUrl(path)
+    expect(result).toBe('https://api.example.com/files?src=path/to/file@name.txt')
+  })
+
+  it('should return the correct URL when the path is an absolute URL', () => {
+    vi.stubEnv('VITE_BASE_API', 'https://api.example.com')
+    const path = 'https://anotherdomain.com/file.txt'
+    const result = convertFileUrl(path)
+    expect(result).toBe('https://api.example.com/files?src=https://anotherdomain.com/file.txt')
+  })
+
+  it('should handle path with query and fragment identifiers', () => {
+    vi.stubEnv('VITE_BASE_API', 'https://api.example.com')
+    const path = 'path/to/file.txt?version=1#section'
+    const result = convertFileUrl(path)
+    expect(result).toBe('https://api.example.com/files?src=path/to/file.txt?version=1#section')
+  })
+})
+
+// getFileNameFromContentDisposition
+describe('getFileNameFromContentDisposition', () => {
+  it('should return the file name without extension', () => {
+    const contentDisposition = 'attachment; filename="example.txt"'
+    const result = getFileNameFromContentDisposition(contentDisposition)
+    expect(result).toBe('example')
+  })
+
+  it('should return "file" if the contentDisposition is empty', () => {
+    const result = getFileNameFromContentDisposition('')
+    expect(result).toBe('file')
+  })
+
+  it('should return "file" if the contentDisposition does not match', () => {
+    const contentDisposition = 'attachment'
+    const result = getFileNameFromContentDisposition(contentDisposition)
+    expect(result).toBe('file')
+  })
+
+  it('should return the file name without extension for a file with a complex name', () => {
+    const contentDisposition = 'attachment; filename="file-name.v1.2.3.zip"'
+    const result = getFileNameFromContentDisposition(contentDisposition)
+    expect(result).toBe('file-name')
+  })
+
+  it('should handle contentDisposition without a filename part', () => {
+    const contentDisposition = 'inline'
+    const result = getFileNameFromContentDisposition(contentDisposition)
+    expect(result).toBe('file')
+  })
+
+  it('should handle contentDisposition with a filename containing special characters', () => {
+    const contentDisposition = 'attachment; filename="my-file_#1@2024.pdf"'
+    const result = getFileNameFromContentDisposition(contentDisposition)
+    expect(result).toBe('my-file_#1@2024')
+  })
+
+  it('should handle contentDisposition with a filename and extension', () => {
+    const contentDisposition = 'attachment; filename="report.pdf"'
+    const result = getFileNameFromContentDisposition(contentDisposition)
+    expect(result).toBe('report')
+  })
+
+  it('should handle contentDisposition with a filename that has multiple dots', () => {
+    const contentDisposition = 'attachment; filename="archive.tar.gz"'
+    const result = getFileNameFromContentDisposition(contentDisposition)
+    expect(result).toBe('archive')
+  })
+
+  it('should return the default file name when no contentDisposition is passed', () => {
+    const result = getFileNameFromContentDisposition()
+    expect(result).toBe('file')
+  })
+})
+
+// getTextFromHtml
+describe('getTextFromHtml', () => {
+  it('should return the correct text from HTML string', () => {
+    const html = '<div>Hello <b>World</b></div>'
+    const result = getTextFromHtml(html)
+    expect(result).toBe('Hello World')
+  })
+
+  it('should return empty string if HTML is empty', () => {
+    const html = ''
+    const result = getTextFromHtml(html)
+    expect(result).toBe('')
+  })
+
+  it('should handle null HTML input gracefully', () => {
+    const result = getTextFromHtml(null as any)
+    expect(result).toBe('')
+  })
+
+  it('should handle undefined HTML input gracefully', () => {
+    const result = getTextFromHtml(undefined as any)
+    expect(result).toBe('undefined')
+  })
+
+  it('should return the correct text from HTML with multiple nested elements', () => {
+    const html = '<div><p><i>Text</i> here</p></div>'
+    const result = getTextFromHtml(html)
+    expect(result).toBe('Text here')
+  })
+
+  it('should strip out script tags from HTML string', () => {
+    const html = '<div><script>alert("XSS")</script>content</div>'
+    const result = getTextFromHtml(html)
+    expect(result).toBe('alert("XSS")content')
+  })
+
+  it('should return text when HTML contains encoded characters', () => {
+    const html = '<div>&amp; &lt; &gt;</div>'
+    const result = getTextFromHtml(html)
+    expect(result).toBe('& < >')
+  })
+
+  it('should return correct text with different HTML entities', () => {
+    const html = '<div>&copy; 2024</div>'
+    const result = getTextFromHtml(html)
+    expect(result).toBe('© 2024')
+  })
+
+  it('should handle complex HTML structure and return correct text', () => {
+    const html = '<div><h1>Main Title</h1><p>Paragraph text</p></div>'
+    const result = getTextFromHtml(html)
+    expect(result).toBe('Main TitleParagraph text')
+  })
+
+  it('should return the correct text when HTML contains line breaks and spaces', () => {
+    const html = '<div>Line 1<br>Line 2</div>'
+    const result = getTextFromHtml(html)
+    expect(result).toBe('Line 1Line 2')
+  })
+})
+
+// withDefaultString
+describe('withDefaultString', () => {
+  it('should return default string when value is null', () => {
+    const result = withDefaultString(null)
+    expect(result).toBe('-')
+  })
+
+  it('should return value when it is a non-empty string', () => {
+    const result = withDefaultString('Test')
+    expect(result).toBe('Test')
+  })
+
+  it('should return default string when value is an empty string', () => {
+    const result = withDefaultString('')
+    expect(result).toBe('-')
+  })
+
+  it('should return default string when value is a falsy string', () => {
+    const result = withDefaultString('0')
+    expect(result).toBe('0')
+  })
+
+  it('should return default string when value is a string with spaces', () => {
+    const result = withDefaultString('   ')
+    expect(result).toBe('   ')
+  })
+
+  it('should return default string when value is a string with special characters', () => {
+    const result = withDefaultString('!@#$%^')
+    expect(result).toBe('!@#$%^')
+  })
+
+  it('should return default string when value is a boolean true', () => {
+    const result = withDefaultString(true as any)
+    expect(result).toBe(true)
+  })
+
+  it('should return default string when value is a boolean false', () => {
+    const result = withDefaultString(false as any)
+    expect(result).toBe('-')
+  })
+
+  it('should return default string when value is a number', () => {
+    const result = withDefaultString(123 as any)
+    expect(result).toBe(123)
+  })
+})
+
+// renderColorByConfidence
+describe('renderColorByConfidence', () => {
+  it('should return correct color for a confidence within the range', () => {
+    const settings = [
+      { min: 0, max: 0.5, color: 'red' },
+      { min: 0.5, max: 1, color: 'green' }
+    ]
+    const result = renderColorByConfidence(0.6, settings as UpdateConfidenceRequestModel[])
+    expect(result).toBe('green')
+  })
+
+  it('should return default color when confidence is outside all ranges', () => {
+    const settings = [
+      { min: 0, max: 0.5, color: 'red' },
+      { min: 0.5, max: 1, color: 'green' }
+    ]
+    const result = renderColorByConfidence(1.1, settings as UpdateConfidenceRequestModel[])
+    expect(result).toBe('#7a8da5')
+  })
+
+  it('should return correct color for a confidence at the exact boundary', () => {
+    const settings = [
+      { min: 0, max: 0.5, color: 'red' },
+      { min: 0.5, max: 1, color: 'green' }
+    ]
+    const result = renderColorByConfidence(0.5, settings as UpdateConfidenceRequestModel[])
+    expect(result).toBe('green')
+  })
+
+  it('should return default color when no settings are provided', () => {
+    const result = renderColorByConfidence(0.8, [])
+    expect(result).toBe('#7a8da5')
+  })
+
+  it('should handle negative confidence gracefully', () => {
+    const settings = [
+      { min: 0, max: 0.5, color: 'red' },
+      { min: 0.5, max: 1, color: 'green' }
+    ]
+    const result = renderColorByConfidence(-0.5, settings as UpdateConfidenceRequestModel[])
+    expect(result).toBe('#7a8da5')
+  })
+
+  it('should return color for confidence at 0', () => {
+    const settings = [
+      { min: 0, max: 0.5, color: 'red' },
+      { min: 0.5, max: 1, color: 'green' }
+    ]
+    const result = renderColorByConfidence(0, settings as UpdateConfidenceRequestModel[])
+    expect(result).toBe('red')
+  })
+
+  it('should return the default color when there is no valid range for confidence', () => {
+    const settings = [{ min: 0.6, max: 1, color: 'blue' }]
+    const result = renderColorByConfidence(0.5, settings as UpdateConfidenceRequestModel[])
+    expect(result).toBe('#7a8da5')
+  })
+})
+
+// trimObjectValues
+describe('trimObjectValues', () => {
+  it('should trim string values in an object', () => {
+    const obj = { name: ' John ', age: 30 }
+    const result = trimObjectValues(obj)
+    expect(result).toEqual({ name: 'John', age: 30 })
+  })
+
+  it('should trim nested string values in an object', () => {
+    const obj = { user: { name: ' John ', age: 25 }, country: ' USA ' }
+    const result = trimObjectValues(obj)
+    expect(result).toEqual({ user: { name: 'John', age: 25 }, country: 'USA' })
+  })
+
+  it('should not modify non-string values', () => {
+    const obj = { number: 250, boolean: true }
+    const result = trimObjectValues(obj)
+    expect(result).toEqual({ number: 250, boolean: true })
+  })
+
+  it('should handle objects with null or undefined values gracefully', () => {
+    const obj = { name: ' John ', address: null }
+    const result = trimObjectValues(obj)
+    expect(result).toEqual({ name: 'John', address: null })
+  })
+
+  it('should return an empty object when passed an empty object', () => {
+    const obj = {}
+    const result = trimObjectValues(obj)
+    expect(result).toEqual({})
+  })
+
+  it('should not modify primitive values', () => {
+    const obj = { key: ' value ' }
+    const result = trimObjectValues(obj)
+    expect(result).toEqual({ key: 'value' })
+  })
+
+  it('should trim all string properties recursively', () => {
+    const obj = { key1: 'value  ', key2: { key3: '  value' } }
+    const result = trimObjectValues(obj)
+    expect(result).toEqual({ key1: 'value', key2: { key3: 'value' } })
+  })
+
+  it('should handle nested arrays with string values', () => {
+    const obj = { list: ['  item1', 'item2  '] }
+    const result = trimObjectValues(obj)
+    expect(result).toEqual({ list: ['item1', 'item2'] })
+  })
+
+  it('should handle objects with mixed value types', () => {
+    const obj = { key1: ' value ', key2: 42, key3: { key4: 'test' } }
+    const result = trimObjectValues(obj)
+    expect(result).toEqual({ key1: 'value', key2: 42, key3: { key4: 'test' } })
+  })
+
+  it('should handle objects with no string values', () => {
+    const obj = { num: 123, bool: false }
+    const result = trimObjectValues(obj)
+    expect(result).toEqual({ num: 123, bool: false })
+  })
+})
+
+// formatNumberWithCommas
+describe('formatNumberWithCommas', () => {
+  it('should format a number with commas correctly', () => {
+    expect(formatNumberWithCommas(1000)).toBe('1,000')
+  })
+
+  it('should format a string number with commas correctly', () => {
+    expect(formatNumberWithCommas('1000000')).toBe('1,000,000')
+  })
+
+  it('should return "NaN" for invalid number input', () => {
+    expect(formatNumberWithCommas('invalid')).toBe('NaN')
+  })
+
+  it('should format a large number correctly', () => {
+    expect(formatNumberWithCommas(1234567890)).toBe('1,234,567,890')
+  })
+
+  it('should return "0" for input 0', () => {
+    expect(formatNumberWithCommas(0)).toBe('0')
+  })
+
+  it('should return a number with decimals formatted correctly', () => {
+    expect(formatNumberWithCommas(1234.56)).toBe('1,234.56')
+  })
+
+  it('should handle negative numbers correctly', () => {
+    expect(formatNumberWithCommas(-1000)).toBe('-1,000')
+  })
+
+  it('should handle decimals with trailing zeros correctly', () => {
+    expect(formatNumberWithCommas(1000.0)).toBe('1,000')
+  })
+
+  it('should handle very large numbers correctly', () => {
+    // eslint-disable-next-line no-loss-of-precision
+    expect(formatNumberWithCommas(1234567890123456789)).toBe('1,234,567,890,123,456,800')
+  })
+
+  it('should return "NaN" for non-numeric string', () => {
+    expect(formatNumberWithCommas('abc')).toBe('NaN')
+  })
+})
+
+// removeDuplicateItemInArray
+describe('removeDuplicateItemInArray', () => {
+  it('should remove duplicates based on a single key', () => {
+    const input = [
+      { id: 1, name: 'A' },
+      { id: 2, name: 'B' },
+      { id: 1, name: 'A' }
+    ]
+    const result = removeDuplicateItemInArray(input, 'id')
+    expect(result).toEqual([
+      { id: 1, name: 'A' },
+      { id: 2, name: 'B' }
+    ])
+  })
+
+  it('should return the same array if no duplicates are found', () => {
+    const input = [
+      { id: 1, name: 'A' },
+      { id: 2, name: 'B' }
+    ]
+    const result = removeDuplicateItemInArray(input, 'id')
+    expect(result).toEqual(input)
+  })
+
+  it('should handle an empty array', () => {
+    const input: any[] = []
+    const result = removeDuplicateItemInArray(input, 'id')
+    expect(result).toEqual([])
+  })
+
+  it('should handle an array of objects with different keys', () => {
+    const input = [
+      { id: 1, name: 'A' },
+      { id: 2, name: 'B' },
+      { id: 3, name: 'C' }
+    ]
+    const result = removeDuplicateItemInArray(input, 'id')
+    expect(result).toEqual(input)
+  })
+
+  it('should handle objects with complex nested properties', () => {
+    const input = [
+      { id: 1, data: { name: 'A' } },
+      { id: 2, data: { name: 'B' } },
+      { id: 1, data: { name: 'A' } }
+    ]
+    const result = removeDuplicateItemInArray(input, 'id')
+    expect(result).toEqual([
+      { id: 1, data: { name: 'A' } },
+      { id: 2, data: { name: 'B' } }
+    ])
+  })
+
+  it('should return an empty array when all items are duplicates', () => {
+    const input = [
+      { id: 1, name: 'A' },
+      { id: 1, name: 'A' }
+    ]
+    const result = removeDuplicateItemInArray(input, 'id')
+    expect(result).toEqual([{ id: 1, name: 'A' }])
+  })
+
+  it('should not mutate the original array', () => {
+    const input = [
+      { id: 1, name: 'A' },
+      { id: 2, name: 'B' },
+      { id: 1, name: 'A' }
+    ]
+    const original = [...input]
+    removeDuplicateItemInArray(input, 'id')
+    expect(input).toEqual(original)
   })
 })
