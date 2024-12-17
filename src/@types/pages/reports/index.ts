@@ -256,6 +256,11 @@ export const reportStatusOptions: SelectOptionModel[] = [
   },
   {
     label: 'Đang phê duyệt',
+    value: DocumentStatusEnum.VALIDATING,
+    color: STATUS_COLORS.WAIT_CHECK
+  },
+  {
+    label: 'YC điều chỉnh',
     value: DocumentStatusEnum.ADJUST_REQUESTED,
     color: STATUS_COLORS.WAIT_CHECK
   },
