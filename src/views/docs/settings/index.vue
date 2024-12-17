@@ -88,7 +88,6 @@ const handleGetDocTypes = async () => {
     const newData = doc_types.value.filter((item) => item.label !== 'Khác')
     doc_types.value = newData
     for (const data in doc_types.value) {
-      console.log('data', doc_types.value[data].label)
       if (doc_types.value[data].label == 'Trích xuất LC') {
         doc_types.value[data].label = 'LC'
       } else if (doc_types.value[data].label == 'Trích xuất invoice') {
