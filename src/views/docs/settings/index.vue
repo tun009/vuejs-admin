@@ -85,6 +85,8 @@ const handleGetDocTypes = async () => {
       label: item.name,
       value: item.id
     }))
+    const newData = doc_types.value.filter((item) => item.label !== 'Khác')
+    doc_types.value = newData
   } catch (error: any) {
     throw new Error(error)
   }
