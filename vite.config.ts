@@ -10,7 +10,6 @@ import svgLoader from 'vite-svg-loader'
 export default ({ mode }: ConfigEnv): UserConfigExport => {
   const viteEnv = loadEnv(mode, process.cwd()) as ImportMetaEnv
   const { VITE_PUBLIC_PATH } = viteEnv
-  console.log(VITE_PUBLIC_PATH)
   return {
     /** Modify base according to actual situation when packaging */
     base: VITE_PUBLIC_PATH,
@@ -86,15 +85,14 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
     ],
     /** Vitest unit test configuration: https://cn.vitest.dev/config */
     test: {
+      // include: ['tests/**/*.test.ts'],
       include: ['tests/**/*.test.ts'],
+      // exclude: ['tests/**/common/*.test.ts'],
       environment: 'jsdom',
-      reporters: ['junit'],
-      outputFile: {
-        junit: './junit-report.xml'
-      },
       coverage: {
-        provider: 'v8',
-        reporter: ['cobertura', 'lcov', 'text', 'html'],
+        provider: 'v8', // Có thể chọn 'v8' hoặc 'istanbul' nếu cần
+        reporter: ['text', 'html', 'lcov'], // Chọn các báo cáo bạn muốn (text, html, lcov)
+        all: true, // Bao gồm tất cả các file mã nguồn (kể cả chưa được test)
         reportOnFailure: true,
         ignoreEmptyLines: true
       }

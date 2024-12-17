@@ -120,6 +120,16 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
     minWidth: 150
   },
   {
+    field: 'result',
+    label: 'docs.document.result',
+    minWidth: 150
+  },
+  {
+    field: 'doneAt',
+    label: 'docs.document.completionDate',
+    minWidth: 150
+  },
+  {
     field: 'branchName',
     label: 'docs.document.sol',
     minWidth: 250
@@ -144,16 +154,7 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
     label: 'docs.document.createdAt',
     minWidth: 120
   },
-  {
-    field: 'result',
-    label: 'docs.document.result',
-    minWidth: 150
-  },
-  {
-    field: 'doneAt',
-    label: 'docs.document.completionDate',
-    minWidth: 150
-  },
+
   {
     field: 'actions',
     label: 'docs.document.actions',

@@ -165,7 +165,7 @@ export function sortObjectsByMultipleFields(array: any[], fields: string[], sort
   })
 }
 
-export const createColumnConfigs = (object: { [key: string]: string | number }): ColumnConfigModel[] => {
+export const createColumnConfigs = (object?: { [key: string]: string | number } | null): ColumnConfigModel[] => {
   if (!object) return []
   const keys = Object.keys(object)
   return keys.map((k) => ({
