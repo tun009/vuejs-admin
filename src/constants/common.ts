@@ -14,6 +14,7 @@ export const PAGINATION_DEFAULT = {
   pageNum: 0,
   pageSize: 10
 }
+export const SOCKET_PATH = 'eximbank-socket'
 
 export const BLOB_EXPORT_TYPES = {
   [DocumentExportFileEnum.DOCX]: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',

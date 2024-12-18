@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { ColumnConfigModel, DocumentStatusEnum, SelectOptionModel } from '@/@types/common'
 import { RoleEnum } from '@/@types/pages/users'
 import { STATUS_COLORS } from '@/constants/color'
@@ -643,3 +644,8 @@ export interface PatchDocumentCompareUndefinedModel {
 
 export const getAllCategoryRequestModel = { pageNum: 0, pageSize: 9999, type: RuleTypeEnum.CATEGORY, query: '' }
 export const getAllRuleRequestModel = { ...getAllCategoryRequestModel, type: RuleTypeEnum.LAW }
+
+export interface SocketDataModel {
+  id: number
+  status: DocumentStatusEnum
+}
