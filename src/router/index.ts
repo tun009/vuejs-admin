@@ -229,39 +229,7 @@ export const constantRoutes: RouteRecordRaw[] = [
  * Used to place routes with permissions (Roles attribute)
  * Must have a Name attribute
  */
-export const dynamicRoutes: RouteRecordRaw[] = [
-  // {
-  //   path: '/permission',
-  //   component: Layouts,
-  //   redirect: '/permission/page',
-  //   name: 'Permission',
-  //   meta: {
-  //     title: 'Permissions',
-  //     svgIcon: 'lock',
-  //     roles: ['admin', 'checker'], // Roles can be set in the root route
-  //     alwaysShow: true // The root menu will always be displayed
-  //   },
-  //   children: [
-  //     {
-  //       path: 'page',
-  //       component: () => import('@/views/permission/page.vue'),
-  //       name: 'PagePermission',
-  //       meta: {
-  //         title: 'Page level',
-  //         roles: ['admin'] // Or set roles in sub-navigation
-  //       }
-  //     },
-  //     {
-  //       path: 'directive',
-  //       component: () => import('@/views/permission/directive.vue'),
-  //       name: 'DirectivePermission',
-  //       meta: {
-  //         title: 'Button level' // If no role is set, it means: the page does not require permission, but will inherit the role of the root route
-  //       }
-  //     }
-  //   ]
-  // }
-]
+export const dynamicRoutes: RouteRecordRaw[] = []
 
 const router = createRouter({
   history,

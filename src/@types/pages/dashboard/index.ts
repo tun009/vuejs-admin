@@ -6,18 +6,15 @@ export interface FieldChangedModel {
   field: string
   rate: number
 }
-export interface SOLModel {
-  id: string
-  stt: number
-  name: string
-  total: number
-}
+
 export interface FilterReportOverviewModel {
   bizType?: BusinessTypeEnum | -1
 }
+
 export interface FilterReportRatioModel extends FilterReportOverviewModel {
   docTypeId?: number
 }
+
 export const fieldChangedListColumnConfigs = [
   {
     field: 'key',
@@ -29,6 +26,7 @@ export const fieldChangedListColumnConfigs = [
     width: 200
   }
 ]
+
 export const SOLListColumnConfigs = [
   {
     field: 'stt',
@@ -55,11 +53,13 @@ export const SOLListColumnConfigs = [
 export interface DasboardOverviewModel {
   [key: string]: number
 }
+
 export interface DasboardRatioModel {
   key: string
   editRatio: number | string
   docType: string
 }
+
 export interface DasboardBranchModel {
   totalDossierHandle: number
   branch: BranchModel

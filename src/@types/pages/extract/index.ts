@@ -1,11 +1,6 @@
 import { SelectOptionModel, StatusColorModel } from '@/@types/common'
 import { STATUS_COLORS } from '@/constants/color'
 
-export enum DossierStatusEnum {
-  ACTIVE,
-  UNACTIVE,
-  BLOCK
-}
 export interface ExtractResultOcrModel {
   id: number
   confidence?: number
@@ -61,22 +56,6 @@ export interface ExtractDocumentModel {
   fileName: string
   result: ExtractResultOcrModel[][]
 }
-export interface ExtractHistoryAction {
-  field: string
-  before: string
-  after: string
-  type: string
-}
-export interface ExtractHistoryDetail {
-  time: string
-  user: string
-  role: string
-  actions: ExtractHistoryAction[]
-}
-// export interface ExtractHistoryModel {
-//   date: string
-//   histories: ExtractHistoryDetail[]
-// }
 export interface ExtractNoteModel {
   stt: number
   id: number

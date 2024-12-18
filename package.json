@@ -25,7 +25,6 @@
     "@tato30/vue-pdf": "1.9.7",
     "axios": "1.7.7",
     "chart.js": "^4.4.4",
-    "chartjs-plugin-datalabels": "^2.2.0",
     "dayjs": "1.11.13",
     "dompurify": "^3.1.7",
     "element-plus": "2.8.3",
@@ -45,9 +44,7 @@
     "vue-chartjs": "^5.3.1",
     "vue-draggable-next": "^2.2.1",
     "vue-i18n": "^10.0.3",
-    "vue-router": "4.4.5",
-    "vue3-apexcharts": "^1.7.0",
-    "vue3-pdf-app": "^1.0.3"
+    "vue-router": "4.4.5"
   },
   "devDependencies": {
     "@tailwindcss/aspect-ratio": "^0.2.0",

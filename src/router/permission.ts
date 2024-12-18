@@ -1,7 +1,6 @@
 import router from '@/router'
 import { useUserStoreHook } from '@/store/modules/user'
 import { usePermissionStoreHook } from '@/store/modules/permission'
-// import { ElMessage } from 'element-plus'
 import { setRouteChange } from '@/hooks/useRouteListener'
 import { useTitle } from '@/hooks/useTitle'
 import { getToken } from '@/utils/cache/cookies'
