@@ -21,6 +21,7 @@ export const formatDateExactFormat = (dateString: string, fromFormat: string, to
 }
 
 export const formatDate = (date: string, format: string) => {
+  if (!date) return ''
   return dayjs(date).format(format)
 }
 
