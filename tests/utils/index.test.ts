@@ -1,10 +1,4 @@
-import {
-  formatDateTime,
-  getCssVariableValue,
-  removeAccents,
-  removeAccentsAndReplaceSpaces,
-  setCssVariableValue
-} from '@/utils'
+import { formatDateTime, removeAccents, removeAccentsAndReplaceSpaces } from '@/utils'
 import dayjs from 'dayjs'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -20,63 +14,6 @@ describe('Utility Functions Tests', () => {
       const result = formatDateTime(time)
       const expected = dayjs(new Date(time)).format('YYYY-MM-DD HH:mm:ss') // Assuming 'YYYY-MM-DD HH:mm:ss' format
       expect(result).toBe(expected)
-    })
-  })
-
-  describe('getCssVariableValue', () => {
-    it('should return a valid CSS variable value', () => {
-      const cssVariableName = '--primary-color'
-      // Mock `getComputedStyle`
-      vi.stubGlobal('getComputedStyle', () => ({
-        getPropertyValue: vi.fn().mockReturnValue('rgb(255, 0, 0)')
-      }))
-
-      const result = getCssVariableValue(cssVariableName)
-      expect(result).toBe('rgb(255, 0, 0)')
-    })
-
-    it('should return an empty string if no CSS variable is found or if there is an error', () => {
-      vi.stubGlobal('getComputedStyle', () => {
-        throw new Error('Test error')
-      })
-
-      const result = getCssVariableValue('--non-existing-variable')
-      expect(result).toBe('')
-    })
-  })
-
-  describe('setCssVariableValue', () => {
-    it('should set a CSS variable', () => {
-      const cssVariableName = '--primary-color'
-      const cssVariableValue = 'rgb(0, 255, 0)'
-
-      // Mock `setProperty`
-      vi.stubGlobal('document', {
-        documentElement: {
-          style: {
-            setProperty: vi.fn()
-          }
-        }
-      })
-
-      setCssVariableValue(cssVariableName, cssVariableValue)
-
-      expect(document.documentElement.style.setProperty).toHaveBeenCalledWith(cssVariableName, cssVariableValue)
-    })
-
-    it('should catch errors when setting CSS variable fails', () => {
-      vi.stubGlobal('document', {
-        documentElement: {
-          style: {
-            setProperty: vi.fn().mockImplementation(() => {
-              throw new Error('Test error')
-            })
-          }
-        }
-      })
-
-      // Ensure no error is thrown
-      setCssVariableValue('--primary-color', 'rgb(0, 255, 0)')
     })
   })
 
