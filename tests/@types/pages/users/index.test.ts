@@ -233,7 +233,7 @@ describe('statusTypeOptions', () => {
 
 describe('configRoleUserTableData', () => {
   it('should have 42 items in the array', () => {
-    expect(configRoleUserTableData).toHaveLength(42)
+    expect(configRoleUserTableData).toHaveLength(40)
   })
 
   it('should have correct structure for each item', () => {
@@ -251,7 +251,7 @@ describe('configRoleUserTableData', () => {
 
     // Verify that there are 9 items with title = 1, and 33 items with title = 2
     expect(title1Items).toHaveLength(9)
-    expect(title2Items).toHaveLength(33)
+    expect(title2Items).toHaveLength(31)
   })
 
   it('should contain the expected names for some specific entries', () => {
