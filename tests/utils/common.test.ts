@@ -1,6 +1,7 @@
 import { SelectOptionModel } from '@/@types/common'
 import { UpdateConfidenceRequestModel } from '@/@types/pages/docs/settings/services/SettingRequest'
 import {
+  buildUrlSocket,
   convertFileUrl,
   createColumnConfigs,
   formatNumberConfidence,
@@ -9,6 +10,7 @@ import {
   getFileNameFromContentDisposition,
   getTextFromHtml,
   groupByField,
+  groupByKey,
   mappingBranches,
   omitPropertyFromObject,
   removeDuplicateItemInArray,
@@ -1252,5 +1254,83 @@ describe('removeDuplicateItemInArray', () => {
     const original = [...input]
     removeDuplicateItemInArray(input, 'id')
     expect(input).toEqual(original)
+  })
+})
+
+// groupByKey
+describe('groupByKey', () => {
+  it('should group items by a specified field', () => {
+    const arr = [
+      { stt: 1, category: 'A' },
+      { stt: 2, category: 'B' },
+      { stt: 3, category: 'A' },
+      { stt: 4, category: 'B' },
+      { stt: 5, category: 'C' }
+    ]
+    const result = groupByKey(arr, 'category')
+
+    expect(result).toEqual([
+      { key: 'A', stt: [1, 3] },
+      { key: 'B', stt: [2, 4] },
+      { key: 'C', stt: [5] }
+    ])
+  })
+
+  it('should return an empty array when the input is empty', () => {
+    const result = groupByKey([], 'category')
+    expect(result).toEqual([])
+  })
+
+  it('should group by a valid field even when some items have missing field values', () => {
+    const arr = [
+      { stt: 1, category: 'A' },
+      { stt: 2 }, // missing category field
+      { stt: 3, category: 'A' },
+      { stt: 4, category: 'B' }
+    ]
+    const result = groupByKey(arr, 'category')
+
+    expect(result).toEqual([
+      { key: 'A', stt: [1, 3] },
+      { key: 'undefined', stt: [2] },
+      { key: 'B', stt: [4] }
+    ])
+  })
+})
+
+// buildUrlSocket
+describe('buildUrlSocket', () => {
+  it('should build the URL correctly from the base URL, path, and query', () => {
+    const query = { user: 'John', id: '123' }
+    const baseUrl = 'http://localhost:3000'
+    const path = 'socket'
+
+    const result = buildUrlSocket({ baseUrl, path, query })
+    expect(result).toBe('http://localhost:3000/socket?user=John&id=123')
+  })
+
+  it('should use the default base URL if not provided', () => {
+    // Simulate import.meta.env variable
+    vi.stubEnv('VITE_BASE_SOCKET_URL', 'http://default-url.com')
+
+    const query = { user: 'Jane' }
+    const result = buildUrlSocket({ query })
+    expect(result).toBe('http://default-url.com/eximbank-socket?user=Jane')
+  })
+
+  it('should handle an empty query object', () => {
+    const query = {}
+    const result = buildUrlSocket({ query })
+    expect(result).toBe('http://default-url.com/eximbank-socket?')
+  })
+
+  it('should build the URL correctly with a custom path and query', () => {
+    const query = { action: 'connect', token: 'abc123' }
+    const result = buildUrlSocket({
+      baseUrl: 'http://localhost:4000',
+      path: 'ws',
+      query
+    })
+    expect(result).toBe('http://localhost:4000/ws?action=connect&token=abc123')
   })
 })

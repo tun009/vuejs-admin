@@ -8,11 +8,11 @@ const createSocketConnection = (url: string) => {
   })
 
   socket.on('connect', () => {
-    console.log('Connected to WebSocket')
+    console.warn('Connected to WebSocket')
   })
 
   socket.on('disconnect', () => {
-    console.log('Disconnected from WebSocket')
+    console.warn('Disconnected from WebSocket')
   })
 
   return socket

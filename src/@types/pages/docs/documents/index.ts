@@ -244,6 +244,16 @@ export const documentStatusOptions: SelectOptionModel[] = [
   },
   {
     label: 'Lỗi phân loại',
+    value: DocumentStatusEnum.CLASSIFY_ERROR,
+    color: STATUS_COLORS.ERROR
+  },
+  {
+    label: 'Lỗi nhận dạng',
+    value: DocumentStatusEnum.OCR_ERROR,
+    color: STATUS_COLORS.ERROR
+  },
+  {
+    label: 'Lỗi phân loại',
     value: DocumentStatusEnum.CLASSIFICATION_ERROR,
     color: STATUS_COLORS.ERROR
   },

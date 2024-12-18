@@ -63,7 +63,7 @@ const { isViewer, isAdmin, isChecker, isMaker, userInfo } = useUserStore()
 const socket = ref()
 
 const defaultStatus = computed(() => {
-  return documentStatusOptions.slice(0, -3).map((c) => c.value as DocumentStatusEnum)
+  return documentStatusOptions.slice(0, -5).map((c) => c.value as DocumentStatusEnum)
 })
 
 const multipleFilterRef = ref<InstanceType<typeof EIBMultipleFilter>>()
@@ -347,7 +347,7 @@ onActivated(() => {
         ref="multipleFilterRef"
         v-model="filterValue.status"
         :title="$t('docs.document.status')"
-        :options="documentStatusOptions.slice(0, -3)"
+        :options="documentStatusOptions.slice(0, -5)"
       />
       <EIBSingleFilter
         v-model="filterValue.result"
