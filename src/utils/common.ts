@@ -195,7 +195,6 @@ export const downloadFileCommon = (response: any, type: DocumentExportFileEnum =
   const blob = new Blob([response?.data as BlobPart], {
     type: BLOB_EXPORT_TYPES?.[type]
   })
-  console.log(response?.headers)
   const fileName = getFileNameFromContentDisposition(response?.headers?.['content-disposition'])
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a')

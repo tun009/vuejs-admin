@@ -46,7 +46,7 @@ export function useConfirmModal() {
       draggable: true,
       ...(isDelete ? { confirmButtonClass: confirmButtonDeleteClass } : {}),
       ...options
-    }).then(() => {
+    })?.then(() => {
       successCallback?.()
       if (showMesageSucess)
         ElMessage({
