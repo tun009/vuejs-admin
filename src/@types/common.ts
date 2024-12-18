@@ -34,7 +34,6 @@ export interface SelectOptionModel {
 }
 
 export type BaseResponseModel<T> = ApiResponseData<T>
-export type TLanguage = 'vi' | 'en'
 
 export enum DocumentStatusEnum {
   NEW = 'NEW',

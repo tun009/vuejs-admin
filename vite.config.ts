@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /// <reference types="vitest" />
 
 import { type ConfigEnv, type UserConfigExport, loadEnv } from 'vite'
@@ -10,7 +11,7 @@ import svgLoader from 'vite-svg-loader'
 export default ({ mode }: ConfigEnv): UserConfigExport => {
   const viteEnv = loadEnv(mode, process.cwd()) as ImportMetaEnv
   const { VITE_PUBLIC_PATH } = viteEnv
-  console.log(VITE_PUBLIC_PATH)
+  console.log(viteEnv)
   return {
     /** Modify base according to actual situation when packaging */
     base: VITE_PUBLIC_PATH,

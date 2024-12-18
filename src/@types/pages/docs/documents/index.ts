@@ -26,24 +26,6 @@ export enum ProcessingStepEnum {
   VALIDATE = 'VALIDATE'
 }
 
-export enum DossierDocStatusEnum {
-  NEW = 'NEW',
-  OCRING = 'OCRING',
-  OCRED = 'OCRED'
-}
-
-export enum FileStatusEnum {
-  NEW = 'NEW',
-  CLASSIFYING = 'CLASSIFYING',
-  CLASSIFIED = 'CLASSIFIED',
-  DELETED = 'DELETED'
-}
-
-export enum OcrSourceEnum {
-  OCR = 'OCR',
-  NLP = 'NLP'
-}
-
 export enum DocumentKeyEnum {
   INVOICE = 'Invoice',
   BOL = 'Bill of lading',
@@ -343,17 +325,6 @@ export const documentResultValidOptions: SelectOptionModel[] = [
   }
 ]
 
-export const documentResultRuleOptions: SelectOptionModel[] = [
-  {
-    label: 'Ref: UCP 600, Art.14i, : A document may ',
-    value: 0
-  },
-  {
-    label: 'Ref: UCP 600, Art.14i, : A document may Meo',
-    value: 1
-  }
-]
-
 export const fileListColumnConfigs: ColumnConfigModel[] = [
   {
     field: 'stt',
@@ -476,7 +447,6 @@ export enum CompareHistoryTypeEnum {
   LC = 'LC'
 }
 
-// compare history mock
 export type CompareHistoryModel = CompareHistoryItemModel[][]
 
 export interface CompareHistoryItemModel {
