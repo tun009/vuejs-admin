@@ -30,8 +30,8 @@ test:
     - npm install -f --verbose
     - npm install @vitest/coverage-v8@2.1.1
     - npm run test:coverage
-    - ls -l coverage/
-    - ls -l .
+    - cat coverage/lcov.info
+    - cat junit-report.xml
     - unset http_proxy
     - unset https_proxy
   # only:
@@ -49,6 +49,8 @@ test:
       coverage_report:
         coverage_format: cobertura
         path: coverage/lcov.info
+      junit:
+        - junit-report.xml
     expire_in: 1 week
   cache:
     paths:
