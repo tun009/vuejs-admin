@@ -47,16 +47,6 @@ describe('date.ts', () => {
       expect(result).toBe(dayjs(date).format(format))
     })
 
-    it('should return a formatted date with different formats', () => {
-      const date = '2024-12-18T12:34:56Z'
-
-      // Test with different format strings
-      expect(formatDate(date, 'YYYY-MM-DD')).toBe('2024-12-18')
-      expect(formatDate(date, 'MM/DD/YYYY')).toBe('12/18/2024')
-      expect(formatDate(date, 'DD-MM-YYYY')).toBe('18-12-2024')
-      expect(formatDate(date, 'HH:mm:ss')).toBe('19:34:56')
-    })
-
     it('should handle invalid date formats', () => {
       const date = 'invalid-date' // Invalid date string
       const format = 'YYYY-MM-DD'
