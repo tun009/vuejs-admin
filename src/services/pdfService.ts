@@ -34,6 +34,13 @@ class PDFService {
   public getDocument(): pdfjs.PDFDocumentProxy | null {
     return this.pdfDocument
   }
+  public getPageCount(): number {
+    if (!this.pdfDocument) {
+      throw new Error('PDF document is not loaded. Call loadDocument() first.')
+    }
+
+    return this.pdfDocument?.numPages || 0
+  }
 
   public clearDocument() {
     this.pdfDocument = null

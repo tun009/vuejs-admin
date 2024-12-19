@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { replaceDocument } from '@/api/extract'
+import { ReplaceDocumentClassifyErrordModel } from '@/@types/pages/docs/documents'
+import { replaceDocumentErrorFile } from '@/api/docs/document'
 import EIBUpload from '@/components/common/EIBUpload.vue'
 import { warningNotification } from '@/utils/notification'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -7,7 +8,8 @@ import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 interface Props {
   modelValue: boolean
-  dossierDocId: number
+  dossierDocId: number | string
+  batchId: number | string
   title?: string
 }
 const { t } = useI18n()
@@ -15,6 +17,7 @@ const { t } = useI18n()
 interface Emits {
   (event: 'update:model-value', value: boolean): void
   (event: 'refresh'): void
+  (event: 'update-file-replace', data: ReplaceDocumentClassifyErrordModel): void
 }
 const props = defineProps<Props>()
 const titleWithDefault = props.title || t('docs.document.replaceDocument')
@@ -50,28 +53,22 @@ const localModelValue = computed({
   }
 })
 const handleAddDocument = async () => {
-  try {
-    loading.value = true
-    if (!files.value.length) {
-      warningNotification(t('notification.description.emptyFiles'))
-      return
-    }
-
-    const formData = new FormData()
-    for (const file of files.value) {
-      formData.append('file', file)
-    }
-
-    await replaceDocument(formData, props.dossierDocId)
-    ElMessage({
-      message: 'Thay thế chứng từ thành công',
-      showClose: true,
-      type: 'success'
-    })
-    localModelValue.value = false
-  } catch {
-    loading.value = false
+  if (!files.value.length) {
+    warningNotification(t('notification.description.emptyFiles'))
+    return
   }
+  const formData = new FormData()
+  for (const file of files.value) {
+    formData.append('file', file)
+  }
+  const { data } = await replaceDocumentErrorFile(formData, props.batchId, 'LETTER_OF_CREDIT')
+  ElMessage({
+    message: 'Thay thế chứng từ thành công',
+    showClose: true,
+    type: 'success'
+  })
+  emits('update-file-replace', data)
+  localModelValue.value = false
 }
 </script>
 

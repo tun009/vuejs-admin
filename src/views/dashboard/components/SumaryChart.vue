@@ -53,7 +53,7 @@ const options = ref({
       yValueFormatString: '#,##0',
       toolTipContent: "<span style='\"'color: {color};'\"'>{name}</span>, {y} bộ chứng từ",
       dataPoints: [
-        { name: 'Đã tải lên', y: 0, color: '#ced4da', key: 'totalDossierRecentUpload', indexLabel: '' },
+        { name: 'Chờ xử lý', y: 0, color: '#ced4da', key: 'totalDossierRecentUpload', indexLabel: '' },
         { name: 'Đang xử lý', y: 0, color: '#fab005', key: 'totalDossierInProgress', indexLabel: '' },
         { name: 'Đã kiểm tra', y: 0, color: '#1971c2', key: 'totalDossierChecked', indexLabel: '' },
         { name: 'Đã phê duyệt', y: 0, color: '#0ca678', key: 'totalDossierValidated', indexLabel: '' },

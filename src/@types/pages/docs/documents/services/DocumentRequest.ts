@@ -74,3 +74,8 @@ export interface UpdateBatchAmountRequestModel {
 export interface UpdateLCAmountRequestModel extends UpdateLCAmountFormModel {
   batchId: number
 }
+export interface UpdateDosssierReplaceRequestModel {
+  dossierDocId?: number
+  docType?: string
+  fileId: number
+}

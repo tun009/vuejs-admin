@@ -321,6 +321,7 @@ watch(
 }
 .box-container-top {
   height: 30vh;
+  min-height: 250px;
 }
 .box-container-bottom {
   height: 48vh;

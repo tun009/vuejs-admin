@@ -76,7 +76,13 @@ const onConfirm = async () => {
   <div class="tab-footer p-[16px] shadow-[inset_0_1px_0_0_#d0d0d0] text-right">
     <el-button class="text-[#1c7ed6] border-[#1c7ed6] mr-2" @click="openModal">Thêm</el-button>
   </div>
-  <EIBDialog title="Thêm ghi chú" v-model="dialogVisible" @on-confirm="onConfirm()" :loading="loadingConfirm">
-    <EIBInput name="reason" v-model="reason" label="Nhập ghi chú" placeholder="Nhập ghi chú" type="textarea" :rows="5"
+  <EIBDialog
+    title="Thêm ghi chú"
+    confirmText="Hoàn tất"
+    v-model="dialogVisible"
+    @on-confirm="onConfirm()"
+    :loading="loadingConfirm"
+  >
+    <EIBInput name="reason" v-model="reason" label="Nhập ghi chú" placeholder="Nhập lý do" type="textarea" :rows="5"
   /></EIBDialog>
 </template>

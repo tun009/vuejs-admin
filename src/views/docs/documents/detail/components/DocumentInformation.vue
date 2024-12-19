@@ -3,7 +3,7 @@ import { CircleCheckFilled, View, WarnTriangleFilled } from '@element-plus/icons
 import { computed, nextTick, onMounted, ref } from 'vue'
 
 import ApproveProcessDocument from './ApproveProcessDocument.vue'
-import ClassifyModal from '@/views/extract/components/ClassifyModal.vue'
+import DocumentClassifyErrorModal from './DocumentClassifyErrorModal.vue'
 
 import { DocumentStatusEnum } from '@/@types/common'
 import {
@@ -507,10 +507,9 @@ onMounted(() => {
   </EIBDrawer>
   <EIBDrawer v-if="openClassifyDrawer" title="Danh sách chứng từ" v-model="openClassifyDrawer" size="93%">
     <template #default>
-      <ClassifyModal
+      <DocumentClassifyErrorModal
         ref="classifyModalRef"
         @close-dialog="closeDialogClassify()"
-        show-content-right
         :batch-id="route.params?.id as string"
       />
     </template>
