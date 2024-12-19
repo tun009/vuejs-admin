@@ -111,7 +111,12 @@ onMounted(() => {
         </template>
         <template #actions="{ row }">
           <div class="flex flex-row gap-2">
-            <SvgIcon :size="18" name="edit-info" @click.stop="openModalUpdateRule(row)" class="cursor-pointer" />
+            <SvgIcon
+              :size="18"
+              name="edit-info"
+              @click.stop="openModalUpdateRule(row)"
+              class="cursor-pointer text-center m-auto"
+            />
           </div>
         </template>
       </EIBTable>
