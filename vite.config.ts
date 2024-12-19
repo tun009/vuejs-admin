@@ -95,7 +95,7 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
       },
       coverage: {
         provider: 'v8',
-        reporter: ['lcov', 'text', 'html'],
+        reporter: ['cobertura', 'lcov', 'text', 'html'],
         reportOnFailure: true,
         ignoreEmptyLines: true
       }

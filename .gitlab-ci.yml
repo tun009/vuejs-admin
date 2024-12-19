@@ -29,10 +29,9 @@ test:
     - export https_proxy=http://10.30.153.169:3128
     - npm install -f --verbose
     - npm install @vitest/coverage-v8@2.1.1
-    - ls -l .
     - npm run test:coverage
-    - ls -l .
-    - ls -l coverage/
+    - cat coverage/lcov.info
+    - cat junit-report.xml
     - unset http_proxy
     - unset https_proxy
   # only:
@@ -48,7 +47,7 @@ test:
     expose_as: 'Unit Test Report'
     reports:
       coverage_report:
-        coverage_format: lcov
+        coverage_format: cobertura
         path: coverage/lcov.info
       junit:
         - junit-report.xml
