@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { ColumnConfigModel, DocumentStatusEnum, SelectOptionModel } from '@/@types/common'
 import { RoleEnum } from '@/@types/pages/users'
 import { STATUS_COLORS } from '@/constants/color'
@@ -24,24 +25,6 @@ export enum ProcessingStepEnum {
   OCR = 'OCR',
   CHECK = 'CHECK',
   VALIDATE = 'VALIDATE'
-}
-
-export enum DossierDocStatusEnum {
-  NEW = 'NEW',
-  OCRING = 'OCRING',
-  OCRED = 'OCRED'
-}
-
-export enum FileStatusEnum {
-  NEW = 'NEW',
-  CLASSIFYING = 'CLASSIFYING',
-  CLASSIFIED = 'CLASSIFIED',
-  DELETED = 'DELETED'
-}
-
-export enum OcrSourceEnum {
-  OCR = 'OCR',
-  NLP = 'NLP'
 }
 
 export enum DocumentKeyEnum {
@@ -121,6 +104,16 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
     minWidth: 150
   },
   {
+    field: 'result',
+    label: 'docs.document.result',
+    minWidth: 150
+  },
+  {
+    field: 'doneAt',
+    label: 'docs.document.completionDate',
+    minWidth: 150
+  },
+  {
     field: 'branchName',
     label: 'docs.document.sol',
     minWidth: 250
@@ -145,16 +138,7 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
     label: 'docs.document.createdAt',
     minWidth: 120
   },
-  {
-    field: 'result',
-    label: 'docs.document.result',
-    minWidth: 150
-  },
-  {
-    field: 'doneAt',
-    label: 'docs.document.completionDate',
-    minWidth: 150
-  },
+
   {
     field: 'actions',
     label: 'docs.document.actions',
@@ -261,6 +245,16 @@ export const documentStatusOptions: SelectOptionModel[] = [
   },
   {
     label: 'Lỗi phân loại',
+    value: DocumentStatusEnum.CLASSIFY_ERROR,
+    color: STATUS_COLORS.ERROR
+  },
+  {
+    label: 'Lỗi nhận dạng',
+    value: DocumentStatusEnum.OCR_ERROR,
+    color: STATUS_COLORS.ERROR
+  },
+  {
+    label: 'Lỗi phân loại',
     value: DocumentStatusEnum.CLASSIFICATION_ERROR,
     color: STATUS_COLORS.ERROR
   },
@@ -339,17 +333,6 @@ export const documentResultValidOptions: SelectOptionModel[] = [
   {
     label: 'N/A',
     value: DocumentResultEnum.NA
-  }
-]
-
-export const documentResultRuleOptions: SelectOptionModel[] = [
-  {
-    label: 'Ref: UCP 600, Art.14i, : A document may ',
-    value: 0
-  },
-  {
-    label: 'Ref: UCP 600, Art.14i, : A document may Meo',
-    value: 1
   }
 ]
 
@@ -475,7 +458,6 @@ export enum CompareHistoryTypeEnum {
   LC = 'LC'
 }
 
-// compare history mock
 export type CompareHistoryModel = CompareHistoryItemModel[][]
 
 export interface CompareHistoryItemModel {
@@ -660,3 +642,8 @@ export interface ReplaceDocumentClassifyErrordModel {
 }
 export const getAllCategoryRequestModel = { pageNum: 0, pageSize: 9999, type: RuleTypeEnum.CATEGORY, query: '' }
 export const getAllRuleRequestModel = { ...getAllCategoryRequestModel, type: RuleTypeEnum.LAW }
+
+export interface SocketDataModel {
+  id: number
+  status: DocumentStatusEnum
+}

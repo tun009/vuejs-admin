@@ -100,7 +100,7 @@ const handleGetUser = async (pagination: PaginationModel) => {
 
 const handleDeleteUser = (data?: UserModel) => {
   showConfirmModal({
-    message: `Sau khi xóa thành công <strong> ${data?.name} </strong>: <br/> Bạn không thể xem các tác vụ người dùng này đã xử lý <br/> Sau khi Xóa thành công, tài khoản này sẽ không thể khôi phục lại. <br/> <br/> Bạn xác nhận xóa người dùng này chứ?`,
+    message: `Sau khi xóa thành công <strong> ${data?.name}:</strong> <br/>&nbsp; <strong>•</strong>  Bạn không thể xem các tác vụ người dùng này đã xử lý <br/> Sau khi Xóa thành công, tài khoản này sẽ không thể khôi phục lại. <br/> Bạn xác nhận xóa người dùng này chứ?`,
     title: 'Xóa người dùng',
     successCallback: handleClearAllChecked,
     onConfirm: async (instance, done) => {
@@ -255,7 +255,7 @@ onMounted(() => {
           </div>
         </template>
         <template #actions="{ row }">
-          <div class="flex flex-row gap-2 m-auto text-center">
+          <div class="flex flex-row gap-3 items-center justify-center">
             <SvgIcon :size="18" name="edit-info" @click.stop="handleUpdateUser(row)" class="cursor-pointer" />
             <div class="w-[20px] h-[20px]" v-if="isHaveDeleteDocument()">
               <SvgIcon :size="20" name="delete-mini" class="cursor-pointer" @click="handleDeleteUser(row)" />

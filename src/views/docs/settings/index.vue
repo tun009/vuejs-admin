@@ -85,6 +85,21 @@ const handleGetDocTypes = async () => {
       label: item.name,
       value: item.id
     }))
+    const newData = doc_types.value.filter((item) => item.label !== 'Khác')
+    doc_types.value = newData
+    for (const data in doc_types.value) {
+      if (doc_types.value[data].label == 'Trích xuất LC') {
+        doc_types.value[data].label = 'LC'
+      } else if (doc_types.value[data].label == 'Trích xuất invoice') {
+        doc_types.value[data].label = 'Invoice'
+      } else if (doc_types.value[data].label == 'Trích xuất Bill Of Lading') {
+        doc_types.value[data].label = 'Bill Of Lading'
+      } else if (doc_types.value[data].label == 'Trích xuất Bill Of Exchange') {
+        doc_types.value[data].label = 'Bill Of Exchange'
+      } else if (doc_types.value[data].label == 'Trích xuất giấy xuất trình giấy tờ') {
+        doc_types.value[data].label = 'Giấy xuất trình giấy tờ'
+      }
+    }
   } catch (error: any) {
     throw new Error(error)
   }
@@ -224,7 +239,7 @@ onMounted(() => {
           :disabledIds="disabledIds"
         >
           <template #actions="{ row }">
-            <div class="flex flex-row gap-2 p-2">
+            <div class="flex flex-row gap-2 p-2 items-center justify-center">
               <SvgIcon :size="18" name="edit-info" @click.stop="handleUpdateInfoExtract(row)" class="cursor-pointer" />
             </div>
           </template>

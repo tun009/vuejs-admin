@@ -35,9 +35,9 @@ const loading = ref(false)
 const updateUserFormRef = ref<FormInstance | null>()
 const statusUser = (status: string) => {
   if (status == 'ACTIVE') {
-    return true
-  } else {
     return false
+  } else {
+    return true
   }
 }
 const { showConfirmModal } = useConfirmModal()
@@ -66,7 +66,7 @@ const handleUpdateUser = () => {
     try {
       if (valid) {
         const payload = { ...updateUserFormData }
-        const status = updateUserFormData.status ? UserStatusEnum.ACTIVE : UserStatusEnum.INACTIVE
+        const status = !updateUserFormData.status ? UserStatusEnum.ACTIVE : UserStatusEnum.INACTIVE
         loading.value = true
         await updateUser({ ...payload, status, id: props.data.id })
         ElMessage({

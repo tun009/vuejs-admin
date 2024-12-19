@@ -34,7 +34,6 @@ export interface SelectOptionModel {
 }
 
 export type BaseResponseModel<T> = ApiResponseData<T>
-export type TLanguage = 'vi' | 'en'
 
 export enum DocumentStatusEnum {
   NEW = 'NEW',
@@ -54,7 +53,9 @@ export enum DocumentStatusEnum {
   ERROR = 'ERROR',
   EXTRACTION_ERROR = 'EXTRACTION_ERROR',
   COMPARISON_ERROR = 'COMPARISON_ERROR',
-  CLASSIFICATION_ERROR = 'CLASSIFICATION_ERROR'
+  CLASSIFICATION_ERROR = 'CLASSIFICATION_ERROR',
+  CLASSIFY_ERROR = 'CLASSIFY_ERROR',
+  OCR_ERROR = 'OCR_ERROR'
 }
 
 export const uploadDocumentColumnConfig: ColumnConfigModel[] = [

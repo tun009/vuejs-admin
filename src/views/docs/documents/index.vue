@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ArrowDownBold, Filter, Plus, Search } from '@element-plus/icons-vue'
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onActivated, onDeactivated, onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
@@ -11,6 +11,7 @@ import { DocumentStatusEnum, PaginationModel } from '@/@types/common'
 import {
   DocumentModel,
   FilterDocumentModel,
+  SocketDataModel,
   businessTypeOptions,
   docListColumnConfigs,
   documentResultOptions,
@@ -18,8 +19,10 @@ import {
   processingStepOptions
 } from '@/@types/pages/docs/documents'
 import { BranchModel } from '@/@types/pages/login'
+import { RoleEnum } from '@/@types/pages/users'
 import { deleteDocument, getBranches, getDocuments } from '@/api/docs/document'
 import { updateDocumentStatus } from '@/api/docs/document/compare'
+import createSocketConnection from '@/api/socker-service'
 import EIBMultipleFilter from '@/components/Filter/EIBMultipleFilter.vue'
 import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
@@ -37,12 +40,17 @@ import { DOCUMENT_DETAIL_PAGE } from '@/constants/router'
 import { useConfirmModal } from '@/hooks/useConfirm'
 import { Title } from '@/layouts/components'
 import { useUserStore } from '@/store/modules/user'
-import { mappingBranches, omitPropertyFromObject, renderLabelByValue, withAllSelection } from '@/utils/common'
+import {
+  buildUrlSocket,
+  mappingBranches,
+  omitPropertyFromObject,
+  renderLabelByValue,
+  withAllSelection
+} from '@/utils/common'
 import { addOneDayToDate, defaultDateRange, formatDate, formatDateExactFormat } from '@/utils/date'
 import { errorNotification } from '@/utils/notification'
 import { debounce } from 'lodash-es'
 import Status from '../components/Status.vue'
-import { RoleEnum } from '@/@types/pages/users'
 
 defineOptions({
   name: 'Document'
@@ -52,9 +60,10 @@ const { t } = useI18n()
 const router = useRouter()
 const { showConfirmModal } = useConfirmModal()
 const { isViewer, isAdmin, isChecker, isMaker, userInfo } = useUserStore()
+const socket = ref()
 
 const defaultStatus = computed(() => {
-  return documentStatusOptions.slice(0, -3).map((c) => c.value as DocumentStatusEnum)
+  return documentStatusOptions.slice(0, -5).map((c) => c.value as DocumentStatusEnum)
 })
 
 const multipleFilterRef = ref<InstanceType<typeof EIBMultipleFilter>>()
@@ -239,8 +248,39 @@ const isHaveDeleteDocument = (username: string, status: DocumentStatusEnum) => {
   return false
 }
 
+const handleSocket = () => {
+  socket.value = createSocketConnection(
+    buildUrlSocket({
+      query: {
+        room: 'batches'
+      }
+    })
+  )
+  socket.value.on('update_data', (data: SocketDataModel) => {
+    const dataMapping = tableData.value.map((item) => {
+      if (item.id !== data.id || item.status === data.status) return item
+      return {
+        ...item,
+        status: data.status
+      }
+    })
+    tableData.value = dataMapping
+  })
+}
+
 onMounted(() => {
   handleGetBranches()
+})
+
+onDeactivated(() => {
+  if (socket.value) {
+    socket.value?.disconnect()
+  }
+})
+
+onActivated(() => {
+  handleGetData()
+  handleSocket()
 })
 </script>
 
@@ -307,7 +347,7 @@ onMounted(() => {
         ref="multipleFilterRef"
         v-model="filterValue.status"
         :title="$t('docs.document.status')"
-        :options="documentStatusOptions.slice(0, -3)"
+        :options="documentStatusOptions.slice(0, -5)"
       />
       <EIBSingleFilter
         v-model="filterValue.result"

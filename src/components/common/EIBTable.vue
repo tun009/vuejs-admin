@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 import type { TableInstance } from 'element-plus'
 import { ColumnConfigModel, PaginationModel } from '@/@types/common'
-import { PAGE_SIZE_LIST_DEFAULT } from '@/constants/common'
+import { PAGE_SIZE_LIST_DEFAULT, PAGINATION_DEFAULT } from '@/constants/common'
 import SafeHtmlRenderer from '../SafeHtmlRenderer.vue'
 
 interface Props {
@@ -35,10 +35,7 @@ const emits = defineEmits<Emits>()
 const totalItems = ref<number>(0)
 const loading = ref<boolean>(false)
 
-const pagination = ref<PaginationModel>({
-  pageNum: 0,
-  pageSize: 10
-})
+const pagination = ref<PaginationModel>({ ...PAGINATION_DEFAULT })
 
 const multipleTableRef = ref<TableInstance>()
 
@@ -47,9 +44,12 @@ const handleSelectionChange = (val: any[]) => {
   emits('update:selection', val)
 }
 
-const handleGetData = async () => {
+const handleGetData = async (resetPagination: boolean = true) => {
   try {
     if (!props.callback) return
+    if (resetPagination) {
+      pagination.value.pageNum = 0
+    }
     loading.value = true
     const response = await props.callback(pagination.value)
     if (typeof response?.data?.total !== 'number') return
@@ -63,13 +63,13 @@ const handleGetData = async () => {
 
 const handlePageChange = (newPage: number) => {
   pagination.value.pageNum = newPage - 1
-  handleGetData()
+  handleGetData(false)
 }
 
 const handlePageSizeChange = (newPageSize: number) => {
   pagination.value.pageSize = newPageSize
   pagination.value.pageNum = 0 // Reset to first page on size change
-  handleGetData()
+  handleGetData(false)
 }
 
 const handleClearSelection = () => {

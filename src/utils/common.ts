@@ -2,7 +2,7 @@ import { ColumnConfigModel, SelectOptionModel, StatusColorModel } from '@/@types
 import { ElMessage, ElMessageBox } from 'element-plus'
 import DOMPurify from 'dompurify'
 import { BranchModel } from '@/@types/pages/login'
-import { BLOB_EXPORT_TYPES, TABLE_COLUMN_WIDTH_DEFAULT } from '@/constants/common'
+import { BLOB_EXPORT_TYPES, SOCKET_PATH, TABLE_COLUMN_WIDTH_DEFAULT } from '@/constants/common'
 import { regexContentDispositionFileName } from '@/constants/regex'
 import { DocumentExportFileEnum } from '@/@types/pages/docs/documents'
 import { UpdateConfidenceRequestModel } from '@/@types/pages/docs/settings/services/SettingRequest'
@@ -165,7 +165,7 @@ export function sortObjectsByMultipleFields(array: any[], fields: string[], sort
   })
 }
 
-export const createColumnConfigs = (object: { [key: string]: string | number }): ColumnConfigModel[] => {
+export const createColumnConfigs = (object?: { [key: string]: string | number } | null): ColumnConfigModel[] => {
   if (!object) return []
   const keys = Object.keys(object)
   return keys.map((k) => ({
@@ -195,7 +195,6 @@ export const downloadFileCommon = (response: any, type: DocumentExportFileEnum =
   const blob = new Blob([response?.data as BlobPart], {
     type: BLOB_EXPORT_TYPES?.[type]
   })
-  console.log(response?.headers)
   const fileName = getFileNameFromContentDisposition(response?.headers?.['content-disposition'])
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
@@ -283,4 +282,18 @@ export const groupByKey = (arr: any[], field: string) => {
     key,
     stt: grouped[key]
   }))
+}
+
+export const buildUrlSocket = ({
+  baseUrl = import.meta.env.VITE_BASE_SOCKET_URL ?? '',
+  path = SOCKET_PATH,
+  query
+}: {
+  baseUrl?: string
+  path?: string
+  query: any
+}) => {
+  const queries = new URLSearchParams(query)
+  const queryString = queries.toString()
+  return baseUrl + '/' + path + '?' + queryString
 }

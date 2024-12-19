@@ -110,13 +110,8 @@ onMounted(() => {
           <span>{{ getTextFromHtml(row.en) }}</span>
         </template>
         <template #actions="{ row }">
-          <div class="flex flex-row gap-2">
-            <SvgIcon
-              :size="18"
-              name="edit-info"
-              @click.stop="openModalUpdateRule(row)"
-              class="cursor-pointer text-center m-auto"
-            />
+          <div class="flex flex-row gap-2 items-center justify-center">
+            <SvgIcon :size="18" name="edit-info" @click.stop="openModalUpdateRule(row)" class="cursor-pointer" />
           </div>
         </template>
       </EIBTable>

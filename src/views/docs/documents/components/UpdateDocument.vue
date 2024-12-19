@@ -42,7 +42,7 @@ const upadateDocumentFormData: UpdateDocumentRequestModel = reactive({
 
 const upadateDocumentFormRules: FormRules<UpdateDocumentRequestModel> = {
   cif: [],
-  customerName: [],
+  customerName: [requireRule()],
   name: [requireRule()],
   branchId: []
 }
@@ -129,6 +129,7 @@ defineExpose<Exposes>({
       name="customerName"
       v-model="upadateDocumentFormData.customerName"
       show-limit
+      required
     />
   </el-form>
   <div>

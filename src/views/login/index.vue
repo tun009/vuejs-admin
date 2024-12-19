@@ -1,7 +1,5 @@
 <script lang="ts" setup>
 import { LoginFormModel } from '@/@types/pages/login'
-// import LanguageSwitch from '@/components/LanguageSwitch/index.vue'
-// import ThemeSwitch from '@/components/ThemeSwitch/index.vue'
 import EIBInput from '@/components/common/EIBInput.vue'
 import { DASHBOARD_PAGE } from '@/constants/router'
 import { useUserStore } from '@/store/modules/user'

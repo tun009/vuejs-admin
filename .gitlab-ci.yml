@@ -9,7 +9,7 @@ sonar:
   stage: test
   script:
     - echo "scanning sonar"
-    - sonar-scanner -Dsonar.projectKey=eximbank-ui -Dsonar.sources=. -Dsonar.host.url=https://sonar.cyberspace.vn/ -Dsonar.login=sqp_51b2de09b4acb6c7fd019fb238f4c7d1fcad2e91 -Dsonar.tests=tests -Dsonar.exclusions=Docker**,tests/** -Dsonar.cpd.exclusions=** -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+    - sonar-scanner -Dsonar.projectKey=eximbank-ui -Dsonar.sources=. -Dsonar.host.url=https://sonar.cyberspace.vn/ -Dsonar.login=sqp_51b2de09b4acb6c7fd019fb238f4c7d1fcad2e91 -Dsonar.tests=tests -Dsonar.cpd.exclusions=** -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
   # only:
   #   - develop
   allow_failure: true
@@ -30,6 +30,8 @@ test:
     - npm install -f --verbose
     - npm install @vitest/coverage-v8@2.1.1
     - npm run test:coverage
+    - cat coverage/lcov.info
+    - cat junit-report.xml
     - unset http_proxy
     - unset https_proxy
   # only:
@@ -44,10 +46,11 @@ test:
       - junit-report.xml
     expose_as: 'Unit Test Report'
     reports:
-      junit: junit-report.xml
       coverage_report:
         coverage_format: cobertura
         path: coverage/lcov.info
+      junit:
+        - junit-report.xml
     expire_in: 1 week
   cache:
     paths:
