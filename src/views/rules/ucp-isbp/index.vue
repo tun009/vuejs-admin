@@ -61,8 +61,8 @@ const getDocTypes = async () => {
         documentTypes.value[data].label = 'Bill Of Lading'
       } else if (documentTypes.value[data].label == 'Trích xuất Bill Of Exchange') {
         documentTypes.value[data].label = 'Bill Of Exchange'
-      } else if (documentTypes.value[data].label == 'Trích xuất giấy xuất trình giấy tờ') {
-        documentTypes.value[data].label = 'Giấy xuất trình giấy tờ'
+      } else if (documentTypes.value[data].label == 'Trích xuất giấy xuất trình chứng từ') {
+        documentTypes.value[data].label = 'Giấy xuất trình chứng từ'
       }
     }
   } catch (error: any) {

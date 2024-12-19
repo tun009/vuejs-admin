@@ -47,6 +47,21 @@ const getDocTypes = async () => {
         value: item.id
       }))
     ]
+    const newData = documentTypes.value.filter((item) => item.label !== 'Khác')
+    documentTypes.value = newData
+    for (const data in documentTypes.value) {
+      if (documentTypes.value[data].label == 'Trích xuất LC') {
+        documentTypes.value[data].label = 'LC'
+      } else if (documentTypes.value[data].label == 'Trích xuất invoice') {
+        documentTypes.value[data].label = 'Invoice'
+      } else if (documentTypes.value[data].label == 'Trích xuất Bill Of Lading') {
+        documentTypes.value[data].label = 'Bill Of Lading'
+      } else if (documentTypes.value[data].label == 'Trích xuất Bill Of Exchange') {
+        documentTypes.value[data].label = 'Bill Of Exchange'
+      } else if (documentTypes.value[data].label == 'Trích xuất giấy xuất trình chứng từ') {
+        documentTypes.value[data].label = 'Giấy xuất trình chứng từ'
+      }
+    }
   } catch (error: any) {
     throw new Error(error)
   }
