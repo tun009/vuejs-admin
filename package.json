@@ -16,7 +16,7 @@
     "lint": "pnpm lint:eslint && pnpm lint:prettier",
     "prepare": "husky",
     "test": "vitest",
-    "test:coverage": "vitest run --coverage",
+    "test:coverage": "vitest run --coverage --watch",
     "postinstall": "chmod +x .husky/*"
   },
   "dependencies": {
