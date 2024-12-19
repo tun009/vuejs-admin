@@ -30,6 +30,8 @@ test:
     - npm install -f --verbose
     - npm install @vitest/coverage-v8@2.1.1
     - npm run test:coverage
+    - ls -l coverage/
+    - ls -l .
     - unset http_proxy
     - unset https_proxy
   # only:
