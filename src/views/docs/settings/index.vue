@@ -96,8 +96,8 @@ const handleGetDocTypes = async () => {
         doc_types.value[data].label = 'Bill Of Lading'
       } else if (doc_types.value[data].label == 'Trích xuất Bill Of Exchange') {
         doc_types.value[data].label = 'Bill Of Exchange'
-      } else if (doc_types.value[data].label == 'Trích xuất giấy xuất trình giấy tờ') {
-        doc_types.value[data].label = 'Giấy xuất trình giấy tờ'
+      } else if (doc_types.value[data].label == 'Trích xuất giấy xuất trình chứng từ') {
+        doc_types.value[data].label = 'Giấy xuất trình chứng từ'
       }
     }
   } catch (error: any) {
@@ -210,7 +210,6 @@ watch(
 )
 
 onMounted(() => {
-  getDataField()
   handleGetDocTypes()
   getConfidenceDetail()
   getCheckConfig()
