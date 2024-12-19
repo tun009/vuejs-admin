@@ -51,7 +51,7 @@ test:
         coverage_format: cobertura
         path: coverage/lcov.info
       junit:
-        report: junit-report.xml
+        - junit-report.xml
     expire_in: 1 week
   cache:
     paths:
