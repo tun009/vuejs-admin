@@ -5,7 +5,7 @@ import { getDossierClassifyApi, getDocummentTypeApi, saveDossierClassifyApi } fr
 import { VuePDF, usePDF } from '@tato30/vue-pdf'
 import ControlSlider from './ControlSlider.vue'
 import { VueDraggableNext } from 'vue-draggable-next'
-import { formatNumberConfidence } from '@/utils/common'
+import { formatNumberConfidence, renderColorByConfidence } from '@/utils/common'
 import EIBSelect from '@/components/common/EIBSelect.vue'
 import { Delete, Plus } from '@element-plus/icons-vue'
 
@@ -14,6 +14,7 @@ import { SelectOptionModel } from '@/@types/common'
 import { ElMessage } from 'element-plus'
 import { ExtractPostClassifyRequestModel } from '@/@types/pages/extract/service/ExtractRequest'
 import { useConfirmModal } from '@/hooks/useConfirm'
+import { UpdateConfidenceRequestModel } from '@/@types/pages/docs/settings/services/SettingRequest'
 const { showConfirmModal } = useConfirmModal()
 
 const dataDetail = ref<ExtractClassifyModel[]>([])
@@ -25,6 +26,7 @@ const scale = ref(0.7)
 interface Props {
   showContentRight?: boolean
   batchId: number | string
+  dataConfigs: UpdateConfidenceRequestModel[]
 }
 interface Emits {
   (e: 'close-dialog'): void
@@ -55,29 +57,6 @@ const getDocumentType = async () => {
 const getDossierById = async () => {
   try {
     const response = await getDossierClassifyApi(props.batchId)
-    // response.data = [
-    //   {
-    //     id: 5215,
-    //     fileName: 'Inv 1012ADVEIB220015.pdf',
-    //     filePath: '2024-11-08/3361/5211.pdf',
-    //     status: 'CLASSIFIED',
-    //     createdAt: '2024-11-08T13:05:54.840641Z',
-    //     createdBy: 'phuctv14',
-    //     pdfEtract: '',
-    //     ocrResults: [
-    //       {
-    //         documentType: 'INVOICE',
-    //         confidence: 1,
-    //         pages: [0, 1]
-    //       },
-    //       {
-    //         documentType: 'INVOICE',
-    //         confidence: 1,
-    //         pages: [2, 3]
-    //       }
-    //     ]
-    //   }
-    // ]
     dataDetail.value = response.data
     // const { pdf } = usePDF(`${baseURL}/files?src=${response.data[0].filePath}`)
     // pdfExtract = pdf
@@ -101,6 +80,7 @@ const activeNamesChild = ref([0])
 const handleCollapseChange = (value: ExtractClassifyModel) => {
   const { pdf } = usePDF(`${baseURL}/files?src=${value?.filePath}`)
   if (!value?.pdfEtract) value.pdfEtract = pdf
+  activeNames.value = value?.id
   activeNamesChild.value = [0]
   if (value?.ocrResults?.length > 0 && value?.ocrResults[0]?.pages?.length > 0) {
     const intervalId = setInterval(() => {
@@ -188,7 +168,7 @@ const openModalReplaceDocument = () => {
 }
 </script>
 <template>
-  <div class="h-[92vh] mx-[-20px] mb-[-4rem] classify-modal">
+  <div class="h-[92vh] mx-[-20px] mb-[-4rem] classify-modal" v-loading="loading">
     <div class="w-full flex h-[94%]">
       <div class="flex w-full">
         <div class="w-[35%] border border-gray-300 border-solid">
@@ -216,7 +196,12 @@ const openModalReplaceDocument = () => {
                     <el-collapse class="child-collapse custom-collapse" v-model="activeNamesChild">
                       <el-collapse-item :name="index_result">
                         <template v-slot:title>
-                          <span class="p-[6px] text-sm text-[#fff] bg-[#099268] rounded-[3px]">
+                          <span
+                            class="p-[6px] text-sm text-[#fff] bg-[#099268] rounded-[3px]"
+                            :style="{
+                              backgroundColor: renderColorByConfidence(doc_result?.confidence ?? 0, dataConfigs)
+                            }"
+                          >
                             {{ formatNumberConfidence(doc_result?.confidence ?? 0) }}%</span
                           >
                           <EIBSelect
@@ -325,7 +310,7 @@ const openModalReplaceDocument = () => {
     </div>
     <div class="flex justify-end items-center h-[6%]">
       <el-button type="default" @click="emits('close-dialog')">Hủy</el-button>
-      <el-button class="mr-[20px]" type="primary" @click="saveDossierClassify()" :loading="loading"
+      <el-button class="mr-[20px]" type="primary" @click="saveDossierClassify()"
         ><SvgIcon name="ic-save" class="mr-1" />Lưu lại</el-button
       >
     </div>

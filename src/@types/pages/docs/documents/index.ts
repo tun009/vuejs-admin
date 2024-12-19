@@ -4,6 +4,7 @@ import { STATUS_COLORS } from '@/constants/color'
 import { BranchModel } from '../../login'
 import { RuleModel, RuleTypeEnum } from '../../rules'
 import { UserModel } from './services/DocumentResponse'
+import { DocumentTypeModel } from '../../extract'
 
 // document enum
 export enum BusinessTypeEnum {
@@ -639,6 +640,23 @@ export interface PatchDocumentCompareUndefinedModel {
   id?: number
   requirement: string
 }
-
+export interface DocumentClassifyErrordModel {
+  id?: number
+  name: string
+  docType: DocumentTypeModel
+  pathFile: string
+  pages: string
+  pdfEtract?: any
+  pageList: number[]
+  isLoaded?: boolean
+  isReplace?: boolean
+  fileId?: number
+  countNumReplace?: number
+}
+export interface ReplaceDocumentClassifyErrordModel {
+  fileId: number
+  pathFile: string
+  docType: string
+}
 export const getAllCategoryRequestModel = { pageNum: 0, pageSize: 9999, type: RuleTypeEnum.CATEGORY, query: '' }
 export const getAllRuleRequestModel = { ...getAllCategoryRequestModel, type: RuleTypeEnum.LAW }

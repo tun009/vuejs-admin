@@ -3,12 +3,14 @@ import {
   GetDocumentRequestModel,
   UpdateBatchAmountRequestModel,
   UpdateDocumentRequestModel,
+  UpdateDosssierReplaceRequestModel,
   UpdateLCAmountRequestModel
 } from '@/@types/pages/docs/documents/services/DocumentRequest'
 import {
   AddFileToDocumentResponseModel,
   GetBatchDetailResponseModel,
   GetBranchResponseModel,
+  GetDocumentClassifyErrordResponseModel,
   GetDocumentDataLCResponseModel,
   GetDocumentDetailResponseModel,
   GetDocumentFileResponseModel,
@@ -17,7 +19,9 @@ import {
   GetDocumentLCDetailResponseModel,
   GetDocumentResponseModel,
   GetDocumentSummaryResponseModel,
-  PutPresentationCheckerResponseModel
+  PatchReplaceDocumentClassifyErrordResponseModel,
+  PutPresentationCheckerResponseModel,
+  TranslateEnglishToVietnameseResponseModel
 } from '@/@types/pages/docs/documents/services/DocumentResponse'
 import { request } from '@/api/service'
 
@@ -168,5 +172,33 @@ export function addFileToDocument(id: string | number, data: FormData) {
     url: 'dossier-files/' + id + '/add-file',
     method: 'patch',
     data
+  })
+}
+export function getDocumentClassifyErrorApi(id: number | string) {
+  return request<GetDocumentClassifyErrordResponseModel>({
+    url: `/dossier-docs/classify-error`,
+    method: 'get',
+    params: { batchId: id }
+  })
+}
+export function replaceDocumentErrorFile(data: FormData, batchId: number | string, docType: string | number) {
+  return request<PatchReplaceDocumentClassifyErrordResponseModel>({
+    url: `/batches/upload-file`,
+    method: 'post',
+    params: { batchId: batchId, docType: docType },
+    data
+  })
+}
+export function postReplaceDocumentError(data: UpdateDosssierReplaceRequestModel[], batchId: number | string) {
+  return request<PutPresentationCheckerResponseModel>({
+    url: `/batches/${batchId}/replace`,
+    method: 'patch',
+    data
+  })
+}
+export function getDocumentClassifyMessageErrorApi(id: number | string) {
+  return request<TranslateEnglishToVietnameseResponseModel>({
+    url: `/batches/${id}/message-error`,
+    method: 'get'
   })
 }

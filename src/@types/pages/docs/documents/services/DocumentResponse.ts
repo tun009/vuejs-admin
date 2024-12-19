@@ -11,7 +11,9 @@ import {
   DocumentLCDetailModel,
   DocumentModel,
   DocumentResultModel,
-  ProcessingStepEnum
+  ProcessingStepEnum,
+  DocumentClassifyErrordModel,
+  ReplaceDocumentClassifyErrordModel
 } from '..'
 
 import { BaseListResponseModel, DocumentStatusEnum } from '@/@types/common'
@@ -88,3 +90,5 @@ export interface BatchDetailModel {
 }
 
 export type GetBatchDetailResponseModel = ApiResponseData<BatchDetailModel>
+export type GetDocumentClassifyErrordResponseModel = ApiResponseData<DocumentClassifyErrordModel[]>
+export type PatchReplaceDocumentClassifyErrordResponseModel = ApiResponseData<ReplaceDocumentClassifyErrordModel>

@@ -344,7 +344,7 @@ const reCheckDosssier = async () => {
     console.error(error)
   }
 }
-const canPermissionOcr = computed(() => {
+const hasPermissionOcr = computed(() => {
   return (
     ![
       DocumentStatusEnum.ADJUST_REQUESTED,
@@ -353,7 +353,9 @@ const canPermissionOcr = computed(() => {
       DocumentStatusEnum.VALIDATING,
       DocumentStatusEnum.VALIDATED
     ].includes(batchDetailData.value.status) &&
-    (isAdmin || batchDetailData?.value?.censorBy?.username === userInfo?.username)
+    (isAdmin ||
+      batchDetailData?.value?.censorBy?.username === userInfo?.username ||
+      batchDetailData?.value?.createdBy?.username === userInfo?.username)
   )
 })
 onMounted(() => {
@@ -370,7 +372,7 @@ onUnmounted(() => {
 
 <template>
   <div>
-    <div class="flex h-screen text-[14px] extract-page overflow-hidden">
+    <div class="flex h-screen text-[14px] extract-page overflow-hidden" v-loading="loading">
       <div class="w-[72%]">
         <div class="flex flex-row h-full">
           <div class="w-[180px]">
@@ -413,7 +415,7 @@ onUnmounted(() => {
                   <el-button
                     class="text-[#1c7ed6] border-[#1c7ed6]"
                     @click="openClassifyModal()"
-                    :disabled="!canPermissionOcr"
+                    :disabled="!hasPermissionOcr"
                     >Sửa phân loại</el-button
                   >
                 </template>
@@ -447,7 +449,7 @@ onUnmounted(() => {
                     :header="headerTable"
                     :body="bodyTable"
                     :pdfViewRef="pdfViewRef"
-                    :disabled="!canPermissionOcr"
+                    :disabled="!hasPermissionOcr"
                   />
                 </div>
               </pane>
@@ -467,7 +469,7 @@ onUnmounted(() => {
           <template #default>
             <div class="flex justify-between p-4 font-semibold items-center">
               <span class="min-h-[32px]">{{ documentDetail?.fileName }}</span>
-              <el-dropdown placement="bottom-end" trigger="click" v-if="canPermissionOcr">
+              <el-dropdown placement="bottom-end" trigger="click" v-if="hasPermissionOcr">
                 <el-button :icon="More" class="p-[8px]" />
                 <template #dropdown>
                   <el-dropdown-menu>
@@ -539,7 +541,7 @@ onUnmounted(() => {
                                 fieldSelect === item?.id && item?.type !== 'image' && item?.type !== 'list[text]'
                               "
                               v-model="item.validatedValue"
-                              :disabled="!canPermissionOcr"
+                              :disabled="!hasPermissionOcr"
                               autosize
                               type="textarea"
                             />
@@ -555,7 +557,7 @@ onUnmounted(() => {
                                 <el-input
                                   v-if="fieldSelect === child_text?.id"
                                   v-model="child_text.validatedValue"
-                                  :disabled="!canPermissionOcr"
+                                  :disabled="!hasPermissionOcr"
                                   autosize
                                   type="textarea"
                                 />
@@ -617,22 +619,18 @@ onUnmounted(() => {
                       :icon="CloseBold"
                       class="text-[#c92a2a] border-[#c92a2a]"
                       @click="handleDeniedDossier()"
-                      :disabled="!canPermissionOcr"
+                      :disabled="!hasPermissionOcr"
                       >Từ chối</el-button
                     >
                     <div class="flex">
-                      <el-button
-                        class="text-[#fff] bg-[#1c7ed6]"
-                        @click="saveDossier()"
-                        :loading="loading"
-                        :disabled="!canPermissionOcr"
+                      <el-button class="text-[#fff] bg-[#1c7ed6]" @click="saveDossier()" :disabled="!hasPermissionOcr"
                         ><SvgIcon name="ic-save" class="mr-1" />Lưu lại</el-button
                       >
                       <el-button
                         :icon="Select"
                         class="text-[#fff] bg-[#099268]"
                         @click="handleCompareDossier()"
-                        :disabled="!canPermissionOcr"
+                        :disabled="!hasPermissionOcr"
                         >Đối sánh</el-button
                       >
                     </div>
@@ -655,6 +653,7 @@ onUnmounted(() => {
     <template #default>
       <ClassifyModal
         ref="classifyModalRef"
+        :data-configs="dataConfigs"
         :batch-id="route?.query?.batchId as string"
         @close-dialog="closeDialogClassify()"
       />
