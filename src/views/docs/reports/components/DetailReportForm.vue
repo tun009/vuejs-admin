@@ -127,7 +127,18 @@ defineExpose<Exposes>({
           hiddenChecked
           hiddenPagination
           class="table-container"
-        />
+        >
+          <template #totalFieldEdit="{ row }">
+            <span v-if="row?.totalFieldEdit != null">{{ row?.totalFieldEdit }}/{{ row?.totalFieldOcr }}</span>
+            <span v-else>-</span>
+          </template>
+          <template #totalRequestComparisonEdit="{ row }">
+            <span v-if="row?.totalRequestComparisonEdit != null"
+              >{{ row?.totalRequestComparisonEdit }}/{{ row?.totalRequestComparison }}</span
+            >
+            <span v-else>-</span>
+          </template>
+        </EIBTable>
       </div>
     </div>
   </div>
