@@ -26,7 +26,7 @@ describe('date.ts', () => {
     it('should return a range of the last 7 days', () => {
       const [sevenDaysAgo] = defaultDateRange()
 
-      expect(dayjs(sevenDaysAgo).isSame(dayjs().subtract(7, 'day'), 'day')).toBe(false)
+      expect(dayjs(sevenDaysAgo).isSame(dayjs().subtract(7, 'day'), 'day')).toBe(true)
     })
   })
   describe('formatDateExactFormat', () => {
