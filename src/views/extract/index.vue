@@ -603,14 +603,14 @@ onUnmounted(() => {
                 </div>
                 <div class="tab-footer p-[16px] flex justify-between shadow-[inset_0_1px_0_0_#d0d0d0]">
                   <template v-if="batchDetailData.status === DocumentStatusEnum.ADJUST_REQUESTED">
-                    <ExtractTextInfoDenied :content="batchDetailData?.errorMessage ?? 'Từ chối'" />
+                    <ExtractTextInfoDenied :content="batchDetailData?.deniedMessage ?? 'Từ chối'" />
                     <el-button class="text-[#fff] bg-[#1c7ed6]" @click="reCheckDosssier()" :loading="loading"
                       ><SvgIcon name="ic-save" class="mr-1" />Kiểm tra lại</el-button
                     >
                   </template>
                   <template v-else-if="batchDetailData.status === DocumentStatusEnum.DENIED">
                     <ExtractTextInfoDenied
-                      :content="batchDetailData?.errorMessage ?? 'Từ chối'"
+                      :content="batchDetailData?.deniedMessage ?? 'Từ chối'"
                       class="ml-auto mr-[20px]"
                     />
                   </template>

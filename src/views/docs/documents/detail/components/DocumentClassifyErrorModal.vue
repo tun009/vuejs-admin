@@ -6,15 +6,11 @@ import { VuePDF, usePDF } from '@tato30/vue-pdf'
 import EIBSelect from '@/components/common/EIBSelect.vue'
 import { Delete, Plus } from '@element-plus/icons-vue'
 
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { SelectOptionModel } from '@/@types/common'
 import { ElMessage } from 'element-plus'
 import { useConfirmModal } from '@/hooks/useConfirm'
-import {
-  getDocumentClassifyErrorApi,
-  getDocumentClassifyMessageErrorApi,
-  postReplaceDocumentError
-} from '@/api/docs/document'
+import { getDocumentClassifyErrorApi, postReplaceDocumentError } from '@/api/docs/document'
 import { DocumentClassifyErrordModel, ReplaceDocumentClassifyErrordModel } from '@/@types/pages/docs/documents'
 import { UpdateDosssierReplaceRequestModel } from '@/@types/pages/docs/documents/services/DocumentRequest'
 const { showConfirmModal } = useConfirmModal()
@@ -22,12 +18,12 @@ const { showConfirmModal } = useConfirmModal()
 const dataDetail = ref<DocumentClassifyErrordModel[]>([])
 const documentTypes = ref<SelectOptionModel[]>([])
 const pageActive = ref<string>()
-const listMessageErrors = ref<string[]>([])
 const baseURL = import.meta.env.VITE_BASE_API
 const idFullScreen = 'image-container'
 const scale = ref(0.7)
 interface Props {
   batchId: number | string
+  errorMessage?: string
 }
 interface Emits {
   (e: 'close-dialog'): void
@@ -63,18 +59,12 @@ const getDossierById = async () => {
     throw new Error(error)
   }
 }
-const getMessageError = async () => {
-  try {
-    const { data } = await getDocumentClassifyMessageErrorApi(props.batchId)
-    listMessageErrors.value = data.split('\n')
-  } catch (error: any) {
-    throw new Error(error)
-  }
-}
+const listMessageErrors = computed(() => {
+  return (props?.errorMessage ?? '').split('\n')
+})
 const openModalClassify = () => {
   getDocumentType()
   getDossierById()
-  getMessageError()
 }
 interface ExtractPdfViewExpose {
   openModalClassify: () => void

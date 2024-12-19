@@ -87,6 +87,7 @@ export interface BatchDetailModel {
   periodPresentation: string
   datePresentation: string
   errorMessage?: string
+  deniedMessage?: string
 }
 
 export type GetBatchDetailResponseModel = ApiResponseData<BatchDetailModel>
