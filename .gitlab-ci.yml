@@ -48,7 +48,7 @@ test:
     expose_as: 'Unit Test Report'
     reports:
       coverage_report:
-        coverage_format: cobertura
+        coverage_format: lcov
         path: coverage/lcov.info
       junit:
         - junit-report.xml
