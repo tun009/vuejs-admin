@@ -28,5 +28,9 @@
   "[scss]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "sonarlint.output.showAnalyzerLogs": true
+  "sonarlint.output.showAnalyzerLogs": true,
+  "sonarlint.connectedMode.project": {
+    "connectionId": "https-sonar-cyberspace-vn",
+    "projectKey": "eximbank-ui"
+  }
 }
