@@ -20,8 +20,7 @@ import {
   GetDocumentResponseModel,
   GetDocumentSummaryResponseModel,
   PatchReplaceDocumentClassifyErrordResponseModel,
-  PutPresentationCheckerResponseModel,
-  TranslateEnglishToVietnameseResponseModel
+  PutPresentationCheckerResponseModel
 } from '@/@types/pages/docs/documents/services/DocumentResponse'
 import { request } from '@/api/service'
 
@@ -194,11 +193,5 @@ export function postReplaceDocumentError(data: UpdateDosssierReplaceRequestModel
     url: `/batches/${batchId}/replace`,
     method: 'patch',
     data
-  })
-}
-export function getDocumentClassifyMessageErrorApi(id: number | string) {
-  return request<TranslateEnglishToVietnameseResponseModel>({
-    url: `/batches/${id}/message-error`,
-    method: 'get'
   })
 }

@@ -511,6 +511,7 @@ onMounted(() => {
         ref="classifyModalRef"
         @close-dialog="closeDialogClassify()"
         :batch-id="route.params?.id as string"
+        :error-message="props.data?.errorMessage"
       />
     </template>
   </EIBDrawer>
