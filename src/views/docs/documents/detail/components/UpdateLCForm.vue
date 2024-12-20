@@ -15,7 +15,7 @@ interface Props {
 interface Emits {
   (event: 'update:loading', value: boolean): void
   (event: 'update:visible', value: boolean): void
-  (event: 'update:amount', amountUsed: number): void
+  (event: 'refresh'): void
 }
 
 interface Exposes {
@@ -37,14 +37,13 @@ const updateLCFormRules: FormRules<UpdateLCAmountFormModel> = {
 const onConfirm = () => {
   updateLCRef.value?.validate(async (valid: boolean, fields) => {
     if (!props.defaultForm?.batchId) return
-    if (updateLCFormData.amountUsed > props.defaultForm.totalAmount) return warningNotification('validate.maxValue')
     if (updateLCFormData.amountUsed < 0) return warningNotification('validate.minValue')
     if (valid) {
       emits('update:loading', true)
       try {
         await updateLCAmount({ amountUsed: updateLCFormData.amountUsed, batchId: props.defaultForm?.batchId })
         ElMessage.success('Thành công!')
-        emits('update:amount', updateLCFormData.amountUsed)
+        emits('refresh')
         emits('update:visible', false)
       } catch (error) {
         console.error(error)

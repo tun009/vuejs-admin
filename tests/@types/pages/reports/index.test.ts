@@ -126,7 +126,7 @@ describe('reportStatusOptions', () => {
       'Đang phân loại': DocumentStatusEnum.CLASSIFYING,
       'Đã phân loại': DocumentStatusEnum.CLASSIFIED,
       'Đang xử lý OCR': DocumentStatusEnum.OCRING,
-      'Đã đối sánh': DocumentStatusEnum.OCRED,
+      'Đã trích xuất': DocumentStatusEnum.OCRED,
       'Chờ kiểm tra': DocumentStatusEnum.WAIT_CHECK,
       'Đang kiểm tra': DocumentStatusEnum.CHECKING,
       'Đã kiểm tra': DocumentStatusEnum.CHECKED,

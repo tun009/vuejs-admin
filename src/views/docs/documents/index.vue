@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ArrowDownBold, Filter, Plus, Search } from '@element-plus/icons-vue'
-import { computed, onActivated, onDeactivated, onMounted, reactive, ref, watch } from 'vue'
+import { onActivated, onDeactivated, onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
@@ -13,13 +13,13 @@ import {
   FilterDocumentModel,
   SocketDataModel,
   businessTypeOptions,
+  defaultStatus,
   docListColumnConfigs,
   documentResultOptions,
   documentStatusOptions,
   processingStepOptions
 } from '@/@types/pages/docs/documents'
 import { BranchModel } from '@/@types/pages/login'
-import { RoleEnum } from '@/@types/pages/users'
 import { deleteDocument, getBranches, getDocuments } from '@/api/docs/document'
 import { updateDocumentStatus } from '@/api/docs/document/compare'
 import createSocketConnection from '@/api/socker-service'
@@ -39,9 +39,11 @@ import { formatDDMMYYYY, formatDDMMYYYY_HHMM, formatYYYYMMDD, shortcutsDateRange
 import { DOCUMENT_DETAIL_PAGE } from '@/constants/router'
 import { useConfirmModal } from '@/hooks/useConfirm'
 import { Title } from '@/layouts/components'
+import { useDocumentStore } from '@/store/modules/document'
 import { useUserStore } from '@/store/modules/user'
 import {
   buildUrlSocket,
+  getDocumentSwitchStatus,
   mappingBranches,
   omitPropertyFromObject,
   renderLabelByValue,
@@ -60,11 +62,8 @@ const { t } = useI18n()
 const router = useRouter()
 const { showConfirmModal } = useConfirmModal()
 const { isViewer, isAdmin, isChecker, isMaker, userInfo } = useUserStore()
+const { setFilter } = useDocumentStore()
 const socket = ref()
-
-const defaultStatus = computed(() => {
-  return documentStatusOptions.slice(0, -5).map((c) => c.value as DocumentStatusEnum)
-})
 
 const multipleFilterRef = ref<InstanceType<typeof EIBMultipleFilter>>()
 const openFilter = ref(false)
@@ -77,7 +76,7 @@ const checkedItems = ref<DocumentModel[]>([])
 const documentTableRef = ref<InstanceType<typeof EIBTable>>()
 const uploadTimes = ref(defaultDateRange())
 const filterValue = reactive<FilterDocumentModel>({
-  status: defaultStatus.value
+  status: defaultStatus
 } as FilterDocumentModel)
 const branches = ref<BranchModel[]>([])
 
@@ -90,7 +89,8 @@ const handleGetDocuments = async (pagination: PaginationModel) => {
       const statusNoError = exactStatus.filter((e) => e !== DocumentStatusEnum.ERROR)
       exactStatus = [...statusNoError, ...errorDocumentStatus]
     }
-    const response = await getDocuments({
+    console.log(status.length)
+    const payload = {
       ...pagination,
       ...omitPropertyFromObject(otherFilter, -1),
       beginDate: formatDateExactFormat(uploadTimes.value[0], formatDDMMYYYY, formatYYYYMMDD),
@@ -101,8 +101,10 @@ const handleGetDocuments = async (pagination: PaginationModel) => {
           column: 'createdAt'
         }
       ],
-      ...(status?.length !== documentStatusOptions.length ? { status: exactStatus } : {})
-    })
+      ...(status?.length !== documentStatusOptions.length - 5 ? { status: exactStatus } : {})
+    }
+    setFilter(payload)
+    const response = await getDocuments(payload)
     tableData.value = response.data.list
     const disabledIds = response.data.list
       .filter((c) => {
@@ -118,29 +120,7 @@ const handleGetDocuments = async (pagination: PaginationModel) => {
 
 /* NOSONAR */
 const handleRedirectToDocumentDetail = async (row: DocumentModel) => {
-  let status: DocumentStatusEnum | null = null
-
-  if (row.status === DocumentStatusEnum.WAIT_CHECK) {
-    if (isMaker) {
-      status = DocumentStatusEnum.CHECKING
-    } else if (isAdmin) {
-      status =
-        userInfo.username === row.createdBy?.username || row.createdBy?.role === RoleEnum.CHECKER
-          ? DocumentStatusEnum.VALIDATING
-          : DocumentStatusEnum.CHECKING
-    }
-  } else if (row.status === DocumentStatusEnum.WAIT_VALIDATE && (isChecker || isAdmin)) {
-    if (
-      isAdmin &&
-      isChecker &&
-      (userInfo.username === row.createdBy?.username || userInfo?.username === row.approveBy?.username)
-    ) {
-      status = DocumentStatusEnum.VALIDATING
-    }
-  } else if (row.status === DocumentStatusEnum.CHECKED && isAdmin) {
-    status = DocumentStatusEnum.VALIDATING
-  }
-
+  const status = getDocumentSwitchStatus(row)
   if (status) {
     try {
       await updateDocumentStatus(row.id, {

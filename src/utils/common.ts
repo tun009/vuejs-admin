@@ -1,11 +1,13 @@
-import { ColumnConfigModel, SelectOptionModel, StatusColorModel } from '@/@types/common'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import DOMPurify from 'dompurify'
+import { ColumnConfigModel, DocumentStatusEnum, SelectOptionModel, StatusColorModel } from '@/@types/common'
+import { DocumentExportFileEnum, DocumentModel } from '@/@types/pages/docs/documents'
+import { UpdateConfidenceRequestModel } from '@/@types/pages/docs/settings/services/SettingRequest'
 import { BranchModel } from '@/@types/pages/login'
+import { RoleEnum } from '@/@types/pages/users'
 import { BLOB_EXPORT_TYPES, SOCKET_PATH, TABLE_COLUMN_WIDTH_DEFAULT } from '@/constants/common'
 import { regexContentDispositionFileName } from '@/constants/regex'
-import { DocumentExportFileEnum } from '@/@types/pages/docs/documents'
-import { UpdateConfidenceRequestModel } from '@/@types/pages/docs/settings/services/SettingRequest'
+import { useUserStore } from '@/store/modules/user'
+import DOMPurify from 'dompurify'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 export const getDataWithPagination = <T>(array: T[], pageNum: number, pageSize: number): T[] => {
   const start = pageNum * pageSize
@@ -296,4 +298,34 @@ export const buildUrlSocket = ({
   const queries = new URLSearchParams(query)
   const queryString = queries.toString()
   return baseUrl + '/' + path + '?' + queryString
+}
+
+export const getDocumentSwitchStatus = (row: DocumentModel) => {
+  let status: DocumentStatusEnum | null = null
+  const { isAdmin, isChecker, isMaker, userInfo } = useUserStore()
+
+  if (row.status === DocumentStatusEnum.WAIT_CHECK) {
+    if (isMaker) {
+      status = DocumentStatusEnum.CHECKING
+    } else if (isAdmin) {
+      status = row.createdBy?.role === RoleEnum.ADMIN ? DocumentStatusEnum.CHECKING : DocumentStatusEnum.VALIDATING
+    } else if (isChecker && row.createdBy?.username === userInfo.username) {
+      status = DocumentStatusEnum.VALIDATING
+    }
+  } else if (row.status === DocumentStatusEnum.WAIT_VALIDATE && (isChecker || isAdmin)) {
+    if (
+      isAdmin ||
+      (isChecker && (userInfo.username === row.createdBy?.username || userInfo?.username === row.approveBy?.username))
+    ) {
+      status = DocumentStatusEnum.VALIDATING
+    }
+  } else if (row.status === DocumentStatusEnum.CHECKED && isAdmin) {
+    status = DocumentStatusEnum.VALIDATING
+  } else if (
+    row.status === DocumentStatusEnum.ADJUST_REQUESTED &&
+    (isAdmin || (isMaker && row.createdBy?.username === userInfo.username))
+  ) {
+    status = DocumentStatusEnum.CHECKING
+  }
+  return status
 }

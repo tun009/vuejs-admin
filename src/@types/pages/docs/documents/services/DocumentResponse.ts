@@ -57,6 +57,8 @@ export type PatchDocumentCompareUndefinedResponseModel = ApiResponseData<boolean
 
 export type RetryDocumentResponseModel = ApiResponseData<DocumentModel>
 
+export type QueryIdsResponseModel = ApiResponseData<number[]>
+
 export interface UserModel {
   id: number
   name: string
