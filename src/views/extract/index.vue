@@ -79,8 +79,12 @@ const getDossiersList = async (id: number) => {
     const response = await getDossierListApi(id)
     isLoadViewContentLeft.value = true
     dossierListData.value = response?.data?.map((item) => {
+      const name = item.docType.name
+        .replace(/^Trích xuất\s+/i, '')
+        .replace(/^[a-záàảãạăâbcd...z]/i, (char) => char.toUpperCase())
       return {
         ...item,
+        docTypeName: name,
         status: renderLabelByValue(documentStatusOptions, item.status) || 'Đang phân loại',
         color: renderColorByValue(documentStatusOptions, item.status) || '#1098ad'
       }
@@ -394,7 +398,7 @@ onUnmounted(() => {
                     @click="getDossierById(item.id)"
                     :class="{ 'dossier-active bg-[#e7f5ff]': item.id === idDossierActive }"
                   >
-                    <div>{{ item?.docType?.name }}</div>
+                    <div>{{ item?.docTypeName }}</div>
                     <div class="mt-2 flex items-center">
                       <span
                         class="w-[8px] h-[8px] rounded-full mr-[4px]"

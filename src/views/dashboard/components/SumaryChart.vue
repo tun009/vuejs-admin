@@ -140,7 +140,7 @@ onUpdated(() => {
 <template>
   <CanvasJSChart :options="options" :styles="styleOptions" ref="chartSumary" v-if="isRendenderChart" />
   <div class="mt-[30px] mr-[10%]" v-else>
-    <el-progress :width="circleWidth" type="circle" :percentage="0" :stroke-width="circleStrokeWidth" color="#dee2e6">
+    <el-progress :width="170" type="circle" :percentage="0" :stroke-width="22" color="#dee2e6">
       <template #default>
         <div class="font-semibold text-[20px]">0</div>
         <div class="text-[14px] text-[#868e96] mt-[5px]">Bộ chứng từ</div>
@@ -151,7 +151,7 @@ onUpdated(() => {
     <div>
       <div v-for="(item, index) in options.data[0]?.dataPoints" :key="index" class="flex gap-1 mt-1">
         <span
-          class="min-w-[16px] min-h-[16px] max-w-[16px] max-h-[16px] rounded-[8px] mt-[1px]"
+          class="min-w-[16px] min-h-[16px] max-w-[16px] max-h-[16px] rounded-[8px] mt-[2px]"
           :style="`background-color:${item.color}`"
         />
         <span>{{ item.name }}: </span>{{ item.y }}
