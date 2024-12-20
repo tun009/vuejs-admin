@@ -159,8 +159,9 @@ const handleGetBranches = async () => {
   }
 }
 
-const getNameStatus = (name: string) => {
-  if (name == UserStatusEnum.ACTIVE) {
+const getNameStatus = (status: string) => {
+  if (!status) return 'Hoạt động'
+  if (status == UserStatusEnum.ACTIVE) {
     return 'Hoạt động'
   } else {
     return 'Khóa tài khoản'

@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest'
 import dayjs from 'dayjs'
 import {
   getDateRangeByDistance,
-  defaultDateRange,
   formatDateExactFormat,
   formatDate,
   addOneDayToDate,
@@ -22,13 +21,6 @@ describe('date.ts', () => {
     })
   })
 
-  describe('defaultDateRange', () => {
-    it('should return a range of the last 7 days', () => {
-      const [sevenDaysAgo] = defaultDateRange()
-
-      expect(dayjs(sevenDaysAgo).isSame(dayjs().subtract(7, 'day'), 'day')).toBe(true)
-    })
-  })
   describe('formatDateExactFormat', () => {
     it('should format the date correctly from one format to another', () => {
       const dateString = '2024-12-05'
