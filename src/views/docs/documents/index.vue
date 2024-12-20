@@ -89,7 +89,6 @@ const handleGetDocuments = async (pagination: PaginationModel) => {
       const statusNoError = exactStatus.filter((e) => e !== DocumentStatusEnum.ERROR)
       exactStatus = [...statusNoError, ...errorDocumentStatus]
     }
-    console.log(status.length)
     const payload = {
       ...pagination,
       ...omitPropertyFromObject(otherFilter, -1),
@@ -101,7 +100,7 @@ const handleGetDocuments = async (pagination: PaginationModel) => {
           column: 'createdAt'
         }
       ],
-      ...(status?.length !== documentStatusOptions.length - 5 ? { status: exactStatus } : {})
+      ...(status.length && status?.length !== documentStatusOptions.length - 5 ? { status: exactStatus } : {})
     }
     setFilter(payload)
     const response = await getDocuments(payload)

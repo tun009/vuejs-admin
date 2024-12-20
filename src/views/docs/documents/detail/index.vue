@@ -63,7 +63,6 @@ const handleGetQueryIds = async () => {
       const statusNoError = exactStatus.filter((e) => e !== DocumentStatusEnum.ERROR)
       exactStatus = [...statusNoError, ...errorDocumentStatus]
     }
-    console.log(exactStatus.length, documentStatusOptions.length)
     const payload = {
       ...omitPropertyFromObject(otherFilter, -1),
       beginDate: formatDateExactFormat(defaultDateRange()?.[0], formatDDMMYYYY, formatYYYYMMDD),
@@ -74,7 +73,7 @@ const handleGetQueryIds = async () => {
           column: 'createdAt'
         }
       ],
-      ...(status?.length !== documentStatusOptions.length - 5 ? { status: exactStatus } : {})
+      ...(status.length && status?.length !== documentStatusOptions.length - 5 ? { status: exactStatus } : {})
     }
     const { data } = await getQueryIds(payload as GetDocumentRequestModel)
     const index = data.findIndex((item) => item.toString() === documentId.value)
