@@ -20,7 +20,8 @@ import {
   GetDocumentResponseModel,
   GetDocumentSummaryResponseModel,
   PatchReplaceDocumentClassifyErrordResponseModel,
-  PutPresentationCheckerResponseModel
+  PutPresentationCheckerResponseModel,
+  QueryIdsResponseModel
 } from '@/@types/pages/docs/documents/services/DocumentResponse'
 import { request } from '@/api/service'
 
@@ -192,6 +193,14 @@ export function postReplaceDocumentError(data: UpdateDosssierReplaceRequestModel
   return request<PutPresentationCheckerResponseModel>({
     url: `/batches/${batchId}/replace`,
     method: 'patch',
+    data
+  })
+}
+
+export function getQueryIds(data: GetDocumentRequestModel) {
+  return request<QueryIdsResponseModel>({
+    url: 'batches/query-ids',
+    method: 'post',
     data
   })
 }

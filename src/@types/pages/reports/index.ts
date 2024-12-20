@@ -171,7 +171,7 @@ export const reportStatusOptions: SelectOptionModel[] = [
     color: STATUS_COLORS.CLASSIFYING
   },
   {
-    label: 'Đã đối sánh',
+    label: 'Đã trích xuất',
     value: DocumentStatusEnum.OCRED,
     color: STATUS_COLORS.OCRED
   },

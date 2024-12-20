@@ -55,7 +55,6 @@ export interface AddDocumentRequestModel {
   branchId?: number
   customerName: string
   cif?: string
-  // amountClaimed: number
 }
 
 export interface UpdateDocumentRequestModel {

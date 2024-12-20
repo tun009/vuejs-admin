@@ -211,7 +211,7 @@ onMounted(() => {
     <UpdateLCForm
       ref="updateLCFormRef"
       :default-form="amount"
-      @update:amount="(amountUsed: number) => (amount.amountUsed = amountUsed)"
+      @refresh="handleGetDocumentAmount"
       @update:loading="(loading: boolean) => (loadingConfirm = loading)"
       @update:visible="(visible: boolean) => (dialogVisible = visible)"
     />

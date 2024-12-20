@@ -71,7 +71,7 @@ const addDocumentFormRules: FormRules<AddDocumentRequestModel> = {
   cif: [],
   customerName: [requireRule()],
   name: [requireRule()],
-  branchId: []
+  branchId: [requireRule()]
 }
 
 const handleAddDocument = () => {
@@ -120,6 +120,9 @@ const handleGetBranches = async () => {
   try {
     const { data } = await getBranches()
     branches.value = data
+    const defaultBranch = data.find((c) => c.code === '1000')
+    if (!defaultBranch) return
+    addDocumentFormData.branchId = defaultBranch.id
   } catch (error) {
     console.error(error)
   }
@@ -172,6 +175,7 @@ onMounted(() => {
             name="branchId"
             :options="mappingBranches(branches)"
             label="docs.document.selectSOL"
+            required
             is-row
           />
 
