@@ -172,13 +172,17 @@ const chartData = ref<DasboardOverviewModel>({})
 const documentTypes = ref<SelectOptionModel[]>([])
 const initDossierTypes = async () => {
   try {
-    const response = await getDocummentTypeApi()
+    const { data } = await getDocummentTypeApi()
     documentTypes.value = [
       { label: 'Tất cả', value: -1 },
-      ...response.data.map((item) => ({
-        label: item.name,
-        value: item.id
-      }))
+      ...data
+        .filter((item) => item.key !== 'OTHER')
+        .map((item) => {
+          const name = item.name
+            .replace(/^Trích xuất\s+/i, '')
+            .replace(/^[a-záàảãạăâbcd...z]/i, (char) => char.toUpperCase())
+          return { label: name, value: item.id }
+        })
     ]
   } catch (error: any) {
     throw new Error(error)
@@ -321,7 +325,7 @@ watch(
 }
 .box-container-top {
   height: 30vh;
-  min-height: 250px;
+  min-height: 260px;
 }
 .box-container-bottom {
   height: 48vh;
