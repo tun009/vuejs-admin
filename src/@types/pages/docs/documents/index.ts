@@ -24,7 +24,9 @@ export enum ProcessingStepEnum {
   NEW = 'NEW',
   OCR = 'OCR',
   CHECK = 'CHECK',
-  VALIDATE = 'VALIDATE'
+  VALIDATE = 'VALIDATE',
+  COMPARISON = 'COMPARISON',
+  CLASSIFY = 'CLASSIFY'
 }
 
 export enum DocumentKeyEnum {
@@ -287,11 +289,11 @@ export const businessTypeOptions: SelectOptionModel[] = [
 
 export const processingStepOptions: SelectOptionModel[] = [
   {
-    label: 'Tạo mới yêu cầu',
+    label: 'Tạo mới',
     value: ProcessingStepEnum.NEW
   },
   {
-    label: 'Đang xử lý',
+    label: 'Trích xuất',
     value: ProcessingStepEnum.OCR
   },
   {
@@ -301,6 +303,14 @@ export const processingStepOptions: SelectOptionModel[] = [
   {
     label: 'Phê duyệt',
     value: ProcessingStepEnum.VALIDATE
+  },
+  {
+    label: 'Đối sánh',
+    value: ProcessingStepEnum.COMPARISON
+  },
+  {
+    label: 'Phân loại',
+    value: ProcessingStepEnum.CLASSIFY
   }
 ]
 

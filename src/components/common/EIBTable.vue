@@ -26,7 +26,7 @@ interface Emits {
 interface Exposes {
   clearSelection: () => void
   setLoading: (status: boolean) => void
-  handleGetData: () => void
+  handleGetData: (resetPagination?: boolean) => void
   getPagination: () => PaginationModel
 }
 

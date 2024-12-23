@@ -69,6 +69,7 @@ export const statusAccessDeleteDocumentStatus = [
   DocumentStatusEnum.CLASSIFIED,
   DocumentStatusEnum.OCRING,
   DocumentStatusEnum.OCRED,
+  DocumentStatusEnum.COMPARING,
   ...makerStepDocumentStatus,
   ...errorDocumentStatus
 ]
