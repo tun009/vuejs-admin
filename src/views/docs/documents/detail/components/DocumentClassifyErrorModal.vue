@@ -27,6 +27,7 @@ interface Props {
 }
 interface Emits {
   (e: 'close-dialog'): void
+  (event: 'refresh'): void
 }
 
 const props = defineProps<Props>()
@@ -117,6 +118,7 @@ const saveDossierClassify = async () => {
     })
     loading.value = false
     emits('close-dialog')
+    emits('refresh')
   } catch (error: any) {
     throw new Error(error)
   }
