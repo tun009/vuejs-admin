@@ -164,8 +164,8 @@ const handleFileReplace = (data: ReplaceDocumentClassifyErrordModel) => {
       fileId: data.fileId,
       countNumReplace: (doc.countNumReplace || 0) + 1
     })
-    // Nếu số lần thay thế < 1, push doc coppy vào others
-    if ((doc.countNumReplace || 0) < 1) {
+    // Nếu số lần thay thế < 2, push doc coppy vào others
+    if ((doc.countNumReplace || 0) < 2) {
       docCopy.docType = {
         id: 159,
         name: 'Khác',

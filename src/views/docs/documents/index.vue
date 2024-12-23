@@ -159,7 +159,7 @@ const handleDeleteDocument = (data?: DocumentModel) => {
           const ids = checkedItems.value.map((i) => i.id)
           await deleteDocument(ids)
         }
-        handleGetData()
+        documentTableRef?.value?.handleGetData(false)
         done()
       } catch (error) {
         console.error(error)
@@ -401,7 +401,7 @@ onActivated(() => {
   <UploadDocuments v-if="dialogVisible" v-model="dialogVisible" @refresh="documentTableRef?.handleGetData()" />
   <EIBDrawer title="docs.document.updateDocument" v-model="openDrawer" v-if="openDrawer">
     <template #default>
-      <UpdateDocument @close="openDrawer = false" :data="rowSelect" @refresh="documentTableRef?.handleGetData()" />
+      <UpdateDocument @close="openDrawer = false" :data="rowSelect" @refresh="documentTableRef?.handleGetData(false)" />
     </template>
   </EIBDrawer>
   <Transition :duration="300" name="nested" class="fixed bottom-0 -ml-5">

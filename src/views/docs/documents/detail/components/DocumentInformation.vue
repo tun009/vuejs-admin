@@ -510,6 +510,7 @@ onMounted(() => {
       <DocumentClassifyErrorModal
         ref="classifyModalRef"
         @close-dialog="closeDialogClassify()"
+        @refresh="$emit('refresh')"
         :batch-id="route.params?.id as string"
         :error-message="props.data?.errorMessage"
       />
