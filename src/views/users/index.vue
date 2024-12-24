@@ -100,7 +100,7 @@ const handleGetUser = async (pagination: PaginationModel) => {
 
 const handleDeleteUser = (data?: UserModel) => {
   showConfirmModal({
-    message: `Sau khi xóa thành công <strong> ${data?.name}:</strong> <br/>&nbsp; <strong>•</strong>  Bạn không thể xem các tác vụ người dùng này đã xử lý <br/> Sau khi Xóa thành công, tài khoản này sẽ không thể khôi phục lại. <br/> Bạn xác nhận xóa người dùng này chứ?`,
+    message: `Sau khi xóa thành công <strong>  ${data?.name ?? 'các người dùng đã được chọn'}:</strong> <br/>&nbsp; <strong>•</strong>  Bạn không thể xem các tác vụ người dùng này đã xử lý <br/> Sau khi Xóa thành công, tài khoản này sẽ không thể khôi phục lại. <br/> Bạn xác nhận xóa người dùng này chứ?`,
     title: 'Xóa người dùng',
     successCallback: handleClearAllChecked,
     onConfirm: async (instance, done) => {
@@ -299,7 +299,7 @@ onMounted(() => {
           ></span
         >
         <el-button type="primary" plain @click="() => handleLockUser()">Khóa tài khoản</el-button>
-        <el-button type="danger" plain :icon="Delete" @click="() => handleDeleteUser()">{{
+        <el-button type="danger" v-if="isHaveDeleteDocument()" plain :icon="Delete" @click="() => handleDeleteUser()">{{
           $t('button.delete')
         }}</el-button>
       </div>
