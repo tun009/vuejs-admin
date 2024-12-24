@@ -73,7 +73,7 @@ const handleGetQueryIds = async () => {
           column: 'createdAt'
         }
       ],
-      ...(status.length && status?.length !== documentStatusOptions.length - 5 ? { status: exactStatus } : {})
+      ...(status?.length !== documentStatusOptions.length - 5 ? { status: exactStatus } : {})
     }
     const { data } = await getQueryIds(payload as GetDocumentRequestModel)
     const index = data.findIndex((item) => item.toString() === documentId.value)

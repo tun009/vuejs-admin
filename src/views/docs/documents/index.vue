@@ -100,9 +100,9 @@ const handleGetDocuments = async (pagination: PaginationModel) => {
           column: 'createdAt'
         }
       ],
-      ...(status.length && status?.length !== documentStatusOptions.length - 5 ? { status: exactStatus } : {})
+      ...(status?.length !== documentStatusOptions.length - 5 ? { status: exactStatus } : {})
     }
-    setFilter(payload)
+    setFilter({ ...payload, status })
     const response = await getDocuments(payload)
     tableData.value = response.data.list
     const disabledIds = response.data.list
