@@ -37,7 +37,7 @@ test:
   # only:
   #   - develop
   tags:
-    - gitlab-runner run
+    - local-huybq
   coverage: /TOTAL\s+\d+\s+\d+\s+(100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/
   artifacts:
     when: always
