@@ -245,7 +245,10 @@ const isHaveActionButton = computed(() => {
     return false
   }
   if (isChecker) {
-    if (checkerStepDocumentStatus.includes(status) || userInfo.username === documentDetail.value?.createdBy?.username)
+    if (
+      (checkerStepDocumentStatus.includes(status) && documentDetail.value.approveBy?.username === userInfo.username) ||
+      userInfo.username === documentDetail.value?.createdBy?.username
+    )
       return true
     return false
   }
