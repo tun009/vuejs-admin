@@ -21,7 +21,7 @@ sonar:
       artifacts: true
 
 test:
-  image: hub.vtcc.vn:8989/node:18.16.1-bullseye
+  image: hub.vtcc.vn:8989/alpine
   stage: test
   script:
     - echo "test"
