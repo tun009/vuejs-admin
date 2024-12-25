@@ -182,7 +182,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     meta: {
       title: 'rules',
       svgIcon: 'ic-round-rule',
-      roles: [RoleEnum.ADMIN, RoleEnum.CHECKER]
+      roles: [RoleEnum.ADMIN, RoleEnum.CHECKER, RoleEnum.MAKER]
     },
     children: [
       {
