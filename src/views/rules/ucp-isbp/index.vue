@@ -13,15 +13,23 @@ import debounce from 'lodash-es/debounce'
 import { onMounted, reactive, ref, watch } from 'vue'
 import UpdateRuleForm from '../components/UpdateRuleForm.vue'
 import { getDocummentTypeApi } from '@/api/extract'
+import { useUserStore } from '@/store/modules/user'
 const documentTypes = ref<SelectOptionModel[]>([])
 
+const { isAdmin, isChecker } = useUserStore()
 const rulesTableRef = ref<InstanceType<typeof EIBTable>>()
 const filterValue = reactive<FilterRulesModel>({ query: '' } as FilterRulesModel)
 filterValue.type = RuleTypeEnum.LAW
 const openUpdateRuleDrawer = ref(false)
 
 const tableData = ref<RuleModel[]>([])
-
+const isHaveUpdateRule = () => {
+  if (isAdmin || isChecker) {
+    return true
+  } else {
+    return false
+  }
+}
 const handleGetRules = async (pagination: PaginationModel) => {
   try {
     const response = await getRules({
@@ -129,7 +137,7 @@ onMounted(() => {
           <span>{{ getTextFromHtml(row.en) }}</span>
         </template>
         <template #actions="{ row }">
-          <div class="flex flex-row gap-2">
+          <div class="flex flex-row gap-2" v-if="isHaveUpdateRule()">
             <SvgIcon
               :size="18"
               name="edit-info"
