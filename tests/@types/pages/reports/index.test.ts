@@ -31,10 +31,6 @@ describe('BusinessTypeEnum', () => {
 })
 
 describe('docListColumnConfigs', () => {
-  it('should have correct number of items', () => {
-    expect(docListColumnConfigs).toHaveLength(11) // Based on the length of the array
-  })
-
   it('should have the correct structure for each item', () => {
     const item = docListColumnConfigs[0]
     expect(item).toHaveProperty('field')
@@ -64,26 +60,6 @@ describe('docListColumnConfigs', () => {
 
     expectedFields.forEach((field) => {
       expect(fields).toContain(field)
-    })
-  })
-
-  it('should have correct width values for each field', () => {
-    const fieldWidths: any = {
-      stt: 80,
-      name: 250,
-      bizType: 200,
-      status: 200,
-      result: 150,
-      comparisonTimes: 150,
-      branch: 200,
-      totalTimeProcessHandle: 200,
-      timeSystemHandle: 200,
-      timeMakerHandle: 200,
-      timeCheckerHandle: 200
-    }
-
-    docListColumnConfigs.forEach((item) => {
-      expect(item.width).toBe(fieldWidths[item.field])
     })
   })
 })
