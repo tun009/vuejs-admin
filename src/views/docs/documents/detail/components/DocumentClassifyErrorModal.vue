@@ -105,11 +105,14 @@ const viewPage = (viewPage: string) => {
 const saveDossierClassify = async () => {
   try {
     loading.value = true
-    const dataPost = dataDetail.value.map((item) => ({
-      dossierDocId: item?.id,
-      docType: item.docType.key,
-      fileId: item?.fileId
-    })) as UpdateDosssierReplaceRequestModel[]
+    const dataPost = dataDetail.value
+      .filter((doc) => doc.pages)
+      .map((item) => ({
+        dossierDocId: item?.id,
+        docType: item.docType.key,
+        fileId: item?.fileId,
+        dossierFileId: item?.dossierFileId
+      })) as UpdateDosssierReplaceRequestModel[]
     await postReplaceDocumentError(dataPost, props.batchId)
     ElMessage({
       showClose: true,
@@ -125,11 +128,20 @@ const saveDossierClassify = async () => {
 }
 const handleDeleteDoc = (data: DocumentClassifyErrordModel[], index: number) => {
   showConfirmModal({
-    message: `Bạn chắc chắn muốn xóa?`,
-    title: 'Xác nhận',
+    message: `Chứng từ sau khi xóa sẽ bị chuyển sang mục Khác. Bạn chắc chắn muốn xóa chứng từ này?`,
+    title: 'Xác nhận Xóa chứng từ',
     showMesageSucess: false,
     onConfirm: (_, done) => {
+      const docCopy = { ...data[index] }
+      docCopy.docType = {
+        id: 159,
+        name: 'Khác',
+        key: 'OTHER',
+        type: 'extraction'
+      }
+      docCopy.isReplace = true
       data.splice(index, 1)
+      data.push(docCopy)
       done()
     }
   })
@@ -143,10 +155,12 @@ const increaseDocument = (data: DocumentClassifyErrordModel[]) => {
       key: 'OTHER',
       type: 'extraction'
     },
+    dossierFileId: null,
     pathFile: '',
     pages: '',
     pageList: []
   })
+  docIndexActive.value = data.length
 }
 const openModalReplaceDocument = () => {
   isShowModalReplace.value = true
@@ -162,10 +176,11 @@ const handleFileReplace = (data: ReplaceDocumentClassifyErrordModel) => {
       isLoaded: false,
       isReplace: true,
       fileId: data.fileId,
+      dossierFileId: data.dossierFileId,
       countNumReplace: (doc.countNumReplace || 0) + 1
     })
     // Nếu số lần thay thế < 2, push doc coppy vào others
-    if ((doc.countNumReplace || 0) < 2) {
+    if (doc?.pageList?.length > 0 && (doc.countNumReplace || 0) < 2) {
       docCopy.docType = {
         id: 159,
         name: 'Khác',

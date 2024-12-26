@@ -40,7 +40,10 @@ import {
 } from '@/utils/common'
 import { documentStatusOptions } from '@/@types/pages/docs/documents'
 import { ArrowLeft, More, CloseBold, Select } from '@element-plus/icons-vue'
-import { ExtractPostDossierRequestModel } from '@/@types/pages/extract/service/ExtractRequest'
+import {
+  ExtractPostDossierRequestModel,
+  ExtractPostDossierTableModel
+} from '@/@types/pages/extract/service/ExtractRequest'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { regexNullOrEmpty } from '@/constants/regex'
 import router from '@/router'
@@ -150,24 +153,11 @@ const clickTable = (data: ExtractResultOcrModel) => {
   isShowTable.value = true
   // pdfViewRef.value?.goToPageView(data.pageId)
   resizeTable.value = 70
-  if (!data?.childrenMapping) bodyTable.value = mappingBodyTable(data.headers, data.children)
+  // if (!data?.childrenMapping) bodyTable.value = mappingBodyTable(data.headers, data.children)
+  if (!data?.childrenMapping) bodyTable.value = data.children
+
   headerTable.value = data.headers
   // bodyTable.value = data.childrenMapping
-}
-const mappingBodyTable = (header: ExtractResultOcrTableHeaderModel[], body: ExtractResultOcrTableChildrenModel[][]) => {
-  const bodyConvert: ExtractResultOcrTableChildrenModel[][] = []
-  body.forEach((rowBody) => {
-    const result: ExtractResultOcrTableChildrenModel[] = []
-    header.forEach((headerItem) => {
-      const matchedItem = rowBody.find((bodyItem) => bodyItem.coreKey === headerItem.key)
-
-      if (matchedItem) {
-        result.push(matchedItem)
-      }
-    })
-    bodyConvert.push(result)
-  })
-  return bodyConvert
 }
 const renderClassOcr = (conf: number = 0) => {
   return conf > 0.75 ? 'trust-hight' : 'trust-medium'
@@ -261,16 +251,37 @@ const saveDossier = async () => {
         .filter((x) => x.id)
         .forEach((item) => {
           if (item.type === 'structured_table' && item?.children?.length > 0) {
-            item?.children?.forEach((row) => {
+            const childrenDataPut = [] as ExtractPostDossierTableModel[]
+
+            item?.children?.forEach((row, index_child) => {
               row.forEach((child) => {
-                dataUpdate.push({ docDataId: child.id, value: child?.validatedValue ?? '' })
+                childrenDataPut.push({
+                  docDataId: child.id ?? '',
+                  key: child.coreKey,
+                  value: child?.validatedValue ?? '',
+                  rowNum: index_child
+                })
               })
+            })
+            dataUpdate.push({
+              docDataId: item.id,
+              value: '',
+              structuredTableValues: childrenDataPut as ExtractPostDossierTableModel[]
             })
           } else if (item.type === 'list[text]' && (item?.listText?.length ?? 0) > 0) {
             item.listText?.forEach((childItem) => {
-              dataUpdate.push({ docDataId: childItem.id, value: childItem?.validatedValue ?? '' })
+              dataUpdate.push({
+                docDataId: childItem.id,
+                value: childItem?.validatedValue ?? '',
+                structuredTableValues: [] as ExtractPostDossierTableModel[]
+              })
             })
-          } else dataUpdate.push({ docDataId: item.id, value: item?.validatedValue ?? '' })
+          } else
+            dataUpdate.push({
+              docDataId: item.id,
+              value: item?.validatedValue ?? '',
+              structuredTableValues: [] as ExtractPostDossierTableModel[]
+            })
         })
     })
     const response = await saveDossierDocApi(Number(route?.query?.dossierDocId), dataUpdate)
@@ -534,7 +545,7 @@ onUnmounted(() => {
                                 backgroundColor: renderColorByConfidence(item?.confidence ?? 0, dataConfigs)
                               }"
                             >
-                              {{ formatNumberConfidence(item?.confidence ?? 0) }}%
+                              {{ item?.confidence ? formatNumberConfidence(item?.confidence ?? 0) + '%' : 'No data' }}
                             </span>
                             <span class="ml-2 text-[#868e96] break-words text-break">{{ item?.name }}</span>
                           </div>

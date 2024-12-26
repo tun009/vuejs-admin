@@ -4,7 +4,7 @@ import {
   ExtractResultOcrTableChildrenModel,
   ExtractResultOcrTableHeaderModel
 } from '@/@types/pages/extract'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 interface ExtractPdfViewExpose {
   tagLabelToPage: (
     boxInfo: ExtractResultOcrPageBBboxesModel[],
@@ -30,6 +30,37 @@ const toggleEdit = (rowIndex: number, colIndex: number, dataCol: ExtractResultOc
     props.pdfViewRef.tagLabelToPage(dataCol?.pageBboxes ?? [], dataCol.type)
   }
 }
+const decreaseRow = (index: number) => {
+  const updatedBody = props.body
+  updatedBody.splice(index, 1)
+  // emit('update-body', data)
+}
+const increaseRow = (index: number, row: ExtractResultOcrTableChildrenModel[]) => {
+  const tempValue = row.map((item) => ({
+    coreKey: item.coreKey,
+    type: item.type,
+    validatedValue: ''
+  })) as ExtractResultOcrTableChildrenModel[]
+  const updatedBody = props.body
+
+  updatedBody.splice(index + 1, 0, tempValue)
+  // emit('update-body', data)
+}
+const bodyTable = computed(() => {
+  const bodyConvert: ExtractResultOcrTableChildrenModel[][] = []
+  props.body.forEach((rowBody) => {
+    const result: ExtractResultOcrTableChildrenModel[] = []
+    props.header.forEach((headerItem) => {
+      const matchedItem = rowBody.find((bodyItem) => bodyItem.coreKey === headerItem.key)
+
+      if (matchedItem) {
+        result.push(matchedItem)
+      }
+    })
+    bodyConvert.push(result)
+  })
+  return bodyConvert
+})
 </script>
 <template>
   <table class="table table-structured-cp" :class="{ 'table-fixed': props.header.length < 5 }">
@@ -42,10 +73,11 @@ const toggleEdit = (rowIndex: number, colIndex: number, dataCol: ExtractResultOc
         <th v-for="(header, index_header) in props.header" :key="index_header">
           {{ header.name }}
         </th>
+        <th class="w-[120px]" />
       </tr>
     </thead>
     <tbody>
-      <tr v-for="(data_row, index_row) in props.body" :key="index_row">
+      <tr v-for="(data_row, index_row) in bodyTable" :key="index_row">
         <td class="text-center">{{ index_row + 1 }}</td>
         <td v-for="(data_col, index_col) in data_row" :key="index_col">
           <el-input
@@ -65,6 +97,20 @@ const toggleEdit = (rowIndex: number, colIndex: number, dataCol: ExtractResultOc
             @click="toggleEdit(index_row, index_col, data_col)"
           >
             {{ data_col?.validatedValue }}
+          </div>
+        </td>
+        <td>
+          <div class="flex flex-row gap-3 items-center px-3 justify-center">
+            <el-icon :size="20" class="cursor-pointer" title="Thêm hàng" @click="increaseRow(index_row, data_row)"
+              ><CirclePlus
+            /></el-icon>
+            <SvgIcon
+              :size="20"
+              name="delete-mini"
+              class="cursor-pointer"
+              title="Xóa hàng"
+              @click="decreaseRow(index_row)"
+            />
           </div>
         </td>
       </tr>
