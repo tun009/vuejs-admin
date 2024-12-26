@@ -123,7 +123,7 @@ export const constantRoutes: RouteRecordRaw[] = [
         meta: {
           title: 'settings',
           keepAlive: true,
-          roles: [RoleEnum.ADMIN, RoleEnum.CHECKER]
+          roles: [RoleEnum.ADMIN, RoleEnum.CHECKER, RoleEnum.MAKER]
         }
       },
       {
