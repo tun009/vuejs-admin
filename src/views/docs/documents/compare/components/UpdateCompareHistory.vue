@@ -1,68 +1,18 @@
 <script lang="ts" setup>
-import {
-  CompareHistoryActionModel,
-  CompareHistoryCustomModel,
-  CompareHistoryModel,
-  CompareHistoryTypeEnum
-} from '@/@types/pages/docs/documents'
-import { getDocumentHistories } from '@/api/docs/document'
+import { CompareHistoryCustomModel, CompareHistoryTypeEnum } from '@/@types/pages/docs/documents'
 import SafeHtmlRenderer from '@/components/SafeHtmlRenderer.vue'
 import { DOCUMENT_HISTORY_MESSAGES } from '@/constants/common'
 import { Right } from '@element-plus/icons-vue'
-import { onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
 
-const route = useRoute()
-
-const compareHistories = ref<CompareHistoryCustomModel[]>([])
-
-const handleConvertDocumentHistory = (data: CompareHistoryModel): CompareHistoryCustomModel[] => {
-  const result: CompareHistoryCustomModel[] = []
-
-  data.forEach((item) => {
-    item.forEach((action) => {
-      const { day, hour, createdBy, role, type, title, valueBefore, valueAfter } = action
-
-      let dayEntry = result.find((entry) => entry.day === day)
-      if (!dayEntry) {
-        dayEntry = { day, hours: [] }
-        result.push(dayEntry)
-      }
-
-      let hourEntry = dayEntry.hours.find((entry) => entry.hour === hour)
-      if (!hourEntry) {
-        hourEntry = { hour, createdBy, role, type, actions: [] }
-        dayEntry.hours.push(hourEntry)
-      }
-
-      hourEntry.actions.push({
-        title,
-        valueBefore: valueBefore ?? null,
-        valueAfter: valueAfter ?? null
-      } as CompareHistoryActionModel)
-    })
-  })
-
-  return result
+interface Props {
+  compareHistories: CompareHistoryCustomModel[]
 }
 
-const handleGetDocumentHistories = async () => {
-  try {
-    const response = await getDocumentHistories(route.params?.id as string)
-    const mappingData = handleConvertDocumentHistory(response.data)
-    compareHistories.value = mappingData
-  } catch (error) {
-    console.error(error)
-  }
-}
+defineProps<Props>()
 
 const isSuccessType = (type: CompareHistoryTypeEnum) => {
   return type !== CompareHistoryTypeEnum.EDIT && type !== CompareHistoryTypeEnum.LC
 }
-
-onMounted(() => {
-  handleGetDocumentHistories()
-})
 </script>
 
 <template>

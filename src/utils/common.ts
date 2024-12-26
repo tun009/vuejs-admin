@@ -1,8 +1,13 @@
 import { ColumnConfigModel, DocumentStatusEnum, SelectOptionModel, StatusColorModel } from '@/@types/common'
-import { DocumentExportFileEnum, DocumentModel } from '@/@types/pages/docs/documents'
+import {
+  CompareHistoryActionModel,
+  CompareHistoryCustomModel,
+  CompareHistoryModel,
+  DocumentExportFileEnum,
+  DocumentModel
+} from '@/@types/pages/docs/documents'
 import { UpdateConfidenceRequestModel } from '@/@types/pages/docs/settings/services/SettingRequest'
 import { BranchModel } from '@/@types/pages/login'
-import { RoleEnum } from '@/@types/pages/users'
 import { BLOB_EXPORT_TYPES, SOCKET_PATH, TABLE_COLUMN_WIDTH_DEFAULT } from '@/constants/common'
 import { regexContentDispositionFileName } from '@/constants/regex'
 import { useUserStore } from '@/store/modules/user'
@@ -307,9 +312,7 @@ export const getDocumentSwitchStatus = (row: DocumentModel) => {
   if (row.status === DocumentStatusEnum.WAIT_CHECK) {
     if (isMaker) {
       status = DocumentStatusEnum.CHECKING
-    } else if (isAdmin) {
-      status = row.createdBy?.role === RoleEnum.ADMIN ? DocumentStatusEnum.CHECKING : DocumentStatusEnum.VALIDATING
-    } else if (isChecker && row.createdBy?.username === userInfo.username) {
+    } else if ((isChecker && row.createdBy?.username === userInfo.username) || isAdmin) {
       status = DocumentStatusEnum.VALIDATING
     }
   } else if (row.status === DocumentStatusEnum.WAIT_VALIDATE && (isChecker || isAdmin)) {
@@ -326,6 +329,38 @@ export const getDocumentSwitchStatus = (row: DocumentModel) => {
     (isAdmin || (isMaker && row.createdBy?.username === userInfo.username))
   ) {
     status = DocumentStatusEnum.CHECKING
+  } else if (row.status === DocumentStatusEnum.CHECKING && isAdmin) {
+    status = DocumentStatusEnum.VALIDATING
   }
   return status
+}
+
+export const handleConvertDocumentHistory = (data: CompareHistoryModel): CompareHistoryCustomModel[] => {
+  const result: CompareHistoryCustomModel[] = []
+
+  data.forEach((item) => {
+    item.forEach((action) => {
+      const { day, hour, createdBy, role, type, title, valueBefore, valueAfter } = action
+
+      let dayEntry = result.find((entry) => entry.day === day)
+      if (!dayEntry) {
+        dayEntry = { day, hours: [] }
+        result.push(dayEntry)
+      }
+
+      let hourEntry = dayEntry.hours.find((entry) => entry.hour === hour)
+      if (!hourEntry) {
+        hourEntry = { hour, createdBy, role, type, actions: [] }
+        dayEntry.hours.push(hourEntry)
+      }
+
+      hourEntry.actions.push({
+        title,
+        valueBefore: valueBefore ?? null,
+        valueAfter: valueAfter ?? null
+      } as CompareHistoryActionModel)
+    })
+  })
+
+  return result
 }
