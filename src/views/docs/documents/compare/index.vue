@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { DocumentStatusEnum } from '@/@types/common'
+import { DocumentStatusEnum, SelectOptionModel } from '@/@types/common'
 import {
   CompareHistoryCustomModel,
   DocumentCompareModel,
@@ -7,6 +7,8 @@ import {
   DocumentKeyEnum,
   DocumentLCAmountModel,
   DocumentResultEnum,
+  DocumentSelectTypeKeyEnum,
+  documentSelectTypeOptions,
   documentTypeOptions,
   getAllCategoryRequestModel,
   getAllRuleRequestModel
@@ -25,6 +27,7 @@ import { DOCUMENT_DETAIL_PAGE } from '@/constants/router'
 import { useConfirmModal } from '@/hooks/useConfirm'
 import { useUserStore } from '@/store/modules/user'
 import {
+  convertFileUrl,
   formatNumberWithCommas,
   getTextFromHtml,
   handleConvertDocumentHistory,
@@ -44,6 +47,8 @@ import CompareSummarySkeleton from './components/CompareSummarySkeleton.vue'
 import DocumentCompareResult from './components/DocumentCompareResult.vue'
 import ResizableSplitter from './components/ResizableSplitter.vue'
 import UpdateCompareHistory from './components/UpdateCompareHistory.vue'
+import { getDocummentTypeApi, getDossierListApi } from '@/api/extract'
+import PreviewDocument from './components/PreviewDocument.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -52,6 +57,9 @@ const { isViewer, isMaker, isChecker, userInfo } = useUserStore()
 const documentCompareConfigs = ref<DocumentCompareModel[]>([])
 
 const { t } = useI18n()
+
+const pathFile = ref<string>('')
+const compareResultMinWidth = ref<number | null>(null)
 const loading = ref(false)
 const documentType = ref<DocumentKeyEnum>((route.query?.type as DocumentKeyEnum) ?? DocumentKeyEnum.INVOICE)
 const conditionSelect = ref<number>(0)
@@ -66,6 +74,8 @@ const compareRejectFormRef = ref<InstanceType<typeof CompareRejectForm>>()
 const compareReturnFormRef = ref<InstanceType<typeof CompareReturnForm>>()
 const documentDetail = ref<BatchDetailModel>({} as BatchDetailModel)
 const dataLC = ref<DocumentDataLCModel[]>([])
+const docTypeOptions = ref<SelectOptionModel[]>([])
+const docType = ref<DocumentSelectTypeKeyEnum>()
 const compareHistories = ref<CompareHistoryCustomModel[]>([])
 const amount = ref<DocumentLCAmountModel>({
   amountUsed: 0,
@@ -237,6 +247,37 @@ const handleGetDocumentHistories = async () => {
   }
 }
 
+const handleGetDocTypes = async () => {
+  try {
+    const { data } = await getDocummentTypeApi()
+    const checkKeys = documentSelectTypeOptions.map((item) => item.value)
+    const exactData = data.filter((d) => checkKeys.includes(d.key))
+    const dataMapping: SelectOptionModel[] = exactData?.map((e) => {
+      const label = documentSelectTypeOptions.find((d) => d.value === e.key)?.label ?? ''
+      return {
+        label,
+        value: e.key
+      }
+    })
+    docTypeOptions.value = [...dataMapping]
+    if (!docTypeOptions.value.length) return
+    docType.value = docTypeOptions.value?.[0]?.value
+    handleGetDocumentByType()
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const handleGetDocumentByType = async () => {
+  try {
+    const { data } = await getDossierListApi(route.params?.id as string, docType.value)
+    if (!data.length) return
+    pathFile.value = data?.[0]?.pathFile ?? ''
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 const compareResults = computed(() => {
   return documentCompareConfigs.value.map((d) => ({
     label: d.title,
@@ -268,6 +309,13 @@ const isDisabledReturnMaker = computed(() => {
   return false
 })
 
+const handleGetWidth = () => {
+  const element = document.getElementById('compare-body')
+  const width = element?.offsetWidth
+  if (!width) return
+  compareResultMinWidth.value = Number(Number(width * 0.56).toFixed(0))
+}
+
 watch(
   () => documentType.value,
   (value) => {
@@ -282,12 +330,21 @@ watch(
   }
 )
 
+watch(
+  () => docType.value,
+  () => {
+    handleGetDocumentByType()
+  }
+)
+
 onMounted(() => {
+  handleGetWidth()
   handleGetDocumentAmount()
   handleGetDocumentDetail()
   handleGetDocumentDataLC()
   handleGetDocumentCompare(documentType.value)
   handleGetDocumentHistories()
+  handleGetDocTypes()
   if (isViewer) return
   handleGetCategories()
   handleGetRules()
@@ -328,8 +385,8 @@ onMounted(() => {
     class="flex flex-row justify-between py-2 px-4 border border-[#ced4da] fixed top-0 left-0 w-full bg-white dark:bg-[#141414] z-[10]"
   >
     <el-button color="#005d98" plain :icon="ArrowLeft" @click="handleBack">{{ $t('button.back') }}</el-button>
-    <el-text class="text-[20px] mx-auto">{{ $t('docs.compare.checkDoc') }} {{ documentTypeLabel }}</el-text>
-    <div class="flex flex-row gap-3" v-if="isHaveActionButton">
+    <el-text class="text-[20px] pl-32 mx-auto">{{ $t('docs.compare.checkDoc') }} {{ documentTypeLabel }}</el-text>
+    <div class="flex flex-row" v-if="isHaveActionButton">
       <el-button
         v-if="!isMaker"
         :disabled="isDisabledReturnMaker"
@@ -349,9 +406,9 @@ onMounted(() => {
       }}</el-button>
     </div>
   </div>
-  <div class="pt-20 bg-[#f1f3f5]">
+  <div class="pt-16 bg-[#f1f3f5]">
     <div class="border border-t-[#e9ecef] bg-[#fff]">
-      <ResizableSplitter :min-width="250" custom-class="h-[calc(100vh_-_90px)]" :default-left-width="400">
+      <ResizableSplitter custom-class="h-[calc(100vh_-_90px)]" :default-left-width="300">
         <template #left>
           <CompareSummarySkeleton v-if="loading" />
           <div v-else class="flex flex-col">
@@ -412,18 +469,40 @@ onMounted(() => {
         </template>
         <template #right>
           <el-skeleton animated v-if="loading" class="h-full overflow-y-hidden" :rows="30" />
-          <el-tabs v-else v-model="activeName" class="demo-tabs">
+          <el-tabs v-else v-model="activeName" class="demo-tabs h-full" id="compare-body">
             <el-tab-pane label="Kết quả" name="result">
-              <DocumentCompareResult
-                :configs="documentCompareConfigs"
-                :condition-select="conditionSelect"
-                :categories="categories"
-                :rules="rules"
-                :is-have-permission="isHaveActionButton"
-                @update:condition="(condition: number) => (conditionSelect = condition)"
-                @scroll-by-index="handleCheckCompareResult"
-                @refresh="handleGetDocumentCompare(documentType, false)"
-              />
+              <ResizableSplitter
+                custom-id="result"
+                custom-class="h-[calc(100vh_-_180px)] !py-0"
+                :default-left-width="compareResultMinWidth ?? 600"
+                :min-width="500"
+              >
+                <template #left>
+                  <DocumentCompareResult
+                    :configs="documentCompareConfigs"
+                    :condition-select="conditionSelect"
+                    :categories="categories"
+                    :rules="rules"
+                    :is-have-permission="isHaveActionButton"
+                    @update:condition="(condition: number) => (conditionSelect = condition)"
+                    @scroll-by-index="handleCheckCompareResult"
+                    @refresh="handleGetDocumentCompare(documentType, false)"
+                  />
+                </template>
+                <template #right>
+                  <PreviewDocument :key="pathFile" :url="convertFileUrl(pathFile)">
+                    <template #right-header>
+                      <EIBSelect
+                        v-model="docType"
+                        hidden-error
+                        name="docType"
+                        :options="docTypeOptions"
+                        class="!w-32"
+                      />
+                    </template>
+                  </PreviewDocument>
+                </template>
+              </ResizableSplitter>
             </el-tab-pane>
             <el-tab-pane :label="$t('docs.compare.editHistory')" name="history">
               <UpdateCompareHistory :compare-histories="compareHistories" />

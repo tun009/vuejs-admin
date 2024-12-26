@@ -16,11 +16,11 @@ import {
   ExtractPostClassifyRequestModel
 } from '@/@types/pages/extract/service/ExtractRequest'
 
-export function getDossierListApi(id: number) {
+export function getDossierListApi(id: string | number, docType?: string) {
   return request<ExtractDossierResponseModel>({
     url: `dossier-docs`,
     method: 'get',
-    params: { batchId: id }
+    params: { batchId: id, ...(docType ? { docType } : {}) }
   })
 }
 export function getDossierDetailApi(id: number) {

@@ -8,6 +8,7 @@ import {
 } from '@/@types/pages/docs/documents'
 import { UpdateConfidenceRequestModel } from '@/@types/pages/docs/settings/services/SettingRequest'
 import { BranchModel } from '@/@types/pages/login'
+import { RoleEnum } from '@/@types/pages/users'
 import { BLOB_EXPORT_TYPES, SOCKET_PATH, TABLE_COLUMN_WIDTH_DEFAULT } from '@/constants/common'
 import { regexContentDispositionFileName } from '@/constants/regex'
 import { useUserStore } from '@/store/modules/user'
@@ -312,7 +313,9 @@ export const getDocumentSwitchStatus = (row: DocumentModel) => {
   if (row.status === DocumentStatusEnum.WAIT_CHECK) {
     if (isMaker) {
       status = DocumentStatusEnum.CHECKING
-    } else if ((isChecker && row.createdBy?.username === userInfo.username) || isAdmin) {
+    } else if (isAdmin) {
+      status = row.createdBy?.role === RoleEnum.ADMIN ? DocumentStatusEnum.CHECKING : DocumentStatusEnum.VALIDATING
+    } else if (isChecker && row.createdBy?.username === userInfo.username) {
       status = DocumentStatusEnum.VALIDATING
     }
   } else if (row.status === DocumentStatusEnum.WAIT_VALIDATE && (isChecker || isAdmin)) {
@@ -329,8 +332,6 @@ export const getDocumentSwitchStatus = (row: DocumentModel) => {
     (isAdmin || (isMaker && row.createdBy?.username === userInfo.username))
   ) {
     status = DocumentStatusEnum.CHECKING
-  } else if (row.status === DocumentStatusEnum.CHECKING && isAdmin) {
-    status = DocumentStatusEnum.VALIDATING
   }
   return status
 }
@@ -363,4 +364,24 @@ export const handleConvertDocumentHistory = (data: CompareHistoryModel): Compare
   })
 
   return result
+}
+
+export function customSort<T>(array: T[], key: keyof T, order: string[]): T[] {
+  const orderMap: { [key: string]: number } = order.reduce(
+    (acc, item, index) => {
+      acc[item] = index
+      return acc
+    },
+    {} as { [key: string]: number }
+  )
+
+  return array.sort((a, b) => {
+    const valueA = a[key] as unknown as string
+    const valueB = b[key] as unknown as string
+
+    const indexA = orderMap[valueA] !== undefined ? orderMap[valueA] : Infinity
+    const indexB = orderMap[valueB] !== undefined ? orderMap[valueB] : Infinity
+
+    return indexA - indexB
+  })
 }
