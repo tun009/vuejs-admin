@@ -65,6 +65,8 @@ export interface CompareRejectFormModel {
   reason: string
 }
 
+export type CompareReturnFormModel = CompareRejectFormModel
+
 export interface CompareContentFormModel {
   id?: number
   requirement: string
@@ -445,7 +447,8 @@ export const documentTypeOptions: SelectOptionModel[] = [
 ]
 
 export interface FilterDocumentModel {
-  name: string
+  name?: string
+  lcNo?: string
   status: DocumentStatusEnum[]
   result: number
   bizType: number
@@ -659,3 +662,19 @@ export interface SocketDataModel {
   id: number
   status: DocumentStatusEnum
 }
+
+export enum FilterTypeEnum {
+  BCT = 'BCT',
+  LC = 'LC'
+}
+
+export const filterTypeSelectOptions = [
+  {
+    label: 'Tên BCT',
+    value: FilterTypeEnum.BCT
+  },
+  {
+    label: 'Mã LC',
+    value: FilterTypeEnum.LC
+  }
+]

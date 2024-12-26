@@ -82,6 +82,7 @@
     "delete": "Xóa",
     "back": "Trở lại",
     "reject": "Từ chối",
+    "return": "Chuyển trả Maker",
     "approve": "Phê duyệt"
   },
   "login": {
@@ -276,6 +277,7 @@
       "reason": "Lý do",
       "enterReason": "Nhập lý do",
       "compareRejectDes": "Sau khi nhấn vào nút “Xác nhận”, hệ thống ghi nhận việc “Từ chối” bộ chứng từ, kết thúc giao dịch xử lý",
+      "compareReturnDes": "Sau khi nhấn vào nút “Xác nhận”, hệ thống sẽ chuyển trả bộ chứng từ này về cho Maker - { maker } xử lý.",
       "addCompareContent": "Bổ sung nội dung đối sánh",
       "result": "Kết quả",
       "english": "Anh",
@@ -292,6 +294,7 @@
       "ruleEvidence": "Dẫn chứng Rule",
       "vietnamese_1": "Tiếng Việt",
       "compareReject": "Xác nhận “Từ chối” bộ chứng từ",
+      "compareReturn": "Xác nhận “Chuyển trả Maker”",
       "checkDoc": "Kiểm tra chứng từ",
       "docName": "Tên bộ chứng từ",
       "createdAtDoc": "Ngày upload chứng từ",

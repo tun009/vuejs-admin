@@ -11,12 +11,14 @@ import { DocumentStatusEnum, PaginationModel } from '@/@types/common'
 import {
   DocumentModel,
   FilterDocumentModel,
+  FilterTypeEnum,
   SocketDataModel,
   businessTypeOptions,
   defaultStatus,
   docListColumnConfigs,
   documentResultOptions,
   documentStatusOptions,
+  filterTypeSelectOptions,
   processingStepOptions
 } from '@/@types/pages/docs/documents'
 import { BranchModel } from '@/@types/pages/login'
@@ -53,6 +55,7 @@ import { addOneDayToDate, defaultDateRange, formatDate, formatDateExactFormat } 
 import { errorNotification } from '@/utils/notification'
 import { debounce } from 'lodash-es'
 import Status from '../components/Status.vue'
+import EIBDropdown from '@/components/common/EIBDropdown.vue'
 
 defineOptions({
   name: 'Document'
@@ -75,6 +78,8 @@ const openDrawer = ref(false)
 const checkedItems = ref<DocumentModel[]>([])
 const documentTableRef = ref<InstanceType<typeof EIBTable>>()
 const uploadTimes = ref(defaultDateRange())
+const isNotFirstActivation = ref<boolean>(false)
+const filterType = ref<FilterTypeEnum>(FilterTypeEnum.BCT)
 const filterValue = reactive<FilterDocumentModel>({
   status: defaultStatus
 } as FilterDocumentModel)
@@ -82,7 +87,7 @@ const branches = ref<BranchModel[]>([])
 
 const handleGetDocuments = async (pagination: PaginationModel) => {
   try {
-    const { status, ...otherFilter } = filterValue
+    const { status, name = '', ...otherFilter } = filterValue
     const isErrorStatus = status.includes(DocumentStatusEnum.ERROR)
     let exactStatus = [...status]
     if (isErrorStatus) {
@@ -100,6 +105,7 @@ const handleGetDocuments = async (pagination: PaginationModel) => {
           column: 'createdAt'
         }
       ],
+      ...(filterType.value === FilterTypeEnum.BCT ? { name } : { lcNo: name }),
       ...(status?.length !== documentStatusOptions.length - 5 ? { status: exactStatus } : {})
     }
     setFilter({ ...payload, status })
@@ -193,6 +199,15 @@ watch(
   }
 )
 
+watch(
+  () => filterType.value,
+  async () => {
+    if (filterValue.name) {
+      handleGetData()
+    }
+  }
+)
+
 const handleUpdateDocument = (row: DocumentModel) => {
   openDrawer.value = true
   rowSelect.value = row
@@ -258,8 +273,12 @@ onDeactivated(() => {
 })
 
 onActivated(() => {
-  handleGetData()
   handleSocket()
+  if (isNotFirstActivation.value) {
+    handleGetData()
+  } else {
+    isNotFirstActivation.value = true
+  }
 })
 </script>
 
@@ -286,13 +305,22 @@ onActivated(() => {
   <div class="flex flex-col mt-2">
     <div class="flex flex-row justify-between gap-10 items-center mb-5">
       <div class="flex flex-row gap5 items-center gap-5">
-        <EIBInput
-          v-model="filterValue.name"
-          custom-class="w-[360px]"
-          placeholder="docs.document.searchByName"
-          :prefix-icon="Search"
-          hidden-error
-        />
+        <div class="flex flex-row gap-2">
+          <EIBDropdown
+            :options="filterTypeSelectOptions"
+            :value="filterType"
+            btn-class-name="w-28"
+            option-class-name="w-28"
+            @update:model-value="(value: string) => (filterType = value as FilterTypeEnum)"
+          />
+          <EIBInput
+            v-model="filterValue.name"
+            custom-class="w-[360px]"
+            placeholder="docs.document.searchByName"
+            :prefix-icon="Search"
+            hidden-error
+          />
+        </div>
         <div class="flex flex-row gap-5 items-center">
           <div class="flex flex-row gap-1 items-center p-1 cursor-pointer" @click="openFilter = !openFilter">
             <el-icon><Filter /></el-icon>

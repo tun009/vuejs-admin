@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { DocumentStatusEnum } from '@/@types/common'
 import {
+  CompareHistoryCustomModel,
   DocumentCompareModel,
   DocumentDataLCModel,
   DocumentKeyEnum,
@@ -12,30 +13,37 @@ import {
 } from '@/@types/pages/docs/documents'
 import { BatchDetailModel } from '@/@types/pages/docs/documents/services/DocumentResponse'
 import { RuleModel } from '@/@types/pages/rules'
-import { getBatchDetail, getDocumentDataLC, getLCAmount } from '@/api/docs/document'
+import { RoleEnum } from '@/@types/pages/users'
+import { getBatchDetail, getDocumentDataLC, getDocumentHistories, getLCAmount } from '@/api/docs/document'
 import { getDocumentCompare, updateDocumentStatus } from '@/api/docs/document/compare'
 import { getRules } from '@/api/rules'
 import EIBDialog from '@/components/common/EIBDialog.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
+import { checkerStepDocumentStatus, endedDocumentStatus, makerStepDocumentStatus } from '@/constants/common'
 import { _formatDDMMYYYY_HHmm } from '@/constants/date'
 import { DOCUMENT_DETAIL_PAGE } from '@/constants/router'
 import { useConfirmModal } from '@/hooks/useConfirm'
 import { useUserStore } from '@/store/modules/user'
-import { formatNumberWithCommas, getTextFromHtml, resetNullUndefinedFields, scrollIntoViewParent } from '@/utils/common'
+import {
+  formatNumberWithCommas,
+  getTextFromHtml,
+  handleConvertDocumentHistory,
+  resetNullUndefinedFields,
+  scrollIntoViewParent
+} from '@/utils/common'
 import { formatDate } from '@/utils/date'
 import { ArrowLeft, Check, CircleCheckFilled, Close, WarnTriangleFilled } from '@element-plus/icons-vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessageBox } from 'element-plus'
+import { sortBy } from 'lodash-es'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import CompareRejectForm from './components/CompareRejectForm.vue'
+import CompareReturnForm from './components/CompareReturnForm.vue'
 import CompareSummarySkeleton from './components/CompareSummarySkeleton.vue'
 import DocumentCompareResult from './components/DocumentCompareResult.vue'
 import ResizableSplitter from './components/ResizableSplitter.vue'
 import UpdateCompareHistory from './components/UpdateCompareHistory.vue'
-import { sortBy } from 'lodash-es'
-import { checkerStepDocumentStatus, endedDocumentStatus, makerStepDocumentStatus } from '@/constants/common'
-import { RoleEnum } from '@/@types/pages/users'
 
 const router = useRouter()
 const route = useRoute()
@@ -49,13 +57,16 @@ const documentType = ref<DocumentKeyEnum>((route.query?.type as DocumentKeyEnum)
 const conditionSelect = ref<number>(0)
 const activeName = ref<'result' | 'history'>('result')
 const dialogVisible = ref(false)
+const dialogReturnVisible = ref(false)
 const loadingConfirm = ref(false)
 const loadingConfirmReturnMaker = ref(false)
 const categories = ref<RuleModel[]>([])
 const rules = ref<RuleModel[]>([])
 const compareRejectFormRef = ref<InstanceType<typeof CompareRejectForm>>()
+const compareReturnFormRef = ref<InstanceType<typeof CompareReturnForm>>()
 const documentDetail = ref<BatchDetailModel>({} as BatchDetailModel)
 const dataLC = ref<DocumentDataLCModel[]>([])
+const compareHistories = ref<CompareHistoryCustomModel[]>([])
 const amount = ref<DocumentLCAmountModel>({
   amountUsed: 0,
   totalAmount: 0
@@ -80,6 +91,9 @@ const batchId = computed(() => {
 
 const handleCheckCompareResult = (index: number) => {
   try {
+    if (activeName.value === 'history') {
+      activeName.value = 'result'
+    }
     conditionSelect.value = index
     const id = `document-compare-${index}`
     setTimeout(() => {
@@ -143,23 +157,6 @@ const handleApproveCompare = () => {
       }
     }
   })
-}
-
-const handleReturnForMaker = async () => {
-  loadingConfirmReturnMaker.value = true
-  try {
-    await updateDocumentStatus(batchId.value, {
-      approveDossier: DocumentStatusEnum.ADJUST_REQUESTED,
-      message: compareRejectFormRef?.value?.getReason()
-    })
-    ElMessage.success(t('notification.description.returnSuccess'))
-    dialogVisible.value = false
-    router.push(DOCUMENT_DETAIL_PAGE(batchId.value))
-  } catch (error) {
-    console.error(error)
-  } finally {
-    loadingConfirmReturnMaker.value = false
-  }
 }
 
 const handleGetDocumentCompare = async (key: DocumentKeyEnum, haveLoading: boolean = true) => {
@@ -230,6 +227,16 @@ const handleGetRules = async () => {
   }
 }
 
+const handleGetDocumentHistories = async () => {
+  try {
+    const response = await getDocumentHistories(route.params?.id as string)
+    const mappingData = handleConvertDocumentHistory(response.data)
+    compareHistories.value = mappingData
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 const compareResults = computed(() => {
   return documentCompareConfigs.value.map((d) => ({
     label: d.title,
@@ -280,6 +287,7 @@ onMounted(() => {
   handleGetDocumentDetail()
   handleGetDocumentDataLC()
   handleGetDocumentCompare(documentType.value)
+  handleGetDocumentHistories()
   if (isViewer) return
   handleGetCategories()
   handleGetRules()
@@ -299,17 +307,21 @@ onMounted(() => {
       @update:loading="(loading: boolean) => (loadingConfirm = loading)"
       @update:visible="(visible: boolean) => (dialogVisible = visible)"
     />
-    <template v-if="!isMaker" #footer-left
-      ><el-button
-        type="primary"
-        plain
-        @click="handleReturnForMaker"
-        :loading="loadingConfirmReturnMaker"
-        :disabled="isDisabledReturnMaker"
-      >
-        {{ $t('docs.compare.returnMaker') }}
-      </el-button></template
-    >
+  </EIBDialog>
+
+  <EIBDialog
+    :title="$t('docs.compare.compareReturn')"
+    v-model="dialogReturnVisible"
+    :loading="loadingConfirmReturnMaker"
+    @on-confirm="compareReturnFormRef?.onConfirm"
+    type="danger"
+  >
+    <CompareReturnForm
+      ref="compareReturnFormRef"
+      :maker="documentDetail.censorBy?.username ?? ''"
+      @update:loading="(loading: boolean) => (loadingConfirmReturnMaker = loading)"
+      @update:visible="(visible: boolean) => (dialogReturnVisible = visible)"
+    />
   </EIBDialog>
 
   <div
@@ -318,6 +330,14 @@ onMounted(() => {
     <el-button color="#005d98" plain :icon="ArrowLeft" @click="handleBack">{{ $t('button.back') }}</el-button>
     <el-text class="text-[20px] mx-auto">{{ $t('docs.compare.checkDoc') }} {{ documentTypeLabel }}</el-text>
     <div class="flex flex-row gap-3" v-if="isHaveActionButton">
+      <el-button
+        v-if="!isMaker"
+        :disabled="isDisabledReturnMaker"
+        type="primary"
+        plain
+        @click="dialogReturnVisible = true"
+        >{{ $t('button.return') }}</el-button
+      >
       <el-button color="#c92a2a" type="danger" :icon="Close" @click="dialogVisible = true">{{
         $t('button.reject')
       }}</el-button>
@@ -406,7 +426,7 @@ onMounted(() => {
               />
             </el-tab-pane>
             <el-tab-pane :label="$t('docs.compare.editHistory')" name="history">
-              <UpdateCompareHistory />
+              <UpdateCompareHistory :compare-histories="compareHistories" />
             </el-tab-pane>
           </el-tabs>
         </template>

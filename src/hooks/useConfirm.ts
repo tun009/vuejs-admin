@@ -50,7 +50,7 @@ export function useConfirmModal() {
       successCallback?.()
       if (showMesageSucess)
         ElMessage({
-          message: 'Thao tác thành công! ⚡',
+          message: 'Thao tác thành công!',
           type: 'success'
         })
     })
