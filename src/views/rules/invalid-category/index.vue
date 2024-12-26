@@ -13,8 +13,10 @@ import debounce from 'lodash-es/debounce'
 import { onMounted, reactive, ref, watch } from 'vue'
 import UpdateRuleForm from '../components/UpdateRuleForm.vue'
 import { getDocummentTypeApi } from '@/api/extract'
+import { useUserStore } from '@/store/modules/user'
 const documentTypes = ref<SelectOptionModel[]>([])
 
+const { isAdmin, isChecker } = useUserStore()
 const rulesTableRef = ref<InstanceType<typeof EIBTable>>()
 const filterValue = reactive<FilterRulesModel>({ query: '' } as FilterRulesModel)
 filterValue.type = RuleTypeEnum.CATEGORY
@@ -22,6 +24,13 @@ const openUpdateRuleDrawer = ref(false)
 
 const tableData = ref<RuleModel[]>([])
 
+const isHaveUpdateRule = () => {
+  if (isAdmin || isChecker) {
+    return true
+  } else {
+    return false
+  }
+}
 const handleGetRules = async (pagination: PaginationModel) => {
   try {
     const response = await getRules({ ...pagination, ...omitPropertyFromObject(filterValue, -1) })
@@ -126,7 +135,15 @@ onMounted(() => {
         </template>
         <template #actions="{ row }">
           <div class="flex flex-row gap-2 items-center justify-center">
-            <SvgIcon :size="18" name="edit-info" @click.stop="openModalUpdateRule(row)" class="cursor-pointer" />
+            <SvgIcon
+              :size="18"
+              name="edit-info"
+              @click.stop="isHaveUpdateRule() && openModalUpdateRule(row)"
+              class="cursor-pointer"
+              :class="{
+                ' opacity-50': !isHaveUpdateRule()
+              }"
+            />
           </div>
         </template>
       </EIBTable>
