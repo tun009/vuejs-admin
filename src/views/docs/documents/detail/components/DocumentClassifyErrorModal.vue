@@ -106,7 +106,7 @@ const saveDossierClassify = async () => {
   try {
     loading.value = true
     const dataPost = dataDetail.value
-      .filter((doc) => doc.pages)
+      .filter((doc) => doc.pageList.length > 0)
       .map((item) => ({
         dossierDocId: item?.id,
         docType: item.docType.key,

@@ -4,7 +4,7 @@ import {
   ExtractResultOcrTableChildrenModel,
   ExtractResultOcrTableHeaderModel
 } from '@/@types/pages/extract'
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 interface ExtractPdfViewExpose {
   tagLabelToPage: (
     boxInfo: ExtractResultOcrPageBBboxesModel[],
@@ -44,7 +44,12 @@ const increaseRow = (index: number, row: ExtractResultOcrTableChildrenModel[]) =
   const updatedBody = props.body
 
   updatedBody.splice(index + 1, 0, tempValue)
-  // emit('update-body', data)
+  nextTick(() => {
+    const newRow = document.getElementById(`row-${index + 1}`)
+    if (newRow) {
+      newRow.scrollIntoView({ behavior: 'smooth', block: 'end' })
+    }
+  })
 }
 const bodyTable = computed(() => {
   const bodyConvert: ExtractResultOcrTableChildrenModel[][] = []
@@ -77,7 +82,7 @@ const bodyTable = computed(() => {
       </tr>
     </thead>
     <tbody>
-      <tr v-for="(data_row, index_row) in bodyTable" :key="index_row">
+      <tr v-for="(data_row, index_row) in bodyTable" :key="index_row" :id="`row-${index_row}`">
         <td class="text-center">{{ index_row + 1 }}</td>
         <td v-for="(data_col, index_col) in data_row" :key="index_col">
           <el-input

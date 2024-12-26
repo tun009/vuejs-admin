@@ -207,6 +207,7 @@ const handleDeniedDossier = () => {
       customClass: 'box-denied-confirm',
       inputPlaceholder: 'Nhập lý do từ chối',
       cancelButtonText: 'Đóng',
+      confirmButtonClass: 'el-button--danger',
       inputPattern: regexNullOrEmpty,
       dangerouslyUseHTMLString: true,
       draggable: true,
@@ -359,18 +360,25 @@ const reCheckDosssier = async () => {
     console.error(error)
   }
 }
+/**
+ * Duoc sua trong truong hop: Trang thai dang kiem tra va la admin hoac nguoi tao
+ *  Hoac trang thai la dang phe duyet co nguoi tao la admin
+ **/
 const hasPermissionOcr = computed(() => {
   return (
-    ![
+    (![
       DocumentStatusEnum.ADJUST_REQUESTED,
       DocumentStatusEnum.DENIED,
       DocumentStatusEnum.WAIT_VALIDATE,
       DocumentStatusEnum.VALIDATING,
       DocumentStatusEnum.VALIDATED
     ].includes(batchDetailData.value.status) &&
-    (isAdmin ||
-      batchDetailData?.value?.censorBy?.username === userInfo?.username ||
-      batchDetailData?.value?.createdBy?.username === userInfo?.username)
+      (isAdmin ||
+        batchDetailData?.value?.censorBy?.username === userInfo?.username ||
+        batchDetailData?.value?.createdBy?.username === userInfo?.username)) ||
+    (batchDetailData.value.status === DocumentStatusEnum.VALIDATING &&
+      batchDetailData?.value?.createdBy?.username === userInfo?.username &&
+      isAdmin)
   )
 })
 onMounted(() => {
@@ -442,7 +450,7 @@ onUnmounted(() => {
               <pane :size="resizeTable">
                 <el-skeleton animated :loading="!isLoadViewContentRight">
                   <template #template>
-                    <el-skeleton-item variant="image" class="w-full h-screen mx-auto" />
+                    <el-skeleton-item variant="text" class="w-full h-screen mx-auto" />
                   </template>
                   <template #default>
                     <PDFView
