@@ -9,7 +9,9 @@ import {
   businessTypeOptions,
   docListColumnConfigs,
   ReportDetailModel,
-  reportStatusOptions
+  reportStatusOptions,
+  filterTypeSelectOptions,
+  FilterTypeEnum
 } from '@/@types/pages/reports'
 import { documentStatusOptions, documentResultOptions, DocumentExportFileEnum } from '@/@types/pages/docs/documents'
 import EIBSingleFilter from '@/components/Filter/EIBSingleFilter.vue'
@@ -34,6 +36,7 @@ import { getBranches } from '@/api/users'
 import { BranchModel } from '@/@types/pages/login'
 import Status from '../components/Status.vue'
 import { errorDocumentStatus } from '@/constants/common'
+import EIBDropdown from '@/components/common/EIBDropdown.vue'
 
 const openFilter = ref(false)
 const defaultStatus = computed(() => {
@@ -48,10 +51,11 @@ const filterValue = reactive<FilterDocumentModel>({ status: defaultStatus.value 
 const openDetailReportDrawer = ref(false)
 const branches = ref<BranchModel[]>([])
 const reportDetail = ref<ReportDetailModel>({} as ReportDetailModel)
+const filterType = ref<FilterTypeEnum>(FilterTypeEnum.BCT)
 
 const handleGetReports = async (pagination: PaginationModel) => {
   try {
-    const { status, ...otherFilter } = filterValue
+    const { status, name = '', ...otherFilter } = filterValue
     const isErrorStatus = status.includes(DocumentStatusEnum.ERROR)
     let exactStatus = [...status]
     if (isErrorStatus) {
@@ -69,6 +73,7 @@ const handleGetReports = async (pagination: PaginationModel) => {
           column: 'createdAt'
         }
       ],
+      ...(filterType.value === FilterTypeEnum.BCT ? { name } : { lcNo: name }),
       ...(status?.length !== reportStatusOptions.length ? { status: exactStatus } : {})
     })
     tableData.value = response.data.list
@@ -151,6 +156,15 @@ watch(
   }
 )
 
+watch(
+  () => filterType.value,
+  async () => {
+    if (filterValue.name) {
+      handleGetData()
+    }
+  }
+)
+
 onMounted(() => {
   handleGetBranches()
 })
@@ -179,6 +193,13 @@ onMounted(() => {
   <div class="flex flex-col mt-2">
     <div class="flex flex-row justify-between gap-10 items-center mb-5">
       <div class="flex flex-row gap5 items-center gap-5">
+        <EIBDropdown
+          :options="filterTypeSelectOptions"
+          :value="filterType"
+          btn-class-name="w-28"
+          option-class-name="w-28"
+          @update:model-value="(value: string) => (filterType = value as FilterTypeEnum)"
+        />
         <EIBInput
           v-model="filterValue.name"
           custom-class="w-[360px]"
@@ -254,6 +275,20 @@ onMounted(() => {
         </template>
         <template #result="{ row }">
           <Status :options="documentResultOptions" :status="row?.result" />
+        </template>
+        <template #timeMakerHandle="{ row }">
+          <div>
+            <span>{{ row?.timeMakerHandle }}</span>
+            <br />
+            <span class="text-[#868e96]">{{ row?.maker }}</span>
+          </div>
+        </template>
+        <template #timeCheckerHandle="{ row }">
+          <div>
+            <span>{{ row?.timeCheckerHandle }}</span>
+            <br />
+            <span class="text-[#868e96]">{{ row?.checker }}</span>
+          </div>
         </template>
       </EIBTable>
     </el-card>

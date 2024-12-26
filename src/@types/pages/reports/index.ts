@@ -103,6 +103,11 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
     width: 250
   },
   {
+    field: 'lcNo',
+    label: 'Mã LC',
+    width: 200
+  },
+  {
     field: 'bizType',
     label: 'Loại nghiệp vụ',
     width: 200
@@ -145,21 +150,6 @@ export const docListColumnConfigs: ColumnConfigModel[] = [
   {
     field: 'timeCheckerHandle',
     label: 'Checker xử lý',
-    width: 200
-  },
-  {
-    field: 'lcNo',
-    label: 'Mã LC',
-    width: 200
-  },
-  {
-    field: 'maker',
-    label: 'Maker',
-    width: 200
-  },
-  {
-    field: 'checker',
-    label: 'Checker',
     width: 200
   }
 ]
@@ -265,3 +255,19 @@ export interface FilterDocumentModel {
     column: string
   }[]
 }
+
+export enum FilterTypeEnum {
+  BCT = 'BCT',
+  LC = 'LC'
+}
+
+export const filterTypeSelectOptions = [
+  {
+    label: 'Tên BCT',
+    value: FilterTypeEnum.BCT
+  },
+  {
+    label: 'Mã LC',
+    value: FilterTypeEnum.LC
+  }
+]
