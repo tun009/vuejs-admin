@@ -351,7 +351,7 @@ onMounted(() => {
   </div>
   <div class="pt-20 bg-[#f1f3f5]">
     <div class="border border-t-[#e9ecef] bg-[#fff]">
-      <ResizableSplitter custom-class="h-[calc(100vh_-_90px)]" :default-left-width="400">
+      <ResizableSplitter :min-width="250" custom-class="h-[calc(100vh_-_90px)]" :default-left-width="400">
         <template #left>
           <CompareSummarySkeleton v-if="loading" />
           <div v-else class="flex flex-col">
