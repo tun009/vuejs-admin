@@ -16,10 +16,12 @@ import {
   businessTypeOptions,
   documentResultListColumnConfigs,
   documentResultOptions,
-  documentStatusOptions
+  documentStatusOptions,
+  documentTypeOptions
 } from '@/@types/pages/docs/documents'
 import { BatchDetailModel } from '@/@types/pages/docs/documents/services/DocumentResponse'
 import { downloadDocumentFile, getDocumentDataLC, getDocumentSummary, getLCAmount } from '@/api/docs/document'
+import { retryComparisonDocument, retryOcrDocument } from '@/api/docs/document/compare'
 import EIBDialog from '@/components/common/EIBDialog.vue'
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import Loading from '@/components/common/EIBLoading.vue'
@@ -29,17 +31,17 @@ import { documentAfterCheckStatus, errorDocumentStatus, processingDocumentStatus
 import { COMPARE_DOCUMENT_DETAIL_PAGE, EXTRACT_PAGE } from '@/constants/router'
 import { useUserStore } from '@/store/modules/user'
 import {
+  customSort,
   downloadFileCommon,
   formatNumberWithCommas,
   renderLabelByValue,
   resetNullUndefinedFields
 } from '@/utils/common'
+import { convertOcrToDateFormat, formatDateOcrLC } from '@/utils/date'
+import { successNotification } from '@/utils/notification'
 import Status from '@/views/docs/components/Status.vue'
 import { useRoute, useRouter } from 'vue-router'
 import UpdateLCForm from './UpdateLCForm.vue'
-import { retryComparisonDocument, retryOcrDocument } from '@/api/docs/document/compare'
-import { successNotification } from '@/utils/notification'
-import { convertOcrToDateFormat, formatDateOcrLC } from '@/utils/date'
 
 interface Props {
   data: BatchDetailModel
@@ -88,7 +90,11 @@ const handleGetDocumentResults = async () => {
     const response = await getDocumentSummary({ batchId: documentId.value })
     if (response?.data) {
       documentSummary.value = response?.data
-      tableData.value = response?.data?.comparisonSummaries
+      tableData.value = customSort(
+        response?.data?.comparisonSummaries,
+        'key',
+        documentTypeOptions.map((item) => item.value)
+      )
     }
   } catch (error) {
     console.error(error)
@@ -480,6 +486,11 @@ onMounted(() => {
           <template #status="{ row }">
             <span>
               {{ renderLabelByValue(documentResultOptions, row.status) }}
+            </span>
+          </template>
+          <template #key="{ row }">
+            <span>
+              {{ renderLabelByValue(documentTypeOptions, row.key) }}
             </span>
           </template>
           <template #numberSatisfiesRequirement="{ row }">

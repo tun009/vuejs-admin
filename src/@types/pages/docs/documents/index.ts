@@ -36,6 +36,14 @@ export enum DocumentKeyEnum {
   PRESENT_DOC = 'Present Document'
 }
 
+export enum DocumentSelectTypeKeyEnum {
+  LETTER_OF_CREDIT = 'LETTER_OF_CREDIT',
+  INVOICE = 'INVOICE',
+  BILL_OF_LADING = 'BILL_OF_LADING',
+  DRAFT = 'DRAFT',
+  EXPORT_DOC_PRESENT = 'EXPORT_DOC_PRESENT'
+}
+
 export enum DocumentExportFileEnum {
   DOCX = 'docx',
   PDF = 'pdf',
@@ -443,6 +451,29 @@ export const documentTypeOptions: SelectOptionModel[] = [
   {
     label: 'Giấy Xuất trình chứng từ',
     value: DocumentKeyEnum.PRESENT_DOC
+  }
+]
+
+export const documentSelectTypeOptions: SelectOptionModel[] = [
+  {
+    label: 'LC',
+    value: DocumentSelectTypeKeyEnum.LETTER_OF_CREDIT
+  },
+  {
+    label: 'Invoice',
+    value: DocumentSelectTypeKeyEnum.INVOICE
+  },
+  {
+    label: 'Bill of lading',
+    value: DocumentSelectTypeKeyEnum.BILL_OF_LADING
+  },
+  {
+    label: 'Drafts',
+    value: DocumentSelectTypeKeyEnum.DRAFT
+  },
+  {
+    label: 'Giấy XTCT',
+    value: DocumentSelectTypeKeyEnum.EXPORT_DOC_PRESENT
   }
 ]
 

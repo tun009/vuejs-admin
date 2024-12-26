@@ -124,7 +124,6 @@ const convertTableDataCompareErrorResults = (compareResult: DocumentCompareModel
 
 const convertDataTableOriginalCopy = (data: ColumnConfigModel[]): ColumnConfigModel[] => {
   const keysMapping = data.map((c) => removeAccentsAndReplaceSpaces(c.field))
-  console.log(keysMapping)
   if (!keysMapping.includes('ban_sao(bank)')) return data
   const result: Array<ColumnConfigModel> = []
   data.forEach((item) => {

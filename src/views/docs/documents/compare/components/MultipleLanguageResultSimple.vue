@@ -37,7 +37,7 @@ const loadingConfirm = ref(false)
 const documentResultFormRef = ref<FormInstance | null>()
 let defaultValue = {
   reason: props.requirement.reason,
-  status: props.requirement.status ?? DocumentResultEnum.NA
+  status: props.requirement.status ?? DocumentResultEnum.COMPLY
 }
 const documentResultFormData = ref({ ...defaultValue })
 const saveDictionaryFormRef = ref<InstanceType<typeof SaveDictionaryForm>>()
@@ -138,7 +138,11 @@ const handleUpdateCompareResult = () => {
           <span class="c-text-des">{{ $t('docs.compare.editInformation') }}</span>
           <div class="flex flex-row items-center">
             <span class="min-w-48 text-sm">{{ $t('docs.compare.checkResult') }}</span>
-            <EIBSelect :options="documentResultValidOptions" v-model="documentResultFormData.status" hidden-error />
+            <EIBSelect
+              :options="documentResultValidOptions.slice(0, -1)"
+              v-model="documentResultFormData.status"
+              hidden-error
+            />
           </div>
         </div>
         <div class="flex flex-col gap-1" v-if="documentResultFormData.status === DocumentResultEnum.DISCREPANCY">

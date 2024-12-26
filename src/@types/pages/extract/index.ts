@@ -49,6 +49,7 @@ export interface ExtractDossierModel {
   status: string | number
   color: StatusColorModel
   docTypeName: string
+  pathFile: string
 }
 export interface ExtractDocumentModel {
   id: number
