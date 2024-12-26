@@ -137,12 +137,15 @@ onMounted(() => {
           <span>{{ getTextFromHtml(row.en) }}</span>
         </template>
         <template #actions="{ row }">
-          <div class="flex flex-row gap-2" v-if="isHaveUpdateRule()">
+          <div class="flex flex-row gap-2">
             <SvgIcon
               :size="18"
               name="edit-info"
-              @click.stop="openModalUpdateRule(row)"
+              @click.stop="isHaveUpdateRule() && openModalUpdateRule(row)"
               class="cursor-pointer text-center m-auto"
+              :class="{
+                ' opacity-50': !isHaveUpdateRule()
+              }"
             />
           </div>
         </template>

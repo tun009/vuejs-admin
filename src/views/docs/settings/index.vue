@@ -17,6 +17,7 @@ import { CONFIDENCES, CONFIDENCE_COLOR_FORM_DEFAULT } from '@/constants/setting'
 import { Title } from '@/layouts/components'
 import { getDocummentTypeApi } from '@/api/extract'
 import { SelectOptionModel } from '@/@types/common'
+import { useUserStore } from '@/store/modules/user'
 import {
   getDocDataField,
   getConfidence,
@@ -43,6 +44,7 @@ const tableData = ref<SettingMD[]>([])
 const dataConfidence = ref<SettingModel[]>([])
 const disabledIds = [1]
 const loading = ref(false)
+const { isAdmin, isChecker, isMaker } = useUserStore()
 
 const ruleForm = ref<UpdateConfidenceFormModel>(CONFIDENCES)
 const colors = ref<UpdateConfidenceColorFormModel>(CONFIDENCE_COLOR_FORM_DEFAULT)
@@ -68,6 +70,30 @@ const automation = ref<UpdateCheckConfigRequestModel>({
   type: AutoCheckConfigEnum.MANUAL,
   autoThreshold: 0
 })
+
+const isHaveUpdateInfoExtract = () => {
+  if (isAdmin || isChecker) {
+    return true
+  } else {
+    return false
+  }
+}
+
+const isHaveUpdateConfidence = () => {
+  if (isAdmin) {
+    return true
+  } else if (isChecker || isMaker) {
+    return false
+  }
+}
+
+const isHaveUpdateCheckConfig = () => {
+  if (isAdmin) {
+    return true
+  } else if (isChecker || isMaker) {
+    return false
+  }
+}
 
 const openUpdateInfoExtractDrawer = ref(false)
 const validateInput = (event: any, item: any) => {
@@ -239,7 +265,15 @@ onMounted(() => {
         >
           <template #actions="{ row }">
             <div class="flex flex-row gap-2 p-2 items-center justify-center">
-              <SvgIcon :size="18" name="edit-info" @click.stop="handleUpdateInfoExtract(row)" class="cursor-pointer" />
+              <SvgIcon
+                :size="18"
+                name="edit-info"
+                @click.stop="isHaveUpdateInfoExtract() && handleUpdateInfoExtract(row)"
+                class="cursor-pointer"
+                :class="{
+                  ' opacity-50': !isHaveUpdateInfoExtract()
+                }"
+              />
             </div>
           </template>
         </EIBTable>
@@ -303,7 +337,14 @@ onMounted(() => {
                   </div>
                 </div>
               </div>
-              <el-button type="primary" :loading="loading" @click.prevent="handleUpdateConfidence" style="width: 110px"
+              <el-button
+                type="primary"
+                :loading="loading"
+                @click.prevent="isHaveUpdateConfidence() && handleUpdateConfidence()"
+                style="width: 110px"
+                :class="{
+                  ' opacity-50 cursor-not-allowed': !isHaveUpdateConfidence()
+                }"
                 >Lưu thay đổi</el-button
               >
             </div>
@@ -373,7 +414,10 @@ onMounted(() => {
                 class="btn-red mt-10 save-btn"
                 variant="none"
                 :loading="loading"
-                @click.prevent="handleUpdateCheckConfig"
+                @click.prevent="isHaveUpdateCheckConfig() && handleUpdateCheckConfig()"
+                :class="{
+                  ' opacity-50 cursor-not-allowed': !isHaveUpdateCheckConfig()
+                }"
                 >Lưu thay đổi</el-button
               >
             </div>
