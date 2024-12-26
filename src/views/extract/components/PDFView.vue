@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { VuePDF, usePDF } from '@tato30/vue-pdf'
+import '@tato30/vue-pdf/style.css'
 import ControlSlider from './ControlSlider.vue'
 import ExtractOcrLoading from './ExtractOcrLoading.vue'
 import { ArrowUp, ArrowDown } from '@element-plus/icons-vue'
@@ -227,6 +228,7 @@ onBeforeUnmount(() => {
         :page="page"
         :scale="scale"
         :rotation="rotation"
+        :text-layer="true"
         @loaded="onLoadedPDF()"
       />
       <div class="text-center my-2">Trang {{ page }}</div>

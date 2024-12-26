@@ -638,6 +638,7 @@ export interface PatchDocumentCompareUndefinedModel {
 export interface DocumentClassifyErrordModel {
   id?: number
   name: string
+  dossierFileId: number | string | null
   docType: DocumentTypeModel
   pathFile: string
   pages: string
@@ -652,6 +653,7 @@ export interface ReplaceDocumentClassifyErrordModel {
   fileId: number
   pathFile: string
   docType: string
+  dossierFileId: number | string | null
 }
 export const getAllCategoryRequestModel = { pageNum: 0, pageSize: 9999, type: RuleTypeEnum.CATEGORY, query: '' }
 export const getAllRuleRequestModel = { ...getAllCategoryRequestModel, type: RuleTypeEnum.LAW }

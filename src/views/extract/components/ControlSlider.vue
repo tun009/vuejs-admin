@@ -11,8 +11,8 @@ const emit = defineEmits<{
 }>()
 const zoomIn = () => {
   scale.value = parseFloat(scale.value.toString())
-  if (scale.value < 2.5) {
-    scale.value = Math.min(scale.value + 0.1, 2.5)
+  if (scale.value < 3) {
+    scale.value = Math.min(scale.value + 0.1, 3)
   }
   emit('update:scale', scale.value)
 }
