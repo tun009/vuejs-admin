@@ -19,7 +19,7 @@
   }
 
   .c-text-des {
-    @apply text-xs text-[#868e96];
+    @apply text-sm text-[#868e96];
   }
 
   .c-text-success {

@@ -261,8 +261,9 @@ const handleGetDocTypes = async () => {
     })
     docTypeOptions.value = [...dataMapping]
     if (!docTypeOptions.value.length) return
-    docType.value = docTypeOptions.value?.[0]?.value
-    handleGetDocumentByType()
+    if (docType.value !== docTypeOptions.value?.[0]?.value) {
+      docType.value = docTypeOptions.value?.[0]?.value
+    }
   } catch (error) {
     console.error(error)
   }
@@ -332,8 +333,10 @@ watch(
 
 watch(
   () => docType.value,
-  () => {
-    handleGetDocumentByType()
+  (value) => {
+    if (value) {
+      handleGetDocumentByType()
+    }
   }
 )
 
@@ -490,7 +493,7 @@ onMounted(() => {
                   />
                 </template>
                 <template #right>
-                  <PreviewDocument :key="pathFile" :url="convertFileUrl(pathFile)">
+                  <PreviewDocument v-if="pathFile" :key="pathFile" :url="convertFileUrl(pathFile)">
                     <template #right-header>
                       <EIBSelect
                         v-model="docType"
