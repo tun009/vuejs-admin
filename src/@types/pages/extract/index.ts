@@ -86,7 +86,8 @@ export enum ExtractHistoryTypeEnum {
   COMPARISON = 'COMPARISON',
   DENIED = 'DENIED',
   REPLACE = 'REPLACE',
-  OCR = 'OCR'
+  OCR = 'OCR',
+  EDIT_TABLE = 'EDIT_TABLE'
 }
 export interface ExtractHistoryModel {
   type: ExtractHistoryTypeEnum
@@ -112,6 +113,7 @@ export interface ExtractHistoryGroupedResultModel {
   hour: string
   value: ExtractHistoryGroupedModel[]
   fileName?: string
+  field?: string
 }
 export interface ExtractHistoryGroupedDayModel {
   day: string

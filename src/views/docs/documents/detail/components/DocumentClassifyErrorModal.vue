@@ -82,7 +82,7 @@ const handleCollapseChange = (value: DocumentClassifyErrordModel, isReplace?: bo
     const intervalId = setInterval(() => {
       if (value?.isLoaded === true) {
         if (isReplace) value.pageList = Array.from({ length: pages.value }, (_, index) => index)
-        viewPage('doc' + value.id + 'page' + value?.pageList[0])
+        viewPage('doc' + value.dossierFileId + 'page' + value?.pageList[0])
         clearInterval(intervalId)
       }
     }, 100)
@@ -237,10 +237,14 @@ const handleFileReplace = (data: ReplaceDocumentClassifyErrordModel) => {
                         :page="doc_page + 1"
                         :width="2000"
                         class="page-extract mt-[5px] mx-auto w-[100px] cursor-pointer"
-                        :style="pageActive === `doc${doc_result.id}page${doc_page}` ? 'border: solid 2px #1864ab' : ''"
-                        :id="`doc${doc_result.id}page${doc_page}`"
+                        :style="
+                          pageActive === `doc${doc_result.dossierFileId}page${doc_page}`
+                            ? 'border: solid 2px #1864ab'
+                            : ''
+                        "
+                        :id="`doc${doc_result.dossierFileId}page${doc_page}`"
                         @loaded="doc_result.isLoaded = true"
-                        @click="viewPage('doc' + doc_result.id + 'page' + doc_page)"
+                        @click="viewPage('doc' + doc_result.dossierFileId + 'page' + doc_page)"
                       />
                       <div class="text-center mt-[5px]">Trang {{ doc_page + 1 }}</div>
                     </div>

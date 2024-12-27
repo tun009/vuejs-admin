@@ -19,7 +19,6 @@ const scale = ref(1)
 const currentPage = ref(1)
 const rotation = ref(0)
 const { pdf, pages } = usePDF(props.url)
-console.log(pages.value)
 const isScrolling = ref(false)
 const scrollToPage = () => {
   if (isScrolling.value) return

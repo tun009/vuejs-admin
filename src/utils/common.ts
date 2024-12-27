@@ -385,3 +385,6 @@ export function customSort<T>(array: T[], key: keyof T, order: string[]): T[] {
     return indexA - indexB
   })
 }
+export const convertDocTypeName = (name: string): string => {
+  return name.replace(/^(Trích xuất|Commercial)\s+/i, '').replace(/^[a-záàảãạăâbcd...z]/i, (char) => char.toUpperCase())
+}

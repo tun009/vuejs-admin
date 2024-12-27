@@ -155,7 +155,7 @@ import {
 import { getDashboardBranchApi, getDashboardRatioApi, getDashboardSumaryApi } from '@/api/dashboard'
 import { BG_COLOR_INVALID_CHARTS, BG_COLOR_VALID_CHARTS } from '@/constants/chart'
 import { addOneDayToDate, defaultDateRange, formatDateExactFormat } from '@/utils/date'
-import { formatNumberConfidence, omitPropertyFromObject } from '@/utils/common'
+import { convertDocTypeName, formatNumberConfidence, omitPropertyFromObject } from '@/utils/common'
 import { getDocummentTypeApi } from '@/api/extract'
 import { SelectOptionModel } from '@/@types/common'
 
@@ -178,9 +178,7 @@ const initDossierTypes = async () => {
       ...data
         .filter((item) => item.key !== 'OTHER')
         .map((item) => {
-          const name = item.name
-            .replace(/^Trích xuất\s+/i, '')
-            .replace(/^[a-záàảãạăâbcd...z]/i, (char) => char.toUpperCase())
+          const name = convertDocTypeName(item.name)
           return { label: name, value: item.id }
         })
     ]

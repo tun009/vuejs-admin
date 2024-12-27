@@ -112,6 +112,11 @@ const groupDataToExtractHistory = (data: Record<string, any>[]): ExtractHistoryG
                 </div>
               </div>
             </template>
+            <template v-else-if="item_history.type === ExtractHistoryTypeEnum.EDIT_TABLE">
+              <div>
+                Đã chỉnh sửa bảng <strong>{{ item_history?.field }}</strong>
+              </div>
+            </template>
             <template v-else>
               <div :style="{ color: renderColorByValue(extractHistoryTypes, item_history?.type).text }">
                 {{ renderLabelByValue(extractHistoryTypes, item_history?.type) }}

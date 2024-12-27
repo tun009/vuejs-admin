@@ -7,6 +7,8 @@ import EIBInput from '@/components/common/EIBInput.vue'
 import { ElMessage } from 'element-plus'
 import { formatDate } from '@/utils/date'
 import { formatDDMMYYYY_HHMM } from '@/constants/date'
+import { useUserStore } from '@/store/modules/user'
+const { isViewer } = useUserStore()
 const props = defineProps<{
   isActive?: boolean
   batchId: number
@@ -74,7 +76,7 @@ const onConfirm = async () => {
     </div>
   </div>
   <div class="tab-footer p-[16px] shadow-[inset_0_1px_0_0_#d0d0d0] text-right">
-    <el-button class="text-[#1c7ed6] border-[#1c7ed6] mr-2" @click="openModal">Thêm</el-button>
+    <el-button class="text-[#1c7ed6] border-[#1c7ed6] mr-2" @click="openModal" :disabled="isViewer">Thêm</el-button>
   </div>
   <EIBDialog
     title="Thêm ghi chú"

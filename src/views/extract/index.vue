@@ -36,7 +36,8 @@ import {
   formatNumberConfidence,
   renderColorByValue,
   renderColorByConfidence,
-  convertFileUrl
+  convertFileUrl,
+  convertDocTypeName
 } from '@/utils/common'
 import { documentStatusOptions } from '@/@types/pages/docs/documents'
 import { ArrowLeft, More, CloseBold, Select } from '@element-plus/icons-vue'
@@ -82,9 +83,7 @@ const getDossiersList = async (id: number) => {
     const response = await getDossierListApi(id)
     isLoadViewContentLeft.value = true
     dossierListData.value = response?.data?.map((item) => {
-      const name = item.docType.name
-        .replace(/^Trích xuất\s+/i, '')
-        .replace(/^[a-záàảãạăâbcd...z]/i, (char) => char.toUpperCase())
+      const name = convertDocTypeName(item.docType.name)
       return {
         ...item,
         docTypeName: name,
