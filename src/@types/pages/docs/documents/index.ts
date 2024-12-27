@@ -445,7 +445,7 @@ export const documentTypeOptions: SelectOptionModel[] = [
     value: DocumentKeyEnum.BOL
   },
   {
-    label: 'Drafts',
+    label: 'Draft',
     value: DocumentKeyEnum.DRAFT
   },
   {
@@ -468,7 +468,7 @@ export const documentSelectTypeOptions: SelectOptionModel[] = [
     value: DocumentSelectTypeKeyEnum.BILL_OF_LADING
   },
   {
-    label: 'Drafts',
+    label: 'Draft',
     value: DocumentSelectTypeKeyEnum.DRAFT
   },
   {
@@ -735,7 +735,7 @@ export const mappingLabelCompare = [
     field: 'bill_of_lading'
   },
   {
-    label: 'Draft(s)',
+    label: 'Draft',
     field: 'draft'
   },
   {
