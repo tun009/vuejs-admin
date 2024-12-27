@@ -111,7 +111,7 @@ const handleGetDocTypes = async () => {
       label: item.name,
       value: item.id
     }))
-    const newData = doc_types.value.filter((item) => item.label !== 'Khác')
+    const newData = doc_types.value.filter((item) => item.label !== 'Others')
     doc_types.value = newData
     for (const data in doc_types.value) {
       if (doc_types.value[data].label == 'Trích xuất LC') {

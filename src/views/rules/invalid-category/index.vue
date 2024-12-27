@@ -56,7 +56,7 @@ const getDocTypes = async () => {
         value: item.id
       }))
     ]
-    const newData = documentTypes.value.filter((item) => item.label !== 'Khác')
+    const newData = documentTypes.value.filter((item) => item.label !== 'Others')
     documentTypes.value = newData
     for (const data in documentTypes.value) {
       if (documentTypes.value[data].label == 'Trích xuất LC') {
