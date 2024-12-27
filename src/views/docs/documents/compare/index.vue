@@ -476,7 +476,7 @@ onMounted(() => {
             <el-tab-pane label="Kết quả" name="result">
               <ResizableSplitter
                 custom-id="result"
-                custom-class="h-[calc(100vh_-_180px)] !py-0"
+                custom-class="h-[calc(100vh_-_180px)] !p-0"
                 :default-left-width="compareResultMinWidth ?? 600"
                 :min-width="500"
               >

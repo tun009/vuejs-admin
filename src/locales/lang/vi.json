@@ -172,7 +172,7 @@
   "docs": {
     "title": "Danh sách bộ chứng từ",
     "document": {
-      "searchByName": "Tìm kiếm theo tên",
+      "searchByName": "Tìm kiếm",
       "filter": "Bộ lọc",
       "stt": "Stt",
       "documentName": "Tên bộ chứng từ",
