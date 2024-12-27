@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
-import type { TableInstance } from 'element-plus'
 import { ColumnConfigModel, PaginationModel } from '@/@types/common'
 import { PAGE_SIZE_LIST_DEFAULT, PAGINATION_DEFAULT } from '@/constants/common'
+import type { TableInstance } from 'element-plus'
+import { onMounted, ref } from 'vue'
 import SafeHtmlRenderer from '../SafeHtmlRenderer.vue'
 
 interface Props {

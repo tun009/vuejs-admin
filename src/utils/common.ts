@@ -4,7 +4,8 @@ import {
   CompareHistoryCustomModel,
   CompareHistoryModel,
   DocumentExportFileEnum,
-  DocumentModel
+  DocumentModel,
+  mappingLabelCompare
 } from '@/@types/pages/docs/documents'
 import { UpdateConfidenceRequestModel } from '@/@types/pages/docs/settings/services/SettingRequest'
 import { BranchModel } from '@/@types/pages/login'
@@ -176,11 +177,15 @@ export function sortObjectsByMultipleFields(array: any[], fields: string[], sort
 export const createColumnConfigs = (object?: { [key: string]: string | number } | null): ColumnConfigModel[] => {
   if (!object) return []
   const keys = Object.keys(object)
-  return keys.map((k) => ({
-    field: k,
-    label: k,
-    minWidth: k.toLowerCase() === 'stt' ? 50 : TABLE_COLUMN_WIDTH_DEFAULT
-  }))
+  return keys.map((k) => {
+    const _index = mappingLabelCompare.findIndex((m) => m.field?.toLowerCase() === k?.toLowerCase())
+    return {
+      field: k,
+      label: _index === -1 ? k : mappingLabelCompare?.[_index]?.label,
+      minWidth: k.toLowerCase() === 'stt' ? 80 : TABLE_COLUMN_WIDTH_DEFAULT,
+      ...(k.toLowerCase() === 'stt' ? { width: 80 } : {})
+    }
+  })
 }
 
 export const convertFileUrl = (path: string) => {

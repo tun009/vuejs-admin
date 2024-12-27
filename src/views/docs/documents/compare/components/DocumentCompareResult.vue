@@ -1,13 +1,20 @@
 <script lang="ts" setup>
-// import EIBList from '@/components/common/EIBList.vue'
 import EIBTable from '@/components/common/EIBTable.vue'
 import { useUserStore } from '@/store/modules/user'
 import { Plus } from '@element-plus/icons-vue'
 import { debounce } from 'lodash-es'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import AddCompareContentForm from './AddCompareContentForm.vue'
-import { CompareReasonResultModel, DocumentCompareModel, DocumentResultEnum } from '@/@types/pages/docs/documents'
-import { convertFileUrl, createColumnConfigs, groupByKey, withDefaultString } from '@/utils/common'
+import {
+  CompareReasonResultModel,
+  DocumentCompareModel,
+  DocumentKeyEnum,
+  DocumentResultEnum,
+  draftCustomSortTable,
+  invoiceCustomSortTable,
+  xtctCustomSortTable
+} from '@/@types/pages/docs/documents'
+import { convertFileUrl, createColumnConfigs, customSort, groupByKey, withDefaultString } from '@/utils/common'
 import MultipleLanguageResult from './MultipleLanguageResult.vue'
 import PreviewExtractImage from './PreviewExtractImage.vue'
 import { RuleModel } from '@/@types/pages/rules'
@@ -16,6 +23,7 @@ import EIBDrawer from '@/components/common/EIBDrawer.vue'
 import MultipleLanguageResultSimple from './MultipleLanguageResultSimple.vue'
 import { ColumnConfigModel } from '@/@types/common'
 import { removeAccentsAndReplaceSpaces } from '@/utils'
+import { useRoute } from 'vue-router'
 
 interface Props {
   conditionSelect: number
@@ -34,7 +42,9 @@ interface Emits {
 const props = defineProps<Props>()
 const emits = defineEmits<Emits>()
 
+const route = useRoute()
 const { isViewer } = useUserStore()
+const documentType = ref<DocumentKeyEnum>((route.query?.type as DocumentKeyEnum) ?? DocumentKeyEnum.INVOICE)
 
 const dialogVisible = ref(false)
 const scrollBlock = ref<HTMLElement | null>(null)
@@ -125,7 +135,9 @@ const convertTableDataCompareErrorResults = (compareResult: DocumentCompareModel
 const convertDataTableOriginalCopy = (data: ColumnConfigModel[]): ColumnConfigModel[] => {
   const keysMapping = data.map((c) => removeAccentsAndReplaceSpaces(c.field))
   if (!keysMapping.includes('ban_sao(bank)')) return data
+
   const result: Array<ColumnConfigModel> = []
+
   data.forEach((item) => {
     if (item.field === 'Name') {
       result.push({
@@ -134,7 +146,7 @@ const convertDataTableOriginalCopy = (data: ColumnConfigModel[]): ColumnConfigMo
         minWidth: item.minWidth
       })
     } else if (item.field.includes('Bản sao') || item.field.includes('Bản gốc')) {
-      const groupLabel = item.field.includes('khách') ? 'Phần giao của khách hàng' : 'Phần giao của ngân hàng'
+      const groupLabel = item.field.includes('khách') ? 'Phần giao của Khách hàng' : 'Phần giao của ngân hàng'
 
       let group = result.find((r) => r.label === groupLabel)
       if (!group) {
@@ -156,8 +168,40 @@ const convertDataTableOriginalCopy = (data: ColumnConfigModel[]): ColumnConfigMo
     }
   })
 
-  return result
+  const others = result.filter(
+    (item) => item.label !== 'Phần giao của Khách hàng' && item.label !== 'Phần giao của ngân hàng'
+  )
+  const groups = result.filter(
+    (item) => item.label === 'Phần giao của Khách hàng' || item.label === 'Phần giao của ngân hàng'
+  )
+
+  groups.sort((a, b) => {
+    if (a.label === 'Phần giao của Khách hàng') return -1
+    if (b.label === 'Phần giao của Khách hàng') return 1
+    if (a.label === 'Phần giao của ngân hàng') return 1
+    if (b.label === 'Phần giao của ngân hàng') return -1
+    return 0
+  })
+
+  groups.forEach((group) => {
+    if (group.columns) {
+      group.columns.sort((a, b) => {
+        if (a.label === 'Bản gốc') return -1
+        if (b.label === 'Bản gốc') return 1
+        return 0
+      })
+    }
+  })
+
+  return [...others, ...groups]
 }
+
+const customSortTable = computed((): string[] => {
+  if (documentType.value === DocumentKeyEnum.INVOICE) return invoiceCustomSortTable
+  if (documentType.value === DocumentKeyEnum.DRAFT) return draftCustomSortTable
+  if (documentType.value === DocumentKeyEnum.PRESENT_DOC) return xtctCustomSortTable
+  return invoiceCustomSortTable
+})
 </script>
 
 <template>
@@ -206,7 +250,13 @@ const convertDataTableOriginalCopy = (data: ColumnConfigModel[]): ColumnConfigMo
             <div v-for="(v, v_i) in block.comparisonResultInputValues" :key="v_i">
               <template v-if="v?.type === 'table' && Array.isArray(v?.value) && typeof v?.value?.[0] !== 'string'">
                 <EIBTable
-                  :column-configs="convertDataTableOriginalCopy(createColumnConfigs(v?.value?.[0])) ?? {}"
+                  :column-configs="
+                    customSort(
+                      convertDataTableOriginalCopy(createColumnConfigs(v?.value?.[0])),
+                      'field',
+                      customSortTable
+                    ) ?? {}
+                  "
                   :data="v?.value"
                   hidden-checked
                   hidden-pagination
@@ -253,7 +303,9 @@ const convertDataTableOriginalCopy = (data: ColumnConfigModel[]): ColumnConfigMo
       </div>
       <div class="flex flex-col gap-3" v-if="compareResult.comparisonRowResults.length">
         <EIBTable
-          :column-configs="createColumnConfigs(convertTableDataCompare(compareResult)?.[0]) ?? {}"
+          :column-configs="
+            customSort(createColumnConfigs(convertTableDataCompare(compareResult)?.[0]), 'field', customSortTable) ?? {}
+          "
           :data="convertTableDataCompare(compareResult)"
           hidden-checked
           hidden-pagination
