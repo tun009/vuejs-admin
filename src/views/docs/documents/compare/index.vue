@@ -388,7 +388,13 @@ onMounted(() => {
     class="flex flex-row justify-between py-2 px-4 border border-[#ced4da] fixed top-0 left-0 w-full bg-white dark:bg-[#141414] z-[10]"
   >
     <el-button color="#005d98" plain :icon="ArrowLeft" @click="handleBack">{{ $t('button.back') }}</el-button>
-    <el-text class="text-[20px] pl-32 mx-auto">{{ $t('docs.compare.checkDoc') }} {{ documentTypeLabel }}</el-text>
+    <el-text
+      class="text-[20px] mx-auto"
+      :class="{
+        'pl-32': isHaveActionButton
+      }"
+      >{{ $t('docs.compare.checkDoc') }} {{ documentTypeLabel }}</el-text
+    >
     <div class="flex flex-row" v-if="isHaveActionButton">
       <el-button
         v-if="!isMaker"
