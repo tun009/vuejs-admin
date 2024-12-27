@@ -54,23 +54,21 @@ const getDocTypes = async () => {
     documentTypes.value = [
       { label: 'Tất cả', value: -1 },
       ...response.data.map((item) => ({
-        label: item.name,
+        label: item.key,
         value: item.id
       }))
     ]
-    const newData = documentTypes.value.filter((item) => item.label !== 'Others')
+    const newData = documentTypes.value.filter(
+      (item) => item.label !== 'OTHER' && item.label !== 'LETTER_OF_CREDIT' && item.label !== 'EXPORT_DOC_PRESENT'
+    )
     documentTypes.value = newData
     for (const data in documentTypes.value) {
-      if (documentTypes.value[data].label == 'Trích xuất LC') {
-        documentTypes.value[data].label = 'LC'
-      } else if (documentTypes.value[data].label == 'Trích xuất invoice') {
-        documentTypes.value[data].label = 'Invoice'
-      } else if (documentTypes.value[data].label == 'Trích xuất Bill Of Lading') {
+      if (documentTypes.value[data].label == 'INVOICE') {
+        documentTypes.value[data].label = 'Commercial Invoice'
+      } else if (documentTypes.value[data].label == 'BILL_OF_LADING') {
         documentTypes.value[data].label = 'Bill Of Lading'
-      } else if (documentTypes.value[data].label == 'Trích xuất Bill Of Exchange') {
-        documentTypes.value[data].label = 'Bill Of Exchange'
-      } else if (documentTypes.value[data].label == 'Trích xuất giấy xuất trình chứng từ') {
-        documentTypes.value[data].label = 'Giấy xuất trình chứng từ'
+      } else if (documentTypes.value[data].label == 'DRAFT') {
+        documentTypes.value[data].label = 'Draft'
       }
     }
   } catch (error: any) {
