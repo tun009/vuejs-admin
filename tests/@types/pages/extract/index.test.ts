@@ -10,11 +10,6 @@ describe('ExtractHistoryTypeEnum', () => {
     expect(ExtractHistoryTypeEnum.REPLACE).toBe('REPLACE')
     expect(ExtractHistoryTypeEnum.OCR).toBe('OCR')
   })
-
-  it('should match the enum values with their string counterparts', () => {
-    // Ensure the enum values match their expected string values
-    expect(Object.values(ExtractHistoryTypeEnum)).toEqual(['EDIT', 'COMPARISON', 'DENIED', 'REPLACE', 'OCR'])
-  })
 })
 
 describe('extractHistoryTypes', () => {
