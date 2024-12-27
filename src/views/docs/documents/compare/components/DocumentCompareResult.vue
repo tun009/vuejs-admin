@@ -146,7 +146,7 @@ const convertDataTableOriginalCopy = (data: ColumnConfigModel[]): ColumnConfigMo
         minWidth: item.minWidth
       })
     } else if (item.field.includes('Bản sao') || item.field.includes('Bản gốc')) {
-      const groupLabel = item.field.includes('khách') ? 'Phần giao của Khách hàng' : 'Phần giao của ngân hàng'
+      const groupLabel = item.field.includes('khách') ? 'Phần giao của Khách hàng' : 'Phần nhận của ngân hàng'
 
       let group = result.find((r) => r.label === groupLabel)
       if (!group) {
@@ -169,17 +169,17 @@ const convertDataTableOriginalCopy = (data: ColumnConfigModel[]): ColumnConfigMo
   })
 
   const others = result.filter(
-    (item) => item.label !== 'Phần giao của Khách hàng' && item.label !== 'Phần giao của ngân hàng'
+    (item) => item.label !== 'Phần giao của Khách hàng' && item.label !== 'Phần nhận của ngân hàng'
   )
   const groups = result.filter(
-    (item) => item.label === 'Phần giao của Khách hàng' || item.label === 'Phần giao của ngân hàng'
+    (item) => item.label === 'Phần giao của Khách hàng' || item.label === 'Phần nhận của ngân hàng'
   )
 
   groups.sort((a, b) => {
     if (a.label === 'Phần giao của Khách hàng') return -1
     if (b.label === 'Phần giao của Khách hàng') return 1
-    if (a.label === 'Phần giao của ngân hàng') return 1
-    if (b.label === 'Phần giao của ngân hàng') return -1
+    if (a.label === 'Phần nhận của ngân hàng') return 1
+    if (b.label === 'Phần nhận của ngân hàng') return -1
     return 0
   })
 
