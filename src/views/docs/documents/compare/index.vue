@@ -409,9 +409,9 @@ onMounted(() => {
       }}</el-button>
     </div>
   </div>
-  <div class="pt-16 bg-[#f1f3f5] document-compare">
+  <div class="pt-20 bg-[#f1f3f5] document-compare">
     <div class="border border-t-[#e9ecef] bg-[#fff]">
-      <ResizableSplitter custom-class="h-[calc(100vh_-_90px)]" :default-left-width="300">
+      <ResizableSplitter custom-class="h-[calc(100vh_-_90px)] !pb-0" :default-left-width="300">
         <template #left>
           <CompareSummarySkeleton v-if="loading" />
           <div v-else class="flex flex-col">
@@ -476,7 +476,7 @@ onMounted(() => {
             <el-tab-pane label="Kết quả" name="result">
               <ResizableSplitter
                 custom-id="result"
-                custom-class="h-[calc(100vh_-_180px)] !p-0"
+                custom-class="h-[calc(100vh_-_140px)] !p-0"
                 :default-left-width="compareResultMinWidth ?? 600"
                 :min-width="500"
               >
@@ -521,5 +521,9 @@ onMounted(() => {
 .document-compare .el-table tr th {
   background-color: #f5f5f5 !important;
   color: #495057;
+}
+
+.el-tabs__header.is-top {
+  margin: 0;
 }
 </style>
