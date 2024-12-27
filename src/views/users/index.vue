@@ -183,8 +183,8 @@ onMounted(() => {
 
 <template>
   <Title :title="$t('user.title')" />
-  <div class="flex flex-col gap-5">
-    <div class="flex flex-row justify-between gap-10">
+  <div class="flex flex-col">
+    <div class="flex flex-row justify-between gap-10 mb-5">
       <div class="flex flex-row gap5 items-center gap-5">
         <EIBInput
           v-model="filterValue.name"
