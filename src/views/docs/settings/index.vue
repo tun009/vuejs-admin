@@ -108,22 +108,22 @@ const handleGetDocTypes = async () => {
   try {
     const response = await getDocummentTypeApi()
     doc_types.value = response.data.map((item) => ({
-      label: item.name,
+      label: item.key,
       value: item.id
     }))
-    const newData = doc_types.value.filter((item) => item.label !== 'Others')
+    const newData = doc_types.value.filter((item) => item.label !== 'OTHER')
     doc_types.value = newData
     for (const data in doc_types.value) {
-      if (doc_types.value[data].label == 'Trích xuất LC') {
+      if (doc_types.value[data].label == 'LETTER_OF_CREDIT') {
         doc_types.value[data].label = 'LC'
-      } else if (doc_types.value[data].label == 'Trích xuất invoice') {
+      } else if (doc_types.value[data].label == 'INVOICE') {
         doc_types.value[data].label = 'Invoice'
-      } else if (doc_types.value[data].label == 'Trích xuất Bill Of Lading') {
+      } else if (doc_types.value[data].label == 'BILL_OF_LADING') {
         doc_types.value[data].label = 'Bill Of Lading'
-      } else if (doc_types.value[data].label == 'Trích xuất Bill Of Exchange') {
-        doc_types.value[data].label = 'Bill Of Exchange'
-      } else if (doc_types.value[data].label == 'Trích xuất giấy xuất trình chứng từ') {
-        doc_types.value[data].label = 'Giấy xuất trình chứng từ'
+      } else if (doc_types.value[data].label == 'DRAFT') {
+        doc_types.value[data].label = 'Draft'
+      } else if (doc_types.value[data].label == 'EXPORT_DOC_PRESENT') {
+        doc_types.value[data].label = 'Giấy XTCT'
       }
     }
   } catch (error: any) {
