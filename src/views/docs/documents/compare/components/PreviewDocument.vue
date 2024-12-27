@@ -55,27 +55,36 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="flex justify-between my-2 pdf-view-component">
-    <ControlSlider
-      class="!w-[250px]"
-      :scale="scale"
-      :id-full-screen="idFullScreen"
-      @update:scale="
-        (val: number) => {
-          scale = val
-        }
-      "
-    />
-    <slot name="right-header" />
-  </div>
-  <div class="overflow-auto scroll-block h-[calc(100vh-240px)] relative" :id="idFullScreen">
-    <div v-for="page in pages" :key="page" class="mx-auto relative w-fit">
-      <VuePDF :id="'page-' + page" :pdf="pdf" :page="page" :scale="scale" :rotation="rotation" @loaded="onLoadedPDF()">
-        <el-skeleton-item variant="image" class="w-full h-[calc(100vh-300px)] mx-auto" />
-      </VuePDF>
-      <div class="text-center my-2">Trang {{ page }}</div>
+  <div class="bg-[#f3f7fd]">
+    <div class="flex justify-between my-2 pdf-view-component">
+      <ControlSlider
+        class="!w-[250px]"
+        :scale="scale"
+        :id-full-screen="idFullScreen"
+        @update:scale="
+          (val: number) => {
+            scale = val
+          }
+        "
+      />
+      <slot name="right-header" />
     </div>
-    <ExtractOcrLoading v-if="isLoadingOcr" />
+    <div class="overflow-auto scroll-block h-[calc(100vh-240px)] relative" :id="idFullScreen">
+      <div v-for="page in pages" :key="page" class="mx-auto relative w-fit">
+        <VuePDF
+          :id="'page-' + page"
+          :pdf="pdf"
+          :page="page"
+          :scale="scale"
+          :rotation="rotation"
+          @loaded="onLoadedPDF()"
+        >
+          <el-skeleton-item variant="image" class="w-full h-[calc(100vh-300px)] mx-auto" />
+        </VuePDF>
+        <div class="text-center my-2">Trang {{ page }}</div>
+      </div>
+      <ExtractOcrLoading v-if="isLoadingOcr" />
+    </div>
   </div>
 </template>
 
