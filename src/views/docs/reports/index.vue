@@ -37,6 +37,7 @@ import { BranchModel } from '@/@types/pages/login'
 import Status from '../components/Status.vue'
 import { errorDocumentStatus } from '@/constants/common'
 import EIBDropdown from '@/components/common/EIBDropdown.vue'
+import { useUserStore } from '@/store/modules/user'
 
 const openFilter = ref(false)
 const defaultStatus = computed(() => {
@@ -52,6 +53,7 @@ const openDetailReportDrawer = ref(false)
 const branches = ref<BranchModel[]>([])
 const reportDetail = ref<ReportDetailModel>({} as ReportDetailModel)
 const filterType = ref<FilterTypeEnum>(FilterTypeEnum.BCT)
+const { isAdmin, isChecker, isMaker } = useUserStore()
 
 const handleGetReports = async (pagination: PaginationModel) => {
   try {
@@ -144,6 +146,14 @@ const handleGetBranches = async () => {
   }
 }
 
+const isHaveDownloadReport = () => {
+  if (isAdmin || isChecker || isMaker) {
+    return true
+  } else {
+    return false
+  }
+}
+
 const handleGetData = debounce(() => documentTableRef?.value?.handleGetData(), 300)
 
 watch(
@@ -223,7 +233,7 @@ onMounted(() => {
           >
         </div>
       </div>
-      <div class="flex flex-row gap-3">
+      <div class="flex flex-row gap-3" v-if="isHaveDownloadReport()">
         <el-button type="primary" class="flex flex-row items-center" @click="downloadFile">
           <SvgIcon name="download-inline" class="w-4 h-4 mr-2" />
           <span>Tải xuống</span></el-button
