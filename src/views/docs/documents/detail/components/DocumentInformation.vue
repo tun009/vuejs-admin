@@ -37,7 +37,7 @@ import {
   renderLabelByValue,
   resetNullUndefinedFields
 } from '@/utils/common'
-import { convertOcrToDateFormat, formatDateOcrLC } from '@/utils/date'
+import { convertOcrToDateFormat } from '@/utils/date'
 import { successNotification } from '@/utils/notification'
 import Status from '@/views/docs/components/Status.vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -352,11 +352,11 @@ onMounted(() => {
           >
           <span
             >{{ $t('docs.detail.createdAtLc') }}:
-            <span class="c-text-value">{{ formatDateOcrLC(getValueLC('date_issue') ?? '') }}</span></span
+            <span class="c-text-value">{{ getValueLC('date_issue') ?? '' }}</span></span
           >
           <span
             >{{ $t('docs.detail.expirationDateLc') }}:
-            <span class="c-text-value">{{ formatDateOcrLC(getValueLC('expiry_date') ?? '') }}</span></span
+            <span class="c-text-value">{{ getValueLC('expiry_date') ?? '' }}</span></span
           >
           <span
             >{{ $t('docs.detail.expirationPositionLc') }}:

@@ -709,3 +709,37 @@ export const filterTypeSelectOptions = [
     value: FilterTypeEnum.LC
   }
 ]
+
+export const invoiceCustomSortTable = ['stt', 'fieldName', 'invoice', 'lc', 'bill_of_lading', 'draft', 'doc_present']
+export const draftCustomSortTable = ['stt', 'fieldName', 'draft', 'lc', 'invoice', 'doc_present']
+export const xtctCustomSortTable = ['stt', 'fieldName', 'doc_present', 'lc', 'invoice', 'draft']
+export const mappingLabelCompare = [
+  {
+    label: 'STT',
+    field: 'stt'
+  },
+  {
+    label: 'Field name',
+    field: 'fieldName'
+  },
+  {
+    label: 'Invoice',
+    field: 'invoice'
+  },
+  {
+    label: 'LC',
+    field: 'lc'
+  },
+  {
+    label: 'Bill of lading',
+    field: 'bill_of_lading'
+  },
+  {
+    label: 'Draft(s)',
+    field: 'draft'
+  },
+  {
+    label: 'Giấy XTCT',
+    field: 'doc_present'
+  }
+]

@@ -409,7 +409,7 @@ onMounted(() => {
       }}</el-button>
     </div>
   </div>
-  <div class="pt-16 bg-[#f1f3f5]">
+  <div class="pt-16 bg-[#f1f3f5] document-compare">
     <div class="border border-t-[#e9ecef] bg-[#fff]">
       <ResizableSplitter custom-class="h-[calc(100vh_-_90px)]" :default-left-width="300">
         <template #left>
@@ -516,3 +516,10 @@ onMounted(() => {
     </div>
   </div>
 </template>
+
+<style>
+.document-compare .el-table tr th {
+  background-color: #f5f5f5 !important;
+  color: #495057;
+}
+</style>
