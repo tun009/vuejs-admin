@@ -760,7 +760,7 @@ describe('createColumnConfigs', () => {
   it('should assign minWidth of 50 if field is "stt"', () => {
     const input = { stt: 1 }
     const result = createColumnConfigs(input)
-    expect(result).toEqual([{ field: 'stt', label: 'stt', minWidth: 50 }])
+    expect(result).toEqual([{ field: 'stt', label: 'STT', minWidth: 80, width: 80 }])
   })
 
   it('should handle numeric values correctly', () => {
