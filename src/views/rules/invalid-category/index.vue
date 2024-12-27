@@ -64,7 +64,7 @@ const getDocTypes = async () => {
       } else if (documentTypes.value[data].label == 'BILL_OF_LADING') {
         documentTypes.value[data].label = 'Bill Of Lading'
       } else if (documentTypes.value[data].label == 'DRAFT') {
-        documentTypes.value[data].label = 'DRAFT'
+        documentTypes.value[data].label = 'Draft'
       } else if (documentTypes.value[data].label == 'EXPORT_DOC_PRESENT') {
         documentTypes.value[data].label = 'Giấy XTCT'
       }
