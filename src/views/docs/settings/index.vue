@@ -253,6 +253,7 @@ onMounted(() => {
           name="docs"
           :options="doc_types"
           label="Thông tin trường trích xuất cho loại chứng từ"
+          hidden-error
         />
 
         <EIBTable
