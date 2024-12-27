@@ -217,7 +217,7 @@ const customSortTable = computed((): string[] => {
     </template>
   </EIBDrawer>
   <div
-    class="flex flex-col gap-6 px-2 mt-3 h-[calc(100vh_-_200px)] overflow-y-auto scroll-block"
+    class="flex flex-col gap-6 mt-3 h-[calc(100vh_-_160px)] overflow-y-auto scroll-block"
     ref="scrollBlock"
     @scroll="onScroll"
   >

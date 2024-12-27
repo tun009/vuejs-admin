@@ -319,7 +319,7 @@ export const getDocumentSwitchStatus = (row: DocumentModel) => {
     if (isMaker) {
       status = DocumentStatusEnum.CHECKING
     } else if (isAdmin) {
-      status = row.createdBy?.role === RoleEnum.ADMIN ? DocumentStatusEnum.CHECKING : DocumentStatusEnum.VALIDATING
+      status = row.createdBy?.role === RoleEnum.MAKER ? DocumentStatusEnum.CHECKING : DocumentStatusEnum.VALIDATING
     } else if (isChecker && row.createdBy?.username === userInfo.username) {
       status = DocumentStatusEnum.VALIDATING
     }
