@@ -463,10 +463,13 @@ onMounted(() => {
                   class="flex flex-row gap-2 items-start cursor-pointer"
                   @click="() => handleCheckCompareResult(index)"
                 >
-                  <el-icon class="mb-[2px]" size="18">
+                  <el-icon class="mb-[2px] min-w-[18px]" size="18">
                     <CircleCheckFilled class="text-[#099268]" v-if="step.status === DocumentResultEnum.COMPLY" />
-                    <WarnTriangleFilled class="text-[#e03131]" v-if="step.status === DocumentResultEnum.DISCREPANCY" />
-                    <CircleCheckFilled class="text-[#d8d8d8]" v-if="step.status === DocumentResultEnum.NA" />
+                    <WarnTriangleFilled
+                      class="text-[#e03131]"
+                      v-else-if="step.status === DocumentResultEnum.DISCREPANCY"
+                    />
+                    <CircleCheckFilled class="text-[#d8d8d8]" v-else />
                   </el-icon>
                   <span class="c-text-primary" :class="{ 'font-bold': index === conditionSelect }">{{
                     step.label
