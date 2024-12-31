@@ -108,10 +108,10 @@ const handleUpdateCompareResult = () => {
       <div class="flex flex-row gap-10">
         <div class="flex flex-col gap-1 flex-1">
           <span class="c-text-des">{{ $t('docs.compare.english') }}</span>
-          <span v-if="documentResultFormData.status === DocumentResultEnum.COMPLY" class="c-text-success">{{
+          <span v-if="requirement.status === DocumentResultEnum.COMPLY" class="c-text-success">{{
             $t('docs.compare.complied')
           }}</span>
-          <div v-else-if="documentResultFormData.status === DocumentResultEnum.DISCREPANCY">
+          <div v-else-if="requirement.status === DocumentResultEnum.DISCREPANCY">
             <div class="flex flex-row items-start gap-2">
               <div class="min-w-1 h-1 w-1 bg-[#e8590c] rounded-sm mt-2" />
               <span class="text-[#e8590c]"
