@@ -21,6 +21,7 @@ const rulesTableRef = ref<InstanceType<typeof EIBTable>>()
 const filterValue = reactive<FilterRulesModel>({ query: '' } as FilterRulesModel)
 filterValue.type = RuleTypeEnum.LAW
 const openUpdateRuleDrawer = ref(false)
+const type: any = ref('ucp-isbp')
 
 const tableData = ref<RuleModel[]>([])
 const isHaveUpdateRule = () => {
@@ -156,6 +157,7 @@ onMounted(() => {
       <UpdateRuleForm
         @close="openUpdateRuleDrawer = false"
         :data="dataUpdateRule"
+        :rule="type"
         @refresh="rulesTableRef?.handleGetData()"
       />
     </template>

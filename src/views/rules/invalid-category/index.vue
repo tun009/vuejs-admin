@@ -40,6 +40,7 @@ const handleGetRules = async (pagination: PaginationModel) => {
     throw new Error(error)
   }
 }
+const type: any = ref('invalid')
 const dataUpdateRule = ref<RuleModel>({} as RuleModel)
 const openModalUpdateRule = (data: RuleModel) => {
   openUpdateRuleDrawer.value = true
@@ -153,6 +154,7 @@ onMounted(() => {
       <UpdateRuleForm
         @close="openUpdateRuleDrawer = false"
         :data="dataUpdateRule"
+        :rule="type"
         @refresh="rulesTableRef?.handleGetData()"
       />
     </template>

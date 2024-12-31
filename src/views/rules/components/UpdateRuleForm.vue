@@ -17,6 +17,7 @@ interface Exposes {
 }
 interface Props {
   data: RuleModel
+  rule: ''
 }
 const props = defineProps<Props>()
 
@@ -29,6 +30,8 @@ const updateRuleFormData: UpdateRuleRequestModel = reactive({
   code: props?.data?.code,
   en: props?.data?.en
 })
+
+const ruleType: string = props.rule
 
 const updateRuleFormRules: FormRules = {
   name: []
@@ -93,6 +96,12 @@ defineExpose<Exposes>({
       show-limit
       :max-length="1200"
     />
+    <div v-if="ruleType == 'invalid'">
+      <p class="text-[#e67700] text-[12px] italic">
+        *Lưu ý: khi chỉnh sửa nội dung, cụm từ “%s” không được bổ sung thêm hoặc xóa bớt đi, vì sẽ ảnh hưởng đến hệ
+        thống khi trả kết quả đối sánh
+      </p>
+    </div>
   </el-form>
   <div>
     <el-button :loading="loading" @click.prevent="handleUpdateRule" type="primary">Lưu thay đổi</el-button>
