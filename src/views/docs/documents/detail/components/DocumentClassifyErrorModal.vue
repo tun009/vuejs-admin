@@ -128,14 +128,14 @@ const saveDossierClassify = async () => {
 }
 const handleDeleteDoc = (data: DocumentClassifyErrordModel[], index: number) => {
   showConfirmModal({
-    message: `Chứng từ sau khi xóa sẽ bị chuyển sang mục Khác. Bạn chắc chắn muốn xóa chứng từ này?`,
+    message: `Chứng từ sau khi xóa sẽ bị chuyển sang mục Others. Bạn chắc chắn muốn xóa chứng từ này?`,
     title: 'Xác nhận Xóa chứng từ',
     showMesageSucess: false,
     onConfirm: (_, done) => {
       const docCopy = { ...data[index] }
       docCopy.docType = {
         id: 159,
-        name: 'Khác',
+        name: 'Others',
         key: 'OTHER',
         type: 'extraction'
       }
@@ -151,7 +151,7 @@ const increaseDocument = (data: DocumentClassifyErrordModel[]) => {
     name: '',
     docType: {
       id: 159,
-      name: 'Khác',
+      name: 'Others',
       key: 'OTHER',
       type: 'extraction'
     },
@@ -183,7 +183,7 @@ const handleFileReplace = (data: ReplaceDocumentClassifyErrordModel) => {
     if (doc?.pageList?.length > 0 && (doc.countNumReplace || 0) < 2) {
       docCopy.docType = {
         id: 159,
-        name: 'Khác',
+        name: 'Others',
         key: 'OTHER',
         type: 'extraction'
       }
