@@ -76,7 +76,7 @@ watch(
       class="w-full cursor-pointer h-full accent-[#7f8b98]"
       type="range"
       min="0.1"
-      max="2.5"
+      max="3"
       step="0.1"
       v-model="scale"
       @update:model-value="(value: number) => emit('update:scale', value)"
