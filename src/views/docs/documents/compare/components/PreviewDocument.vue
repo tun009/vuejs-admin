@@ -69,7 +69,7 @@ onBeforeUnmount(() => {
       />
       <slot name="right-header" />
     </div>
-    <div class="overflow-auto scroll-block h-[calc(100vh-200px)] relative" :id="idFullScreen">
+    <div class="overflow-auto scroll-block h-[calc(100vh-212px)] relative" :id="idFullScreen">
       <div v-for="page in pages" :key="page" class="mx-auto relative w-fit">
         <VuePDF
           :id="'page-' + page"
