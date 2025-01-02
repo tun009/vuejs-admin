@@ -330,8 +330,6 @@ export const getDocumentSwitchStatus = (row: DocumentModel) => {
     ) {
       status = DocumentStatusEnum.VALIDATING
     }
-  } else if (row.status === DocumentStatusEnum.CHECKED && isAdmin) {
-    status = DocumentStatusEnum.VALIDATING
   } else if (
     row.status === DocumentStatusEnum.ADJUST_REQUESTED &&
     (isAdmin || (isMaker && row.createdBy?.username === userInfo.username))

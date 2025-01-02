@@ -18,6 +18,7 @@ import { RuleModel } from '@/@types/pages/rules'
 import { RoleEnum } from '@/@types/pages/users'
 import { getBatchDetail, getDocumentDataLC, getDocumentHistories, getLCAmount } from '@/api/docs/document'
 import { getDocumentCompare, updateDocumentStatus } from '@/api/docs/document/compare'
+import { getDocummentTypeApi, getDossierListApi } from '@/api/extract'
 import { getRules } from '@/api/rules'
 import EIBDialog from '@/components/common/EIBDialog.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
@@ -28,7 +29,6 @@ import { useConfirmModal } from '@/hooks/useConfirm'
 import { useUserStore } from '@/store/modules/user'
 import {
   convertFileUrl,
-  formatNumberWithCommas,
   getTextFromHtml,
   handleConvertDocumentHistory,
   resetNullUndefinedFields,
@@ -45,10 +45,9 @@ import CompareRejectForm from './components/CompareRejectForm.vue'
 import CompareReturnForm from './components/CompareReturnForm.vue'
 import CompareSummarySkeleton from './components/CompareSummarySkeleton.vue'
 import DocumentCompareResult from './components/DocumentCompareResult.vue'
+import PreviewDocument from './components/PreviewDocument.vue'
 import ResizableSplitter from './components/ResizableSplitter.vue'
 import UpdateCompareHistory from './components/UpdateCompareHistory.vue'
-import { getDocummentTypeApi, getDossierListApi } from '@/api/extract'
-import PreviewDocument from './components/PreviewDocument.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -87,7 +86,7 @@ const documentTypeLabel = computed(() => {
 })
 
 const isValid = computed(() => {
-  return compareResults.value.every((i) => i.status === DocumentResultEnum.COMPLY)
+  return !compareResults.value.some((i) => i.status === DocumentResultEnum.DISCREPANCY)
 })
 
 const currency = computed(() => {
@@ -314,7 +313,7 @@ const handleGetWidth = () => {
   const element = document.getElementById('compare-body')
   const width = element?.offsetWidth
   if (!width) return
-  compareResultMinWidth.value = Number(Number(width * 0.56).toFixed(0))
+  compareResultMinWidth.value = Number(Number(width * 0.65).toFixed(0))
 }
 
 watch(
@@ -432,7 +431,7 @@ onMounted(() => {
               </div>
               <div class="flex flex-col gap-1">
                 <span class="c-text-value">{{ $t('docs.compare.totalAmount') }}</span>
-                <span class="text-base">{{ formatNumberWithCommas(amount?.totalAmount ?? 0) }} {{ currency }}</span>
+                <span class="text-base">{{ amount?.totalAmount ?? 0 }} {{ currency }}</span>
               </div>
             </div>
             <el-divider />

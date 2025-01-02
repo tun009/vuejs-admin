@@ -137,7 +137,7 @@ const handleUpdateCompareResult = () => {
         <div class="flex flex-col gap-1">
           <span class="c-text-des">{{ $t('docs.compare.editInformation') }}</span>
           <div class="flex flex-row items-center">
-            <span class="min-w-48 text-sm">{{ $t('docs.compare.checkResult') }}</span>
+            <span class="min-w-40 text-sm">{{ $t('docs.compare.checkResult') }}</span>
             <EIBSelect
               :options="documentResultValidOptions.slice(0, -1)"
               v-model="documentResultFormData.status"
@@ -148,7 +148,7 @@ const handleUpdateCompareResult = () => {
         <div class="flex flex-col gap-1" v-if="documentResultFormData.status === DocumentResultEnum.DISCREPANCY">
           <span class="c-text-des">{{ $t('docs.compare.english_1') }}</span>
           <div class="flex flex-row items-start">
-            <span class="min-w-48 text-sm mt-2">{{ $t('docs.compare.reason') }}</span>
+            <span class="min-w-40 text-sm mt-2">{{ $t('docs.compare.reason') }}</span>
             <div class="flex flex-col gap-2 w-full">
               <div class="flex flex-row items-center gap-2 w-full">
                 <EIBInput name="reason" v-model="documentResultFormData.reason" />

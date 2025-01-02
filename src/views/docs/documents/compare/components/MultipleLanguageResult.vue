@@ -337,7 +337,7 @@ const ruleMapping = computed((): SelectOptionModel[] => {
         <div class="flex flex-col gap-1">
           <span class="c-text-des">{{ $t('docs.compare.editInformation') }}</span>
           <div class="flex flex-row items-center">
-            <span class="min-w-48 text-sm">{{ $t('docs.compare.checkResult') }}</span>
+            <span class="min-w-40 text-sm">{{ $t('docs.compare.checkResult') }}</span>
             <EIBSelect
               :options="documentResultValidOptions.slice(0, -1)"
               v-model="documentResultFormData.status"
@@ -348,7 +348,7 @@ const ruleMapping = computed((): SelectOptionModel[] => {
         <div class="flex flex-col gap-1" v-if="documentResultFormData.status === DocumentResultEnum.DISCREPANCY">
           <span class="c-text-des">{{ $t('docs.compare.english_1') }}</span>
           <div class="flex flex-row items-start">
-            <span class="min-w-48 text-sm mt-2">{{ $t('docs.compare.reason') }}</span>
+            <span class="min-w-40 text-sm mt-2">{{ $t('docs.compare.reason') }}</span>
             <div class="flex flex-col gap-2 w-full -ml-7">
               <div class="flex flex-row items-center gap-2 w-full" v-for="(r, i) in reasonList" :key="r.id">
                 <div class="h-5 w-5 min-w-5">
@@ -382,7 +382,7 @@ const ruleMapping = computed((): SelectOptionModel[] => {
             </div>
           </div>
           <div class="flex flex-row items-center">
-            <span class="min-w-48 text-sm">{{ $t('docs.compare.ruleEvidence') }}</span>
+            <span class="min-w-40 text-sm">{{ $t('docs.compare.ruleEvidence') }}</span>
             <EIBSelect
               :options="ruleMapping"
               v-model="documentResultFormData.lawIds"
@@ -396,7 +396,7 @@ const ruleMapping = computed((): SelectOptionModel[] => {
         <div class="flex flex-col gap-1" v-if="documentResultFormData.status === DocumentResultEnum.DISCREPANCY">
           <span class="c-text-des">{{ $t('docs.compare.vietnamese_1') }}</span>
           <div class="flex flex-row items-start">
-            <span class="min-w-48 text-sm mt-2">{{ $t('docs.compare.reason') }}</span>
+            <span class="min-w-40 text-sm mt-2">{{ $t('docs.compare.reason') }}</span>
             <div class="flex flex-col gap-2 w-full">
               <div class="flex flex-row items-center gap-2 w-full" v-for="(r, i) in reasonList" :key="r.id">
                 <EIBTextareaAutoComplete

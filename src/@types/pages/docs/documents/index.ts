@@ -559,6 +559,7 @@ export interface DocumentLCAmountModel {
   batchId?: number
   totalAmount: number
   amountUsed: number
+  percent?: string
 }
 
 export interface UpdateLCAmountFormModel {

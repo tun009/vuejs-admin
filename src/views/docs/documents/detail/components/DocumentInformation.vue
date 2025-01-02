@@ -30,13 +30,7 @@ import { PROGRESS_COLORS } from '@/constants/color'
 import { documentAfterCheckStatus, errorDocumentStatus, processingDocumentStatus } from '@/constants/common'
 import { COMPARE_DOCUMENT_DETAIL_PAGE, EXTRACT_PAGE } from '@/constants/router'
 import { useUserStore } from '@/store/modules/user'
-import {
-  customSort,
-  downloadFileCommon,
-  formatNumberWithCommas,
-  renderLabelByValue,
-  resetNullUndefinedFields
-} from '@/utils/common'
+import { customSort, downloadFileCommon, renderLabelByValue, resetNullUndefinedFields } from '@/utils/common'
 import { convertOcrToDateFormat } from '@/utils/date'
 import { successNotification } from '@/utils/notification'
 import Status from '@/views/docs/components/Status.vue'
@@ -130,11 +124,6 @@ const handleDownloadCompareResult = async (type: DocumentExportFileEnum = Docume
     console.error(error)
   }
 }
-
-const percentage = computed(() => {
-  if (!amount.value.totalAmount) return 0
-  return Number(((amount.value.amountUsed / amount.value.totalAmount) * 100).toFixed(2))
-})
 
 const isOcred = computed(() => !processingDocumentStatus.includes(props.data.status))
 const isValidated = computed(() => props.data.status === DocumentStatusEnum.VALIDATED)
@@ -331,7 +320,7 @@ onMounted(() => {
           <el-progress
             :width="120"
             type="circle"
-            :percentage="percentage"
+            :percentage="Number(amount.percent ?? 0)"
             :stroke-width="10"
             striped-flow
             :duration="10"
@@ -340,8 +329,7 @@ onMounted(() => {
           />
           <div class="text-gray-700 dark:text-slate-300 flex flex-col gap-1">
             <span
-              ><span class="text-2xl">{{ formatNumberWithCommas(amount.amountUsed) }}</span> /
-              {{ formatNumberWithCommas(amount.totalAmount) }}</span
+              ><span class="text-2xl">{{ amount.amountUsed }}</span> / {{ amount.totalAmount }}</span
             >
             <span>{{ $t('docs.detail.lcProgress', { currency: getValueLC('currency') }) }}</span>
           </div>
