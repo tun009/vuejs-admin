@@ -13,6 +13,7 @@ interface Props {
   files: File[]
   limitFileCount?: number
   allowedExtensions?: string
+  isReplaceFile?: boolean
 }
 
 interface Emits {
@@ -132,7 +133,7 @@ const handleDeleteFile = (index: number) => {
         :data="tableFiles"
         hiddenPagination
         hiddenChecked
-        height="350"
+        :height="isReplaceFile ? 'auto' : 350"
         locales
       >
         <template #actions="{ index }">
@@ -143,6 +144,10 @@ const handleDeleteFile = (index: number) => {
           </div>
         </template>
       </EIBTable>
+      <div v-if="isReplaceFile" class="c-text-des italic">
+        Sau khi bấm Tải lên, hệ thống sẽ tự động thực hiện Phân loại, Trích xuất và Đối sánh lại thông tin theo nội dung
+        chứng từ mới nhất
+      </div>
     </div>
   </div>
 </template>

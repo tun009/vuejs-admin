@@ -9,7 +9,7 @@ import {
   saveDossierDocApi
 } from '@/api/extract'
 import { useConfirmModal } from '@/hooks/useConfirm'
-
+import { ExtractDossierPostModel } from '@/@types/pages/extract'
 import {
   ExtractDocumentModel,
   ExtractDossierModel,
@@ -56,7 +56,7 @@ import { UpdateConfidenceRequestModel } from '@/@types/pages/docs/settings/servi
 import { getBatchDetail } from '@/api/docs/document'
 import { BatchDetailModel } from '@/@types/pages/docs/documents/services/DocumentResponse'
 import { useUserStore } from '@/store/modules/user'
-const { userInfo, isAdmin } = useUserStore()
+const { userInfo, isAdmin, isChecker, isMaker } = useUserStore()
 const dossierListData = ref<ExtractDossierModel[]>([])
 const documentDetail = ref<ExtractDocumentModel>()
 const activeName = ref('ocr')
@@ -380,6 +380,43 @@ const hasPermissionOcr = computed(() => {
       isAdmin)
   )
 })
+const hasPermissionReplaceOcr = computed(() => {
+  return (
+    ([
+      DocumentStatusEnum.ADJUST_REQUESTED,
+      DocumentStatusEnum.CHECKING,
+      DocumentStatusEnum.WAIT_CHECK,
+      DocumentStatusEnum.CHECKED
+    ].includes(batchDetailData.value.status) &&
+      isMaker) ||
+    ([DocumentStatusEnum.VALIDATING].includes(batchDetailData.value.status) && isChecker) ||
+    ([
+      DocumentStatusEnum.ADJUST_REQUESTED,
+      DocumentStatusEnum.CHECKING,
+      DocumentStatusEnum.WAIT_CHECK,
+      DocumentStatusEnum.CHECKED,
+      DocumentStatusEnum.VALIDATING
+    ].includes(batchDetailData.value.status) &&
+      isAdmin)
+  )
+})
+const refreshReplaceDoc = (data: ExtractDossierPostModel) => {
+  dossierListData.value.forEach((item) => {
+    if (item.id === Number(route?.query?.dossierDocId)) {
+      item.id = data.id
+      item.status = renderLabelByValue(documentStatusOptions, data.status) || 'Đang phân loại'
+      item.color = renderColorByValue(documentStatusOptions, data.status) || '#1098ad'
+    }
+  })
+  idDossierActive.value = data.id
+  router.replace({
+    path: EXTRACT_PAGE,
+    query: {
+      batchId: route.query.batchId,
+      dossierDocId: data.id
+    }
+  })
+}
 onMounted(() => {
   isComponentActive = true
   getPermission()
@@ -464,7 +501,9 @@ onUnmounted(() => {
               </pane>
               <pane v-if="isShowTable" :size="100 - resizeTable" class="!bg-[#fff]">
                 <div class="text-right">
-                  <el-icon class="cursor-pointer mr-[5px]" @click="closeTable"><CloseBold /></el-icon>
+                  <el-icon class="cursor-pointer mr-[5px]" @click="closeTable">
+                    <CloseBold />
+                  </el-icon>
                 </div>
                 <div class="h-[93%] overflow-auto">
                   <TableStructuredOcr
@@ -495,8 +534,11 @@ onUnmounted(() => {
                 <el-button :icon="More" class="p-[8px]" />
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item>
-                      <div class="flex gap-[6px] items-center leading-9" @click="openModalReplaceDocument()">
+                    <el-dropdown-item :disabled="!hasPermissionReplaceOcr">
+                      <div
+                        class="flex gap-[6px] items-center leading-9"
+                        @click="hasPermissionReplaceOcr ? openModalReplaceDocument() : ''"
+                      >
                         <SvgIcon name="ic-reload-document" />
                         Thay thế chứng từ
                       </div>
@@ -505,8 +547,8 @@ onUnmounted(() => {
                       <div class="flex gap-[6px] items-center leading-8" @click="handleOcrDoc()">
                         <SvgIcon name="ic-ocr" />
                         Trích xuất OCR
-                      </div></el-dropdown-item
-                    >
+                      </div>
+                    </el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -626,9 +668,9 @@ onUnmounted(() => {
                 <div class="tab-footer p-[16px] flex justify-between shadow-[inset_0_1px_0_0_#d0d0d0]">
                   <template v-if="batchDetailData.status === DocumentStatusEnum.ADJUST_REQUESTED">
                     <ExtractTextInfoDenied :content="batchDetailData?.deniedMessage ?? 'Từ chối'" />
-                    <el-button class="text-[#fff] bg-[#1c7ed6]" @click="reCheckDosssier()" :loading="loading"
-                      ><SvgIcon name="ic-save" class="mr-1" />Kiểm tra lại</el-button
-                    >
+                    <el-button class="text-[#fff] bg-[#1c7ed6]" @click="reCheckDosssier()" :loading="loading">
+                      <SvgIcon name="ic-save" class="mr-1" />Kiểm tra lại
+                    </el-button>
                   </template>
                   <template v-else-if="batchDetailData.status === DocumentStatusEnum.DENIED">
                     <ExtractTextInfoDenied
@@ -645,9 +687,9 @@ onUnmounted(() => {
                       >Từ chối</el-button
                     >
                     <div class="flex">
-                      <el-button class="text-[#fff] bg-[#1c7ed6]" @click="saveDossier()" :disabled="!hasPermissionOcr"
-                        ><SvgIcon name="ic-save" class="mr-1" />Lưu lại</el-button
-                      >
+                      <el-button class="text-[#fff] bg-[#1c7ed6]" @click="saveDossier()" :disabled="!hasPermissionOcr">
+                        <SvgIcon name="ic-save" class="mr-1" />Lưu lại
+                      </el-button>
                       <el-button
                         :icon="Select"
                         class="text-[#fff] bg-[#099268]"
@@ -686,6 +728,7 @@ onUnmounted(() => {
     title="Thay thế chứng từ"
     v-model="isShowModalReplace"
     :dossierDocId="Number(route?.query?.dossierDocId)"
+    @refresh="refreshReplaceDoc"
   />
 </template>
 <style lang="scss">
@@ -693,23 +736,29 @@ onUnmounted(() => {
   .el-tabs__nav-scroll {
     padding: 0 16px;
   }
+
   .btn-go-back {
     box-shadow:
       inset -1px 0 0 0 #ebebeb,
       0 2px 4px 0 #aaa;
   }
+
   .el-tabs__item:not(.is-active) {
     color: #adb5bd;
   }
+
   .trust-hight > div {
     border-color: #0c8599;
   }
+
   .trust-medium > div {
     border-color: #ee0033;
   }
+
   .item-dossier:hover {
     background-color: #e1edfe;
   }
+
   .text-4-line {
     display: -webkit-box;
     -webkit-line-clamp: 4;
@@ -718,9 +767,11 @@ onUnmounted(() => {
     text-overflow: ellipsis;
   }
 }
+
 .box-denied-confirm .el-message-box__input {
   padding-top: 5px !important;
 }
+
 .text-break {
   word-break: break-word;
 }
