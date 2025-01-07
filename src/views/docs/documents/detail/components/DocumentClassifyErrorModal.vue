@@ -8,11 +8,12 @@ import { Delete, Plus } from '@element-plus/icons-vue'
 
 import { computed, ref } from 'vue'
 import { SelectOptionModel } from '@/@types/common'
-import { ElMessage } from 'element-plus'
+import { ElMessageBox } from 'element-plus'
 import { useConfirmModal } from '@/hooks/useConfirm'
 import { getDocumentClassifyErrorApi, postReplaceDocumentError } from '@/api/docs/document'
 import { DocumentClassifyErrordModel, ReplaceDocumentClassifyErrordModel } from '@/@types/pages/docs/documents'
 import { UpdateDosssierReplaceRequestModel } from '@/@types/pages/docs/documents/services/DocumentRequest'
+import { successNotification } from '@/utils/notification'
 const { showConfirmModal } = useConfirmModal()
 
 const dataDetail = ref<DocumentClassifyErrordModel[]>([])
@@ -104,7 +105,7 @@ const viewPage = (viewPage: string) => {
 }
 const saveDossierClassify = async () => {
   try {
-    loading.value = true
+    const requiredDocTypes = ['LETTER_OF_CREDIT', 'INVOICE', 'BILL_OF_LADING', 'DRAFT', 'EXPORT_DOC_PRESENT']
     const dataPost = dataDetail.value
       .filter((doc) => doc.pageList.length > 0)
       .map((item) => ({
@@ -113,18 +114,28 @@ const saveDossierClassify = async () => {
         fileId: item?.fileId,
         dossierFileId: item?.dossierFileId
       })) as UpdateDosssierReplaceRequestModel[]
-    await postReplaceDocumentError(dataPost, props.batchId)
-    ElMessage({
-      showClose: true,
-      type: 'success',
-      message: 'Cập nhật thành công'
-    })
-    loading.value = false
-    emits('close-dialog')
-    emits('refresh')
+    const hasAllRequiredDocTypes = requiredDocTypes.every((type) => dataPost.some((item) => item.docType === type))
+    if (hasAllRequiredDocTypes) handleReplaceDocCompleted(dataPost)
+    else {
+      ElMessageBox.confirm('Bạn chưa chọn đầy đủ tất cả các loại chứng từ. Vẫn tiếp tục lưu?', 'Cảnh báo', {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(async () => {
+        handleReplaceDocCompleted(dataPost)
+      })
+    }
   } catch (error: any) {
     throw new Error(error)
   }
+}
+const handleReplaceDocCompleted = async (dataPost: UpdateDosssierReplaceRequestModel[]) => {
+  loading.value = true
+  await postReplaceDocumentError(dataPost, props.batchId)
+  successNotification('Cập nhật thành công')
+  loading.value = false
+  emits('close-dialog')
+  emits('refresh')
 }
 const handleDeleteDoc = (data: DocumentClassifyErrordModel[], index: number) => {
   showConfirmModal({
@@ -310,11 +321,17 @@ const handleFileReplace = (data: ReplaceDocumentClassifyErrordModel) => {
         >
       </div>
     </div>
-    <div class="flex justify-end items-center h-[6%]">
-      <el-button type="default" @click="emits('close-dialog')">Hủy</el-button>
-      <el-button class="mr-[20px]" type="primary" @click="saveDossierClassify()"
-        ><SvgIcon name="ic-save" class="mr-1" />Lưu lại</el-button
-      >
+    <div class="flex justify-between items-center h-[6%] px-1">
+      <span class="ml-2 c-text-des"
+        >Sau khi bấm Lưu lại, hệ thống sẽ tự động thực hiện Trích xuất và Đối sánh lại thông tin theo nội dung chứng từ
+        mới nhất
+      </span>
+      <div class="flex">
+        <el-button type="default" @click="emits('close-dialog')">Hủy</el-button>
+        <el-button class="mr-[20px]" type="primary" @click="saveDossierClassify()"
+          ><SvgIcon name="ic-save" />Lưu lại</el-button
+        >
+      </div>
     </div>
   </div>
   <ReplaceDocumentErrorModal

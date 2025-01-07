@@ -79,12 +79,17 @@ const handleAddDocument = async () => {
         <span class="text-sm text-gray-600">{{ $t('docs.document.uploadNoteSingle') }}</span>
         <div>
           <el-button @click="localModelValue = false">{{ $t('button.cancel') }}</el-button>
-          <el-button :loading="loading" type="primary" @click="handleAddDocument">
-            {{ $t('button.confirm') }}
-          </el-button>
+          <el-button :loading="loading" type="primary" @click="handleAddDocument">Tải lên</el-button>
         </div>
       </div>
     </template>
-    <EIBUpload :files="files" @add-files="addFiles" @set-files="setFiles" :limit-file-count="1" v-loading="loading" />
+    <EIBUpload
+      :files="files"
+      @add-files="addFiles"
+      @set-files="setFiles"
+      :limit-file-count="1"
+      v-loading="loading"
+      is-replace-file
+    />
   </el-dialog>
 </template>

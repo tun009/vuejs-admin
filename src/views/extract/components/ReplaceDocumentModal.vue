@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ExtractDossierPostModel } from '@/@types/pages/extract'
 import { replaceDocument } from '@/api/extract'
 import EIBUpload from '@/components/common/EIBUpload.vue'
 import { warningNotification } from '@/utils/notification'
@@ -11,10 +12,9 @@ interface Props {
   title?: string
 }
 const { t } = useI18n()
-
 interface Emits {
   (event: 'update:model-value', value: boolean): void
-  (event: 'refresh'): void
+  (event: 'refresh', value: ExtractDossierPostModel): void
 }
 const props = defineProps<Props>()
 const titleWithDefault = props.title || t('docs.document.replaceDocument')
@@ -62,12 +62,13 @@ const handleAddDocument = async () => {
       formData.append('file', file)
     }
 
-    await replaceDocument(formData, props.dossierDocId)
+    const { data } = await replaceDocument(formData, props.dossierDocId)
     ElMessage({
       message: 'Thay thế chứng từ thành công',
       showClose: true,
       type: 'success'
     })
+    if (data?.id) emits('refresh', data)
     localModelValue.value = false
   } catch {
     loading.value = false
@@ -82,12 +83,17 @@ const handleAddDocument = async () => {
         <span class="text-sm text-gray-600">{{ $t('docs.document.uploadNoteSingle') }}</span>
         <div>
           <el-button @click="localModelValue = false">{{ $t('button.cancel') }}</el-button>
-          <el-button :loading="loading" type="primary" @click="handleAddDocument">
-            {{ $t('button.confirm') }}
-          </el-button>
+          <el-button :loading="loading" type="primary" @click="handleAddDocument">Tải lên</el-button>
         </div>
       </div>
     </template>
-    <EIBUpload :files="files" @add-files="addFiles" @set-files="setFiles" :limit-file-count="1" v-loading="loading" />
+    <EIBUpload
+      :files="files"
+      @add-files="addFiles"
+      @set-files="setFiles"
+      :limit-file-count="1"
+      v-loading="loading"
+      is-replace-file
+    />
   </el-dialog>
 </template>

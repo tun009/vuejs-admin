@@ -158,3 +158,9 @@ export interface DocumentTypeModel {
   key: string
   type: string
 }
+export interface ExtractDossierPostModel {
+  id: number
+  name: string
+  pathFile: string
+  status: string
+}

@@ -5,7 +5,7 @@ import Input from '@/components/common/EIBInput.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
 // import { requireRule } from '@/utils/validate'
 import { ElMessage, FormRules } from 'element-plus'
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch } from 'vue'
 
 interface Emits {
   (event: 'close'): void
@@ -36,7 +36,22 @@ const ruleType: string = props.rule
 const updateRuleFormRules: FormRules = {
   name: []
 }
-
+const removePTag = (htmlString: string): string => {
+  if (!htmlString) return ''
+  return htmlString.replace(/^<p>|<\/p>$/g, '').trim()
+}
+const wrapInPTag = (htmlString: string): string => {
+  if (!htmlString) return ''
+  return `<p>${htmlString}</p>`
+}
+watch(
+  () => updateRuleFormData.en,
+  (newValue) => {
+    updateRuleFormData.en = removePTag(newValue)
+    console.log(updateRuleFormData.en)
+  },
+  { immediate: true }
+)
 const handleClose = () => {
   emits('close')
   updateRuleFormRef.value.resetFields()
@@ -47,7 +62,8 @@ const handleUpdateRule = () => {
     try {
       if (valid) {
         loading.value = true
-        await updateRule({ id: props.data.id as number, type: props.data.type, en: updateRuleFormData.en })
+        const contentWithPTag = wrapInPTag(updateRuleFormData.en)
+        await updateRule({ id: props.data.id as number, type: props.data.type, en: contentWithPTag })
         ElMessage({
           message: 'Cập nhật thông tin thành công!',
           showClose: true,
