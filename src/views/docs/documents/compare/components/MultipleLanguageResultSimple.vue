@@ -157,7 +157,7 @@ const handleUpdateCompareResult = () => {
           </div>
         </div>
       </el-form>
-      <div class="ml-48">
+      <div class="ml-40">
         <el-button :loading="loading" @click.prevent="handleUpdateCompareResult" type="primary">{{
           $t('button.update')
         }}</el-button>

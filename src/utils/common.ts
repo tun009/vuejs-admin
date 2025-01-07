@@ -143,7 +143,6 @@ export function sortObjectsByMultipleFields(array: any[], fields: string[], sort
 
   return array.slice().sort((a, b) => {
     for (const field of fields) {
-      // Thay thế for loop bằng for-of
       const aValue = a[field]
       const bValue = b[field]
 

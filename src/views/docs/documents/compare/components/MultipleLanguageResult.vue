@@ -68,7 +68,7 @@ const defaultLawIds = computed(() => {
   return lawReasonMapping.value.laws.map((l) => l.code)
 })
 
-const defaultValue = {
+let defaultValue = {
   status: props.status ?? DocumentResultEnum.COMPLY,
   ...lawReasonMapping.value
 }
@@ -95,6 +95,8 @@ const saveDictionaryFormRef = ref<InstanceType<typeof SaveDictionaryForm>>()
 const documentResultFormRules: FormRules = {}
 
 const handleClose = () => {
+  documentResultFormData.value = { ...defaultValue }
+  reasonList.value = [...reasonListMappingDefault.value]
   isEdit.value = false
 }
 
@@ -136,6 +138,7 @@ const handleUpdateCompareResult = () => {
     if (valid) {
       loading.value = true
       try {
+        console.log(reasonList)
         const lawIds = documentResultFormData.value.lawIds.filter((d) => !lawReasonMapping.value.lawIds.includes(d))
         const laws = props.rules.filter((r) => lawIds.includes(r.code))
         const reasons = reasonList.value.filter((r) => r?.isNew).map((c) => toRaw(c))
@@ -201,6 +204,7 @@ const handleUpdateCompareResult = () => {
           message: t('notification.description.updateSuccess')
         })
         isEdit.value = false
+        defaultValue = { ...documentResultFormData.value }
         emits('refresh')
       } catch (error) {
         console.error(error)
@@ -239,6 +243,13 @@ const ruleMapping = computed((): SelectOptionModel[] => {
     label: getTextFromHtml(r.en),
     value: r.code
   }))
+})
+
+const disabledSaveButton = computed(() => {
+  if (defaultValue.status === DocumentResultEnum.COMPLY && defaultValue.status === documentResultFormData.value.status)
+    return true
+  if (reasonListMappingDefault.value.every((r) => !r.en) && reasonList.value.every((r) => !r.en)) return true
+  return false
 })
 </script>
 
@@ -414,10 +425,14 @@ const ruleMapping = computed((): SelectOptionModel[] => {
           </div>
         </div>
       </el-form>
-      <div class="ml-48">
-        <el-button :loading="loading" @click.prevent="handleUpdateCompareResult" type="primary">{{
-          $t('button.update')
-        }}</el-button>
+      <div class="ml-40">
+        <el-button
+          :loading="loading"
+          :disabled="disabledSaveButton"
+          @click.prevent="handleUpdateCompareResult"
+          type="primary"
+          >{{ $t('button.update') }}</el-button
+        >
         <el-button :disabled="loading" @click="handleClose" type="default">{{ $t('button.cancel') }}</el-button>
       </div>
     </div>
