@@ -339,6 +339,15 @@ watch(
   }
 )
 
+watch(
+  () => activeName.value,
+  (value) => {
+    if (value === 'history') {
+      handleGetDocumentHistories()
+    }
+  }
+)
+
 onMounted(() => {
   handleGetWidth()
   handleGetDocumentAmount()
@@ -432,6 +441,10 @@ onMounted(() => {
               <div class="flex flex-col gap-1">
                 <span class="c-text-value">{{ $t('docs.compare.totalAmount') }}</span>
                 <span class="text-base">{{ amount?.totalAmount ?? 0 }} {{ currency }}</span>
+              </div>
+              <div class="flex flex-col gap-1">
+                <span class="c-text-value">{{ $t('docs.compare.totalAmountLC') }}</span>
+                <span class="text-base">{{ amount?.amountUsed ?? 0 }} {{ currency }}</span>
               </div>
             </div>
             <el-divider />

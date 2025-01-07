@@ -51,7 +51,10 @@ const isSuccessType = (type: CompareHistoryTypeEnum) => {
                   }}
                 </p>
                 <div v-if="!isSuccessType(time?.type)" class="flex flex-row items-center justify-between">
-                  <span v-if="!action?.valueBefore">Complied</span>
+                  <template v-if="!action?.valueBefore.length">
+                    <span v-if="action?.valueAfter?.[0] === 'Complied'">Discrepancy</span>
+                    <span v-else>Complied</span>
+                  </template>
                   <div v-else class="grid gap-3">
                     <div
                       v-for="(content, contentIndex) in action?.valueBefore"
@@ -65,7 +68,10 @@ const isSuccessType = (type: CompareHistoryTypeEnum) => {
                   <el-icon class="mr-3 ml-20"><Right /></el-icon>
                 </div>
                 <div v-if="!isSuccessType(time?.type)" class="flex flex-row items-center justify-between">
-                  <span v-if="!action.valueAfter">Complied</span>
+                  <template v-if="!action?.valueAfter.length">
+                    <span v-if="action?.valueBefore?.[0] === 'Complied'">Discrepancy</span>
+                    <span v-else>Complied</span>
+                  </template>
                   <div v-else class="grid gap-3">
                     <div
                       v-for="(content, contentIndex) in action?.valueAfter"
