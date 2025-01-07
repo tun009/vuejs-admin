@@ -299,6 +299,7 @@
       "docName": "Tên bộ chứng từ",
       "createdAtDoc": "Ngày upload chứng từ",
       "totalAmount": "Tổng trị giá",
+      "totalAmountLC": "Tổng trị giá LC đã sử dụng",
       "checkList": "Danh sách kiểm tra",
       "editHistory": "Lịch sử chỉnh sửa",
       "fieldName": "Tên trường trích xuất",
