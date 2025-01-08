@@ -196,8 +196,7 @@ export function getFileNameFromContentDisposition(contentDisposition: string = '
 
   if (match) {
     const fileNameWithExtension = match[1]
-    const fileNameWithoutExtension = fileNameWithExtension?.split('.')?.[0]
-    return fileNameWithoutExtension
+    return fileNameWithExtension
   }
 
   return 'file'
@@ -389,4 +388,22 @@ export function customSort<T>(array: T[], key: keyof T, order: string[]): T[] {
 }
 export const convertDocTypeName = (name: string): string => {
   return name.replace(/^(Trích xuất|Commercial)\s+/i, '').replace(/^[a-záàảãạăâbcd...z]/i, (char) => char.toUpperCase())
+}
+
+export const hasDuplicateField = (array: { [key: string]: any }[], fieldName: string): boolean => {
+  const valueSet = new Set<any>()
+
+  for (const obj of array) {
+    if (obj[fieldName] === undefined) {
+      throw new Error(`Field "${fieldName}" not found in object`)
+    }
+
+    if (valueSet.has(obj[fieldName])) {
+      return true
+    }
+
+    valueSet.add(obj[fieldName])
+  }
+
+  return false
 }

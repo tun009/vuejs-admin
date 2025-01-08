@@ -14,6 +14,7 @@ export interface RuleModel {
   type: RuleTypeEnum
   defaultValue?: string
   isNew?: boolean
+  parentId?: number
 }
 
 export const reasonDefault: RuleModel = {
