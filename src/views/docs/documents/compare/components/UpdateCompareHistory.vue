@@ -16,7 +16,7 @@ const isSuccessType = (type: CompareHistoryTypeEnum) => {
 </script>
 
 <template>
-  <div class="text-sm">
+  <div class="text-sm mt-3">
     <div class="grid grid-cols-9 bg-primary text-white py-2 px-3 sticky top-0 overflow-hidden">
       <div class="col-span-1">{{ $t('docs.compare.time') }}</div>
       <div class="col-span-4">{{ $t('docs.compare.beforeUpdate') }}</div>

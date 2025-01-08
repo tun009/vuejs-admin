@@ -20,12 +20,13 @@ import {
 import EIBDialog from '@/components/common/EIBDialog.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
 import EIBTextareaAutoComplete from '@/components/common/EIBTextareaAutoComplete.vue'
-import { getTextFromHtml, removeDuplicateItemInArray } from '@/utils/common'
+import { getTextFromHtml, hasDuplicateField, removeDuplicateItemInArray } from '@/utils/common'
 import { InfoFilled } from '@element-plus/icons-vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
-import { computed, ref, toRaw } from 'vue'
+import { computed, ref, toRaw, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import SaveDictionaryForm from './SaveDictionaryForm.vue'
+import { warningNotification } from '@/utils/notification'
 
 interface Props {
   categories: RuleModel[]
@@ -55,9 +56,14 @@ const lawReasonMapping = computed(() => {
     lawIds: [],
     reasonId: []
   }
-  props.result.forEach((r) => {
+  props.result.forEach((_r) => {
+    const r = toRaw(_r)
+    const exacReasons = r.reasons.map((c) => ({
+      ...c,
+      parentId: r.id
+    }))
     result.laws = [...result.laws, ...(r.laws ?? [])]
-    result.reasons = [...result.reasons, ...(r.reasons ?? [])]
+    result.reasons = [...result.reasons, ...(exacReasons ?? [])]
     result.lawIds = [...result.lawIds, ...(r.lawIds ?? [])]
     result.reasonId = [...result.reasonId, ...(r.reasonId ?? [])]
   })
@@ -68,7 +74,7 @@ const defaultLawIds = computed(() => {
   return lawReasonMapping.value.laws.map((l) => l.code)
 })
 
-const defaultValue = {
+let defaultValue = {
   status: props.status ?? DocumentResultEnum.COMPLY,
   ...lawReasonMapping.value
 }
@@ -81,6 +87,13 @@ const reasonListMappingDefault = computed(() => {
   }))
   return temp
 })
+
+watch(
+  () => reasonListMappingDefault.value,
+  (newValue) => {
+    reasonList.value = [...newValue]
+  }
+)
 
 const reasonList = ref<RuleModel[]>(reasonListMappingDefault.value)
 
@@ -95,6 +108,8 @@ const saveDictionaryFormRef = ref<InstanceType<typeof SaveDictionaryForm>>()
 const documentResultFormRules: FormRules = {}
 
 const handleClose = () => {
+  documentResultFormData.value = { ...defaultValue }
+  reasonList.value = [...reasonListMappingDefault.value]
   isEdit.value = false
 }
 
@@ -133,17 +148,31 @@ const handleSaveDictionary = (i: number) => {
 const handleUpdateCompareResult = () => {
   /* NOSONAR */
   documentResultFormRef.value?.validate(async (valid: boolean, fields) => {
+    const hasDuplicate = hasDuplicateField(reasonList.value, 'en')
+    if (hasDuplicate) {
+      warningNotification('Trùng lặp giữa các lý do!')
+      return
+    }
     if (valid) {
       loading.value = true
       try {
         const lawIds = documentResultFormData.value.lawIds.filter((d) => !lawReasonMapping.value.lawIds.includes(d))
         const laws = props.rules.filter((r) => lawIds.includes(r.code))
         const reasons = reasonList.value.filter((r) => r?.isNew).map((c) => toRaw(c))
-        const reasonListIds = reasonList.value.map((r) => r.id)
+        const reasonListIds = reasonList.value.map((r) => r?.id)
+        const reasonListParentIds = reasonList.value.map((r) => r?.parentId)
         const initialReasons: DocumentComparisonResultReasonModel[] = props.result.map((p) => {
-          const exactlyReasons = p.reasons.filter((r) => reasonListIds.includes(r.id) && !r?.isNew)
+          const exactlyReasons = p.reasons
+            .map((c) => ({ ...c, parentId: p.id }))
+            .filter(
+              (r) =>
+                reasonListIds.includes(r.id) &&
+                !r?.isNew &&
+                r.parentId === p.id &&
+                reasonListParentIds.includes(r.parentId)
+            )
           const reasons = exactlyReasons.map((r) => {
-            const newReason = reasonList.value.find((i) => i.id === r.id)
+            const newReason = reasonList.value.find((i) => i.id === r.id && i.parentId === p.id)
             return {
               code: r.code,
               en: newReason?.en ?? '',
@@ -154,16 +183,18 @@ const handleUpdateCompareResult = () => {
           return { comparisonResultReasonId: p.id, reasons, laws }
         })
         if (props.type === 'simple') {
-          const reasonMore: DocumentComparisonResultReasonModel = {
+          const reasonMore: DocumentComparisonResultReasonModel[] = reasons.map((c, index) => ({
             comparisonResultReasonId: null,
-            reasons,
-            laws
-          }
+            reasons: [c],
+            laws: !index ? laws : []
+          }))
           const payload: UpdateDocumentCompareResultRequestModel = {
             comparisonResultId: props.comparisonResultId,
             status: documentResultFormData.value.status,
             comparisonResultReasons:
-              documentResultFormData.value.status === DocumentResultEnum.COMPLY ? [] : [...initialReasons, reasonMore]
+              documentResultFormData.value.status === DocumentResultEnum.COMPLY
+                ? []
+                : [...initialReasons, ...reasonMore]
           }
           const exactlyReasons = payload.comparisonResultReasons.filter((c) => c.laws.length || c.reasons.length)
           const exactlyPayload: UpdateDocumentCompareResultRequestModel = {
@@ -171,18 +202,19 @@ const handleUpdateCompareResult = () => {
             comparisonResultReasons: exactlyReasons
           }
           await updateCompareResult(exactlyPayload)
-          reasonList.value = reasonList.value.map((c) => ({ ...c, isNew: false }))
         } else {
-          const reasonMore: DocumentComparisonResultReasonModel = {
+          const reasonMore: DocumentComparisonResultReasonModel[] = reasons.map((c, index) => ({
             comparisonResultReasonId: null,
-            reasons,
-            laws
-          }
+            reasons: [c],
+            laws: !index ? laws : []
+          }))
           const payload: UpdateDocumentCompareResultTableRequestModel = {
             comparisonId: props.comparisonResultId,
             status: documentResultFormData.value.status,
             reasons:
-              documentResultFormData.value.status === DocumentResultEnum.COMPLY ? [] : [...initialReasons, reasonMore]
+              documentResultFormData.value.status === DocumentResultEnum.COMPLY
+                ? []
+                : [...initialReasons, ...reasonMore]
           }
           const exactlyReasons = payload.reasons.filter((c) => c.laws.length || c.reasons.length)
           const exactlyPayload: UpdateDocumentCompareResultTableRequestModel = {
@@ -190,7 +222,6 @@ const handleUpdateCompareResult = () => {
             reasons: exactlyReasons
           }
           await updateCompareResultTable(exactlyPayload)
-          reasonList.value = reasonList.value.map((c) => ({ ...c, isNew: false }))
         }
         if (documentResultFormData.value.status === DocumentResultEnum.COMPLY) {
           reasonList.value = []
@@ -201,6 +232,7 @@ const handleUpdateCompareResult = () => {
           message: t('notification.description.updateSuccess')
         })
         isEdit.value = false
+        defaultValue = { ...documentResultFormData.value }
         emits('refresh')
       } catch (error) {
         console.error(error)
@@ -239,6 +271,19 @@ const ruleMapping = computed((): SelectOptionModel[] => {
     label: getTextFromHtml(r.en),
     value: r.code
   }))
+})
+
+const disabledSaveButton = computed(() => {
+  if (props.status === DocumentResultEnum.NA) return false
+  if (defaultValue.status === DocumentResultEnum.COMPLY && defaultValue.status === documentResultFormData.value.status)
+    return true
+  if (
+    reasonListMappingDefault.value.every((r) => !r.en) &&
+    reasonList.value.every((r) => !r.en) &&
+    defaultValue.status === documentResultFormData.value.status
+  )
+    return true
+  return false
 })
 </script>
 
@@ -414,10 +459,14 @@ const ruleMapping = computed((): SelectOptionModel[] => {
           </div>
         </div>
       </el-form>
-      <div class="ml-48">
-        <el-button :loading="loading" @click.prevent="handleUpdateCompareResult" type="primary">{{
-          $t('button.update')
-        }}</el-button>
+      <div class="ml-40">
+        <el-button
+          :loading="loading"
+          :disabled="disabledSaveButton"
+          @click.prevent="handleUpdateCompareResult"
+          type="primary"
+          >{{ $t('button.update') }}</el-button
+        >
         <el-button :disabled="loading" @click="handleClose" type="default">{{ $t('button.cancel') }}</el-button>
       </div>
     </div>

@@ -2,8 +2,9 @@
 import EIBTable from '@/components/common/EIBTable.vue'
 import Status from '@/views/docs/components/Status.vue'
 import { ref } from 'vue'
-import { ReportDetailModel } from '@/@types/pages/reports'
+import { ReportDetailModel, businessTypeOptions } from '@/@types/pages/reports'
 import { documentStatusOptions, documentResultOptions } from '@/@types/pages/docs/documents'
+import { renderLabelByValue } from '@/utils/common'
 interface Props {
   data: ReportDetailModel
 }
@@ -64,7 +65,7 @@ defineExpose<Exposes>({
       </div>
       <div class="w-[50]">
         <p class="text-[#495057] font-bold text-[14px]">Loại nghiệp vụ:</p>
-        <p class="text-[14px]">{{ props.data?.bizType }}</p>
+        <p class="text-[14px]">{{ renderLabelByValue(businessTypeOptions, props.data?.bizType) }}</p>
       </div>
     </div>
     <div class="flex mt-[16px]">
