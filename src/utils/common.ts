@@ -314,7 +314,7 @@ export const getDocumentSwitchStatus = (row: DocumentModel) => {
   const { isAdmin, isChecker, isMaker, userInfo } = useUserStore()
 
   if (row.status === DocumentStatusEnum.WAIT_CHECK) {
-    if (isMaker) {
+    if (isMaker && row.createdBy?.username === userInfo.username) {
       status = DocumentStatusEnum.CHECKING
     } else if (isAdmin) {
       status = row.createdBy?.role === RoleEnum.MAKER ? DocumentStatusEnum.CHECKING : DocumentStatusEnum.VALIDATING

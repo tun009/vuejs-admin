@@ -289,6 +289,7 @@ const isHaveActionButton = computed(() => {
   const status = documentDetail.value.status
   if (isViewer || !status || endedDocumentStatus.includes(status)) return false
   if (isMaker) {
+    if (userInfo.username !== documentDetail.value?.createdBy?.username) return false
     if (makerStepDocumentStatus.includes(status)) return true
     return false
   }
