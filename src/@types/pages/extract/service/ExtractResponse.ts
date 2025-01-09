@@ -19,3 +19,4 @@ export type ExtractNotePostResponseModel = ApiResponseData<ExtractNotePostModel>
 export type ExtractDossierPostResponseModel = ApiResponseData<ExtractDossierPostModel>
 export type DocumentTypeResponseModel = ApiResponseData<DocumentTypeModel[]>
 export type ExtractSettingResponseModel = ApiResponseData<UpdateConfidenceRequestModel[]>
+export type ExtractGetStatusDocResponseModel = ApiResponseData<boolean>

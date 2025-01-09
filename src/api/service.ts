@@ -59,6 +59,7 @@ function createService() {
       const errorCode = get(error, 'code')
       const msg = get(error, 'response.data.msg')
       const msgLocal = errorCode === 'ERR_NETWORK' ? 'Problem connecting to server' : ''
+      const showError = get(error, 'config.customConfig.showError', true)
       switch (status) {
         case 400:
           error.message = 'Request error'
@@ -99,7 +100,7 @@ function createService() {
         default:
           break
       }
-      ElMessage.error(msg ?? error.message ?? msgLocal)
+      if (showError) ElMessage.error(msg ?? error.message ?? msgLocal)
       return Promise.reject(error)
     }
   )
@@ -118,7 +119,8 @@ function createRequest(service: AxiosInstance) {
         'Content-Type': config.data instanceof FormData ? 'multipart/form-data' : 'application/json'
       },
       timeout: 30000,
-      baseURL: import.meta.env.VITE_BASE_API
+      baseURL: import.meta.env.VITE_BASE_API,
+      customConfig
       // data: {}
     }
     // Merge the default configuration defaultConfig and the passed-in custom configuration config into mergeConfig

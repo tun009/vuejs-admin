@@ -7,7 +7,8 @@ import {
   ExtractNotePostResponseModel,
   ExtractNoteResponseModel,
   DocumentTypeResponseModel,
-  ExtractSettingResponseModel
+  ExtractSettingResponseModel,
+  ExtractGetStatusDocResponseModel
 } from '@/@types/pages/extract/service/ExtractResponse'
 import { request } from '@/api/service'
 import {
@@ -102,4 +103,13 @@ export function getExtractConfidence() {
     url: 'confidence-config',
     method: 'get'
   })
+}
+export function getStatusDocument(id: number) {
+  return request<ExtractGetStatusDocResponseModel>(
+    {
+      url: `dossier-docs/${id}/status`,
+      method: 'get'
+    },
+    { showError: false }
+  )
 }
