@@ -425,9 +425,6 @@ const refreshReplaceDoc = (data: ExtractDossierPostModel) => {
   //     item.color = renderColorByValue(documentStatusOptions, data.status) || '#1098ad'
   //   }
   // })
-
-  checkStatusDocument(data.id)
-  idDossierActive.value = data.id
   router.replace({
     path: EXTRACT_PAGE,
     query: {
@@ -435,6 +432,8 @@ const refreshReplaceDoc = (data: ExtractDossierPostModel) => {
       dossierDocId: data.id
     }
   })
+  checkStatusDocument(data.id)
+  idDossierActive.value = data.id
   // goToBackDocumentPage()
 }
 onMounted(() => {
