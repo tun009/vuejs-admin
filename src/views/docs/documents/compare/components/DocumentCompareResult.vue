@@ -1,10 +1,5 @@
 <script lang="ts" setup>
-import EIBTable from '@/components/common/EIBTable.vue'
-import { useUserStore } from '@/store/modules/user'
-import { Plus } from '@element-plus/icons-vue'
-import { debounce } from 'lodash-es'
-import { computed, ref } from 'vue'
-import AddCompareContentForm from './AddCompareContentForm.vue'
+import { ColumnConfigModel } from '@/@types/common'
 import {
   CompareReasonResultModel,
   DocumentCompareModel,
@@ -14,16 +9,20 @@ import {
   invoiceCustomSortTable,
   xtctCustomSortTable
 } from '@/@types/pages/docs/documents'
-import { convertFileUrl, createColumnConfigs, customSort, groupByKey, withDefaultString } from '@/utils/common'
-import MultipleLanguageResult from './MultipleLanguageResult.vue'
-import PreviewExtractImage from './PreviewExtractImage.vue'
 import { RuleModel } from '@/@types/pages/rules'
 import SafeHtmlRenderer from '@/components/SafeHtmlRenderer.vue'
 import EIBDrawer from '@/components/common/EIBDrawer.vue'
-import MultipleLanguageResultSimple from './MultipleLanguageResultSimple.vue'
-import { ColumnConfigModel } from '@/@types/common'
+import EIBTable from '@/components/common/EIBTable.vue'
 import { removeAccentsAndReplaceSpaces } from '@/utils'
+import { convertFileUrl, createColumnConfigs, customSort, groupByKey, withDefaultString } from '@/utils/common'
+import { Plus } from '@element-plus/icons-vue'
+import { debounce } from 'lodash-es'
+import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import AddCompareContentForm from './AddCompareContentForm.vue'
+import MultipleLanguageResult from './MultipleLanguageResult.vue'
+import MultipleLanguageResultSimple from './MultipleLanguageResultSimple.vue'
+import PreviewExtractImage from './PreviewExtractImage.vue'
 
 interface Props {
   conditionSelect: number
@@ -43,7 +42,6 @@ const props = defineProps<Props>()
 const emits = defineEmits<Emits>()
 
 const route = useRoute()
-const { isViewer } = useUserStore()
 const documentType = ref<DocumentKeyEnum>((route.query?.type as DocumentKeyEnum) ?? DocumentKeyEnum.INVOICE)
 
 const dialogVisible = ref(false)
@@ -228,7 +226,7 @@ const customSortTable = computed((): string[] => {
       >
         <span>{{ compareResult?.title }}</span>
         <el-button
-          v-if="!isViewer && (compareResult?.title?.includes('46A') || compareResult?.title?.includes('47A'))"
+          v-if="isHavePermission && (compareResult?.title?.includes('46A') || compareResult?.title?.includes('47A'))"
           :icon="Plus"
           color="#005d98"
           plain

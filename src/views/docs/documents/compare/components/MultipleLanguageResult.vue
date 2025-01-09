@@ -108,7 +108,7 @@ const saveDictionaryFormRef = ref<InstanceType<typeof SaveDictionaryForm>>()
 const documentResultFormRules: FormRules = {}
 
 const handleClose = () => {
-  documentResultFormData.value = { ...defaultValue }
+  documentResultFormData.value = { ...defaultValue, lawIds: defaultLawIds.value }
   reasonList.value = [...reasonListMappingDefault.value]
   isEdit.value = false
 }
@@ -508,5 +508,9 @@ const disabledSaveButton = computed(() => {
 
 .multiple-language-result .el-select-dropdown__item.is-selected::after {
   display: none;
+}
+
+.el-tag.is-closable.el-tag--info.el-tag--default.el-tag--light {
+  max-width: 756px !important;
 }
 </style>
