@@ -89,7 +89,7 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
     test: {
       include: ['tests/**/*.test.ts'],
       environment: 'jsdom',
-      // reporters: ['junit'],
+      reporters: ['junit'],
       outputFile: {
         junit: './junit-report.xml'
       },
