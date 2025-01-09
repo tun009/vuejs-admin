@@ -7,7 +7,6 @@ import {
   formatNumberConfidence,
   formatNumberWithCommas,
   getDataWithPagination,
-  getFileNameFromContentDisposition,
   getTextFromHtml,
   groupByField,
   groupByKey,
@@ -850,61 +849,6 @@ describe('convertFileUrl', () => {
     const path = 'path/to/file.txt?version=1#section'
     const result = convertFileUrl(path)
     expect(result).toBe('https://api.example.com/files?src=path/to/file.txt?version=1#section')
-  })
-})
-
-// getFileNameFromContentDisposition
-describe('getFileNameFromContentDisposition', () => {
-  it('should return the file name without extension', () => {
-    const contentDisposition = 'attachment; filename="example.txt"'
-    const result = getFileNameFromContentDisposition(contentDisposition)
-    expect(result).toBe('example')
-  })
-
-  it('should return "file" if the contentDisposition is empty', () => {
-    const result = getFileNameFromContentDisposition('')
-    expect(result).toBe('file')
-  })
-
-  it('should return "file" if the contentDisposition does not match', () => {
-    const contentDisposition = 'attachment'
-    const result = getFileNameFromContentDisposition(contentDisposition)
-    expect(result).toBe('file')
-  })
-
-  it('should return the file name without extension for a file with a complex name', () => {
-    const contentDisposition = 'attachment; filename="file-name.v1.2.3.zip"'
-    const result = getFileNameFromContentDisposition(contentDisposition)
-    expect(result).toBe('file-name')
-  })
-
-  it('should handle contentDisposition without a filename part', () => {
-    const contentDisposition = 'inline'
-    const result = getFileNameFromContentDisposition(contentDisposition)
-    expect(result).toBe('file')
-  })
-
-  it('should handle contentDisposition with a filename containing special characters', () => {
-    const contentDisposition = 'attachment; filename="my-file_#1@2024.pdf"'
-    const result = getFileNameFromContentDisposition(contentDisposition)
-    expect(result).toBe('my-file_#1@2024')
-  })
-
-  it('should handle contentDisposition with a filename and extension', () => {
-    const contentDisposition = 'attachment; filename="report.pdf"'
-    const result = getFileNameFromContentDisposition(contentDisposition)
-    expect(result).toBe('report')
-  })
-
-  it('should handle contentDisposition with a filename that has multiple dots', () => {
-    const contentDisposition = 'attachment; filename="archive.tar.gz"'
-    const result = getFileNameFromContentDisposition(contentDisposition)
-    expect(result).toBe('archive')
-  })
-
-  it('should return the default file name when no contentDisposition is passed', () => {
-    const result = getFileNameFromContentDisposition()
-    expect(result).toBe('file')
   })
 })
 

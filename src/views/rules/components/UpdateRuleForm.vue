@@ -48,7 +48,6 @@ watch(
   () => updateRuleFormData.en,
   (newValue) => {
     updateRuleFormData.en = removePTag(newValue)
-    console.log(updateRuleFormData.en)
   },
   { immediate: true }
 )

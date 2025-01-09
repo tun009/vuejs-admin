@@ -249,7 +249,7 @@ onMounted(() => {
       <el-tab-pane label="Trường thông tin trích xuất" name="first">
         <EIBSelect
           v-model="docTypeID"
-          class="pb-2"
+          class="py-2"
           name="docs"
           :options="doc_types"
           label="Thông tin trường trích xuất cho loại chứng từ"
@@ -280,7 +280,7 @@ onMounted(() => {
         </EIBTable>
       </el-tab-pane>
       <el-tab-pane label="Độ tin cậy" name="second">
-        <div class="mb-2">Cấu hình màu sắc độ tin cậy của dữ liệu</div>
+        <div class="my-2">Cấu hình màu sắc độ tin cậy của dữ liệu</div>
         <el-card style="height: 100%">
           <el-form ref="ruleFormConfidence" autocomplete="on" :model="ruleForm" :rules="rules">
             <div class="reliability-wrapper">
@@ -353,7 +353,7 @@ onMounted(() => {
         </el-card>
       </el-tab-pane>
       <el-tab-pane label="Luồng kiểm tra" name="third">
-        <el-card>
+        <el-card class="mt-2">
           <el-form ref="ruleForm5" class="" :model="ruleForm1" autocomplete="on">
             <div class="mt-1 d-flex flex-column g-6 auto-validation">
               <div class="mt-1 d-flex flex-column g-4">

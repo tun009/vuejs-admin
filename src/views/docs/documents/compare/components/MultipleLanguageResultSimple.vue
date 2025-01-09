@@ -10,7 +10,7 @@ import EIBInput from '@/components/common/EIBInput.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
 import { getTextFromHtml } from '@/utils/common'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import SaveDictionaryForm from './SaveDictionaryForm.vue'
 
@@ -83,6 +83,18 @@ const handleUpdateCompareResult = () => {
     }
   })
 }
+
+const disabledSaveButton = computed(() => {
+  if (props.requirement.status === DocumentResultEnum.NA) return false
+  if (defaultValue.status === DocumentResultEnum.COMPLY && defaultValue.status === documentResultFormData.value.status)
+    return true
+  if (
+    defaultValue.reason === documentResultFormData.value.reason &&
+    defaultValue.status === documentResultFormData.value.status
+  )
+    return true
+  return false
+})
 </script>
 
 <template>
@@ -158,9 +170,13 @@ const handleUpdateCompareResult = () => {
         </div>
       </el-form>
       <div class="ml-40">
-        <el-button :loading="loading" @click.prevent="handleUpdateCompareResult" type="primary">{{
-          $t('button.update')
-        }}</el-button>
+        <el-button
+          :loading="loading"
+          :disabled="disabledSaveButton"
+          @click.prevent="handleUpdateCompareResult"
+          type="primary"
+          >{{ $t('button.update') }}</el-button
+        >
         <el-button :disabled="loading" @click="handleClose" type="default">{{ $t('button.cancel') }}</el-button>
       </div>
     </div>

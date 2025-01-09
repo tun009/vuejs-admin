@@ -40,6 +40,7 @@ import EIBDropdown from '@/components/common/EIBDropdown.vue'
 import { useUserStore } from '@/store/modules/user'
 
 const openFilter = ref(false)
+const loading = ref(false)
 const defaultStatus = computed(() => {
   return reportStatusOptions.map((c) => c.value as DocumentStatusEnum)
 })
@@ -105,6 +106,7 @@ const handleResetFilter = () => {
 
 const downloadFile = async () => {
   try {
+    loading.value = true
     const pagination = documentTableRef?.value?.getPagination()
     const { status, ...otherFilter } = filterValue
     const isErrorStatus = status.includes(DocumentStatusEnum.ERROR)
@@ -134,6 +136,8 @@ const downloadFile = async () => {
     downloadFileCommon(response, DocumentExportFileEnum.EXCEL)
   } catch (error) {
     console.error(error)
+  } finally {
+    loading.value = false
   }
 }
 
@@ -234,8 +238,8 @@ onMounted(() => {
         </div>
       </div>
       <div class="flex flex-row gap-3" v-if="isHaveDownloadReport()">
-        <el-button type="primary" class="flex flex-row items-center" @click="downloadFile">
-          <SvgIcon name="download-inline" class="w-4 h-4 mr-2" />
+        <el-button type="primary" class="flex flex-row items-center" :loading="loading" @click="downloadFile">
+          <SvgIcon v-if="!loading" name="download-inline" class="w-4 h-4 mr-2" />
           <span>Tải xuống</span></el-button
         >
       </div>
