@@ -5,14 +5,15 @@ import {
   getDossierDetailApi,
   getDossierListApi,
   getExtractConfidence,
+  getStatusDocument,
   ocrDocumentApi,
   saveDossierDocApi
 } from '@/api/extract'
 import { useConfirmModal } from '@/hooks/useConfirm'
-import { ExtractDossierPostModel } from '@/@types/pages/extract'
 import {
   ExtractDocumentModel,
   ExtractDossierModel,
+  ExtractDossierPostModel,
   ExtractResultOcrModel,
   ExtractResultOcrTableChildrenModel,
   ExtractResultOcrTableHeaderModel
@@ -77,7 +78,7 @@ const route = useRoute()
 const baseURL = import.meta.env.VITE_BASE_API
 const dataConfigs = ref<UpdateConfidenceRequestModel[]>([] as UpdateConfidenceRequestModel[])
 const batchDetailData = ref<BatchDetailModel>({} as BatchDetailModel)
-
+const intervalId = ref()
 const getDossiersList = async (id: number) => {
   try {
     const response = await getDossierListApi(id)
@@ -108,26 +109,26 @@ const getDossierById = (id: number) => {
       dossierDocId: id
     }
   })
-  getDossiersDetail(id)
+  getDossiersDetail(id, true)
 }
 const ocrDataDetail = ref<ExtractResultOcrModel[]>([])
 const isFirstViewExtract = ref<boolean>(false)
 const docTypeOcrData = ref()
-const getDossiersDetail = async (id: number) => {
+const getDossiersDetail = async (id: number, isLoading: boolean = true) => {
   try {
     resetOptions()
+    if (isLoading) isLoadViewContentRight.value = false
     const response = await getDossierDetailApi(id)
     documentDetail.value = response.data
     ocrDataDetail.value = documentDetail.value.result[0]
     docTypeOcrData.value = documentDetail.value?.docType
     if (docTypeOcrData.value === DocTypeEnum.DRAFT) isFirstViewExtract.value = true
-    isLoadViewContentRight.value = true
+    if (isLoading) isLoadViewContentRight.value = true
   } catch (error: any) {
     throw new Error(error)
   }
 }
 const resetOptions = () => {
-  isLoadViewContentRight.value = false
   isShowTable.value = false
   isLoadedPdf.value = false
   activeName.value = 'ocr'
@@ -314,20 +315,33 @@ const goToBackDocumentPage = () => {
 const handleOcrDoc = async () => {
   try {
     isLoadingOcr.value = true
-    setTimeout(() => {
-      isLoadingOcr.value = false
-    }, 2000)
     const response = await ocrDocumentApi(Number(route?.query?.dossierDocId))
-    if (response.data)
-      ElMessage({
-        showClose: true,
-        type: 'success',
-        message: 'Trích xuất OCR thành công'
-      })
-    getDossiersDetail(Number(route?.query?.dossierDocId))
+    if (response.data) {
+      checkStatusDocument()
+    }
   } catch (error: any) {
     throw new Error(error)
   }
+}
+const checkStatusDocument = (idActive?: number) => {
+  intervalId.value = setInterval(async () => {
+    try {
+      const { data } = await getStatusDocument(Number(route?.query?.dossierDocId))
+      if (data === true) {
+        clearInterval(intervalId.value)
+        ElMessage({
+          showClose: true,
+          type: 'success',
+          message: 'Trích xuất OCR thành công'
+        })
+        if (idActive) getDossiersList(Number(route?.query?.batchId))
+        getDossiersDetail(Number(route?.query?.dossierDocId), false)
+        isLoadingOcr.value = false
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }, 600)
 }
 const getConfidenceDetail = async () => {
   try {
@@ -365,7 +379,7 @@ const reCheckDosssier = async () => {
  **/
 const hasPermissionOcr = computed(() => {
   return (
-    (![
+    ((![
       DocumentStatusEnum.ADJUST_REQUESTED,
       DocumentStatusEnum.DENIED,
       DocumentStatusEnum.WAIT_VALIDATE,
@@ -375,40 +389,42 @@ const hasPermissionOcr = computed(() => {
       (isAdmin ||
         batchDetailData?.value?.censorBy?.username === userInfo?.username ||
         batchDetailData?.value?.createdBy?.username === userInfo?.username)) ||
-    (batchDetailData.value.status === DocumentStatusEnum.VALIDATING &&
-      batchDetailData?.value?.createdBy?.username === userInfo?.username &&
-      isAdmin)
+      (batchDetailData.value.status === DocumentStatusEnum.VALIDATING &&
+        batchDetailData?.value?.createdBy?.username === userInfo?.username &&
+        isAdmin)) &&
+    !isLoadingOcr.value
   )
 })
 const hasPermissionReplaceOcr = computed(() => {
   return (
-    ([
+    (([
       DocumentStatusEnum.ADJUST_REQUESTED,
       DocumentStatusEnum.CHECKING,
       DocumentStatusEnum.WAIT_CHECK,
       DocumentStatusEnum.CHECKED
     ].includes(batchDetailData.value.status) &&
       isMaker) ||
-    ([DocumentStatusEnum.VALIDATING].includes(batchDetailData.value.status) && isChecker) ||
-    ([
-      DocumentStatusEnum.ADJUST_REQUESTED,
-      DocumentStatusEnum.CHECKING,
-      DocumentStatusEnum.WAIT_CHECK,
-      DocumentStatusEnum.CHECKED,
-      DocumentStatusEnum.VALIDATING
-    ].includes(batchDetailData.value.status) &&
-      isAdmin)
+      ([DocumentStatusEnum.VALIDATING].includes(batchDetailData.value.status) && isChecker) ||
+      ([
+        DocumentStatusEnum.ADJUST_REQUESTED,
+        DocumentStatusEnum.CHECKING,
+        DocumentStatusEnum.WAIT_CHECK,
+        DocumentStatusEnum.CHECKED,
+        DocumentStatusEnum.VALIDATING
+      ].includes(batchDetailData.value.status) &&
+        isAdmin)) &&
+    !isLoadingOcr.value
   )
 })
 const refreshReplaceDoc = (data: ExtractDossierPostModel) => {
-  dossierListData.value.forEach((item) => {
-    if (item.id === Number(route?.query?.dossierDocId)) {
-      item.id = data.id
-      item.status = renderLabelByValue(documentStatusOptions, data.status) || 'Đang phân loại'
-      item.color = renderColorByValue(documentStatusOptions, data.status) || '#1098ad'
-    }
-  })
-  idDossierActive.value = data.id
+  isLoadingOcr.value = true
+  // dossierListData.value.forEach((item) => {
+  //   if (item.id === Number(route?.query?.dossierDocId)) {
+  //     item.id = data.id
+  //     item.status = renderLabelByValue(documentStatusOptions, data.status) || 'Đang phân loại'
+  //     item.color = renderColorByValue(documentStatusOptions, data.status) || '#1098ad'
+  //   }
+  // })
   router.replace({
     path: EXTRACT_PAGE,
     query: {
@@ -416,6 +432,9 @@ const refreshReplaceDoc = (data: ExtractDossierPostModel) => {
       dossierDocId: data.id
     }
   })
+  checkStatusDocument(data.id)
+  idDossierActive.value = data.id
+  // goToBackDocumentPage()
 }
 onMounted(() => {
   isComponentActive = true
@@ -426,6 +445,9 @@ onMounted(() => {
 })
 onUnmounted(() => {
   isComponentActive = false
+  if (intervalId.value) {
+    clearInterval(intervalId.value)
+  }
 })
 </script>
 
@@ -447,11 +469,16 @@ onUnmounted(() => {
                 </template>
                 <template #default>
                   <div
+                    disabled
                     v-for="(item, index_ds) in dossierListData"
                     :key="index_ds"
-                    class="p-3 border-b-[1px] border-b-[#e9ecef] text-[13px] text-[#868e96] hover:bg-[#e7f5ff] cursor-pointer"
-                    @click="getDossierById(item.id)"
-                    :class="{ 'dossier-active bg-[#e7f5ff]': item.id === idDossierActive }"
+                    class="p-3 border-b-[1px] border-b-[#e9ecef] text-[13px] text-[#868e96] hover:bg-[#e7f5ff]"
+                    @click="isLoadingOcr ? '' : getDossierById(item.id)"
+                    :class="{
+                      'dossier-active bg-[#e7f5ff]': item.id === idDossierActive,
+                      'cursor-not-allowed	': isLoadingOcr,
+                      'cursor-pointer': !isLoadingOcr
+                    }"
                   >
                     <div>{{ item?.docTypeName }}</div>
                     <div class="mt-2 flex items-center">
@@ -573,7 +600,7 @@ onUnmounted(() => {
                   class="overflow-y-auto"
                   :class="docTypeOcrData === DocTypeEnum.DRAFT ? 'h-[calc(100vh-207px)]' : 'h-[calc(100vh-185px)] '"
                 >
-                  <template v-if="isLoadedPdf">
+                  <template v-if="isLoadedPdf && !isLoadingOcr">
                     <div
                       v-for="(item, index) in ocrDataDetail?.filter((field) => field?.id)"
                       :key="index"
@@ -634,7 +661,7 @@ onUnmounted(() => {
                       </div>
                     </div>
                   </template>
-                  <template v-else-if="ocrDataDetail?.length > 0">
+                  <template v-else-if="ocrDataDetail?.length > 0 || isLoadingOcr">
                     <div
                       v-for="(item, index) in ocrDataDetail"
                       :key="index"

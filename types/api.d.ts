@@ -7,4 +7,5 @@ interface ApiResponseData<T> {
 
 interface ApiCustomRequestConfigModel {
   notAuth?: boolean
+  showError?: boolean
 }
