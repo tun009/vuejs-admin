@@ -62,28 +62,6 @@ const options = ref({
       ]
     }
   ]
-  // legend: {
-  //   horizontalAlign: 'right',
-  //   verticalAlign: 'center',
-  //   position: 'right',
-  //   dockInsidePlotArea: false,
-  //   itemHeight: 500,
-  //   maxHeight: 500,
-  //   itemTextFormatter: (e: any) => {
-  //     return `${e.dataPoint.label}: ${e.dataPoint.y}`
-  //   }
-  // }
-  //   subtitles: [
-  //     {
-  //       type: 'text',
-  //       text: '1000',
-  //       fontSize: 16,
-  //       fontColor: '#000',
-  //       horizontalAlign: 'center',
-  //       verticalAlign: 'center',
-  //       dockInsidePlotArea: true
-  //     }
-  //   ]
 })
 
 const styleOptions = ref({
