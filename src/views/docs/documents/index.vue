@@ -187,7 +187,7 @@ const handleResetFilter = () => {
   multipleFilterRef.value?.handleCheckAll()
 }
 
-const handleGetData = debounce(() => documentTableRef?.value?.handleGetData(), 300)
+const handleGetData = debounce((isReload: boolean = true) => documentTableRef?.value?.handleGetData(isReload), 300)
 
 watch(
   [() => filterValue, () => uploadTimes],
@@ -275,7 +275,7 @@ onDeactivated(() => {
 onActivated(() => {
   handleSocket()
   if (isNotFirstActivation.value) {
-    handleGetData()
+    handleGetData(false)
   } else {
     isNotFirstActivation.value = true
   }
