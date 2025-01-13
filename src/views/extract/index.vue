@@ -5,7 +5,6 @@ import {
   getDossierDetailApi,
   getDossierListApi,
   getExtractConfidence,
-  getStatusDocument,
   ocrDocumentApi,
   saveDossierDocApi
 } from '@/api/extract'
@@ -323,20 +322,43 @@ const handleOcrDoc = async () => {
     throw new Error(error)
   }
 }
-const checkStatusDocument = (idActive?: number) => {
+const isErrorStatus = (status: DocumentStatusEnum) => {
+  return [
+    DocumentStatusEnum.CLASSIFICATION_ERROR,
+    DocumentStatusEnum.EXTRACTION_ERROR,
+    DocumentStatusEnum.COMPARISON_ERROR
+  ].includes(status)
+}
+const isCompletedStepCompareStatus = (status: DocumentStatusEnum) => {
+  return [
+    DocumentStatusEnum.OCRED,
+    DocumentStatusEnum.COMPARING,
+    DocumentStatusEnum.WAIT_CHECK,
+    DocumentStatusEnum.CHECKING,
+    DocumentStatusEnum.WAIT_VALIDATE,
+    DocumentStatusEnum.WAIT_CHECK,
+    DocumentStatusEnum.ADJUST_REQUESTED,
+    DocumentStatusEnum.VALIDATED
+  ].includes(status)
+}
+const checkStatusDocument = () => {
   intervalId.value = setInterval(async () => {
     try {
-      const { data } = await getStatusDocument(Number(route?.query?.dossierDocId))
-      if (data === true) {
+      const { data } = await getBatchDetail(route?.query?.batchId as string)
+      if (isErrorStatus(data.status) || isCompletedStepCompareStatus(data.status)) {
         clearInterval(intervalId.value)
-        ElMessage({
-          showClose: true,
-          type: 'success',
-          message: 'Trích xuất OCR thành công'
-        })
-        if (idActive) getDossiersList(Number(route?.query?.batchId))
-        getDossiersDetail(Number(route?.query?.dossierDocId), false)
-        isLoadingOcr.value = false
+        setTimeout(() => {
+          ElMessage({
+            showClose: true,
+            type: isErrorStatus(data.status) ? 'error' : 'success',
+            message: isErrorStatus(data.status)
+              ? (documentStatusOptions.find((item) => item.value === data.status)?.label ?? 'Có lỗi xảy ra')
+              : 'Trích xuất OCR thành công'
+          })
+          getDossiersList(Number(route?.query?.batchId))
+          getDossiersDetail(Number(route?.query?.dossierDocId), false)
+          isLoadingOcr.value = false
+        }, 3000)
       }
     } catch (error) {
       console.error(error)
@@ -432,7 +454,7 @@ const refreshReplaceDoc = (data: ExtractDossierPostModel) => {
       dossierDocId: data.id
     }
   })
-  checkStatusDocument(data.id)
+  checkStatusDocument()
   idDossierActive.value = data.id
   // goToBackDocumentPage()
 }
