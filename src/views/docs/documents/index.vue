@@ -274,7 +274,6 @@ onDeactivated(() => {
 
 onActivated(() => {
   handleSocket()
-  debugger
   if (isNotFirstActivation.value) {
     handleGetData(false)
   } else {
