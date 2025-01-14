@@ -279,6 +279,11 @@ export const documentStatusOptions: SelectOptionModel[] = [
     label: 'Lỗi đối sánh',
     value: DocumentStatusEnum.COMPARISON_ERROR,
     color: STATUS_COLORS.ERROR
+  },
+  {
+    label: 'Đã xóa',
+    value: DocumentStatusEnum.DELETED,
+    color: STATUS_COLORS.ERROR
   }
 ]
 
