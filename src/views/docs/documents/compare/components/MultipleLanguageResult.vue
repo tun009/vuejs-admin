@@ -124,7 +124,7 @@ const handleRemoveRule = (i: number) => {
 const updateRuleValue = ({ index, value }: { index: number; value: Partial<RuleModel> }) => {
   const newReasons = [...reasonList.value].map((r, i) => {
     if (i !== index) return r
-    return { ...r, ...value }
+    return { ...r, ...value, isNew: true }
   })
   reasonList.value = [...newReasons]
 }
