@@ -66,7 +66,7 @@ describe('docListColumnConfigs', () => {
 
 describe('reportStatusOptions', () => {
   it('should have the correct number of items', () => {
-    expect(reportStatusOptions).toHaveLength(14) // Verify that the array has 14 elements
+    expect(reportStatusOptions).toHaveLength(15) // Verify that the array has 14 elements
   })
 
   it('should have correct structure for each item', () => {
@@ -111,7 +111,8 @@ describe('reportStatusOptions', () => {
       'YC điều chỉnh': DocumentStatusEnum.ADJUST_REQUESTED,
       'Đã phê duyệt': DocumentStatusEnum.VALIDATED,
       'Từ chối': DocumentStatusEnum.DENIED,
-      Lỗi: DocumentStatusEnum.ERROR
+      Lỗi: DocumentStatusEnum.ERROR,
+      'Đã xóa': DocumentStatusEnum.DELETED
     }
 
     reportStatusOptions.forEach((item) => {
