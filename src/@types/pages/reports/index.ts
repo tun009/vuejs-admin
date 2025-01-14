@@ -224,6 +224,11 @@ export const reportStatusOptions: SelectOptionModel[] = [
     label: 'Lỗi',
     value: DocumentStatusEnum.ERROR,
     color: STATUS_COLORS.ERROR
+  },
+  {
+    label: 'Đã xóa',
+    value: DocumentStatusEnum.DELETED,
+    color: STATUS_COLORS.ERROR
   }
 ]
 

@@ -55,7 +55,8 @@ export enum DocumentStatusEnum {
   COMPARISON_ERROR = 'COMPARISON_ERROR',
   CLASSIFICATION_ERROR = 'CLASSIFICATION_ERROR',
   CLASSIFY_ERROR = 'CLASSIFY_ERROR',
-  OCR_ERROR = 'OCR_ERROR'
+  OCR_ERROR = 'OCR_ERROR',
+  DELETED = 'DELETED'
 }
 
 export const uploadDocumentColumnConfig: ColumnConfigModel[] = [
