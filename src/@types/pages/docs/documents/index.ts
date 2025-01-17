@@ -694,7 +694,7 @@ export interface ReplaceDocumentClassifyErrordModel {
 }
 export const getAllCategoryRequestModel = { pageNum: 0, pageSize: 9999, type: RuleTypeEnum.CATEGORY, query: '' }
 export const getAllRuleRequestModel = { ...getAllCategoryRequestModel, type: RuleTypeEnum.LAW }
-export const defaultStatus = documentStatusOptions.slice(0, -5).map((c) => c.value as DocumentStatusEnum)
+export const defaultStatus = documentStatusOptions.slice(0, -6).map((c) => c.value as DocumentStatusEnum)
 export interface SocketDataModel {
   id: number
   status: DocumentStatusEnum

@@ -106,7 +106,7 @@ const handleGetDocuments = async (pagination: PaginationModel) => {
         }
       ],
       ...(filterType.value === FilterTypeEnum.BCT ? { name } : { lcNo: name }),
-      ...(status?.length !== documentStatusOptions.length - 5 ? { status: exactStatus } : {})
+      ...(status?.length !== documentStatusOptions.length - 6 ? { status: exactStatus } : {})
     }
     setFilter({ ...payload, status })
     const response = await getDocuments(payload)
@@ -354,7 +354,7 @@ onActivated(() => {
         ref="multipleFilterRef"
         v-model="filterValue.status"
         :title="$t('docs.document.status')"
-        :options="documentStatusOptions.slice(0, -5)"
+        :options="documentStatusOptions.slice(0, -6)"
       />
       <EIBSingleFilter
         v-model="filterValue.result"
