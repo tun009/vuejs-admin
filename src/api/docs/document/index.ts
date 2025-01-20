@@ -58,11 +58,14 @@ export function addDocument(data: FormData) {
   })
 }
 
-export function getBatchDetail(id: string | number) {
-  return request<GetBatchDetailResponseModel>({
-    url: 'batches/' + id,
-    method: 'get'
-  })
+export function getBatchDetail(id: string | number, showError: boolean = true) {
+  return request<GetBatchDetailResponseModel>(
+    {
+      url: 'batches/' + id,
+      method: 'get'
+    },
+    { showError: showError }
+  )
 }
 
 export function getDocumentFiles(params: { batchId: string | number }) {

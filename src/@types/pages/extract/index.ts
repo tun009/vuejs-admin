@@ -1,4 +1,4 @@
-import { SelectOptionModel, StatusColorModel } from '@/@types/common'
+import { DocumentStatusEnum, SelectOptionModel, StatusColorModel } from '@/@types/common'
 import { STATUS_COLORS } from '@/constants/color'
 
 export interface ExtractResultOcrModel {
@@ -47,15 +47,18 @@ export interface ExtractDossierModel {
   id: number
   docType: ExtractDossierTypeModel
   status: string | number
+  pathFile: string
+}
+export interface ExtractDossierMappingModel extends ExtractDossierModel {
   color: StatusColorModel
   docTypeName: string
-  pathFile: string
 }
 export interface ExtractDocumentModel {
   id: number
   docType: string
   pathFile: string
   fileName: string
+  statusDoc: DocumentStatusEnum
   result: ExtractResultOcrModel[][]
 }
 export interface ExtractNoteModel {
@@ -163,4 +166,9 @@ export interface ExtractDossierPostModel {
   name: string
   pathFile: string
   status: string
+}
+export interface SocketDataModelExtract {
+  id: number
+  status: DocumentStatusEnum
+  dossierDocs: ExtractDossierModel[]
 }

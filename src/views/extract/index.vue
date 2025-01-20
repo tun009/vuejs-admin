@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, ref, nextTick, onUnmounted, computed } from 'vue'
+import { onMounted, ref, nextTick, onUnmounted, computed, onDeactivated } from 'vue'
 import {
   comparisonDocumentApi,
   getDossierDetailApi,
@@ -11,11 +11,13 @@ import {
 import { useConfirmModal } from '@/hooks/useConfirm'
 import {
   ExtractDocumentModel,
+  ExtractDossierMappingModel,
   ExtractDossierModel,
   ExtractDossierPostModel,
   ExtractResultOcrModel,
   ExtractResultOcrTableChildrenModel,
-  ExtractResultOcrTableHeaderModel
+  ExtractResultOcrTableHeaderModel,
+  SocketDataModelExtract
 } from '@/@types/pages/extract'
 import PreviewExtractImage from '@/views/docs/documents/compare/components/PreviewExtractImage.vue'
 import PDFView from './components/PDFView.vue'
@@ -37,7 +39,8 @@ import {
   renderColorByValue,
   renderColorByConfidence,
   convertFileUrl,
-  convertDocTypeName
+  convertDocTypeName,
+  buildUrlSocket
 } from '@/utils/common'
 import { documentStatusOptions } from '@/@types/pages/docs/documents'
 import { ArrowLeft, More, CloseBold, Select } from '@element-plus/icons-vue'
@@ -56,8 +59,9 @@ import { UpdateConfidenceRequestModel } from '@/@types/pages/docs/settings/servi
 import { getBatchDetail } from '@/api/docs/document'
 import { BatchDetailModel } from '@/@types/pages/docs/documents/services/DocumentResponse'
 import { useUserStore } from '@/store/modules/user'
+import createSocketConnection from '@/api/socker-service'
 const { userInfo, isAdmin, isChecker, isMaker } = useUserStore()
-const dossierListData = ref<ExtractDossierModel[]>([])
+const dossierListData = ref<ExtractDossierMappingModel[]>([])
 const documentDetail = ref<ExtractDocumentModel>()
 const activeName = ref('ocr')
 const fieldSelect = ref<number | null>()
@@ -78,24 +82,33 @@ const baseURL = import.meta.env.VITE_BASE_API
 const dataConfigs = ref<UpdateConfidenceRequestModel[]>([] as UpdateConfidenceRequestModel[])
 const batchDetailData = ref<BatchDetailModel>({} as BatchDetailModel)
 const intervalId = ref()
-const getDossiersList = async (id: number) => {
+const batchId = computed(() => route?.query?.batchId as string | number)
+const dossierDocId = computed(() => route?.query?.dossierDocId as string | number)
+const statusDoc = ref<DocumentStatusEnum>(DocumentStatusEnum.WAIT_CHECK)
+const socket = ref()
+const getDossiersList = async (id: number, isGoToDocId?: boolean) => {
   try {
-    const response = await getDossierListApi(id)
+    handleSocket(id)
+    const { data } = await getDossierListApi(id)
     isLoadViewContentLeft.value = true
-    dossierListData.value = response?.data?.map((item) => {
-      const name = convertDocTypeName(item.docType.name)
-      return {
-        ...item,
-        docTypeName: name,
-        status: renderLabelByValue(documentStatusOptions, item.status) || 'Đang phân loại',
-        color: renderColorByValue(documentStatusOptions, item.status) || '#1098ad'
-      }
-    })
+    dossierListData.value = buidDossierListData(data)
     // hard code
-    if (dossierListData.value.length > 0 && !route?.query?.dossierDocId) getDossierById(dossierListData.value[0]?.id)
+    if (dossierListData.value.length > 0 && (!dossierDocId.value || isGoToDocId))
+      getDossierById(dossierListData.value[0]?.id)
   } catch (error: any) {
     throw new Error(error)
   }
+}
+const buidDossierListData = (data: ExtractDossierModel[]) => {
+  return data?.map((item) => {
+    const name = convertDocTypeName(item.docType.name)
+    return {
+      ...item,
+      docTypeName: name,
+      status: renderLabelByValue(documentStatusOptions, item.status) || 'Đang phân loại',
+      color: renderColorByValue(documentStatusOptions, item.status) || '#1098ad'
+    }
+  }) as ExtractDossierMappingModel[]
 }
 let isComponentActive = true
 const getDossierById = (id: number) => {
@@ -113,19 +126,41 @@ const getDossierById = (id: number) => {
 const ocrDataDetail = ref<ExtractResultOcrModel[]>([])
 const isFirstViewExtract = ref<boolean>(false)
 const docTypeOcrData = ref()
-const getDossiersDetail = async (id: number, isLoading: boolean = true) => {
-  try {
-    resetOptions()
-    if (isLoading) isLoadViewContentRight.value = false
-    const response = await getDossierDetailApi(id)
-    documentDetail.value = response.data
-    ocrDataDetail.value = documentDetail.value.result[0]
-    docTypeOcrData.value = documentDetail.value?.docType
-    if (docTypeOcrData.value === DocTypeEnum.DRAFT) isFirstViewExtract.value = true
-    if (isLoading) isLoadViewContentRight.value = true
-  } catch (error: any) {
-    throw new Error(error)
+const queue: Array<() => Promise<void>> = []
+let isProcessing = false
+const processQueue = async () => {
+  if (isProcessing || queue.length === 0) return
+
+  isProcessing = true
+  const nextTask = queue.shift()
+  if (nextTask) {
+    await nextTask()
   }
+  isProcessing = false
+  processQueue()
+}
+/** dùng queue xử lý trong trường hợp người dùng spam vào button getDossiersDetail */
+const getDossiersDetail = async (id: number, isLoading: boolean = true) => {
+  const task = async () => {
+    try {
+      resetOptions()
+
+      if (isLoading) isLoadViewContentRight.value = false
+
+      const response = await getDossierDetailApi(id)
+      documentDetail.value = response.data
+      ocrDataDetail.value = documentDetail.value.result[0]
+      docTypeOcrData.value = documentDetail.value?.docType
+      statusDoc.value = documentDetail.value?.statusDoc
+      if (docTypeOcrData.value === DocTypeEnum.DRAFT) isFirstViewExtract.value = true
+
+      if (isLoading) isLoadViewContentRight.value = true
+    } catch (error: any) {
+      throw new Error(error)
+    }
+  }
+  queue.push(task)
+  processQueue()
 }
 const resetOptions = () => {
   isShowTable.value = false
@@ -173,6 +208,10 @@ const openClassifyModal = async () => {
 const closeDialogClassify = () => {
   openClassifyDrawer.value = false
 }
+const refreshDialogClassify = () => {
+  openClassifyDrawer.value = false
+  getDossiersList(Number(batchId.value), true)
+}
 const handleCompareDossier = () => {
   showConfirmModal({
     message:
@@ -181,7 +220,7 @@ const handleCompareDossier = () => {
     showMesageSucess: false,
     onConfirm: async (instance, done) => {
       try {
-        await comparisonDocumentApi(Number(route?.query?.batchId))
+        await comparisonDocumentApi(Number(batchId.value))
         ElMessage({
           showClose: true,
           type: 'success',
@@ -213,7 +252,7 @@ const handleDeniedDossier = () => {
       inputErrorMessage: 'Vui lòng nhập lý do từ chối!'
     }
   ).then(async ({ value }) => {
-    await updateDocumentStatus(route?.query?.batchId as string, {
+    await updateDocumentStatus(batchId.value as string, {
       approveDossier: DocumentStatusEnum.DENIED,
       message: value,
       isOCR: true
@@ -284,7 +323,7 @@ const saveDossier = async () => {
             })
         })
     })
-    const response = await saveDossierDocApi(Number(route?.query?.dossierDocId), dataUpdate)
+    const response = await saveDossierDocApi(Number(dossierDocId.value), dataUpdate)
     if (response.data) {
       ElMessage({
         showClose: true,
@@ -293,7 +332,7 @@ const saveDossier = async () => {
       })
       closeTable()
       // getDossiersDetail(idDossierActive.value)
-      getDossiersList(Number(route?.query?.batchId))
+      getDossiersList(Number(batchId.value))
       loading.value = false
     }
   } catch (error: any) {
@@ -309,7 +348,7 @@ const openModalReplaceDocument = () => {
   isShowModalReplace.value = true
 }
 const goToBackDocumentPage = () => {
-  router.push(DOCUMENT_DETAIL_PAGE(route?.query?.batchId as string))
+  router.push(DOCUMENT_DETAIL_PAGE(batchId.value as string))
 }
 const handleOcrDoc = async () => {
   try {
@@ -341,30 +380,36 @@ const isCompletedStepCompareStatus = (status: DocumentStatusEnum) => {
     DocumentStatusEnum.VALIDATED
   ].includes(status)
 }
+
 const checkStatusDocument = () => {
+  let isMessageShown = false
   intervalId.value = setInterval(async () => {
     try {
-      const { data } = await getBatchDetail(route?.query?.batchId as string)
+      const { data } = await getBatchDetail(batchId.value as string, false)
       if (isErrorStatus(data.status) || isCompletedStepCompareStatus(data.status)) {
         clearInterval(intervalId.value)
         setTimeout(() => {
-          ElMessage({
-            showClose: true,
-            type: isErrorStatus(data.status) ? 'error' : 'success',
-            message: isErrorStatus(data.status)
-              ? (documentStatusOptions.find((item) => item.value === data.status)?.label ?? 'Có lỗi xảy ra')
-              : 'Trích xuất OCR thành công'
-          })
-          getDossiersList(Number(route?.query?.batchId))
-          getDossiersDetail(Number(route?.query?.dossierDocId), false)
-          isLoadingOcr.value = false
+          if (!isMessageShown) {
+            ElMessage({
+              showClose: true,
+              type: isErrorStatus(data.status) ? 'error' : 'success',
+              message: isErrorStatus(data.status)
+                ? (documentStatusOptions.find((item) => item.value === data.status)?.label ?? 'Có lỗi xảy ra')
+                : 'Trích xuất OCR thành công'
+            })
+            getDossiersList(Number(batchId.value))
+            getDossiersDetail(Number(dossierDocId.value), false)
+            isLoadingOcr.value = false
+            isMessageShown = true
+          }
         }, 3000)
       }
     } catch (error) {
       console.error(error)
     }
-  }, 600)
+  }, 1000)
 }
+
 const getConfidenceDetail = async () => {
   try {
     const response = await getExtractConfidence()
@@ -375,7 +420,7 @@ const getConfidenceDetail = async () => {
 }
 const getPermission = async () => {
   try {
-    const { data } = await getBatchDetail(route?.query?.batchId as string)
+    const { data } = await getBatchDetail(batchId.value as string)
     batchDetailData.value = data
   } catch (error) {
     console.error(error)
@@ -384,7 +429,7 @@ const getPermission = async () => {
 const reCheckDosssier = async () => {
   try {
     loading.value = true
-    await updateDocumentStatus(route?.query?.batchId as string, {
+    await updateDocumentStatus(batchId.value as string, {
       approveDossier: DocumentStatusEnum.CHECKING,
       message: '',
       isOCR: true
@@ -435,6 +480,7 @@ const hasPermissionReplaceOcr = computed(() => {
         DocumentStatusEnum.VALIDATING
       ].includes(batchDetailData.value.status) &&
         isAdmin)) &&
+    ![DocumentStatusEnum.OCRED, DocumentStatusEnum.COMPARING].includes(statusDoc.value) &&
     !isLoadingOcr.value
   )
 })
@@ -458,6 +504,19 @@ const refreshReplaceDoc = (data: ExtractDossierPostModel) => {
   idDossierActive.value = data.id
   // goToBackDocumentPage()
 }
+const handleSocket = (bathId: number) => {
+  socket.value = createSocketConnection(
+    buildUrlSocket({
+      query: {
+        room: `batch_${bathId}`
+      }
+    })
+  )
+  socket.value.on('update_data', (data: SocketDataModelExtract) => {
+    console.log(data)
+    if (data?.dossierDocs?.length > 0) dossierListData.value = buidDossierListData(data.dossierDocs)
+  })
+}
 onMounted(() => {
   isComponentActive = true
   getPermission()
@@ -469,6 +528,14 @@ onUnmounted(() => {
   isComponentActive = false
   if (intervalId.value) {
     clearInterval(intervalId.value)
+  }
+})
+// onActivated(() => {
+//   handleSocket()
+// })
+onDeactivated(() => {
+  if (socket.value) {
+    socket.value?.disconnect()
   }
 })
 </script>
@@ -751,10 +818,10 @@ onUnmounted(() => {
                 </div>
               </el-tab-pane>
               <el-tab-pane label="Lịch sử chỉnh sửa" name="history">
-                <HistoryTab :isActive="activeName === 'history'" :dossierDocId="Number(route?.query?.dossierDocId)" />
+                <HistoryTab :isActive="activeName === 'history'" :dossierDocId="Number(dossierDocId)" />
               </el-tab-pane>
               <el-tab-pane label="Ghi chú" name="note">
-                <NoteTab :isActive="activeName === 'note'" :batchId="Number(route?.query?.batchId)" />
+                <NoteTab :isActive="activeName === 'note'" :batchId="Number(batchId)" />
               </el-tab-pane>
             </el-tabs>
           </template>
@@ -767,8 +834,9 @@ onUnmounted(() => {
       <ClassifyModal
         ref="classifyModalRef"
         :data-configs="dataConfigs"
-        :batch-id="route?.query?.batchId as string"
+        :batch-id="batchId"
         @close-dialog="closeDialogClassify()"
+        @refresh-data="refreshDialogClassify()"
       />
     </template>
   </EIBDrawer>
