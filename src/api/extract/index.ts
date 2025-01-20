@@ -86,7 +86,7 @@ export function replaceDocument(data: FormData, id: number) {
     data
   })
 }
-export function comparisonDocumentApi(id: number) {
+export function comparisonDocumentApi(id: number | string) {
   return request<ExtractDossierPostResponseModel>({
     url: `batches/${id}/comparison`,
     method: 'patch'

@@ -30,6 +30,7 @@ interface Props {
 }
 interface Emits {
   (e: 'close-dialog'): void
+  (e: 'refresh-data'): void
 }
 
 const props = defineProps<Props>()
@@ -129,7 +130,7 @@ const saveDossierClassify = async () => {
       type: 'success',
       message: 'Cập nhật thành công'
     })
-    emits('close-dialog')
+    emits('refresh-data')
   } catch {
     ElMessage({
       showClose: true,
