@@ -513,7 +513,6 @@ const handleSocket = (bathId: number) => {
     })
   )
   socket.value.on('update_data', (data: SocketDataModelExtract) => {
-    console.log(data)
     if (data?.dossierDocs?.length > 0) dossierListData.value = buidDossierListData(data.dossierDocs)
   })
 }
