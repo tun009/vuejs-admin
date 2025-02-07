@@ -332,7 +332,7 @@ export const getDocumentSwitchStatus = (row: DocumentModel) => {
     row.status === DocumentStatusEnum.ADJUST_REQUESTED &&
     (isAdmin || (isMaker && row.createdBy?.username === userInfo.username))
   ) {
-    status = DocumentStatusEnum.CHECKING
+    // status = DocumentStatusEnum.CHECKING
   }
   return status
 }
