@@ -484,6 +484,9 @@ const hasPermissionReplaceOcr = computed(() => {
     !isLoadingOcr.value
   )
 })
+const hasPermissionReCheckDocument = computed(() => {
+  return batchDetailData?.value?.censorBy?.username === userInfo?.username && isMaker
+})
 const refreshReplaceDoc = (data: ExtractDossierPostModel) => {
   isLoadingOcr.value = true
   // dossierListData.value.forEach((item) => {
@@ -783,7 +786,12 @@ onDeactivated(() => {
                 <div class="tab-footer p-[16px] flex justify-between shadow-[inset_0_1px_0_0_#d0d0d0]">
                   <template v-if="batchDetailData.status === DocumentStatusEnum.ADJUST_REQUESTED">
                     <ExtractTextInfoDenied :content="batchDetailData?.deniedMessage ?? 'Từ chối'" />
-                    <el-button class="text-[#fff] bg-[#1c7ed6]" @click="reCheckDosssier()" :loading="loading">
+                    <el-button
+                      v-if="hasPermissionReCheckDocument"
+                      class="text-[#fff] bg-[#1c7ed6]"
+                      @click="reCheckDosssier()"
+                      :loading="loading"
+                    >
                       <SvgIcon name="ic-save" class="mr-1" />Kiểm tra lại
                     </el-button>
                   </template>
