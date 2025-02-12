@@ -289,6 +289,35 @@ const customSortTable = computed((): string[] => {
             </div>
           </div>
         </div>
+        <div v-if="compareResult.comparisonResults?.[child]?.comparisonRowResults.length">
+          <EIBTable
+            :column-configs="
+              customSort(
+                createColumnConfigs(convertTableDataCompare(compareResult.comparisonResults?.[child])?.[0]),
+                'field',
+                customSortTable
+              ) ?? {}
+            "
+            :data="convertTableDataCompare(compareResult.comparisonResults?.[child])"
+            hidden-checked
+            hidden-pagination
+            height="unset"
+          >
+            <template #fieldName="{ row }">
+              <SafeHtmlRenderer :html="row?.fieldName?.replace(/\n/g, '<br>')" />
+            </template>
+            <template
+              v-for="(c, i) in groupByKey(
+                convertTableDataCompareError(compareResult.comparisonResults?.[child]),
+                'key'
+              )"
+              #[c?.key]="{ row, index }"
+              :key="i"
+            >
+              <span :class="{ 'text-red-500': c.stt.includes(index + 1) }">{{ row?.[c.key] }}</span>
+            </template>
+          </EIBTable>
+        </div>
         <MultipleLanguageResult
           :categories="categories"
           :rules="rules"
