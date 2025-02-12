@@ -242,7 +242,12 @@ onMounted(() => {
               <div v-if="errorDocumentStatus.includes(data?.status)" class="flex flex-col gap-2">
                 <div
                   class="flex gap-1"
-                  v-if="isChecker && data?.censorBy?.name && data?.censorBy?.name !== userInfo.username"
+                  v-if="
+                    isChecker &&
+                    data?.censorBy?.name &&
+                    data?.censorBy?.name !== userInfo.username &&
+                    data?.status === DocumentStatusEnum.CHECKED
+                  "
                 >
                   <Status :options="documentStatusOptions" :status="DocumentStatusEnum.CHECKED" />
                   <span class="c-text-value">{{ $t('docs.document.by') }}</span> {{ data?.censorBy?.name }}
