@@ -606,6 +606,7 @@ export interface ComparisonResultModel {
       prefixValue: string
     }[]
   }[]
+  comparisonRowResults: comparisonRowResultsModel[]
 }
 
 export interface ComparisonCellResultModel {
@@ -623,11 +624,7 @@ export interface DocumentCompareModel {
   comparisonResults: {
     [key: string]: ComparisonResultModel
   }
-  comparisonRowResults: {
-    stt: number
-    fieldName: string
-    comparisonCellResults: ComparisonCellResultModel[]
-  }[]
+  comparisonRowResults: comparisonRowResultsModel[]
   undefinedResults: {
     id: number
     inputField: string
@@ -640,7 +637,11 @@ export interface DocumentCompareModel {
     }[]
   }[]
 }
-
+export interface comparisonRowResultsModel {
+  stt: number
+  fieldName: string
+  comparisonCellResults: ComparisonCellResultModel[]
+}
 export interface DocumentResultModel {
   status: DocumentResultEnum
   timeOfShipment: DocumentResultEnum

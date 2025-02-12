@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ColumnConfigModel } from '@/@types/common'
 import {
+  ComparisonResultModel,
   CompareReasonResultModel,
   DocumentCompareModel,
   DocumentKeyEnum,
@@ -78,7 +79,7 @@ const getCompareOn = (reasons: CompareReasonResultModel[]): string[] => {
   return result
 }
 
-const convertTableDataCompare = (compareResult: DocumentCompareModel) => {
+const convertTableDataCompare = (compareResult: DocumentCompareModel | ComparisonResultModel) => {
   const response = compareResult.comparisonRowResults.map((c) => {
     const result: { [key: string]: string | number } = {
       stt: c.stt,
@@ -103,7 +104,7 @@ const handleAddRule4647A = (id: number, _is47A: boolean) => {
   dialogVisible.value = true
 }
 
-const convertTableDataCompareError = (compareResult: DocumentCompareModel) => {
+const convertTableDataCompareError = (compareResult: DocumentCompareModel | ComparisonResultModel) => {
   const response: { key: string; stt: number }[] = []
   compareResult.comparisonRowResults.forEach((c) => {
     c.comparisonCellResults.forEach((d) => {
