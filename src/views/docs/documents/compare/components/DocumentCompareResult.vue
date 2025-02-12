@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ColumnConfigModel } from '@/@types/common'
 import {
+  ComparisonResultModel,
   CompareReasonResultModel,
   DocumentCompareModel,
   DocumentKeyEnum,
@@ -78,7 +79,7 @@ const getCompareOn = (reasons: CompareReasonResultModel[]): string[] => {
   return result
 }
 
-const convertTableDataCompare = (compareResult: DocumentCompareModel) => {
+const convertTableDataCompare = (compareResult: DocumentCompareModel | ComparisonResultModel) => {
   const response = compareResult.comparisonRowResults.map((c) => {
     const result: { [key: string]: string | number } = {
       stt: c.stt,
@@ -103,7 +104,7 @@ const handleAddRule4647A = (id: number, _is47A: boolean) => {
   dialogVisible.value = true
 }
 
-const convertTableDataCompareError = (compareResult: DocumentCompareModel) => {
+const convertTableDataCompareError = (compareResult: DocumentCompareModel | ComparisonResultModel) => {
   const response: { key: string; stt: number }[] = []
   compareResult.comparisonRowResults.forEach((c) => {
     c.comparisonCellResults.forEach((d) => {
@@ -288,6 +289,35 @@ const customSortTable = computed((): string[] => {
               </template>
             </div>
           </div>
+        </div>
+        <div v-if="compareResult.comparisonResults?.[child]?.comparisonRowResults.length">
+          <EIBTable
+            :column-configs="
+              customSort(
+                createColumnConfigs(convertTableDataCompare(compareResult.comparisonResults?.[child])?.[0]),
+                'field',
+                customSortTable
+              ) ?? {}
+            "
+            :data="convertTableDataCompare(compareResult.comparisonResults?.[child])"
+            hidden-checked
+            hidden-pagination
+            height="unset"
+          >
+            <template #fieldName="{ row }">
+              <SafeHtmlRenderer :html="row?.fieldName?.replace(/\n/g, '<br>')" />
+            </template>
+            <template
+              v-for="(c, i) in groupByKey(
+                convertTableDataCompareError(compareResult.comparisonResults?.[child]),
+                'key'
+              )"
+              #[c?.key]="{ row, index }"
+              :key="i"
+            >
+              <span :class="{ 'text-red-500': c.stt.includes(index + 1) }">{{ row?.[c.key] }}</span>
+            </template>
+          </EIBTable>
         </div>
         <MultipleLanguageResult
           :categories="categories"
