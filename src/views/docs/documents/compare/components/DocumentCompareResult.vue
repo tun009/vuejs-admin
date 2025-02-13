@@ -133,7 +133,20 @@ const convertTableDataCompareErrorResults = (compareResult: DocumentCompareModel
 
 const convertDataTableOriginalCopy = (data: ColumnConfigModel[]): ColumnConfigModel[] => {
   const keysMapping = data.map((c) => removeAccentsAndReplaceSpaces(c.field))
-  if (!keysMapping.includes('ban_sao(bank)')) return data
+  if (!keysMapping.includes('ban_sao(bank)')) {
+    if (keysMapping.includes('name_of_goods')) {
+      const nameOfGoods = data.find((item) => item.field === 'Name of goods')
+      if (nameOfGoods) {
+        const sttIndex = data.findIndex((item) => item.field === 'STT')
+
+        if (sttIndex !== -1) {
+          data.splice(data.indexOf(nameOfGoods), 1)
+          data.splice(sttIndex + 1, 0, nameOfGoods)
+        }
+      }
+    }
+    return data
+  }
 
   const result: Array<ColumnConfigModel> = []
 
