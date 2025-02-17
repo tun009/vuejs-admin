@@ -20,6 +20,7 @@ import {
 import EIBDialog from '@/components/common/EIBDialog.vue'
 import EIBSelect from '@/components/common/EIBSelect.vue'
 import EIBTextareaAutoComplete from '@/components/common/EIBTextareaAutoComplete.vue'
+import { useUserStore } from '@/store/modules/user'
 import { getTextFromHtml, hasDuplicateField, removeDuplicateItemInArray } from '@/utils/common'
 import { InfoFilled } from '@element-plus/icons-vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
@@ -47,6 +48,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 const emits = defineEmits<Emits>()
 
+const { isViewer, isMaker } = useUserStore()
 const { t } = useI18n()
 
 const lawReasonMapping = computed(() => {
@@ -316,7 +318,7 @@ const disabledSaveButton = computed(() => {
           <div v-else-if="props.status === DocumentResultEnum.DISCREPANCY">
             <div v-if="lawReasonMapping.reasons.length">
               <div
-                class="flex flex-row items-start gap-2"
+                class="flex flex-row items-start gap-2 min-h-[42px]"
                 v-for="(res, index) in lawReasonMapping.reasons"
                 :key="index"
               >
@@ -350,7 +352,7 @@ const disabledSaveButton = computed(() => {
           <div v-else-if="props.status === DocumentResultEnum.DISCREPANCY">
             <div v-if="lawReasonMapping.reasons.length">
               <div
-                class="flex flex-row items-start gap-2"
+                class="flex flex-row items-start gap-2 min-h-[42px]"
                 v-for="(res, index) in lawReasonMapping.reasons"
                 :key="index"
               >
@@ -417,7 +419,7 @@ const disabledSaveButton = computed(() => {
                   plain
                   class="h-[38px]"
                   @click="handleSaveDictionary(i)"
-                  :disabled="!r?.code || r.defaultValue === r.en"
+                  :disabled="!r?.code || r.defaultValue === r.en || isViewer || isMaker"
                   >{{ $t('docs.compare.saveDictionary') }}</el-button
                 >
               </div>
