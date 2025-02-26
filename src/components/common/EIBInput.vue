@@ -84,7 +84,7 @@ const updateValue = (value: string) => {
         :type="type"
         @update:model-value="updateValue"
         :disabled="disabled"
-        :maxlength="maxLength"
+        :maxlength="isPassword ? passwordLength : maxLength"
         :rows="rows"
         :class="[customClass]"
         :placeholder="$t(placeholder ?? '')"
