@@ -3,7 +3,7 @@ import { LoginFormModel } from '@/@types/pages/login'
 import EIBInput from '@/components/common/EIBInput.vue'
 import { DASHBOARD_PAGE } from '@/constants/router'
 import { useUserStore } from '@/store/modules/user'
-import { limitLengthRule, requireRule } from '@/utils/validate'
+import { requireRule } from '@/utils/validate'
 import { Lock, User } from '@element-plus/icons-vue'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
@@ -24,7 +24,7 @@ const loginFormData: LoginFormModel = reactive({
 
 const loginFormRules: FormRules = {
   username: [requireRule()],
-  password: [requireRule(), limitLengthRule({ min: 8, max: 100 })],
+  password: [requireRule()],
   code: []
 }
 const handleLogin = () => {
@@ -78,8 +78,8 @@ const handleLogin = () => {
               label="login.password"
               placeholder="login.enterPassword"
               :prefix-icon="Lock"
-              type="password"
               show-password
+              type="password"
               :model-value="loginFormData.password"
               @update:modelValue="(val: string) => (loginFormData.password = val)"
             />

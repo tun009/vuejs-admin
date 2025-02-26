@@ -64,7 +64,10 @@ const updateValue = (value: string) => {
         ><span v-if="required && !readonly" class="text-red-600 mr-1">*</span>{{ $t(label) }}</label
       >
       <span v-if="showLimit && !readonly && !disabled">{{
-        $t('base.input.limit', { length: (modelValue ?? '')?.toString()?.length, maxLength: maxLength })
+        $t('base.input.limit', {
+          length: (modelValue ?? '')?.toString()?.length,
+          maxLength: maxLength
+        })
       }}</span>
     </div>
     <span v-if="readonly" class="text-sm leading-[24px] font-normal text-[#495057]">{{

@@ -104,25 +104,34 @@ defineExpose<Exposes>({
       label="profile.password"
       placeholder="profile.enterCurrentPassword"
       name="oldPassword"
+      type="password"
       v-model="changePasswordFormData.oldPassword"
       required
       show-limit
+      :max-length="100"
+      show-password
     />
     <EIBInput
       label="profile.newPassword"
       placeholder="profile.enterNewPassword"
       name="newPassword"
+      type="password"
       v-model="changePasswordFormData.newPassword"
       required
       show-limit
+      :max-length="100"
+      show-password
     />
     <EIBInput
       label="profile.confirmPassword"
       placeholder="profile.enterNewPasswordAgain"
       name="confirmPassword"
+      type="password"
       v-model="changePasswordFormData.confirmPassword"
       required
       show-limit
+      :max-length="100"
+      show-password
     />
   </el-form>
   <div>
