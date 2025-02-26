@@ -78,6 +78,7 @@ const handleLogin = () => {
               label="login.password"
               placeholder="login.enterPassword"
               :prefix-icon="Lock"
+              show-password
               type="password"
               :model-value="loginFormData.password"
               @update:modelValue="(val: string) => (loginFormData.password = val)"
