@@ -108,8 +108,8 @@ defineExpose<Exposes>({
       v-model="changePasswordFormData.oldPassword"
       required
       show-limit
+      :max-length="100"
       show-password
-      is-password
     />
     <EIBInput
       label="profile.newPassword"
@@ -119,8 +119,8 @@ defineExpose<Exposes>({
       v-model="changePasswordFormData.newPassword"
       required
       show-limit
+      :max-length="100"
       show-password
-      is-password
     />
     <EIBInput
       label="profile.confirmPassword"
@@ -130,8 +130,8 @@ defineExpose<Exposes>({
       v-model="changePasswordFormData.confirmPassword"
       required
       show-limit
+      :max-length="100"
       show-password
-      is-password
     />
   </el-form>
   <div>

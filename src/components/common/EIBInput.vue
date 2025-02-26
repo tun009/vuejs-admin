@@ -23,8 +23,6 @@ interface Props {
   rows?: number
   autosize?: { minRows: number; maxRows: number }
   emptyValue?: string
-  isPassword?: boolean
-  passwordLength?: number
 }
 
 interface Emits {
@@ -37,7 +35,6 @@ const props = withDefaults(defineProps<Props>(), {
   type: 'text',
   size: 'large',
   maxLength: 200,
-  passwordLength: 100,
   emptyValue: '',
   autosize: () => ({ minRows: 2, maxRows: 6 })
 })
@@ -69,7 +66,7 @@ const updateValue = (value: string) => {
       <span v-if="showLimit && !readonly && !disabled">{{
         $t('base.input.limit', {
           length: (modelValue ?? '')?.toString()?.length,
-          maxLength: isPassword ? passwordLength : maxLength
+          maxLength: maxLength
         })
       }}</span>
     </div>
@@ -84,7 +81,7 @@ const updateValue = (value: string) => {
         :type="type"
         @update:model-value="updateValue"
         :disabled="disabled"
-        :maxlength="isPassword ? passwordLength : maxLength"
+        :maxlength="maxLength"
         :rows="rows"
         :class="[customClass]"
         :placeholder="$t(placeholder ?? '')"
