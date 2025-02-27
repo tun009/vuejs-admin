@@ -5,6 +5,7 @@ import {
   ExtractResultOcrTableHeaderModel
 } from '@/@types/pages/extract'
 import { computed, nextTick, ref } from 'vue'
+import { Plus } from '@element-plus/icons-vue'
 interface ExtractPdfViewExpose {
   tagLabelToPage: (
     boxInfo: ExtractResultOcrPageBBboxesModel[],
@@ -34,6 +35,15 @@ const decreaseRow = (index: number) => {
   const updatedBody = props.body
   updatedBody.splice(index, 1)
   // emit('update-body', data)
+}
+const addNewData = () => {
+  const tempValueAdd = props.header.map((item) => ({
+    coreKey: item.key,
+    type: 'text',
+    validatedValue: ''
+  })) as ExtractResultOcrTableChildrenModel[]
+  const updatedBody = props.body
+  updatedBody.splice(1, 0, tempValueAdd)
 }
 const increaseRow = (index: number, row: ExtractResultOcrTableChildrenModel[]) => {
   const tempValue = row.map((item) => ({
@@ -78,11 +88,22 @@ const bodyTable = computed(() => {
         <th v-for="(header, index_header) in props.header" :key="index_header">
           {{ header.name }}
         </th>
-        <th class="w-[120px]" />
+        <th class="w-[120px]" v-if="bodyTable.length > 0" />
       </tr>
     </thead>
     <tbody>
-      <tr v-for="(data_row, index_row) in bodyTable" :key="index_row" :id="`row-${index_row}`">
+      <tr v-if="bodyTable.length === 0">
+        <td :colspan="props.header.length + 1" class="h-[120px]">
+          <el-button
+            @click="addNewData()"
+            class="sticky left-1/2 inline-block -translate-x-1/2"
+            type="primary"
+            :icon="Plus"
+            >Thêm dữ liệu</el-button
+          >
+        </td>
+      </tr>
+      <tr v-else v-for="(data_row, index_row) in bodyTable" :key="index_row" :id="`row-${index_row}`">
         <td class="text-center">{{ index_row + 1 }}</td>
         <td v-for="(data_col, index_col) in data_row" :key="index_col">
           <el-input

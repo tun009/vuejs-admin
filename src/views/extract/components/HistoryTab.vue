@@ -29,7 +29,7 @@ const fetchHistories = async () => {
     const response = await getDossierHistoriesApi(props.dossierDocId)
     historiesData.value = response.data
     historiesData.value.forEach((item) => {
-      if (item.some((x) => x.type === ExtractHistoryTypeEnum.EDIT))
+      if (item.some((x) => [ExtractHistoryTypeEnum.EDIT_TABLE, ExtractHistoryTypeEnum.EDIT].includes(x.type)))
         dataHistoriesConvert.push(groupDataToExtractHistory(item)[0])
       else dataHistoriesConvert.push({ ...item[0], value: [] })
     })
@@ -113,8 +113,11 @@ const groupDataToExtractHistory = (data: Record<string, any>[]): ExtractHistoryG
               </div>
             </template>
             <template v-else-if="item_history.type === ExtractHistoryTypeEnum.EDIT_TABLE">
-              <div>
-                Đã chỉnh sửa bảng <strong>{{ item_history?.field }}</strong>
+              <div
+                v-for="(table_edit_field, index_table_edit_field) in item_history.value"
+                :key="index_table_edit_field"
+              >
+                Đã chỉnh sửa bảng <strong>{{ table_edit_field?.field }}</strong>
               </div>
             </template>
             <template v-else>
