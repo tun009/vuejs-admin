@@ -16,7 +16,7 @@ initTheme()
       <keep-alive>
         <component :is="Component" :key="route.fullPath" />
       </keep-alive>
-    </router-view>
-    <router-view /> -->
+    </router-view> -->
+    <router-view />
   </el-config-provider>
 </template>
