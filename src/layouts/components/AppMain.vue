@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 // import { useSettingsStore } from '@/store/modules/settings'
 // import Footer from './Footer/index.vue'
-
+import { KEEP_ALIVE_ROUTER_NAME } from '@/constants/common'
 // const settingsStore = useSettingsStore()
 </script>
 
@@ -10,7 +10,7 @@
     <div class="app-scrollbar">
       <!-- Using route.path and route.fullPath as key has different effects, path is more general in most cases -->
       <router-view v-slot="{ Component, route }">
-        <keep-alive>
+        <keep-alive :include="KEEP_ALIVE_ROUTER_NAME">
           <component :is="Component" :key="route.path" />
         </keep-alive>
       </router-view>
