@@ -144,6 +144,10 @@ const convertDataTableOriginalCopy = (data: ColumnConfigModel[]): ColumnConfigMo
           data.splice(sttIndex + 1, 0, nameOfGoods)
         }
       }
+    } else if (keysMapping.includes('item_size')) {
+      data = data.filter(
+        (item) => item.field !== 'item_quantity' && item.field !== 'item_amount' && item.field !== 'item_unit_price'
+      )
     }
     return data
   }
