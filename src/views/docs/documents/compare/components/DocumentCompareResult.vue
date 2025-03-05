@@ -144,13 +144,11 @@ const convertDataTableOriginalCopy = (data: ColumnConfigModel[]): ColumnConfigMo
         }
       }
     } else if (keysMapping.includes('item_size')) {
-      const filteredData = data.filter(
+      data = data.filter(
         (item) => item.field !== 'item_quantity' && item.field !== 'item_amount' && item.field !== 'item_unit_price'
       )
-      return filteredData
-    } else {
-      return data
     }
+    return data
   }
 
   const result: Array<ColumnConfigModel> = []
