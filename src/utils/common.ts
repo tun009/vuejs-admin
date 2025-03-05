@@ -350,7 +350,7 @@ export const handleConvertDocumentHistory = (data: CompareHistoryModel): Compare
         result.push(dayEntry)
       }
 
-      let hourEntry = dayEntry.hours.find((entry) => entry.hour === hour)
+      let hourEntry = dayEntry.hours.find((entry) => entry.hour === hour && entry.type === type)
       if (!hourEntry) {
         hourEntry = { hour, createdBy, role, type, actions: [] }
         dayEntry.hours.push(hourEntry)

@@ -434,6 +434,7 @@ const reCheckDosssier = async () => {
       message: '',
       isOCR: true
     })
+    getDossiersList(batchId.value as number)
     getPermission()
     loading.value = false
   } catch (error) {

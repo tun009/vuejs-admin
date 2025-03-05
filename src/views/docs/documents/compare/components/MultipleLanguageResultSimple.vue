@@ -126,9 +126,8 @@ const disabledSaveButton = computed(() => {
           <div v-else-if="requirement.status === DocumentResultEnum.DISCREPANCY">
             <div class="flex flex-row items-start gap-2">
               <div class="min-w-1 h-1 w-1 bg-[#e8590c] rounded-sm mt-2" />
-              <span class="text-[#e8590c]"
-                >{{ $t('docs.compare.discrepancy')
-                }}{{ documentResultFormData.reason ? ': ' + getTextFromHtml(documentResultFormData.reason) : '' }}</span
+              <span class="text-[#e8590c]">
+                {{ documentResultFormData.reason ? getTextFromHtml(documentResultFormData.reason) : '' }}</span
               >
             </div>
           </div>

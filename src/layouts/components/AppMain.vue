@@ -1,9 +1,7 @@
 <script lang="ts" setup>
-import { KEEP_ALIVE_ROUTER_NAME } from '@/constants/common'
-
 // import { useSettingsStore } from '@/store/modules/settings'
 // import Footer from './Footer/index.vue'
-
+import { KEEP_ALIVE_ROUTER_NAME } from '@/constants/common'
 // const settingsStore = useSettingsStore()
 </script>
 

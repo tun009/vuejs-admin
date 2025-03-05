@@ -12,6 +12,11 @@ initTheme()
 
 <template>
   <el-config-provider :locale="vi">
+    <!-- <router-view v-slot="{ Component, route }">
+      <keep-alive>
+        <component :is="Component" :key="route.fullPath" />
+      </keep-alive>
+    </router-view> -->
     <router-view />
   </el-config-provider>
 </template>

@@ -101,7 +101,7 @@ defineExpose<Exposes>({
     </el-radio-group>
   </div>
   <div>
-    <span class="underline">{{ $t('docs.detail.note') }}:</span><span> {{ $t('docs.detail.noteDes') }}</span>
+    <span class="underline">{{ $t('docs.detail.note') }}: </span><span> {{ $t('docs.detail.noteDes') }}</span>
   </div>
   <div>
     <el-button :loading="loading" @click.prevent="handleSelectChecker" type="primary">{{
