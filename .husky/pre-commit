@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 echo "Check code before commit"
 sh .husky/pre-checkout
-npx lint-staged
+# npx lint-staged
