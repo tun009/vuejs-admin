@@ -9,7 +9,7 @@ import isWhiteList from '@/config/white-list'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import i18n from '@/locales/index'
-import { LOGIN_PAGE, MAIN_PAGE, _403_PAGE } from '@/constants/router'
+import { LANDING_PAGE, LOGIN_PAGE, MAIN_PAGE, PRODUCT_PAGE, _403_PAGE } from '@/constants/router'
 
 const { setTitle } = useTitle()
 NProgress.configure({ showSpinner: false })
@@ -19,6 +19,11 @@ router.beforeEach(async (to, _from, next) => {
   const userStore = useUserStoreHook()
   const permissionStore = usePermissionStoreHook()
   const token = getToken()
+
+  // Nếu đường dẫn là trang chủ, landing page hoặc product detail, cho phép truy cập trực tiếp
+  if (to.path === MAIN_PAGE || to.path === LANDING_PAGE || to.path.startsWith(PRODUCT_PAGE)) {
+    return next()
+  }
 
   // If not logged in
   if (!token) {

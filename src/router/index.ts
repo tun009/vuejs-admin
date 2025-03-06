@@ -6,8 +6,10 @@ import {
   DOCUMENT_PAGE,
   DOCS_PAGE,
   INVALID_CATEGORY_PAGE,
+  LANDING_PAGE,
   LOGIN_PAGE,
   MAIN_PAGE,
+  PRODUCT_PAGE,
   PROFILE_PAGE,
   REDIRECT_PAGE,
   REPORTS_PAGE,
@@ -22,7 +24,7 @@ import {
   COMPARE_DOCUMENT_DETAIL_PAGE
 } from '@/constants/router'
 import { RoleEnum } from '@/@types/pages/users'
-
+import LandingPage from '@/views/landing/index.vue'
 const Layouts = () => import('@/layouts/index.vue')
 
 /**
@@ -67,15 +69,38 @@ export const constantRoutes: RouteRecordRaw[] = [
       title: 'login'
     }
   },
+  {
+    path: LANDING_PAGE,
+    component: () => import('@/views/landing/index.vue'),
+    meta: {
+      hidden: true,
+      title: 'landing'
+    }
+  },
+  {
+    path: `${PRODUCT_PAGE}/:slug`,
+    component: () => import('@/views/landing/detail/ProductDetail.vue'),
+    meta: {
+      hidden: true,
+      title: 'product-detail'
+    }
+  },
 
   // Private router
   {
     path: MAIN_PAGE,
+    component: () => import('@/views/landing/index.vue'),
+    meta: {
+      hidden: true,
+      title: 'landing'
+    }
+  },
+  {
+    path: DASHBOARD_PAGE,
     component: Layouts,
-    redirect: DASHBOARD_PAGE,
     children: [
       {
-        path: DASHBOARD_PAGE,
+        path: '',
         component: () => import('@/views/dashboard/index.vue'),
         name: 'Dashboard',
         meta: {
@@ -221,6 +246,11 @@ export const constantRoutes: RouteRecordRaw[] = [
       hidden: true,
       title: 'documentCompare'
     }
+  },
+  {
+    path: '/',
+    name: 'LandingPage',
+    component: LandingPage
   }
 ]
 

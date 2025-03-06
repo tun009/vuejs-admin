@@ -4,6 +4,7 @@ export const _404_PAGE = '/404'
 export const LOGIN_PAGE = '/login'
 export const DASHBOARD_PAGE = '/dashboard'
 export const MAIN_PAGE = '/'
+export const LANDING_PAGE = '/landing'
 export const DOCS_PAGE = '/docs'
 export const DOCUMENT_PAGE = '/document'
 export const REPORTS_PAGE = '/reports'
@@ -15,6 +16,8 @@ export const INVALID_CATEGORY_PAGE = '/invalid-category'
 export const PROFILE_PAGE = '/profile'
 // export const EXTRACT_PAGE = '/extract'
 export const EXTRACT_PAGE = '/extract'
+export const PRODUCT_PAGE = '/product'
+export const PRODUCT_DETAIL_PAGE = (slug: string = ':slug') => `/product/${slug}`
 
 export const DOCUMENT_DETAIL_PAGE = (id: string | number = ':id') => `/docs/document/${id}`
 export const COMPARE_DOCUMENT_DETAIL_PAGE = (id: string | number = ':id') => `/document-compare/${id}`
