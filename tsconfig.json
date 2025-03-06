@@ -1,10 +1,14 @@
 {
+  "files": [],
+  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],
   "compilerOptions": {
     "target": "esnext",
     "useDefineForClassFields": true,
     "module": "esnext",
     "moduleResolution": "node",
-    "strict": true,
+    "strict": false,
+    "noImplicitAny": false,
+    "composite": true,
     "jsx": "preserve",
     "jsxImportSource": "vue",
     "importHelpers": true,
@@ -16,18 +20,13 @@
     "esModuleInterop": true,
     "lib": ["esnext", "dom"],
     "skipLibCheck": true,
-    "types": [
-      "node",
-      "vite/client",
-      "element-plus/global",
-      "vitest"
-    ],
+    "types": ["node", "vite/client", "element-plus/global", "vitest"],
     /** baseUrl Used to tell the compiler where to find the module. This must be configured when using non-relative modules.*/
     "baseUrl": ".",
     /** Path mapping configuration for non-relative module imports, path calculation based on baseUrl configuration */
     "paths": {
       "@/*": ["src/*"],
-      "@c/*": ["src/components/*"],
+      "@c/*": ["src/components/*"]
     }
   },
   "include": [

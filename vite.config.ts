@@ -1,10 +1,13 @@
 /* eslint-disable prettier/prettier */
 /// <reference types="vitest" />
+/// <reference types="vite/client" />
 
 import { type ConfigEnv, type UserConfigExport, loadEnv } from 'vite'
-import path, { resolve } from 'path'
+import path from 'path'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
+import autoprefixer from 'autoprefixer'
+import tailwind from 'tailwindcss'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import svgLoader from 'vite-svg-loader'
 
@@ -15,10 +18,15 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
   return {
     /** Modify base according to actual situation when packaging */
     base: VITE_PUBLIC_PATH,
+    css: {
+      postcss: {
+        plugins: [tailwind(), autoprefixer()],
+      },
+    },
     resolve: {
       alias: {
         /** The @ symbol points to the src directory */
-        '@': resolve(__dirname, './src')
+        '@': path.resolve(__dirname, './src'),
       }
     },
     server: {
@@ -66,13 +74,13 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
       mode === 'development'
         ? undefined
         : {
-            /** Remove console.log when bundling */
-            pure: ['console.log'],
-            /** Remove debugger when bundling */
-            drop: ['debugger'],
-            /** Remove all comments when bundling */
-            legalComments: 'none'
-          },
+          /** Remove console.log when bundling */
+          pure: ['console.log'],
+          /** Remove debugger when bundling */
+          drop: ['debugger'],
+          /** Remove all comments when bundling */
+          legalComments: 'none'
+        },
     /** Vite plugin */
     plugins: [
       vue(),
