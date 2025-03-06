@@ -1,7 +1,7 @@
 import { ref, watchEffect } from 'vue'
 import { getActiveThemeName, setActiveThemeName } from '@/utils/cache/local-storage'
 
-const DEFAULT_THEME_NAME = 'normal'
+const DEFAULT_THEME_NAME = 'dark'
 type DefaultThemeName = typeof DEFAULT_THEME_NAME
 
 /** Registered theme name, DefaultThemeName is required */
@@ -21,11 +21,11 @@ const themeList: ThemeList[] = [
   {
     title: 'Dark',
     name: DEFAULT_THEME_NAME
+  },
+  {
+    title: 'Dark-blue',
+    name: 'dark-blue'
   }
-  // {
-  //   title: 'Dark-blue',
-  //   name: 'dark-blue'
-  // }
 ]
 
 /** The name of the theme being applied */

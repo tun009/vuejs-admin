@@ -4,6 +4,9 @@ import { useUserStore } from '@/store/modules/user'
 import { UserFilled } from '@element-plus/icons-vue'
 import Breadcrumb from '../Breadcrumb/index.vue'
 import Sidebar from '../Sidebar/index.vue'
+import Notify from '@/components/Notify/index.vue'
+import ThemeSwitch from '@/components/ThemeSwitch/index.vue'
+import LanguageSwitch from '@/components/LanguageSwitch/index.vue'
 import { useDevice } from '@/hooks/useDevice'
 import { useLayoutMode } from '@/hooks/useLayoutMode'
 import { PROFILE_PAGE } from '@/constants/router'
@@ -30,10 +33,13 @@ const goToProfile = () => {
     <Breadcrumb v-if="!isTop || isMobile" class="breadcrumb" />
     <Sidebar v-if="isTop && !isMobile" class="sidebar" />
     <div class="right-menu">
+      <ThemeSwitch class="right-menu-item" />
+      <LanguageSwitch class="right-menu-item" />
+      <Notify class="right-menu-item" />
       <el-dropdown class="right-menu-item">
         <div class="right-menu-avatar">
-          <span>{{ truncateString(userStore.userInfo.name) }}</span>
           <el-avatar :icon="UserFilled" :size="30" />
+          <span>{{ truncateString(userStore.userInfo.name) }}</span>
         </div>
         <template #dropdown>
           <el-dropdown-menu>
@@ -51,15 +57,14 @@ const goToProfile = () => {
     </div>
   </div>
 </template>
-
 <style lang="scss" scoped>
 .navigation-bar {
   padding: 6px 20px;
   // height: var(--prefix-navigationbar-height);
+  align-items: center;
   overflow: hidden;
   color: var(--prefix-navigationbar-text-color);
   display: flex;
-  align-items: center;
   justify-content: space-between;
   .hamburger {
     display: flex;
@@ -74,6 +79,21 @@ const goToProfile = () => {
       display: none;
     }
   }
+  .sidebar {
+    flex: 1;
+    min-width: 0px;
+    :deep(.el-menu) {
+      background-color: transparent;
+      // background-color: var(--el-menu-bg-color);
+    }
+    :deep(.el-sub-menu) {
+      &.is-active {
+        .el-sub-menu__title {
+          color: var(--el-color-primary) !important;
+        }
+      }
+    }
+  }
   .right-menu {
     margin-right: 10px;
     height: 100%;
@@ -86,7 +106,7 @@ const goToProfile = () => {
         display: flex;
         align-items: center;
         .el-avatar {
-          margin-left: 10px;
+          margin-right: 10px;
         }
         span {
           font-size: 16px;
@@ -96,9 +116,11 @@ const goToProfile = () => {
   }
 }
 </style>
-
 <style lang="scss">
 .navigation-bar {
+  .el-badge {
+    display: flex;
+  }
   .sidebar {
     flex: 1;
     min-width: 0px;

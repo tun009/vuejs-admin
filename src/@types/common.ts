@@ -75,3 +75,4 @@ export const uploadDocumentColumnConfig: ColumnConfigModel[] = [
     width: 110
   }
 ]
+export type TLanguage = 'vi' | 'en'

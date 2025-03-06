@@ -1,14 +1,14 @@
 /** Controls the animation effect when switching themes (only works on newer browsers, such as Chrome 111+) */
 
-// ::view-transition-old(root) {
-//   animation: none;
-//   mix-blend-mode: normal;
-// }
+::view-transition-old(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
 
-// ::view-transition-new(root) {
-//   animation: 0.5s ease-in clip-animation;
-//   mix-blend-mode: normal;
-// }
+::view-transition-new(root) {
+  animation: 0.5s ease-in clip-animation;
+  mix-blend-mode: normal;
+}
 
 @keyframes clip-animation {
   from {
