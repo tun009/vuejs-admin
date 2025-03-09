@@ -55,7 +55,7 @@ export const truncateFileName = (fileName: string) => {
 }
 
 export const truncateString = (string: string) => {
-  if (string.length > 20) {
+  if (string?.length > 20) {
     return string.slice(0, 20) + '...'
   }
 

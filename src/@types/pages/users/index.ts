@@ -287,3 +287,8 @@ export const configRoleUserTableData = [
     title: 2
   }
 ]
+
+export enum LonginTypeEnum {
+  PASSWORD = 'password',
+  AUTH_CODE = 'authorization_code'
+}

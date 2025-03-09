@@ -1,5 +1,5 @@
 {
-  "name": "eximbank-ui",
+  "name": "gpmlogin-ui",
   "version": "0.0.7",
   "description": "Vue3、TypeScript、Element Plus、Pinia、Vite",
   "type": "module",

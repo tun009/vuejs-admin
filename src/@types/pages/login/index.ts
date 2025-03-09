@@ -7,6 +7,10 @@ export interface BranchModel {
 }
 
 export interface UserInfoModel {
+  message: string
+  user: UserInfoDataModel
+}
+export interface UserInfoDataModel {
   id: number
   name: string
   username: string
@@ -14,6 +18,11 @@ export interface UserInfoModel {
   role: RoleEnum
   branch: BranchModel
   firstLogin: boolean
+  full_name: string
+  avatar: string
+  email: string
+  created_at: string
+  updated_at: string
 }
 
 export interface LoginFormModel {

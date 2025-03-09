@@ -39,7 +39,9 @@ onUnmounted(() => {
           <a href="#features" class="text-gray-700 hover:text-primary transition-colors duration-200">Tính năng</a>
           <a href="#pricing" class="text-gray-700 hover:text-primary transition-colors duration-200">Sản phẩm</a>
           <a href="#contact" class="text-gray-700 hover:text-primary transition-colors duration-200">Liên hệ</a>
-          <button class="btn-primary transition-transform duration-200 hover:scale-105">Mua ngay</button>
+          <button @click="$router.push('/login')" class="btn-primary transition-transform duration-200 hover:scale-105">
+            Đăng nhập
+          </button>
         </div>
 
         <!-- Mobile menu button -->
@@ -80,7 +82,12 @@ onUnmounted(() => {
           >Liên hệ</a
         >
         <div class="px-3 py-2">
-          <button class="btn-primary w-full transition-transform duration-200 hover:scale-105">Mua ngay</button>
+          <button
+            @click="$router.push('/login')"
+            class="btn-primary w-full transition-transform duration-200 hover:scale-105"
+          >
+            Mua ngay
+          </button>
         </div>
       </div>
     </div>

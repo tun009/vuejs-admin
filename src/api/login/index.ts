@@ -1,4 +1,8 @@
-import { LoginRequestModel, RefreshTokenRequestModel } from '@/@types/pages/login/services/LoginRequest'
+import {
+  AuthorizeCodeRequestModel,
+  LoginRequestModel,
+  RefreshTokenRequestModel
+} from '@/@types/pages/login/services/LoginRequest'
 import {
   LoginResponseModel,
   LogoutResponseModel,
@@ -8,8 +12,8 @@ import { request } from '@/api/service'
 
 /** Log in and return token */
 export function loginApi(data: LoginRequestModel) {
-  return request<LoginResponseModel>({
-    url: 'users/auth',
+  return request<any>({
+    url: 'oauth/token',
     method: 'post',
     data
   })
@@ -45,7 +49,14 @@ export function logoutApi(data: RefreshTokenRequestModel) {
 /** Get user details */
 export function getUserInfoApi() {
   return request<UserInfoResponseModel>({
-    url: 'users/me',
+    url: 'api/user/me',
     method: 'get'
+  })
+}
+export function authorizeGetTokenApi(data: AuthorizeCodeRequestModel) {
+  return request<any>({
+    url: 'oauth/authorize',
+    method: 'get',
+    data
   })
 }

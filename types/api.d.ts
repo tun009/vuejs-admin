@@ -9,3 +9,8 @@ interface ApiCustomRequestConfigModel {
   notAuth?: boolean
   showError?: boolean
 }
+interface ApiResponseDataNew<T> {
+  message: string
+  data: T
+  success: boolean
+}

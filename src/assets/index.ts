@@ -1,4 +1,4 @@
-export { default as LoginBackgound } from '@/assets/login/background.webp'
+export { default as LoginBackgound } from '@/assets/login/auth-img.91a7e82a.png'
 export { default as LoginBackgoundIcon } from '@/assets/login/background-icon.webp'
 export { default as EximbankLogo } from '@/assets/login/eib-logo.webp'
 export { default as EximbankLogoWhite } from '@/assets/login/eib-logo-white.webp'

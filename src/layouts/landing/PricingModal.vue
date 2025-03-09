@@ -110,7 +110,7 @@ const plans = [
                       <span class="text-gray-600">{{ feature }}</span>
                     </li>
                   </ul>
-                  <button class="btn-primary w-full">Mua Ngay</button>
+                  <button @click="$router.push('/login')" class="btn-primary w-full">Mua Ngay</button>
                 </div>
               </div>
             </DialogPanel>

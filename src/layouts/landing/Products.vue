@@ -117,7 +117,7 @@ const formatNumber = (num: number): string => {
             >
               Xem Chi Tiết
             </button>
-            <button @click="isModalOpen = true" class="btn-primary w-full">Mua Ngay</button>
+            <button @click="(isModalOpen = true), $router.push('/login')" class="btn-primary w-full">Mua Ngay</button>
           </div>
         </div>
       </div>

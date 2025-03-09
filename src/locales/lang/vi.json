@@ -87,7 +87,7 @@
   },
   "login": {
     "title": "Đăng nhập",
-    "username": "Tên đăng nhập",
+    "username": "Địa chỉ email",
     "password": "Mật khẩu",
     "loginSuccess": "Đăng nhập thành công",
     "enterUsername": "Nhập tên đăng nhập",
@@ -96,10 +96,10 @@
   "router": {
     "login": "Đăng nhập",
     "dashboard": "Tổng quan",
-    "document": "Quản lý chứng từ",
-    "dataProcessing": "Kiểm tra chứng từ",
+    "document": "Quản lý sản phẩm",
+    "dataProcessing": "Danh sách sản phẩm",
     "reports": "Báo cáo",
-    "settings": "Cài đặt",
+    "settings": "Quản lý gói",
     "users": "Quản lý người dùng",
     "rules": "Quản lý rule",
     "ruleUI": "Luật UCP/ISBP",

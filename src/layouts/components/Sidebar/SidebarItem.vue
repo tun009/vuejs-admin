@@ -181,9 +181,9 @@ onUnmounted(() => {
 //   padding-left: 56px !important;
 // }
 
-.sidebar-item {
-  background-color: var(--el-menu-bg-color);
-}
+// .sidebar-item {
+//   background-color: var(--el-menu-bg-color);
+// }
 </style>
 
 <style lang="scss">

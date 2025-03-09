@@ -1,7 +1,8 @@
-import { LoginFormModel, UserInfoModel } from '@/@types/pages/login'
-import { RoleEnum } from '@/@types/pages/users'
+import { LoginFormModel, UserInfoDataModel, UserInfoModel } from '@/@types/pages/login'
+import { LonginTypeEnum, RoleEnum } from '@/@types/pages/users'
 import { getUserInfoApi, loginApi, logoutApi, refreshTokenApi } from '@/api/login'
-import { LOGIN_PAGE } from '@/constants/router'
+import { DATA_LOGIN_DEFAULT } from '@/constants/common'
+import { MAIN_PAGE } from '@/constants/router'
 import { resetRouter } from '@/router'
 import store from '@/store'
 import {
@@ -21,21 +22,39 @@ export const useUserStore = defineStore('user', () => {
 
   const token = ref<string>(getToken() || '')
   const roles = ref<string[]>([])
-  const userInfo = ref<UserInfoModel>({} as UserInfoModel)
+  const userInfo = ref<UserInfoDataModel>({} as UserInfoDataModel)
 
   /** Login */
   const login = async ({ username, password }: LoginFormModel) => {
-    const { data } = await loginApi({ username, password })
-    setToken(data.token)
-    setRefreshToken(data.refreshToken)
-    token.value = data.token
+    const defaultValueLogin = {
+      grant_type: LonginTypeEnum.PASSWORD,
+      client_id: DATA_LOGIN_DEFAULT.customer.client_id,
+      client_secret: DATA_LOGIN_DEFAULT.customer.client_secret
+    }
+    const data = await loginApi({ ...defaultValueLogin, username, password })
+    setToken(data.access_token)
+    setRefreshToken(data.access_token)
+    token.value = data.access_token
+  }
+  const loginWithAuthorizeCode = async (code: string) => {
+    const defaultValueLogin = {
+      grant_type: LonginTypeEnum.AUTH_CODE,
+      client_id: DATA_LOGIN_DEFAULT.admin.client_id,
+      client_secret: DATA_LOGIN_DEFAULT.admin.client_secret,
+      code,
+      redirect_uri: `${window.location.origin}/auth/callback`
+    }
+    const data = await loginApi(defaultValueLogin)
+    setToken(data.access_token)
+    setRefreshToken(data.access_token)
+    token.value = data.access_token
   }
   /** Get user details */
   const getInfo = async () => {
     const { data } = await getUserInfoApi()
-    userInfo.value = data
+    userInfo.value = data.user
     // Verify that the returned roles is a non-empty array, otherwise insert a default role that has no effect to prevent the routing guard logic from entering an infinite loop
-    roles.value = [data.role]
+    roles.value = [data.user.role || RoleEnum.VIEWER]
   }
   /** Simulate role changes */
   const changeRoles = async (role: string) => {
@@ -54,7 +73,7 @@ export const useUserStore = defineStore('user', () => {
     token.value = ''
     roles.value = []
     resetRouter()
-    if (route.path === LOGIN_PAGE) return
+    if (route.path === MAIN_PAGE) return
     location.reload()
   }
 
@@ -69,9 +88,9 @@ export const useUserStore = defineStore('user', () => {
   const refreshToken = async () => {
     try {
       const { data } = await refreshTokenApi({ id: userInfo.value.id, refreshToken: getRefreshToken() ?? '' })
-      setToken(data.token)
-      setRefreshToken(data.refreshToken)
-      token.value = data.token
+      setToken(data.access_token)
+      setRefreshToken(data.refresh_token)
+      token.value = data.access_token
     } catch (error) {
       console.error(error)
       logout()
@@ -79,7 +98,7 @@ export const useUserStore = defineStore('user', () => {
   }
   /** Set user info */
   const setUserInfo = (data: UserInfoModel) => {
-    userInfo.value = data
+    userInfo.value = data.user
   }
 
   const isAdmin = computed(() => userInfo.value.role === RoleEnum.ADMIN)
@@ -98,6 +117,7 @@ export const useUserStore = defineStore('user', () => {
     resetToken,
     setUserInfo,
     refreshToken,
+    loginWithAuthorizeCode,
     isAdmin,
     isChecker,
     isMaker,

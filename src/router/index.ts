@@ -21,7 +21,10 @@ import {
   _404_PAGE,
   DOCUMENT_DETAIL_PAGE,
   EXTRACT_PAGE,
-  COMPARE_DOCUMENT_DETAIL_PAGE
+  COMPARE_DOCUMENT_DETAIL_PAGE,
+  AUTH_CALLBACK,
+  PRODUCT_PACKAGE,
+  PRODUCT_LIST
 } from '@/constants/router'
 import { RoleEnum } from '@/@types/pages/users'
 import LandingPage from '@/views/landing/index.vue'
@@ -78,6 +81,14 @@ export const constantRoutes: RouteRecordRaw[] = [
     }
   },
   {
+    path: AUTH_CALLBACK,
+    component: () => import('@/views/login/CallBackLogin.vue'),
+    meta: {
+      hidden: true,
+      title: 'login'
+    }
+  },
+  {
     path: `${PRODUCT_PAGE}/:slug`,
     component: () => import('@/views/landing/detail/ProductDetail.vue'),
     meta: {
@@ -124,7 +135,7 @@ export const constantRoutes: RouteRecordRaw[] = [
   {
     path: DOCS_PAGE,
     component: Layouts,
-    redirect: DOCS_PAGE + DOCUMENT_PAGE,
+    redirect: PRODUCT_LIST,
     meta: {
       title: 'document',
       svgIcon: 'ic-model-group',
@@ -132,7 +143,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     },
     children: [
       {
-        path: DOCS_PAGE + DOCUMENT_PAGE,
+        path: PRODUCT_LIST,
         component: () => import('@/views/docs/documents/index.vue'),
         meta: {
           breadcrumb: false,
@@ -142,24 +153,13 @@ export const constantRoutes: RouteRecordRaw[] = [
         name: 'Document'
       },
       {
-        path: DOCS_PAGE + SETTINGS_PAGE,
+        path: PRODUCT_PACKAGE,
         component: () => import('@/views/docs/settings/index.vue'),
         name: 'Settings',
         meta: {
           title: 'settings',
-          keepAlive: true,
-          roles: [RoleEnum.ADMIN, RoleEnum.CHECKER, RoleEnum.MAKER]
+          keepAlive: true
         }
-      },
-      {
-        component: () => import('@/views/docs/documents/detail/index.vue'),
-        meta: {
-          hidden: true,
-          keepAlive: true,
-          title: 'documentDetail'
-        },
-        name: 'Document detail',
-        path: DOCUMENT_DETAIL_PAGE()
       }
     ]
   },
@@ -200,53 +200,7 @@ export const constantRoutes: RouteRecordRaw[] = [
       }
     ]
   },
-  {
-    path: RULES_PAGE,
-    redirect: RULES_PAGE + UCP_ISBP_PAGE,
-    component: Layouts,
-    meta: {
-      title: 'rules',
-      svgIcon: 'ic-round-rule',
-      roles: [RoleEnum.ADMIN, RoleEnum.CHECKER, RoleEnum.MAKER]
-    },
-    children: [
-      {
-        path: RULES_PAGE + UCP_ISBP_PAGE,
-        component: () => import('@/views/rules/ucp-isbp/index.vue'),
-        name: 'Rule UCP/ISBP',
-        meta: {
-          title: 'ruleUI',
-          keepAlive: true
-        }
-      },
-      {
-        path: RULES_PAGE + INVALID_CATEGORY_PAGE,
-        component: () => import('@/views/rules/invalid-category/index.vue'),
-        name: 'Invalid category',
-        meta: {
-          title: 'invalidCategory',
-          keepAlive: true
-        }
-      }
-    ]
-  },
-  {
-    path: EXTRACT_PAGE,
-    component: () => import('@/views/extract/index.vue'),
-    meta: {
-      title: 'extract',
-      hidden: true,
-      keepAlive: false
-    }
-  },
-  {
-    path: COMPARE_DOCUMENT_DETAIL_PAGE(),
-    component: () => import('@/views/docs/documents/compare/index.vue'),
-    meta: {
-      hidden: true,
-      title: 'documentCompare'
-    }
-  },
+
   {
     path: '/',
     name: 'LandingPage',
